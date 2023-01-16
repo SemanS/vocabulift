@@ -88,7 +88,7 @@ export default defineConfig({
         dir: 'dist',
       },
     },
-    outDir: '../dist'
+    outDir: './dist'
   },
 })
   
