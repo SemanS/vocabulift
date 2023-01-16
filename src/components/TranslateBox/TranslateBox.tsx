@@ -1,43 +1,34 @@
-import { Switch } from 'antd';
 import { useState, useEffect } from 'react';
-
-import TranslateWord from '../TranslateWord/TranslateWord';
+import TranslateWord from "../TranslateWord/TranslateWord";
+import { Switch } from "antd";
 
 interface TranslateBoxProps {
   text: string;
+  onClick: (word: string) => void;
 }
 
-const TranslateBox: React.FC<TranslateBoxProps> = ({text}) => {
+const TranslateBox: React.FC<TranslateBoxProps> = ({text, onClick}) => {
     const [translations, setTranslations] = useState<string[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const [mode, setMode] = useState<'word' | 'sentence'>('word'); // initial mode is 'word'
-    const [clickedWords, setClickedWords] = useState<string[]>([]);
-  
+    const [selectedWord, setSelectedWord] = useState<string | null>(null);
+    
     const handleWordClick = (word: string) => {
-      if(!clickedWords.includes(word)){
-          setClickedWords([...clickedWords, word]);
-      }
-  }
+        onClick(word);
+    }
 
-  const dummyFetch = async (text: string, mode: 'word' | 'sentence') => {
-    return {
-        translations: mode === 'word' ? 
-            text.split(" ").map((word) => `${word}_translated`) : 
-            [`${text}_translated`]
-    };
-};
-useEffect(() => {
+    useEffect(() => {
       const fetchData = async () => {
         setIsLoading(true);
         try {
           let data
           if(mode === "word"){
-            data = await dummyFetch(text,'word');
+            data = text.split(" ");
         }else{
-            data = await dummyFetch(text,'sentence');
+          data = text.match(/[^\.!?]+[\.!?]/g);
         }
-          setTranslations(data.translations);
+          setTranslations(data);
         } catch (err) {
           setError(err);
         }
@@ -55,33 +46,20 @@ useEffect(() => {
       return <div>An error occurred: {error.message}</div>;
     }
   
-    const words = mode === 'word' ? text.split(" ") : [text]; 
     return (
-      <>
+        <>
             <div style={{ marginBottom: 16 }}>
                 <Switch
                     checked={mode === 'sentence'}
                     onChange={() => setMode(mode === 'word' ? 'sentence' : 'word')}
                 />
-                <span style={{ marginLeft: 8 }}>
-                    {mode === 'word' ? 'Translate words' : 'Translate sentence'}
-                </span>
+                {' '}Translate by word or sentence
             </div>
-            <div className="translate-box">
-                {words.map((word, index) => (
-                    <TranslateWord key={word} word={word} translation={translations[index]} onClick={handleWordClick} />
-                ))}
-            </div>
-            <div className="clicked-words-list">
-            Clicked Words:
-            <ul>
-                {clickedWords.map((word, index) => (
-                    <li key={index}>{word}</li>
-                ))}
-            </ul>
-        </div>
-</>
+            {translations.map((sentence, index) => (
+                <TranslateWord key={index} word={sentence} translation={translations[index]} onClick={handleWordClick} />
+            ))}
+        </>
     );
-  };
+}
 
-export default TranslateBox
+export default TranslateBox;

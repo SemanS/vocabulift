@@ -15,6 +15,8 @@ export type BasicLayoutProps = {
 
 const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   const location = useLocation()
+  const text = "This is some text to be translated";
+  const translations = ["Translation 1","Translation 2","Translation 3","Translation 4","Translation 5","Translation 6","Translation 7"];
 
   return (
     <ProLayout

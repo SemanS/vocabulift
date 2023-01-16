@@ -19,7 +19,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({ word, translation, onClic
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
-                {word}
+                {word + " "}
                 </span>
         </Tooltip>
     );

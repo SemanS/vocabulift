@@ -1,8 +1,7 @@
 // @ts-nocheck
 import { dynamic } from '@vitjs/runtime';
 import React from 'react';
-import SmileOutlined from '@ant-design/icons/SmileOutlined'
-import StarOutlined from '@ant-design/icons/StarOutlined'
+import BookOutlined from '@ant-design/icons/BookOutlined'
 
 import LoadingComponent from '/Users/macbook/Projects/vocabulift/src/components/PageLoading';
 
@@ -20,22 +19,17 @@ export default function getRoutes() {
             "component": dynamic({ loader: () => import('/Users/macbook/Projects/vocabulift/src/layouts/BasicLayout'), loading: LoadingComponent}),
             "routes": [
               {
-                "path": "/",
-                "redirect": "/book",
+                "path": "/books",
+                "icon": React.createElement(BookOutlined),
+                "name": "Books",
+                "component": dynamic({ loader: () => import('/Users/macbook/Projects/vocabulift/src/pages/Books'), loading: LoadingComponent}),
                 "exact": true
               },
               {
-                "path": "/book",
-                "icon": React.createElement(SmileOutlined),
-                "name": "欢迎页",
-                "component": dynamic({ loader: () => import('/Users/macbook/Projects/vocabulift/src/pages/Book'), loading: LoadingComponent}),
-                "exact": true
-              },
-              {
-                "path": "/ant-design",
-                "icon": React.createElement(StarOutlined),
-                "name": "Ant Design",
-                "component": dynamic({ loader: () => import('/Users/macbook/Projects/vocabulift/src/pages/AntDesign'), loading: LoadingComponent}),
+                "path": "/books/:title",
+                "name": "Book Detail",
+                "component": dynamic({ loader: () => import('/Users/macbook/Projects/vocabulift/src/pages/BookDetail'), loading: LoadingComponent}),
+                "hideInMenu": true,
                 "exact": true
               }
             ]

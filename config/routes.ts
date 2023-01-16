@@ -11,21 +11,18 @@ export default [
             component: './layouts/BasicLayout',
             routes: [
               {
-                path: '/',
-                redirect: '/book',
+                path: '/books',
+                icon: 'book',
+                name: 'Books',
+                component: './pages/Books',
+                
               },
               {
-                path: '/book',
-                icon: 'smile',
-                name: '欢迎页',
-                component: './pages/Book',
-              },
-              {
-                path: '/ant-design',
-                icon: 'star',
-                name: 'Ant Design',
-                component: './pages/AntDesign',
-              },
+                path: '/books/:title',
+                name: 'Book Detail',
+                component: './pages/BookDetail',
+                hideInMenu: true
+              }
             ],
           },
           {
@@ -41,4 +38,4 @@ export default [
   {
     component: './pages/404',
   },
-]
+];
