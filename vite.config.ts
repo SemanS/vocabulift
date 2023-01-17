@@ -80,14 +80,6 @@ export default defineConfig({
         javascriptEnabled: true,
       },
     },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        dir: 'public',
-      },
-    },
-    outDir: './public'
-  },
+  }
 })
   
