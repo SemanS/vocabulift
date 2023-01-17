@@ -2,6 +2,7 @@
 import react from '@vitejs/plugin-react'
 import vitApp from '@vitjs/vit'
 import { getThemeVariables } from 'antd/dist/theme'
+import path from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 import autoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite'
@@ -60,7 +61,7 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      // { find: '@', replacement: path.resolve(__dirname, 'src') },
+      { find: '@', replacement: path.resolve(__dirname, 'src') },
       // fix less import by: @import ~
       // https://github.com/vitejs/vite/issues/2185#issuecomment-784637827
       { find: /^~/, replacement: '' },
