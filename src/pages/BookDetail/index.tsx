@@ -2,7 +2,6 @@ import { PageContainer } from '@ant-design/pro-layout';
 import { Card, Row, Col } from 'antd';
 import classNames from 'classnames'
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
 
 import TranslateBox from '@/components/TranslateBox/TranslateBox';
 
