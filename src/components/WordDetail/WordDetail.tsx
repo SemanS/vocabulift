@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { Card } from 'antd';
-//import './WordDetail.css';
 
 interface WordDetailProps {
     word: string;

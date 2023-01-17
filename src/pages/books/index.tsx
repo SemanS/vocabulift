@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import { List, Card } from 'antd';
+// eslint-disable-next-line import/default
+import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 interface Book {

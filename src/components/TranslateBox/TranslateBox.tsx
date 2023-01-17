@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
-import TranslateWord from "../TranslateWord/TranslateWord";
 import { Switch } from "antd";
+import { useState, useEffect } from 'react';
+
+import TranslateWord from "../TranslateWord/TranslateWord";
+
 
 interface TranslateBoxProps {
   text: string;
@@ -12,7 +14,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({text, onClick}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [mode, setMode] = useState<'word' | 'sentence'>('word'); // initial mode is 'word'
-  const [selectedWord, setSelectedWord] = useState<string | null>(null);
   
   const handleWordClick = (word: string) => {
       onClick(word);

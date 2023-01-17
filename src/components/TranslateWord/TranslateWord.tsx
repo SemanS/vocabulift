@@ -1,5 +1,6 @@
 import { Tooltip } from 'antd';
 import classNames from 'classnames'
+
 import styles from './TranslateWord.module.less'
 
 interface TranslateWordProps {
