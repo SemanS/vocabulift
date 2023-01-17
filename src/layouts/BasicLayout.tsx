@@ -2,7 +2,6 @@ import { HomeOutlined } from '@ant-design/icons'
 import ProLayout from '@ant-design/pro-layout'
 import { history, Link, useLocation } from '@vitjs/runtime'
 
-import TranslateBox from '@/components/TranslateBox/TranslateBox'
 import GlobalFooter from '@/containers/GlobalFooter'
 
 import defaultSettings from '../../config/defaultSettings'
@@ -15,8 +14,6 @@ export type BasicLayoutProps = {
 
 const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
   const location = useLocation()
-  const text = "This is some text to be translated";
-  const translations = ["Translation 1","Translation 2","Translation 3","Translation 4","Translation 5","Translation 6","Translation 7"];
 
   return (
     <ProLayout
@@ -39,7 +36,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
           breadcrumbName: (<HomeOutlined />) as any,
         },
         ...routers,
-      ]}  
+      ]}
       itemRender={(route, params, routes, paths) => {
         const first = routes.indexOf(route) === 0
         return first ? (
@@ -54,8 +51,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       //   fontColor: 'rgba(24,144,255,0.15)',
       // }}
       {...defaultSettings}
-      >
-      </ProLayout>
+    />
   )
 }
 

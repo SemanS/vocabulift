@@ -2,7 +2,6 @@
 import react from '@vitejs/plugin-react'
 import vitApp from '@vitjs/vit'
 import { getThemeVariables } from 'antd/dist/theme'
-import { resolve } from 'path'
 import { visualizer } from 'rollup-plugin-visualizer'
 import autoImport from 'unplugin-auto-import/vite'
 import { defineConfig } from 'vite'
@@ -14,6 +13,7 @@ import routes from './config/routes'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/vite-react/',
   plugins: [
     react({
       babel: {
@@ -22,7 +22,7 @@ export default defineConfig({
         },
       },
     }),
-    [tsconfigPaths()],
+    tsconfigPaths(),
     autoImport({
       imports: [
         'react',
@@ -61,8 +61,7 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      { find: '@', replacement: resolve(__dirname, 'src') },
-      { find: '@@', replacement: resolve(__dirname, 'src/vit') },
+      // { find: '@', replacement: path.resolve(__dirname, 'src') },
       // fix less import by: @import ~
       // https://github.com/vitejs/vite/issues/2185#issuecomment-784637827
       { find: /^~/, replacement: '' },
@@ -84,7 +83,12 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'dist',
-  }
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-venders': ['react', 'react-dom', '@vitjs/runtime'],
+        },
+      },
+    },
+  },
 })
-  

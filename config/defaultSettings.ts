@@ -7,7 +7,7 @@ const Settings: LayoutSettings = {
   fixedHeader: true,
   fixSiderbar: true,
   colorWeak: false,
-  title: 'Vocabulift',
+  title: 'Vite React',
   iconfontUrl: '',
 }
 
