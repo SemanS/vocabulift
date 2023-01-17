@@ -16,11 +16,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@@/*": ["./src/.vit/*"]
-    }
+    "baseUrl": "."
   },
-  "include": ["./src", "./*.ts"]
+  "include": ["./src", "./*.tsx"]
 }
