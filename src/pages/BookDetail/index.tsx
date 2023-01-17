@@ -29,7 +29,7 @@ const BookDetail: React.FC<BookDetailProps> = () => {
             <Row>
                 <Col span={12}>
                     <Card>
-                        <TranslateBox text={text} translations={translations} onClick={handleClick} clickedWords={clickedWords} />
+                        <TranslateBox text={text} onClick={handleClick} />
                     </Card>
                 </Col>
                 <Col span={12}>
