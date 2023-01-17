@@ -13,7 +13,6 @@ import routes from './config/routes'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/vite-react/',
   plugins: [
     react({
       babel: {
@@ -81,14 +80,6 @@ export default defineConfig({
         javascriptEnabled: true,
       },
     },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        dir: 'dist',
-      },
-    },
-    outDir: './dist'
-  },
+  }
 })
   
