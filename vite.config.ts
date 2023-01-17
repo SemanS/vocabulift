@@ -21,7 +21,7 @@ export default defineConfig({
         },
       },
     }),
-    tsconfigPaths(),
+    [tsconfigPaths()],
     autoImport({
       imports: [
         'react',

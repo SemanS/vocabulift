@@ -68,7 +68,7 @@
     "vite": "^2.3.2",
     "vite-plugin-imp": "^2.0.4",
     "vite-plugin-windicss": "^1.8.3",
-    "vite-tsconfig-paths": "^2.3.0",
+    "vite-tsconfig-paths": "^2.5.1",
     "windicss": "^3.5.1"
   }
 }
