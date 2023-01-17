@@ -2,7 +2,7 @@
 import { createBrowserHistory, History } from '@vitjs/runtime';
 
 const options = {
-  "basename": "/vite-react/"
+  "basename": "/"
 };
 
 if (options.basename) {
