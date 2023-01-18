@@ -1,7 +1,6 @@
-import { List, Card } from 'antd';
-// eslint-disable-next-line import/default
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { List, Card } from 'antd';
+import {useNavigate} from "react-router-dom"
 
 interface Book {
   name: string;
@@ -12,7 +11,7 @@ interface Book {
 
 const Books: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTimeout(() => {
@@ -35,7 +34,7 @@ const Books: React.FC = () => {
             hoverable
             cover={<img alt={book.title} />}
             onClick={() => {
-              history.push(`/books/${book.title}`);
+              navigate(`/books/${book.title}`);
             }}
           >
             <Card.Meta title={book.title} description={book.author} />
@@ -45,5 +44,3 @@ const Books: React.FC = () => {
     />
   );
 };
-
-export default Books;

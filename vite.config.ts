@@ -1,94 +1,87 @@
-// import * as path from 'path';
-import react from '@vitejs/plugin-react'
-import vitApp from '@vitjs/vit'
-import { getThemeVariables } from 'antd/dist/theme'
-import { visualizer } from 'rollup-plugin-visualizer'
-import autoImport from 'unplugin-auto-import/vite'
-import { defineConfig } from 'vite'
-import vitePluginImp from 'vite-plugin-imp'
-import windiCSS from 'vite-plugin-windicss'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import type { UserConfigExport, ConfigEnv } from 'vite'
+import { loadEnv } from 'vite';
+import reactRefresh from '@vitejs/plugin-react-refresh'
+import { viteMockServe } from 'vite-plugin-mock'
+import { resolve } from 'path';
+import svgr from 'vite-plugin-svgr'
+import { getAliases } from "vite-aliases";
+import styleImport from 'vite-plugin-style-import';
 
-import routes from './config/routes'
+const aliases = getAliases();
+
+function pathResolve(dir: string) {
+  return resolve(__dirname, '.', dir);
+}
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  base: '/vite-react/',
-  plugins: [
-    react({
-      babel: {
-        parserOpts: {
-          plugins: ['decorators-legacy'],
-        },
-      },
-    }),
-    tsconfigPaths(),
-    autoImport({
-      imports: [
-        'react',
+export default ({ command } : { command: string}) => {
+  console.log('command:',)
+  return {
+    resolve: {
+      // alias: aliases,
+      alias: [
         {
-          react: [
-            'createElement',
-            'cloneElement',
-            'createContext',
-            'useLayoutEffect',
-            'forwardRef',
-          ],
+          // /@/xxxx  =>  src/xxx
+          find: /^~/,
+          replacement: pathResolve('node_modules') + '/',
+        },
+        {
+          // /@/xxxx  =>  src/xxx
+          find: /@\//,
+          replacement: pathResolve('src') + '/',
         },
       ],
-    }),
-    vitePluginImp({
-      libList: [
-        {
-          libName: 'antd',
-          style: (name) => `antd/es/${name}/style`,
-        },
+    },
+    optimizeDeps: {
+      include: [
+        '@ant-design/colors',
+        '@ant-design/icons',
       ],
-    }),
-    vitApp({
-      routes,
-      dynamicImport: {
-        loading: './components/PageLoading',
-      },
-      exportStatic: {},
-    }),
-    windiCSS(),
-    visualizer(),
-  ],
-  server: {
-    // open: true,
-    port: 8000,
-  },
-  resolve: {
-    alias: [
-      // { find: '@', replacement: path.resolve(__dirname, 'src') },
-      // fix less import by: @import ~
-      // https://github.com/vitejs/vite/issues/2185#issuecomment-784637827
-      { find: /^~/, replacement: '' },
+    },
+    // server: {
+    //   proxy: {
+    //     '/api': {
+    //       target: 'http://127.0.0.1:7770',
+    //       changeOrigin: true,
+    //       rewrite: path => path.replace(/^\/api/, '')
+    //     }
+    //   },
+    // },
+    plugins: [
+      reactRefresh(),
+      svgr(),
+      viteMockServe({
+        mockPath: 'mock',
+        supportTs: true,
+        watchFiles: true,
+        localEnabled: command === 'serve',
+        logger: true,
+      }),
+      // styleImport({
+      //   libs: [
+      //     {
+      //       libraryName: 'antd',
+      //       esModule: true,
+      //       resolveStyle: (name) => {
+      //         return `antd/es/${name}/style/index`;
+      //       },
+      //     },
+      //   ],
+      // }),
     ],
-  },
-  css: {
-    modules: {
-      localsConvention: 'camelCaseOnly',
-    },
-    preprocessorOptions: {
-      less: {
-        // modifyVars: { 'primary-color': '#13c2c2' },
-        modifyVars: getThemeVariables({
-          // dark: true, // 开启暗黑模式
-          // compact: true, // 开启紧凑模式
-        }),
-        javascriptEnabled: true,
+    css: {
+      modules: {
+        localsConvention: 'camelCaseOnly',
       },
-    },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'react-venders': ['react', 'react-dom', '@vitjs/runtime'],
+      preprocessorOptions: {
+        less: {
+          javascriptEnabled: true,
+          modifyVars: {
+            '@primary-color': '#1890ff',
+          },
         },
       },
     },
-  },
-})
+  }
+}
+

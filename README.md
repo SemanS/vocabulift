@@ -1,57 +1,59 @@
-English | [简体中文](./README.zh-CN.md)
+# React + Recoil + React Query + React Hooks + Typescript + Axios + Vite - Starter
 
-# Vite React
+This Starter utilizes React, Recoil, React Query, React Hooks, Typescript, Axios And Vite.
 
-🚀 Use Vite + React like a Pro!
+## [中文文档](./README_ZH.md)
 
-> Try building an [Ant Design Pro](https://github.com/ant-design/ant-design-pro)-like project with [Vite](https://github.com/vitejs/vite), which builds an easy-to-use mid-background scaffolding from scratch.
 
-## ✨ Features
+## Screenshot
 
-- 🛠 [TypeScript](https://github.com/microsoft/TypeScript) + [ESLint](https://github.com/eslint/eslint) + [Prettier](https://github.com/prettier/prettier) + [lint-staged](https://github.com/okonet/lint-staged), preset configurations
-- ❤️ [Less](https://github.com/less/less.js) + [Windi CSS](https://github.com/windicss/windicss), enjoyable CSS development experience
-- ⚙️ Preset Vite plugins reasonable, pursue the ultimate development experience
-- 💡 Fully features of [Ant Design](https://github.com/ant-design/ant-design), support style import on demand
-- 💎 Provide different degrees of custom scaffolding, free choice, easy to use
+![](./screenshot1.png)
+![](./screenshot2.png)
 
-## Always one option for you
 
-Due to the different needs of everybody, and in order to reduce the mental burden of users, the increasingly complex project was split, but the development environment configuration remained, which also made it convenient for users to customize the development environment. The following shows the preset core dependencies of each branch.
+## Installation
 
-### [⭐️ feat/base](https://github.com/yunsii/vite-react/tree/feat/base)
+Clone this repo and install all dependencies
 
-Only provides primitive React development support for small, routless projects such as Hello World or for custom more complex scaffolding.
+```
+ git clone https://github.com/ychengcloud/react-vite-admin.git
 
-- [react](https://github.com/facebook/react)
-- [react-dom](https://github.com/facebook/react/blob/main/packages/react-dom/README.md)
+ cd react-vite-admin
 
-### [⭐️ feat/vitjs](https://github.com/yunsii/vite-react/tree/feat/vitjs)
+ yarn install
+```
 
-Based on [vitjs/vit](https://github.com/vitjs/vit), take over the route and application entry, support custom MOCK data. It can be convenient to build a complicated application based on routing.
+## Development
 
-- [react](https://github.com/facebook/react)
-- [react-dom](https://github.com/facebook/react/blob/main/packages/react-dom/README.md)
-- [vitjs/vit](https://github.com/vitjs/vit)
+``` 
+yarn dev 
+```
 
-### [⭐️ master](https://github.com/yunsii/vite-react)\*
+## Build
 
-Contains all the features of the previous branch, while supporting the fully features of antd, and [Ant Design Pro](https://github.com/ant-design/ant-design-pro) page layout
+```
+yarn build
+```
 
-- [react](https://github.com/facebook/react)
-- [react-dom](https://github.com/facebook/react/blob/main/packages/react-dom/README.md)
-- [vitjs/vit](https://github.com/vitjs/vit)
-- [antd](https://github.com/ant-design/ant-design)
-- [@ant-design/pro-layout](https://procomponents.ant.design/components/layout)
-- [ahooks](https://ahooks.js.org/hooks)
+## Publish
 
-### [⭐️ feat/concent](https://github.com/yunsii/vite-react/tree/feat/concent)
+```
+yarn dist
+```
 
-Contains all the features of the previous branch, Use [concent](https://github.com/concentjs/concent) as a global state management tool.
+## Contributing
 
-- [react](https://github.com/facebook/react)
-- [react-dom](https://github.com/facebook/react/blob/main/packages/react-dom/README.md)
-- [vitjs/vit](https://github.com/vitjs/vit)
-- [antd](https://github.com/ant-design/ant-design)
-- [@ant-design/pro-layout](https://procomponents.ant.design/components/layout)
-- [ahooks](https://ahooks.js.org/hooks)
-- [concent](https://github.com/concentjs/concent)
+Your contributions are always welcome! [Click Here to read the guidelines](./contributing.md).
+
+## Thanks
+
+- [Antd Design](https://ant.design)
+- [Antd Design Pro](https://pro.ant.design/)
+- [Vite](https://vitejs.dev/)
+- [React Query](https://react-query.tanstack.com/)
+- [React antd admin](https://github.com/WinmezzZ/react-antd-admin.git)
+- [vue-vben-admin](https://github.com/anncwb/vue-vben-admin)
+
+## License
+
+[MIT](./LICENSE)

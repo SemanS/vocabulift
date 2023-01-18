@@ -1,17 +1,23 @@
-import { history } from '@vitjs/runtime'
-import { Button, Result } from 'antd'
+import { Button, Result } from 'antd';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useLocale } from '@/locales';
 
-const NoFoundPage: React.FC = () => (
-  <Result
-    status='404'
-    title='404'
-    subTitle='Sorry, the page you visited does not exist.'
-    extra={
-      <Button type='primary' onClick={() => history.push('/')}>
-        Back Home
-      </Button>
-    }
-  />
-)
+const NotFoundPage: React.FC<{}> = () => {
+  const navigate = useNavigate();
+  const { formatMessage } = useLocale();
+  return (
+    <Result
+      status="404"
+      title="404"
+      subTitle={formatMessage({ id: 'gloabal.tips.notfound' })}
+      extra={
+        <Button type="primary" onClick={() => navigate('/')}>
+          {formatMessage({ id: 'gloabal.tips.backHome' })}
+        </Button>
+      }
+    ></Result>
+  );
+};
 
-export default NoFoundPage
+export default NotFoundPage;
