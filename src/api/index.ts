@@ -10,7 +10,7 @@ export const useLogin = () => {
 }
 
 export const useGetCurrentUser = () => {
-    const baseUrl = "http://ec2-18-197-98-20.eu-central-1.compute.amazonaws.com:3000/api/v1"
+    const baseUrl = "https://vocabulift.com/api/v1"
     return useGetOne<CurrentUserResult>(
         "CurrentUser",
         `${baseUrl}/current/user`
