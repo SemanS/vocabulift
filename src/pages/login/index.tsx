@@ -27,13 +27,13 @@ const LoginForm: FC = () => {
     const result = await loginMutation.mutateAsync(form);
     console.log("result: ", result);
 
-    if (result) {
+    //if (result) {
       localStorage.setItem("token", result.token);
       localStorage.setItem("username", result.username);
 
       const from = location.state?.from || { pathname: "/dashboard" };
       navigate(from);
-    }
+    //}
   };
 
   return (

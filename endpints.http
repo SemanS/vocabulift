@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:4000
+@cookie = auth="86a48dc5-04d4-4ddb-b97b-31fde0321d57"
+
+###
+GET {{baseUrl}}/api/v1/current/user
+Content-Type: application/json
+Cookie: {{cookie}}
+
+{
+  "role": "admin",
+  "username": "decker"
+}
