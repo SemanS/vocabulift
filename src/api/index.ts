@@ -12,30 +12,18 @@ import {
 const projectResource = "/projects";
 
 export const useLogin = () => {
-  //const baseUrl = "https://vocabulift.com/api/v1"
-  const baseUrl = "http://localhost:3000/api/v1";
-  //return useCreate<LoginParams, LoginResult>("/login");
+  const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
   return useCreate<LoginParams, LoginResult>(`${baseUrl}/login`);
 };
 
 export const useGetCurrentUser = () => {
-  //const baseUrl = "https://vocabulift.com/api/v1";
-  const baseUrl = "http://localhost:3000";
-  return useGetOne<CurrentUserResult>(
-    "CurrentUser",
-    `${baseUrl}/current/user`
-    //"/current/user"
-  );
+  const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
+  return useGetOne<CurrentUserResult>("CurrentUser", `${baseUrl}/current/user`);
 };
 
 export const useGetCurrentMenus = () => {
-  //const baseUrl = "https://vocabulift.com/api/v1";
-  const baseUrl = "http://localhost:3000/api/v1";
-  return useGetList<MenuList>(
-    "CurrentMenuList",
-    //"/current/menu"
-    `${baseUrl}/current/menu`
-  );
+  const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
+  return useGetList<MenuList>("CurrentMenuList", `${baseUrl}/current/menu`);
 };
 export const useGetProjects = (pagination: any, filters: any) => {
   return useGetList<API.ProjectPagination>(

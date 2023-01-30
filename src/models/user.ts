@@ -1,15 +1,14 @@
-import { Device } from '@/models';
-import { MenuChild } from '@/models/menu.interface';
-import { PureSettings } from '@ant-design/pro-layout/lib/defaultSettings';
-import { Role } from './login';
+import { Device } from "@/models";
+import { MenuChild } from "@/models/menu.interface";
+import { PureSettings } from "@ant-design/pro-layout/lib/defaultSettings";
+import { Role } from "./login";
 
-export type Locale = 'zh-cn' | 'en-us';
+export type Locale = "zh-cn" | "en-us";
 
 export interface CurrentUserResult {
   username: string;
   role: Role;
 }
-
 
 export interface User {
   username: string;

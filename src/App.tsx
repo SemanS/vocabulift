@@ -12,7 +12,6 @@ import RenderRouter from "./routes";
 
 import "./App.less";
 
-import { useGetCurrentUser } from "./api";
 import { createBrowserHistory } from "history";
 import { useRecoilState } from "recoil";
 import { userState } from "./stores/user";
@@ -22,15 +21,10 @@ const history = createBrowserHistory();
 
 const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
-  const [cookies] = useCookies(["access_token"]);
 
   const { locale } = user;
 
-  useEffect(() => {
-    if (import.meta.env.MODE == "development") {
-      sessionStorage.setItem("token", cookies.access_token);
-    }
-  }, [cookies.access_token]);
+  console.log(user);
 
   useEffect(() => {
     if (locale.toLowerCase() === "en-us") {
