@@ -1,28 +1,28 @@
-import React from 'react';
-import { GithubOutlined } from '@ant-design/icons';
-import { DefaultFooter } from '@ant-design/pro-layout';
+import React from "react";
+import { GithubOutlined } from "@ant-design/icons";
+import { DefaultFooter } from "@ant-design/pro-layout";
 
 export default () => (
   <DefaultFooter
-    copyright="2021 柚程云出品"
+    copyright="2023 vocabulift"
     links={[
       {
-        key: '柚程云',
-        title: '柚程云',
+        key: "vocabulift",
+        title: "vocabulift",
         blankTarget: true,
-        href: '',
+        href: "",
       },
       {
-        key: 'github',
+        key: "github",
         title: <GithubOutlined />,
-        href: 'https://github.com/ychengcloud/react-antd-vite-admin',
+        href: "https://github.com/ychengcloud/react-antd-vite-admin",
         blankTarget: true,
       },
       {
-        key: '柚程云管理平台',
-        title: '柚程云管理平台',
+        key: "vocabulift",
+        title: "vocabulift",
         blankTarget: true,
-        href: '',
+        href: "",
       },
     ]}
   />

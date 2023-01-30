@@ -21,10 +21,9 @@ const history = createBrowserHistory();
 
 const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
+  console.log("okejko" + JSON.stringify(user));
 
   const { locale } = user;
-
-  console.log(user);
 
   useEffect(() => {
     if (locale.toLowerCase() === "en-us") {

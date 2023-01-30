@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { getGlobalState } from "../models";
 
 const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -23,8 +24,13 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
           },
         })
         .then((response) => {
-          console.log(response.data);
-          setUser(response.data);
+          console.log(response.data.body);
+          setUser({
+            ...getGlobalState(),
+            username: "Slavo",
+            noticeCount: 0,
+            ...response.data.body,
+          });
         })
         .catch((error) => {
           console.error(error);
@@ -32,15 +38,13 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
     }
   }, [cookies.access_token, setUser]);
 
-  const logged = user.logged ? true : false;
-
   //const { data: currentUser, error } = useGetCurrentUser();
 
   useEffect(() => {
     //setUser({ ...user, username: currentUser?.username || "", logged: true });
   }, []);
 
-  return logged ? <div>{children}</div> : <Navigate to="/login" />;
+  return user ? <div>{children}</div> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;
