@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
-import { Switch } from "antd";
+import { Pagination, Switch } from "antd";
 import React from "react";
+import "../../index.module.less";
 
 interface TranslateBoxProps {
   text: string;
@@ -67,6 +68,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
           onClick={handleWordClick}
         />
       ))}
+      <Pagination defaultCurrent={6} total={500} showSizeChanger={false} />
     </>
   );
 };
