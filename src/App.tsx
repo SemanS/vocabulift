@@ -16,12 +16,21 @@ import { useGetCurrentUser } from "./api";
 import { createBrowserHistory } from "history";
 import { useRecoilState } from "recoil";
 import { userState } from "./stores/user";
+import { CookiesProvider, useCookies } from "react-cookie";
 
 const history = createBrowserHistory();
 
 const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
+  const [cookies] = useCookies(["access_token"]);
+
   const { locale } = user;
+
+  useEffect(() => {
+    if (import.meta.env.MODE == "development") {
+      sessionStorage.setItem("token", cookies.access_token);
+    }
+  }, [cookies.access_token]);
 
   useEffect(() => {
     if (locale.toLowerCase() === "en-us") {
@@ -48,13 +57,15 @@ const App: React.FC = () => {
   };
 
   return (
-    <ConfigProvider locale={getAntdLocale()} componentSize="middle">
-      <IntlProvider locale={locale.split("-")[0]} messages={getLocale()}>
-        <BrowserRouter>
-          <RenderRouter />
-        </BrowserRouter>
-      </IntlProvider>
-    </ConfigProvider>
+    <CookiesProvider>
+      <ConfigProvider locale={getAntdLocale()} componentSize="middle">
+        <IntlProvider locale={locale.split("-")[0]} messages={getLocale()}>
+          <BrowserRouter>
+            <RenderRouter />
+          </BrowserRouter>
+        </IntlProvider>
+      </ConfigProvider>
+    </CookiesProvider>
   );
 };
 

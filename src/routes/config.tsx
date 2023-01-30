@@ -1,10 +1,10 @@
-import React, { FC } from 'react';
-import { Route } from 'react-router-dom';
-import { RouteProps } from 'react-router';
-import PrivateRoute from './privateRoute';
-import { useIntl } from 'react-intl';
+import React, { FC } from "react";
+import { Route } from "react-router-dom";
+import { PathRouteProps } from "react-router";
+import PrivateRoute from "./privateRoute";
+import { useIntl } from "react-intl";
 
-export interface WrapperRouteProps extends RouteProps {
+export interface WrapperRouteProps extends PathRouteProps {
   /** authorization？ */
   auth?: boolean;
 }

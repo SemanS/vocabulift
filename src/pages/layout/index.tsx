@@ -28,7 +28,7 @@ const IconMap: { [key: string]: React.ReactNode } = {
 
 const LayoutPage: FC = ({ children }) => {
   const { data: menuList, error } = useGetCurrentMenus();
-  
+
   const [user, setUser] = useRecoilState(userState);
   const [pathname, setPathname] = useState("/welcome");
   const { device, collapsed, newUser, settings } = user;
@@ -91,10 +91,8 @@ const LayoutPage: FC = ({ children }) => {
       formatMessage={formatMessage}
       onMenuHeaderClick={() => history.push("https://reactjs.org/")}
       headerTitleRender={(logo, title, props) => (
-        <a
-          className={styles.layoutPageHeader}
-        >
-          <LogoSvg  />
+        <a className={styles.layoutPageHeader}>
+          <LogoSvg />
           {title}
         </a>
       )}

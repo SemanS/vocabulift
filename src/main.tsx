@@ -46,10 +46,10 @@ ReactDOM.render(
             </div>
           )}
         > */}
-          <Suspense fallback={<SuspendFallbackLoading />}>
-            <App />
-          </Suspense>
-        {/* </ErrorBoundary> */}
+        <Suspense fallback={<SuspendFallbackLoading />}>
+          <App />
+        </Suspense>
+        {/*  </ErrorBoundary> */}
       </RecoilRoot>
     </QueryClientProvider>
   </AxiosProvider>,

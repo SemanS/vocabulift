@@ -9,6 +9,8 @@ import { useLogin } from "@/api";
 
 import styles from "./index.module.less";
 import { ReactComponent as LogoSvg } from "@/assets/logo/logo.svg";
+import axios from "axios";
+import { getGoogleUrl } from "@/utils/getGoogleUrl";
 
 const initialValues: LoginParams = {
   username: "guest",
@@ -19,20 +21,28 @@ const initialValues: LoginParams = {
 const LoginForm: FC = () => {
   const loginMutation = useLogin();
   const navigate = useNavigate();
-  const location = useLocation() as Location<{ from: string }>;
+  const location = useLocation();
+
+  //const location = useLocation() as Location<{ from: string }>;
 
   // const dispatch = useAppDispatch();
+
+  const from = ((location.state as any)?.from.pathname as string) || "/profile";
+
+  const onFailure = (response: any) => {
+    console.error(response);
+  };
 
   const onFinished = async (form: LoginParams) => {
     const result = await loginMutation.mutateAsync(form);
     console.log("result: ", result);
 
     //if (result) {
-      localStorage.setItem("token", result.token);
-      localStorage.setItem("username", result.username);
+    localStorage.setItem("token", result.token);
+    localStorage.setItem("username", result.username);
 
-      const from = location.state?.from || { pathname: "/dashboard" };
-      navigate(from);
+    const from = location.state?.from || { pathname: "/dashboard" };
+    navigate(from);
     //}
   };
 
@@ -45,7 +55,9 @@ const LoginForm: FC = () => {
             <span className={styles.title}>项目管理</span>
           </Link>
         </div>
-        <div className={styles.desc}>全新技术栈(React\Recoil\React Query\React Hooks\Vite)的后台管理系统</div>
+        <div className={styles.desc}>
+          全新技术栈(React\Recoil\React Query\React Hooks\Vite)的后台管理系统
+        </div>
       </div>
       <div className={styles.main}>
         <Form<LoginParams> onFinish={onFinished} initialValues={initialValues}>
@@ -76,6 +88,9 @@ const LoginForm: FC = () => {
           </Form.Item>
         </Form>
       </div>
+      <Button type="primary" href={getGoogleUrl(from)}>
+        Href Primary
+      </Button>{" "}
     </div>
   );
 };
