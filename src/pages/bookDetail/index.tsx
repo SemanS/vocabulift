@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Card, Row, Col } from "antd";
+import { Card, Row, Col, Pagination } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import styles from "./index.module.less";
 import classNames from "classnames";
@@ -9,18 +9,9 @@ import TranslateBox from "./components/TranslateBox/TranslateBox";
 
 const BookDetail: FC = () => {
   const [clickedWord, setClickedWord] = useState<string>("");
-  const [clickedWords, setClickedWords] = useState<string[]>([]); // added state to keep track of clicked words
-  const text =
-    "A short poem may be a stylistic choice or it may be that you have said what you intended to say in a more concise way. Either way, they differ stylistically from a long poem in that there tends to be more care in word choice. Since there are fewer words people tend to spend more time on choosing a word that fits the subject to perfection. Because of this meticulous attitude, writing a short poem is often more tedious than writing a long poem.";
-  const translations = [
-    "Translation 1",
-    "Translation 2",
-    "Translation 3",
-    "Translation 4",
-    "Translation 5",
-    "Translation 6",
-    "Translation 7",
-  ];
+  const [clickedWords, setClickedWords] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [mode, setMode] = useState<"word" | "sentence">("word");
 
   const handleClick = (word: string) => {
     if (!clickedWords.includes(word)) {
@@ -29,6 +20,28 @@ const BookDetail: FC = () => {
     }
   };
 
+  const [texts, setTexts] = useState([
+    "Text 1",
+    "Text 2",
+    "Text 3",
+    "Text 4",
+    "Text 5",
+  ]);
+
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  const textsPerPage = 1;
+  const totalPages = texts.length / textsPerPage;
+
+  const handlePageChange = (page: number) => {
+    setCurrentTextIndex((page - 1) * textsPerPage);
+    setCurrentPage(page);
+  };
+
+  const indexOfLastText = currentPage * textsPerPage;
+  const indexOfFirstText = indexOfLastText - textsPerPage;
+  const currentText = texts.slice(indexOfFirstText, indexOfLastText);
+
   const { title } = useParams<{ title: string }>();
 
   return (
@@ -36,7 +49,16 @@ const BookDetail: FC = () => {
       <Row>
         <Col span={18}>
           <Card className={classNames(styles.translateBoxMargin)}>
-            <TranslateBox text={text} onClick={handleClick} />
+            <TranslateBox
+              text={texts[currentTextIndex]}
+              onClick={handleClick}
+            />{" "}
+            <Pagination
+              current={currentPage}
+              onChange={handlePageChange}
+              total={totalPages}
+              pageSize={1}
+            />
           </Card>
         </Col>
         <Col span={6}>

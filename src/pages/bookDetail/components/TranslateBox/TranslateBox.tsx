@@ -13,7 +13,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
   const [translations, setTranslations] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [mode, setMode] = useState<"word" | "sentence">("word"); // initial mode is 'word'
+  const [mode, setMode] = useState<"word" | "sentence">("word");
 
   const handleWordClick = (word: string) => {
     onClick(word);
@@ -68,7 +68,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
           onClick={handleWordClick}
         />
       ))}
-      <Pagination defaultCurrent={6} total={500} showSizeChanger={false} />
+      {/* <Pagination
+        defaultCurrent={1}
+        total={totalPages}
+        onChange={handlePageChange}
+      />{" "} */}
     </>
   );
 };
