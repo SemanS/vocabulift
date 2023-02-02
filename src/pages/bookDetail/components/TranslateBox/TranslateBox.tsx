@@ -68,11 +68,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
           onClick={handleWordClick}
         />
       ))}
-      {/* <Pagination
-        defaultCurrent={1}
-        total={totalPages}
-        onChange={handlePageChange}
-      />{" "} */}
     </>
   );
 };

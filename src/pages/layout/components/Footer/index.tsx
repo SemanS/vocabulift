@@ -19,7 +19,7 @@ export default () => (
         blankTarget: true,
       },
       {
-        key: "vocabulift",
+        key: "vocabulift1",
         title: "vocabulift",
         blankTarget: true,
         href: "",

@@ -30,6 +30,8 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
    */
   const loginOut = async () => {
     // Note: There may be security issues, please note
+    console.log("vyclera");
+    sessionStorage.clear;
     if (location.pathname !== "/login") {
       navigate("/login", {
         replace: true,
@@ -72,7 +74,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
   const menuHeaderDropdown = (
     <Menu className={"menu"} selectedKeys={[]} onClick={onMenuClick}>
-
       <Menu.Item key="logout">
         <LogoutOutlined />
         退出登录

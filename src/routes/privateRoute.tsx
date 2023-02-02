@@ -16,7 +16,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
 
   useEffect(() => {
     if (import.meta.env.MODE === "development" && cookies.access_token) {
-      sessionStorage.setItem("token", cookies.access_token);
+      sessionStorage.setItem("access_token", cookies.access_token);
       axios
         .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/current/user`, {
           headers: {

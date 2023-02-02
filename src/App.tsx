@@ -21,7 +21,6 @@ const history = createBrowserHistory();
 
 const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
-  console.log("okejko" + JSON.stringify(user));
 
   const { locale } = user;
 
