@@ -8,6 +8,8 @@ import {
   Space,
   Typography,
   List,
+  Badge,
+  Divider,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import styles from "./index.module.less";
@@ -181,9 +183,9 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer loading={loading}>
-      <Row>
+      <Row className={classNames(styles.wordCardContainer)}>
         <Col span={18}>
-          <Card className={classNames(styles.translateBoxMargin)}>
+          <Card className={classNames(styles.wordDefinitionCard)}>
             <TranslateBox
               text_en={texts_en
                 .slice(
@@ -224,14 +226,14 @@ const BookDetail: FC = () => {
           </Card>
         </Col>
       </Row>
-      <Row>
+      <Row className={classNames(styles.wordCardContainer)}>
         <Col span={24}>
           <Card
             title={clickedWord}
             className={classNames(styles.clickedWordCard)}
-          ></Card>
+          />
           <Card
-            style={{ width: "100%" }}
+            className={classNames(styles.wordDefinitionCard)}
             actions={[
               <audio controls>
                 <source src={phonetics[0].audio} type="audio/mpeg" />
@@ -241,30 +243,47 @@ const BookDetail: FC = () => {
             <Meta
               title={word}
               description={
-                <Row>
+                <Row gutter={16}>
                   <Col span={12}>
-                    <Text strong>Phonetic:</Text>
-                    <Text>{phonetic}</Text>
+                    <Text strong className={classNames(styles.wordInfo)}>
+                      Phonetic:
+                    </Text>
+                    <Text className={classNames(styles.wordInfo)}>
+                      {phonetic}
+                    </Text>
                   </Col>
                   <Col span={12}>
-                    <Text strong>Phonetics:</Text>
+                    <Text strong className={classNames(styles.wordInfo)}>
+                      Phonetics:
+                    </Text>
                     {phonetics.map(({ text }, index) => (
-                      <Text key={index}>{text}</Text>
+                      <Text key={index} className="word-info">
+                        {text}
+                      </Text>
                     ))}
                   </Col>
                 </Row>
               }
             />
             <br />
-            <Text strong>Origin:</Text>
-            <Text>{origin}</Text>
+            <Text strong className={classNames(styles.wordInfo)}>
+              Origin:
+            </Text>
+            <Text className={classNames(styles.wordInfo)}>{origin}</Text>
             <br />
-            <Text strong>Meanings:</Text>
+            <Text strong className={classNames(styles.wordInfo)}>
+              Meanings:
+            </Text>
             <List
               dataSource={meanings}
               renderItem={({ partOfSpeech, definitions }) => (
                 <List.Item>
-                  <Typography.Text strong>{partOfSpeech}:</Typography.Text>
+                  <Typography.Text
+                    strong
+                    className={classNames(styles.wordInfo)}
+                  >
+                    {partOfSpeech}:
+                  </Typography.Text>
                   <List
                     dataSource={definitions}
                     renderItem={({
@@ -273,11 +292,19 @@ const BookDetail: FC = () => {
                       synonyms,
                       antonyms,
                     }) => (
-                      <List.Item>
-                        <Text>Definition: {definition}</Text>
-                        <Text>Example: {example}</Text>
-                        <Text>Synonyms: {synonyms.join(", ")}</Text>
-                        <Text>Antonyms: {antonyms.join(", ")}</Text>
+                      <List.Item className={classNames(styles.definitionItem)}>
+                        <Text className={classNames(styles.wordInfo)}>
+                          Definition: {definition}
+                        </Text>
+                        <Text className={classNames(styles.wordInfo)}>
+                          Example: {example}
+                        </Text>
+                        <Text className={classNames(styles.wordInfo)}>
+                          Synonyms: {synonyms.join(", ")}
+                        </Text>
+                        <Text className={classNames(styles.wordInfo)}>
+                          Antonyms: {antonyms.join(", ")}
+                        </Text>
                       </List.Item>
                     )}
                   />
@@ -287,6 +314,13 @@ const BookDetail: FC = () => {
           </Card>
         </Col>
       </Row>
+      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Badge.Ribbon text="Hippies">
+          <Card title="Pushes open the window" size="small">
+            and raises the spyglass.
+          </Card>
+        </Badge.Ribbon>
+      </Space>
     </PageContainer>
   );
 };
