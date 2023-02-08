@@ -3,11 +3,9 @@ import { loadEnv } from "vite";
 import { viteMockServe } from "vite-plugin-mock";
 import { resolve } from "path";
 import svgr from "vite-plugin-svgr";
-import { getAliases } from "vite-aliases";
 import styleImport from "vite-plugin-style-import";
 import react from "@vitejs/plugin-react";
-
-const aliases = getAliases();
+import { theme } from "antd/lib";
 
 function pathResolve(dir: string) {
   return resolve(__dirname, ".", dir);
@@ -73,6 +71,7 @@ export default ({ command }: { command: string }) => {
       preprocessorOptions: {
         less: {
           javascriptEnabled: true,
+          additionalData: "@root-entry-name: default;",
           modifyVars: {
             "@primary-color": "#1890ff",
           },
