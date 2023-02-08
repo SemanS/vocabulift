@@ -19,7 +19,18 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <Tooltip title={translation}>
+    <Tooltip
+      showArrow={false}
+      overlayInnerStyle={{
+        backgroundColor: "white",
+        color: "black",
+        borderRadius: "10px",
+      }}
+      getPopupContainer={(trigger) => {
+        return trigger;
+      }}
+      title={translation}
+    >
       <Text
         className={classNames(
           isHovered ? styles.bubbleHovered : "",

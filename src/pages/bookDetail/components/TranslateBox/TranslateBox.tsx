@@ -5,12 +5,18 @@ import React from "react";
 import "../../index.module.less";
 
 interface TranslateBoxProps {
-  text: string;
+  text_en: string;
+  text_cz: string;
   onClick: (word: string) => void;
 }
 
-const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
-  const [translations, setTranslations] = useState<string[]>([]);
+const TranslateBox: React.FC<TranslateBoxProps> = ({
+  text_en,
+  text_cz,
+  onClick,
+}) => {
+  const [translationsEn, setTranslationsEn] = useState<string[]>([]);
+  const [translationsCz, setTranslationsCz] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [mode, setMode] = useState<"word" | "sentence">("word");
@@ -23,16 +29,22 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        let data;
+        let dataEn;
+        let dataCz;
+
         if (mode === "word") {
-          data = text.split(" ");
+          dataEn = text_en.split(" ");
+          dataCz = text_cz.split(" ");
         } else {
-          data = text.match(/[^\.!?]+[\.!?]/g);
+          dataEn = text_en.split(/(?<!Mr\.)(?<!Mrs\.)(?<=[.!?])\s/g);
+          dataCz = text_cz.split(/(?<!Mr\.)(?<!Mrs\.)(?<=[.!?])\s/g);
         }
-        if (data) {
-          setTranslations(data);
+        if (dataEn && dataCz) {
+          setTranslationsEn(dataEn);
+          setTranslationsCz(dataCz);
         } else {
-          setTranslations([]);
+          setTranslationsEn([]);
+          setTranslationsCz([]);
         }
       } catch (err) {
         setError(err as Error);
@@ -41,7 +53,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
     };
 
     fetchData();
-  }, [text, mode]);
+  }, [text_en, mode]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -57,14 +69,14 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({ text, onClick }) => {
         <Switch
           checked={mode === "sentence"}
           onChange={() => setMode(mode === "word" ? "sentence" : "word")}
-        />{" "}
+        />
         Translate by word or sentence
       </div>
-      {translations.map((sentence, index) => (
+      {translationsEn.map((sentence_en, index) => (
         <TranslateWord
           key={index}
-          word={sentence}
-          translation={translations[index]}
+          word={sentence_en}
+          translation={translationsCz[index]}
           onClick={handleWordClick}
         />
       ))}
