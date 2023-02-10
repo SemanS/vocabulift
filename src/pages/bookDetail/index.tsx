@@ -1,19 +1,6 @@
 import { FC, useState, useEffect } from "react";
-import {
-  Card,
-  Row,
-  Col,
-  Pagination,
-  PaginationProps,
-  Space,
-  Typography,
-  List,
-  Badge,
-  Divider,
-} from "antd";
+import { Card, Row, Col, Pagination, PaginationProps, Typography } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
-import styles from "./index.module.less";
-import classNames from "classnames";
 import React from "react";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 
@@ -27,12 +14,41 @@ const BookDetail: FC = () => {
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
   const [sentenceFrom, setSentenceFrom] = useState(1);
-  const [isPageFetched, setIsPageFetched] = useState(false);
   const [countOfSentences, setCountOfSentences] = useState(100);
-  const [texts_en, setTextsEn] = useState([]);
-  const [texts_cz, setTextsCz] = useState([]);
+  const [texts_en, setTextsEn] = useState<string[]>([]);
+  const [texts_cz, setTextsCz] = useState<string[]>([]);
+  const [texts_sk, setTextsSk] = useState<string[]>([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
+
+  useEffect(() => {
+    if (sentenceFrom == 1) {
+      const fetchDataAndUpdateState = async () => {
+        setLoading(true);
+        const data = await fetchData(sentenceFrom);
+        setTextsEn(
+          data.sentences.map(
+            (sentence_en: { content_en: any }) => sentence_en.content_en
+          )
+        );
+        setTextsCz(
+          data.sentences.map(
+            (sentence_cz: { content_cz: any }) => sentence_cz.content_cz
+          )
+        );
+        setTextsSk(
+          data.sentences.map(
+            (words_sk: { content_sk_sentences: any }) =>
+              words_sk.content_sk_sentences
+          )
+        );
+        setTotalSentences(data.totalSentences);
+        setLoading(false);
+      };
+
+      fetchDataAndUpdateState();
+    }
+  }, []);
 
   useEffect(() => {
     const fetchDataAndUpdateState = async () => {
@@ -40,6 +56,11 @@ const BookDetail: FC = () => {
       const data = await fetchData(sentenceFrom);
       setTextsEn(data.sentences.map((s: { content_en: any }) => s.content_en));
       setTextsCz(data.sentences.map((s: { content_cz: any }) => s.content_cz));
+      setTextsSk(
+        data.sentences.map(
+          (s: { content_sk_sentences: any }) => s.content_sk_sentences
+        )
+      );
       setTotalSentences(data.totalSentences);
       setLoading(false);
     };
@@ -94,29 +115,6 @@ const BookDetail: FC = () => {
     const data = await response.json();
     return data;
   };
-
-  useEffect(() => {
-    if (sentenceFrom == 1) {
-      const fetchDataAndUpdateState = async () => {
-        setLoading(true);
-        const data = await fetchData(sentenceFrom);
-        setTextsEn(
-          data.sentences.map(
-            (sentence_en: { content_en: any }) => sentence_en.content_en
-          )
-        );
-        setTextsCz(
-          data.sentences.map(
-            (sentence_cz: { content_cz: any }) => sentence_cz.content_cz
-          )
-        );
-        setTotalSentences(data.totalSentences);
-        setLoading(false);
-      };
-
-      fetchDataAndUpdateState();
-    }
-  }, []);
 
   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
     event.preventDefault();
@@ -183,9 +181,9 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer loading={loading}>
-      <Row className={classNames(styles.wordCardContainer)}>
-        <Col span={18}>
-          <Card className={classNames(styles.wordDefinitionCard)}>
+      <Row gutter={[16, 16]}>
+        <Col span={clickedWords.length == 0 ? 24 : 18}>
+          <Card>
             <TranslateBox
               text_en={texts_en
                 .slice(
@@ -194,6 +192,12 @@ const BookDetail: FC = () => {
                 )
                 .join(" ")}
               text_cz={texts_cz
+                .slice(
+                  (currentTextIndex + sentenceFrom - 1) % texts_cz.length,
+                  (currentTextIndex % texts_cz.length) + sentencesPerPage
+                )
+                .join(" ")}
+              text_sk={texts_sk
                 .slice(
                   (currentTextIndex + sentenceFrom - 1) % texts_en.length,
                   (currentTextIndex % texts_en.length) + sentencesPerPage
@@ -215,112 +219,64 @@ const BookDetail: FC = () => {
             />
           </Card>
         </Col>
-        <Col span={6}>
-          <Card title="Translate List">
-            <div>Clicked Words:</div>
-            <ul>
-              {clickedWords.map((word, index) => (
-                <li key={index}>{word}</li>
-              ))}
-            </ul>
-          </Card>
-        </Col>
+        {clickedWords.length != 0 && (
+          <>
+            <Col span={6}>
+              <Card title="Translate List">
+                <ul>
+                  {clickedWords.map((word, index) => (
+                    <li key={index}>{word}</li>
+                  ))}
+                </ul>
+              </Card>
+            </Col>
+            <Col span={18}>
+              {/* <Card
+                title={
+                  <span>
+                    <span style={{ fontWeight: "normal" }}>
+                      Definitions of:{" "}
+                    </span>
+                    <strong style={{ fontWeight: "bold" }}>
+                      {clickedWord}
+                    </strong>
+                  </span>
+                }
+                extra={[
+                  <audio ref={audioRef} src={phonetics[0].audio} />,
+                  <CaretRightOutlined onClick={togglePlay} />,
+                ]}
+              >
+                <List
+                  grid={{ gutter: 0, column: 1 }}
+                  dataSource={meanings}
+                  renderItem={({ partOfSpeech, definitions }) => (
+                    <List.Item>
+                      {definitions.map(
+                        ({ definition, example, synonyms, antonyms }) => (
+                          <>
+                            <div>
+                              <Typography.Text strong>
+                                {partOfSpeech}
+                              </Typography.Text>
+                              <Typography.Text>: {definition}</Typography.Text>
+                            </div>
+                            <div>
+                              <Typography.Text italic>
+                                Example: {example}
+                              </Typography.Text>
+                            </div>
+                          </>
+                        )
+                      )}
+                    </List.Item>
+                  )}
+                />
+              </Card> */}
+            </Col>
+          </>
+        )}
       </Row>
-      <Row className={classNames(styles.wordCardContainer)}>
-        <Col span={24}>
-          <Card
-            title={clickedWord}
-            className={classNames(styles.clickedWordCard)}
-          />
-          <Card
-            className={classNames(styles.wordDefinitionCard)}
-            actions={[
-              <audio controls>
-                <source src={phonetics[0].audio} type="audio/mpeg" />
-              </audio>,
-            ]}
-          >
-            <Meta
-              title={word}
-              description={
-                <Row gutter={16}>
-                  <Col span={12}>
-                    <Text strong className={classNames(styles.wordInfo)}>
-                      Phonetic:
-                    </Text>
-                    <Text className={classNames(styles.wordInfo)}>
-                      {phonetic}
-                    </Text>
-                  </Col>
-                  <Col span={12}>
-                    <Text strong className={classNames(styles.wordInfo)}>
-                      Phonetics:
-                    </Text>
-                    {phonetics.map(({ text }, index) => (
-                      <Text key={index} className="word-info">
-                        {text}
-                      </Text>
-                    ))}
-                  </Col>
-                </Row>
-              }
-            />
-            <br />
-            <Text strong className={classNames(styles.wordInfo)}>
-              Origin:
-            </Text>
-            <Text className={classNames(styles.wordInfo)}>{origin}</Text>
-            <br />
-            <Text strong className={classNames(styles.wordInfo)}>
-              Meanings:
-            </Text>
-            <List
-              dataSource={meanings}
-              renderItem={({ partOfSpeech, definitions }) => (
-                <List.Item>
-                  <Typography.Text
-                    strong
-                    className={classNames(styles.wordInfo)}
-                  >
-                    {partOfSpeech}:
-                  </Typography.Text>
-                  <List
-                    dataSource={definitions}
-                    renderItem={({
-                      definition,
-                      example,
-                      synonyms,
-                      antonyms,
-                    }) => (
-                      <List.Item className={classNames(styles.definitionItem)}>
-                        <Text className={classNames(styles.wordInfo)}>
-                          Definition: {definition}
-                        </Text>
-                        <Text className={classNames(styles.wordInfo)}>
-                          Example: {example}
-                        </Text>
-                        <Text className={classNames(styles.wordInfo)}>
-                          Synonyms: {synonyms.join(", ")}
-                        </Text>
-                        <Text className={classNames(styles.wordInfo)}>
-                          Antonyms: {antonyms.join(", ")}
-                        </Text>
-                      </List.Item>
-                    )}
-                  />
-                </List.Item>
-              )}
-            />
-          </Card>
-        </Col>
-      </Row>
-      <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-        <Badge.Ribbon text="Hippies">
-          <Card title="Pushes open the window" size="small">
-            and raises the spyglass.
-          </Card>
-        </Badge.Ribbon>
-      </Space>
     </PageContainer>
   );
 };

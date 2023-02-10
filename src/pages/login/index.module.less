@@ -1,4 +1,4 @@
-@import '~antd/es/style/themes/default.less';
+/* @import '~antd/es/style/themes/default.less'; */
 
 .container {
   display: flex;
@@ -7,10 +7,10 @@
   align-items: center;
   height: 100vh;
   overflow: auto;
-  background: @layout-body-background;
+  //background: @layout-body-background;
 }
 
-@media (min-width: @screen-md-min) {
+@media (min-width: 768px) {
   .container {
     background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
     background-repeat: no-repeat;
@@ -41,7 +41,7 @@
 .title {
   position: relative;
   top: 2px;
-  color: @heading-color;
+  color: #001529;
   font-weight: 600;
   font-size: 33px;
   font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -50,14 +50,14 @@
 .desc {
   margin-top: 12px;
   margin-bottom: 40px;
-  color: @text-color-secondary;
-  font-size: @font-size-base;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
 }
 
 .main {
   width: 328px;
   margin: 0 auto;
-  @media screen and (max-width: @screen-sm) {
+  @media screen and (max-width: 576px) {
     width: 95%;
     max-width: 328px;
   }
@@ -67,7 +67,7 @@
   }
   
   :global {
-    .@{ant-prefix}-tabs-nav-list {
+    .ant-tabs-nav-list {
       margin: auto;
       font-size: 16px;
     }
@@ -82,7 +82,7 @@
     transition: color 0.3s;
 
     &:hover {
-      color: @primary-color;
+      color: rgba(0, 0, 0, 0.65);
     }
   }
 
@@ -96,7 +96,7 @@
   }
 
   .prefixIcon {
-    color: @primary-color;
-    font-size: @font-size-base;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 16px;;
   }
 }

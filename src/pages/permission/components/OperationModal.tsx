@@ -88,16 +88,16 @@ const OperationModal: FC<OperationModalProps> = (props) => {
   };
 
   return (
-    <Modal
+    (<Modal
       title={`项目${current ? "编辑" : "添加"}`}
       width={640}
       bodyStyle={{ padding: "28px 0 0" }}
       destroyOnClose
-      visible={visible}
+      open={visible}
       {...modalFooter}
     >
       {getModalContent()}
-    </Modal>
+    </Modal>)
   );
 };
 

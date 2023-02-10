@@ -6,6 +6,12 @@ import svgr from "vite-plugin-svgr";
 import styleImport from "vite-plugin-style-import";
 import react from "@vitejs/plugin-react";
 import { theme } from "antd/lib";
+import { convertLegacyToken } from "@ant-design/compatible/lib";
+
+const { defaultAlgorithm, defaultSeed } = theme;
+
+const mapToken = defaultAlgorithm(defaultSeed);
+const v4Token = convertLegacyToken(mapToken);
 
 function pathResolve(dir: string) {
   return resolve(__dirname, ".", dir);
@@ -74,6 +80,7 @@ export default ({ command }: { command: string }) => {
           additionalData: "@root-entry-name: default;",
           modifyVars: {
             "@primary-color": "#1890ff",
+            v4Token,
           },
         },
       },

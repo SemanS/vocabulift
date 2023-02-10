@@ -20,11 +20,14 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
 
   return (
     <Tooltip
-      showArrow={false}
+      arrow={false}
+      mouseEnterDelay={0}
+      mouseLeaveDelay={0}
       overlayInnerStyle={{
         backgroundColor: "white",
         color: "black",
         borderRadius: "10px",
+        fontSize: "14px",
       }}
       getPopupContainer={(trigger) => {
         return trigger;

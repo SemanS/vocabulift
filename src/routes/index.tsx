@@ -7,30 +7,49 @@ import WrapperRouteComponent from "./config";
 import { useRoutes, RouteObject } from "react-router-dom";
 import BookDetail from "@/pages/bookDetail";
 
-const NotFound = lazy(() => import('@/pages/404'));
-const Project = lazy(() => import('@/pages/project'));
+const NotFound = lazy(() => import("@/pages/404"));
+const Project = lazy(() => import("@/pages/project"));
 
 const routeList: RouteObject[] = [
-
   {
     path: "/",
-    element: <WrapperRouteComponent auth={true} ><LayoutPage /></WrapperRouteComponent>,
+    element: (
+      <WrapperRouteComponent>
+        <LayoutPage />
+      </WrapperRouteComponent>
+    ),
     children: [
       {
         path: "/dashboard",
-        element: <WrapperRouteComponent><Dashboard /></WrapperRouteComponent>,
+        element: (
+          <WrapperRouteComponent>
+            <Dashboard />
+          </WrapperRouteComponent>
+        ),
       },
       {
         path: "/books",
-        element: <WrapperRouteComponent><BookDetail /></WrapperRouteComponent>,
+        element: (
+          <WrapperRouteComponent>
+            <BookDetail />
+          </WrapperRouteComponent>
+        ),
       },
       {
         path: "/project/list",
-        element: <WrapperRouteComponent><Project /></WrapperRouteComponent>,
+        element: (
+          <WrapperRouteComponent>
+            <Project />
+          </WrapperRouteComponent>
+        ),
       },
       {
         path: "*",
-        element: <WrapperRouteComponent><NotFound /></WrapperRouteComponent>,
+        element: (
+          <WrapperRouteComponent>
+            <NotFound />
+          </WrapperRouteComponent>
+        ),
       },
     ],
   },

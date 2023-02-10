@@ -1,22 +1,24 @@
 import { useState, useEffect } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
-import { Pagination, Switch } from "antd";
+import { Switch } from "antd";
 import React from "react";
-import "../../index.module.less";
 
 interface TranslateBoxProps {
   text_en: string;
   text_cz: string;
+  text_sk: string;
   onClick: (word: string) => void;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
   text_en,
   text_cz,
+  text_sk,
   onClick,
 }) => {
   const [translationsEn, setTranslationsEn] = useState<string[]>([]);
   const [translationsCz, setTranslationsCz] = useState<string[]>([]);
+  const [translationsSk, setTranslationsSk] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [mode, setMode] = useState<"word" | "sentence">("word");
@@ -31,21 +33,19 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       try {
         let dataEn;
         let dataCz;
+        let dataSk = ["", ""];
 
         if (mode === "word") {
           dataEn = text_en.split(" ");
           dataCz = text_cz.split(" ");
+          dataSk = text_sk.split(" ");
         } else {
           dataEn = text_en.split(/(?<!Mr\.)(?<!Mrs\.)(?<=[.!?])\s/g);
           dataCz = text_cz.split(/(?<!Mr\.)(?<!Mrs\.)(?<=[.!?])\s/g);
         }
-        if (dataEn && dataCz) {
-          setTranslationsEn(dataEn);
-          setTranslationsCz(dataCz);
-        } else {
-          setTranslationsEn([]);
-          setTranslationsCz([]);
-        }
+        setTranslationsEn(dataEn);
+        setTranslationsCz(dataCz);
+        setTranslationsSk(dataSk);
       } catch (err) {
         setError(err as Error);
       }
@@ -72,14 +72,23 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         />
         Translate by word or sentence
       </div>
-      {translationsEn.map((sentence_en, index) => (
-        <TranslateWord
-          key={index}
-          word={sentence_en}
-          translation={translationsCz[index]}
-          onClick={handleWordClick}
-        />
-      ))}
+      {mode == "sentence"
+        ? translationsEn.map((sentence_en, index) => (
+            <TranslateWord
+              key={index}
+              word={sentence_en}
+              translation={translationsCz[index]}
+              onClick={handleWordClick}
+            />
+          ))
+        : translationsEn.map((sentence_en, index) => (
+            <TranslateWord
+              key={index}
+              word={sentence_en}
+              translation={translationsSk[index]}
+              onClick={handleWordClick}
+            />
+          ))}
     </>
   );
 };
