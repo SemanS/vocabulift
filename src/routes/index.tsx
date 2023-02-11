@@ -6,6 +6,7 @@ import LayoutPage from "@/pages/layout";
 import WrapperRouteComponent from "./config";
 import { useRoutes, RouteObject } from "react-router-dom";
 import BookDetail from "@/pages/bookDetail";
+import Books from "@/pages/books";
 
 const NotFound = lazy(() => import("@/pages/404"));
 const Project = lazy(() => import("@/pages/project"));
@@ -28,10 +29,18 @@ const routeList: RouteObject[] = [
         ),
       },
       {
-        path: "/books",
+        path: "/books/:title",
         element: (
           <WrapperRouteComponent>
             <BookDetail />
+          </WrapperRouteComponent>
+        ),
+      },
+      {
+        path: "/books",
+        element: (
+          <WrapperRouteComponent>
+            <Books />
           </WrapperRouteComponent>
         ),
       },

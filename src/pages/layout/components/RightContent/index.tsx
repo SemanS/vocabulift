@@ -10,7 +10,7 @@ import classes from "./index.module.less";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import SelectLang from "./SelectLang";
-import { ReactComponent as LanguageSvg } from '@/assets/header/language.svg';
+import { ReactComponent as LanguageSvg } from "@/assets/header/language.svg";
 
 export type SiderTheme = "light" | "dark";
 
@@ -34,7 +34,7 @@ const GlobalHeaderRight: React.FC = () => {
   }
   return (
     <Space className={className}>
-      <HeaderSearch
+      {/* <HeaderSearch
         className={`${classes.action} ${classes.search}`}
         placeholder="站内搜索"
         defaultValue="Ant Design"
@@ -55,10 +55,9 @@ const GlobalHeaderRight: React.FC = () => {
         onSearch={value => {
           console.log('input', value);
         }}
-      />
+      /> */}
       <HeaderDropdown
-      className={classes.action}
-
+        className={classes.action}
         overlay={
           <Menu>
             <Menu.Item

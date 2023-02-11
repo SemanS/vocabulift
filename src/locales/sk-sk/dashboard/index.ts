@@ -1,0 +1,17 @@
+export const skSK_dashboard = {
+  "app.dashboard.overview.totalSales": "Celkové predaje",
+  "app.dashboard.overview.visits": "Návštevy",
+  "app.dashboard.overview.payments": "Platby",
+  "app.dashboard.overview.operationalEffect": "Prevádzkový efekt",
+  "app.dashboard.overview.wowChange": "Zmena WoW",
+  "app.dashboard.overview.dodChange": "Zmena DoD",
+  "app.dashboard.overview.dailySales": "Denne predaje",
+  "app.dashboard.overview.visits.dailyVisits": "Denne návštevy",
+  "app.dashboard.overview.conversionRate": "Konverzný kurz",
+  "app.dashboard.salePercent.proportionOfSales": "Podiel predaja",
+  "app.dashboard.salePercent.all": "Všetko",
+  "app.dashboard.salePercent.online": "Online",
+  "app.dashboard.salePercent.offline": "Offline",
+  "app.dashboard.timeline.traffic": "Prevádzka",
+  "app.dashboard.timeline.payments": "Platby",
+};

@@ -6,6 +6,7 @@ import { localeConfig } from "@/config/locale";
 import { ConfigProvider } from "antd";
 import enUS from "antd/es/locale/en_US";
 import zhCN from "antd/es/locale/zh_CN";
+import skSK from "antd/es/locale/sk_SK";
 import moment from "moment";
 import "moment/dist/locale/zh-cn";
 import RenderRouter from "./routes";
@@ -29,6 +30,8 @@ const App: React.FC = () => {
       moment.locale("en");
     } else if (locale.toLowerCase() === "zh-cn") {
       moment.locale("zh");
+    } else if (locale.toLowerCase() === "sk-sk") {
+      moment.locale("sk");
     }
   }, [locale]);
 
@@ -37,6 +40,8 @@ const App: React.FC = () => {
       return enUS;
     } else if (locale.toLowerCase() === "zh-cn") {
       return zhCN;
+    } else if (locale.toLowerCase() === "sk-sk") {
+      return skSK;
     }
   };
 

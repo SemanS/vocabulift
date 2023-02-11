@@ -8,7 +8,7 @@ import { Location } from "history";
 import { useLogin } from "@/api";
 
 import styles from "./index.module.less";
-import { ReactComponent as LogoSvg } from "@/assets/logo/logo.svg";
+import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import axios from "axios";
 import { getGoogleUrl } from "@/utils/getGoogleUrl";
 
@@ -27,7 +27,7 @@ const LoginForm: FC = () => {
 
   // const dispatch = useAppDispatch();
 
-  const from = ((location.state as any)?.from.pathname as string) || "/profile";
+  const from = ((location.state as any)?.from.pathname as string) || "/books";
 
   const onFailure = (response: any) => {
     console.error(response);
@@ -52,11 +52,11 @@ const LoginForm: FC = () => {
         <div className={styles.header}>
           <Link to="/">
             <LogoSvg className={styles.logo} />
-            <span className={styles.title}>项目管理</span>
+            <span className={styles.title}>VocabuLift</span>
           </Link>
         </div>
         <div className={styles.desc}>
-          全新技术栈(React\Recoil\React Query\React Hooks\Vite)的后台管理系统
+          Words that last, vocabulary that stays
         </div>
       </div>
       <div className={styles.main}>
@@ -74,7 +74,7 @@ const LoginForm: FC = () => {
             <Input type="password" size="large" placeholder="密码" />
           </Form.Item>
           <Form.Item name="remember" valuePropName="checked">
-            <Checkbox>记住用户</Checkbox>
+            <Checkbox>Remember</Checkbox>
           </Form.Item>
           <Form.Item>
             <Button
@@ -83,13 +83,13 @@ const LoginForm: FC = () => {
               htmlType="submit"
               type="primary"
             >
-              登录
+              Login
             </Button>
           </Form.Item>
         </Form>
       </div>
-      <Button type="primary" href={getGoogleUrl(from)}>
-        Href Primary
+      <Button size="large" type="primary" href={getGoogleUrl(from)}>
+        Google
       </Button>{" "}
     </div>
   );

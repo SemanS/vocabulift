@@ -14,7 +14,6 @@ import React from "react";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import { CaretRightOutlined } from "@ant-design/icons";
 import { WordData } from "@models/word.interface";
-import { useBeforeUnload } from "react-router-dom";
 
 const { Meta } = Card;
 const { Text } = Typography;
@@ -219,12 +218,17 @@ const BookDetail: FC = () => {
         {clickedWords.length != 0 && (
           <>
             <Col span={6}>
-              <Card title="Translate List">
-                <ul>
-                  {clickedWords.map((word, index) => (
-                    <li key={index}>{word}</li>
-                  ))}
-                </ul>
+              <Card>
+                <List
+                  size="small"
+                  header={
+                    <div>
+                      <strong>Vocabulary</strong>
+                    </div>
+                  }
+                  dataSource={clickedWords}
+                  renderItem={(word, index) => <List.Item>{word}</List.Item>}
+                />
               </Card>
             </Col>
             <Col span={18}>
@@ -248,11 +252,11 @@ const BookDetail: FC = () => {
                 <List
                   grid={{ gutter: 0, column: 1 }}
                   dataSource={wordData?.meanings}
-                  renderItem={({ partOfSpeech, definitions }) => (
-                    <List.Item>
-                      {definitions.map((definition, index) => (
+                  renderItem={({ partOfSpeech, definitions }, index) => (
+                    <List.Item key={index}>
+                      {definitions.map((definition, subIndex) => (
                         <>
-                          <div key={index}>
+                          <div key={`${index}-${subIndex}`}>
                             <Typography.Text strong>
                               {partOfSpeech}
                             </Typography.Text>
@@ -261,7 +265,7 @@ const BookDetail: FC = () => {
                             </Typography.Text>
                           </div>
                           {definition.example ? (
-                            <div key={`example-${index}`}>
+                            <div key={`example-${index}-${subIndex}`}>
                               <Typography.Text italic>
                                 Example: {definition.example}
                               </Typography.Text>

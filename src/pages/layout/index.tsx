@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
 import { createBrowserHistory } from "history";
 import RightContent from "./components/RightContent";
-import { ReactComponent as LogoSvg } from "@/assets/logo/react.svg";
+import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
 
@@ -133,10 +133,15 @@ const LayoutPage: FC = ({ children }) => {
       location={{
         pathname: location.pathname,
       }}
+      logo={
+        <a className={styles.layoutPageHeader}>
+          <LogoSvg />
+        </a>
+      }
       {...settings}
       onCollapse={toggle}
       formatMessage={formatMessage}
-      onMenuHeaderClick={() => history.push("https://reactjs.org/")}
+      onMenuHeaderClick={() => history.push("https://")}
       headerTitleRender={(logo, title, props) => (
         <a className={styles.layoutPageHeader}>
           <LogoSvg />
@@ -174,7 +179,7 @@ const LayoutPage: FC = ({ children }) => {
       // menuDataRender={() => m}
       rightContentRender={() => <RightContent />}
       footerRender={() => <Footer />}
-      collapsedButtonRender={() => {
+      /* collapsedButtonRender={() => {
         return (
           <div
             onClick={() => toggle}
@@ -188,7 +193,7 @@ const LayoutPage: FC = ({ children }) => {
             </span>
           </div>
         );
-      }}
+      }} */
     >
       <Outlet />
     </ProLayout>
