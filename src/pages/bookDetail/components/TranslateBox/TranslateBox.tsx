@@ -4,6 +4,7 @@ import { Switch } from "antd";
 import React from "react";
 
 interface TranslateBoxProps {
+  mode: string;
   text_en: string;
   text_cz: string;
   text_sk: string;
@@ -11,6 +12,7 @@ interface TranslateBoxProps {
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
+  mode,
   text_en,
   text_cz,
   text_sk,
@@ -21,7 +23,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [translationsSk, setTranslationsSk] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [mode, setMode] = useState<"word" | "sentence">("word");
+  //const [mode, setMode] = useState<"word" | "sentence">("word");
 
   const handleWordClick = (word: string) => {
     onClick(word);
@@ -65,13 +67,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 
   return (
     <>
-      <div style={{ marginBottom: 16 }}>
+      {/* <div style={{ marginBottom: 16 }}>
         <Switch
           checked={mode === "sentence"}
           onChange={() => setMode(mode === "word" ? "sentence" : "word")}
         />
         Translate by word or sentence
-      </div>
+      </div> */}
       {mode == "sentence"
         ? translationsEn.map((sentence_en, index) => (
             <TranslateWord
@@ -79,6 +81,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               word={sentence_en}
               translation={translationsCz[index]}
               onClick={handleWordClick}
+              mode={mode}
             />
           ))
         : translationsEn.map((sentence_en, index) => (
@@ -87,6 +90,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               word={sentence_en}
               translation={translationsSk[index]}
               onClick={handleWordClick}
+              mode={mode}
             />
           ))}
     </>

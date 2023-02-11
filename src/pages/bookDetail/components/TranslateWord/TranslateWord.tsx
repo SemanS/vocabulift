@@ -9,12 +9,14 @@ interface TranslateWordProps {
   word: string;
   translation: string;
   onClick: (word: string) => void;
+  mode: string;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
   word,
   translation,
   onClick,
+  mode,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -35,6 +37,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
       title={translation}
     >
       <Text
+        style={{ cursor: mode == "word" ? "pointer" : "default" }}
         className={classNames(
           isHovered ? styles.bubbleHovered : "",
           styles.textbox

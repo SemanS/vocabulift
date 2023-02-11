@@ -1,14 +1,26 @@
-import { FC, useState, useEffect } from "react";
-import { Card, Row, Col, Pagination, PaginationProps, Typography } from "antd";
+import { FC, useState, useEffect, useRef } from "react";
+import {
+  Card,
+  Row,
+  Col,
+  Pagination,
+  PaginationProps,
+  Typography,
+  Switch,
+  List,
+} from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import React from "react";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
+import { CaretRightOutlined } from "@ant-design/icons";
+import { WordData } from "@models/word.interface";
+import { useBeforeUnload } from "react-router-dom";
 
 const { Meta } = Card;
 const { Text } = Typography;
 
 const BookDetail: FC = () => {
-  const [clickedWord, setClickedWord] = useState<string>("");
+  const [clickedWord, setClickedWord] = useState<string>();
   const [clickedWords, setClickedWords] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -20,6 +32,10 @@ const BookDetail: FC = () => {
   const [texts_sk, setTextsSk] = useState<string[]>([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [mode, setMode] = useState<"word" | "sentence">("word");
+  const [wordData, setWordData] = useState<WordData>();
+  const [state, setState] = React.useState(null);
 
   useEffect(() => {
     if (sentenceFrom == 1) {
@@ -77,7 +93,7 @@ const BookDetail: FC = () => {
   }, [currentPage, sentencesPerPage]);
 
   const handleClick = (word: string) => {
-    if (!clickedWords.includes(word)) {
+    if (!clickedWords.includes(word) && mode == "word") {
       setClickedWords([...clickedWords, word]);
       setClickedWord(word);
     }
@@ -116,75 +132,56 @@ const BookDetail: FC = () => {
     return data;
   };
 
-  const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-    event.preventDefault();
-    event.returnValue = "";
-  };
-
   useEffect(() => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {};
-  }, []);
+    if (clickedWord) {
+      // Fetch word details from public API
+      fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${clickedWord}`)
+        .then((response) => response.json())
+        .then((data) => setWordData(data[0]))
+        .catch((error) => console.error(error));
+      // Make POST on backend to save word under user
+      fetch(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-word`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          language: "en",
+          word: clickedWord,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => console.log(data))
+        .catch((error) => console.error(error));
+    }
+  }, [clickedWord]);
 
-  const wordData = {
-    word: "hello",
-    phonetic: "həˈləʊ",
-    phonetics: [
-      {
-        text: "həˈləʊ",
-        audio:
-          "//ssl.gstatic.com/dictionary/static/sounds/20200429/hello--_gb_1.mp3",
-      },
-      {
-        text: "hɛˈləʊ",
-      },
-    ],
-    origin: "early 19th century: variant of earlier hollo ; related to holla.",
-    meanings: [
-      {
-        partOfSpeech: "exclamation",
-        definitions: [
-          {
-            definition: "used as a greeting or to begin a phone conversation.",
-            example: "hello there, Katie!",
-            synonyms: [],
-            antonyms: [],
-          },
-        ],
-      },
-      {
-        partOfSpeech: "noun",
-        definitions: [
-          {
-            definition: "an utterance of ‘hello’; a greeting.",
-            example: "she was getting polite nods and hellos from people",
-            synonyms: [],
-            antonyms: [],
-          },
-        ],
-      },
-      {
-        partOfSpeech: "verb",
-        definitions: [
-          {
-            definition: "say or shout ‘hello’.",
-            example: "I pressed the phone button and helloed",
-            synonyms: [],
-            antonyms: [],
-          },
-        ],
-      },
-    ],
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
   };
-
-  const { word, phonetic, phonetics, origin, meanings } = wordData;
 
   return (
     <PageContainer loading={loading}>
       <Row gutter={[16, 16]}>
         <Col span={clickedWords.length == 0 ? 24 : 18}>
           <Card>
+            <div style={{ marginBottom: 16 }}>
+              <Switch
+                checked={mode === "sentence"}
+                onChange={() => setMode(mode === "word" ? "sentence" : "word")}
+              />
+              Translate by word or sentence
+            </div>
             <TranslateBox
+              mode={mode}
               text_en={texts_en
                 .slice(
                   (currentTextIndex + sentenceFrom - 1) % texts_en.length,
@@ -231,48 +228,53 @@ const BookDetail: FC = () => {
               </Card>
             </Col>
             <Col span={18}>
-              {/* <Card
+              <Card
                 title={
                   <span>
                     <span style={{ fontWeight: "normal" }}>
                       Definitions of:{" "}
                     </span>
                     <strong style={{ fontWeight: "bold" }}>
-                      {clickedWord}
+                      {wordData?.word}
                     </strong>
                   </span>
                 }
                 extra={[
-                  <audio ref={audioRef} src={phonetics[0].audio} />,
+                  <Text>{wordData?.phonetics[0].text} </Text>,
+                  <audio ref={audioRef} src={wordData?.phonetics[0].audio} />,
                   <CaretRightOutlined onClick={togglePlay} />,
                 ]}
               >
                 <List
                   grid={{ gutter: 0, column: 1 }}
-                  dataSource={meanings}
+                  dataSource={wordData?.meanings}
                   renderItem={({ partOfSpeech, definitions }) => (
                     <List.Item>
-                      {definitions.map(
-                        ({ definition, example, synonyms, antonyms }) => (
-                          <>
-                            <div>
-                              <Typography.Text strong>
-                                {partOfSpeech}
-                              </Typography.Text>
-                              <Typography.Text>: {definition}</Typography.Text>
-                            </div>
-                            <div>
+                      {definitions.map((definition, index) => (
+                        <>
+                          <div key={index}>
+                            <Typography.Text strong>
+                              {partOfSpeech}
+                            </Typography.Text>
+                            <Typography.Text>
+                              : {definition.definition}
+                            </Typography.Text>
+                          </div>
+                          {definition.example ? (
+                            <div key={`example-${index}`}>
                               <Typography.Text italic>
-                                Example: {example}
+                                Example: {definition.example}
                               </Typography.Text>
                             </div>
-                          </>
-                        )
-                      )}
+                          ) : (
+                            ""
+                          )}
+                        </>
+                      ))}
                     </List.Item>
                   )}
                 />
-              </Card> */}
+              </Card>
             </Col>
           </>
         )}
