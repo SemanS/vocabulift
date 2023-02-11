@@ -56,7 +56,7 @@ const GlobalHeaderRight: React.FC = () => {
           console.log('input', value);
         }}
       /> */}
-      <HeaderDropdown
+      {/*  <HeaderDropdown
         className={classes.action}
         overlay={
           <Menu>
@@ -80,7 +80,7 @@ const GlobalHeaderRight: React.FC = () => {
         <span>
           <QuestionCircleOutlined />
         </span>
-      </HeaderDropdown>
+      </HeaderDropdown> */}
       <Avatar />
 
       <SelectLang className={classes.action} />

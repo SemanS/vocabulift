@@ -14,6 +14,8 @@ import React from "react";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import { CaretRightOutlined } from "@ant-design/icons";
 import { WordData } from "@models/word.interface";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
 
 const { Meta } = Card;
 const { Text } = Typography;
@@ -34,7 +36,7 @@ const BookDetail: FC = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<WordData>();
-  const [state, setState] = React.useState(null);
+  const [user, setUser] = useRecoilState(userState);
 
   useEffect(() => {
     if (sentenceFrom == 1) {
@@ -133,6 +135,7 @@ const BookDetail: FC = () => {
 
   useEffect(() => {
     if (clickedWord) {
+      console.log("spina" + JSON.stringify(user));
       // Fetch word details from public API
       fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${clickedWord}`)
         .then((response) => response.json())

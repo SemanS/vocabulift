@@ -15,12 +15,12 @@ export const localeConfig = [
     messages: enUS,
     icon: <EnUsSvg />,
   },
-  {
+  /* {
     name: "简体中文",
     key: "zh-cn",
     messages: zhCN,
     icon: <ZhCnSvg />,
-  },
+  }, */
   {
     name: "Slovak",
     key: "sk-sk",

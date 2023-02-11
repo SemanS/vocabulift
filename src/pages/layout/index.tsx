@@ -9,7 +9,7 @@ import { useRecoilState } from "recoil";
 
 import type { MenuDataItem } from "@ant-design/pro-layout";
 import ProLayout from "@ant-design/pro-layout";
-import { SmileOutlined, HeartOutlined, FrownOutlined } from "@ant-design/icons";
+import { BookOutlined, HomeOutlined, FrownOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
 import { createBrowserHistory } from "history";
@@ -21,8 +21,8 @@ import Footer from "./components/Footer";
 const history = createBrowserHistory();
 
 const IconMap: { [key: string]: React.ReactNode } = {
-  smile: <SmileOutlined />,
-  heart: <HeartOutlined />,
+  book: <BookOutlined />,
+  home: <HomeOutlined />,
   frown: <FrownOutlined />,
 };
 
@@ -43,45 +43,12 @@ const LayoutPage: FC = ({ children }) => {
       path: "/dashboard",
       name: "dashboard",
       locale: "menu.dashboard",
-      icon: "heart",
+      icon: "home",
     },
     {
       path: "/books",
       name: "books",
-    },
-    {
-      path: "/project",
-      name: "Project",
-      icon: "smile",
-      locale: "menu.project",
-      children: [
-        {
-          path: "/project/list",
-          name: "Project List",
-          locale: "menu.project.list",
-          icon: "smile",
-        },
-      ],
-    },
-    {
-      path: "/permission",
-      name: "permission",
-      locale: "menu.permission",
-      icon: "smile",
-      children: [
-        {
-          path: "/permission/list",
-          name: "permission list",
-          locale: "menu.permission.list",
-          icon: "smile",
-        },
-      ],
-    },
-    {
-      path: "/404",
-      name: "404",
-      locale: "menu.notfound",
-      icon: "frown",
+      icon: "book",
     },
   ];
 
@@ -141,7 +108,7 @@ const LayoutPage: FC = ({ children }) => {
       {...settings}
       onCollapse={toggle}
       formatMessage={formatMessage}
-      onMenuHeaderClick={() => history.push("https://")}
+      onMenuHeaderClick={() => navigate("/")}
       headerTitleRender={(logo, title, props) => (
         <a className={styles.layoutPageHeader}>
           <LogoSvg />

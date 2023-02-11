@@ -12,6 +12,7 @@ import HeaderDropdown from "../HeaderDropdown";
 import classes from "./index.module.less";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
+import { useCookies } from "react-cookie";
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -19,6 +20,7 @@ export type GlobalHeaderRightProps = {
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const [user, setUser] = useRecoilState(userState);
+  const [cookies, setCookie] = useCookies(["access_token"]);
 
   const { username, avatar } = user;
 
@@ -26,12 +28,15 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const location = useLocation();
 
   /**
-   * 退出登录，并且将当前的 url 保存
+   * Logout
    */
   const loginOut = async () => {
     // Note: There may be security issues, please note
-    console.log("vyclera");
+    if (cookies.access_token) {
+      setCookie("access_token", "", { expires: new Date(0) });
+    }
     sessionStorage.clear;
+    useCookies;
     if (location.pathname !== "/login") {
       navigate("/login", {
         replace: true,
@@ -76,7 +81,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     <Menu className={"menu"} selectedKeys={[]} onClick={onMenuClick}>
       <Menu.Item key="logout">
         <LogoutOutlined />
-        退出登录
+        Sign Out
       </Menu.Item>
     </Menu>
   );

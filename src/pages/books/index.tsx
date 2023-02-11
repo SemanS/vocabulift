@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Avatar } from "antd";
+import { List, Card, Avatar, Progress } from "antd";
 import { useNavigate } from "react-router-dom";
 
 interface Book {
@@ -23,6 +23,14 @@ const Books: React.FC = () => {
   })); */
 
   const data = [
+    {
+      href: "/books/book1",
+      title: `The Adventures of Huckleberry Finn`,
+      description:
+        "Ant Design, a design language for background applications, is refined by Ant UED Team.",
+      content:
+        "We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.",
+    },
     {
       href: "/books/book1",
       title: `The Adventures of Huckleberry Finn`,
@@ -58,6 +66,11 @@ const Books: React.FC = () => {
             description={item.description}
           />
           {item.content}
+          <Progress
+            style={{ marginTop: "10px" }}
+            percent={20}
+            strokeColor={{ "0%": "#000", "100%": "#000" }}
+          />
         </List.Item>
       )}
     />

@@ -5,8 +5,9 @@ import { DefaultFooter } from "@ant-design/pro-layout";
 export default () => (
   <DefaultFooter
     copyright="2023 vocabulift"
-    links={[
-      {
+    links={
+      [
+        /* {
         key: "vocabulift",
         title: "vocabulift",
         blankTarget: true,
@@ -23,7 +24,8 @@ export default () => (
         title: "vocabulift",
         blankTarget: true,
         href: "",
-      },
-    ]}
+      }, */
+      ]
+    }
   />
 );

@@ -24,7 +24,6 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
           },
         })
         .then((response) => {
-          console.log(response.data.body);
           setUser({
             ...getGlobalState(),
             username: "Slavo",
