@@ -7,9 +7,10 @@ import WrapperRouteComponent from "./config";
 import { useRoutes, RouteObject } from "react-router-dom";
 import BookDetail from "@/pages/bookDetail";
 import Books from "@/pages/books";
+import Vocabulary from "@/pages/vocabulary";
 
 const NotFound = lazy(() => import("@/pages/404"));
-const Project = lazy(() => import("@/pages/project"));
+//const Project = lazy(() => import("@/pages/project"));
 
 const routeList: RouteObject[] = [
   {
@@ -45,13 +46,21 @@ const routeList: RouteObject[] = [
         ),
       },
       {
+        path: "/vocabulary",
+        element: (
+          <WrapperRouteComponent>
+            <Vocabulary />
+          </WrapperRouteComponent>
+        ),
+      },
+      /* {
         path: "/project/list",
         element: (
           <WrapperRouteComponent>
             <Project />
           </WrapperRouteComponent>
         ),
-      },
+      }, */
       {
         path: "*",
         element: (

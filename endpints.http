@@ -31,6 +31,3 @@ Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2RhZDg4Y
 
 ###
 GET https://api-free.deepl.com/v2/translate?auth_key=4a62e59c-5716-b6d6-c0e6-6b488407dee7:fx&text=the&target_lang=SK
-
-You don't know   about me without you have read       a  book by the name of The Adventures of Tom Sawyer; but that ain't no matter.
-Vy  nie   poznať o     ja bez     vy  majú prečítajte si a    kniha podľa . názov z Stránka Dobrodružstvá z Tom Sawyer; ale že nie je nie záležitosť.
