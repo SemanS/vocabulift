@@ -37,7 +37,9 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
       title={translation}
     >
       <Text
-        style={{ cursor: mode == "word" ? "pointer" : "default" }}
+        style={{
+          cursor: mode == "word" ? "pointer" : "default",
+        }}
         className={classNames(
           isHovered ? styles.bubbleHovered : "",
           styles.textbox

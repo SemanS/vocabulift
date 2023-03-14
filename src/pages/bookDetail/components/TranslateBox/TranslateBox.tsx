@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
-import { Switch } from "antd";
 import React from "react";
 
 interface TranslateBoxProps {
   mode: string;
-  text_en: string;
-  text_cz: string;
-  text_sk: string;
+  text_en: { text: string; sentence_no: number }[];
+  text_cz: { text: string; sentence_no: number }[];
+  text_sk: { text: string; sentence_no: number }[];
   onClick: (word: string) => void;
 }
 
@@ -35,19 +34,44 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       try {
         let dataEn;
         let dataCz;
-        let dataSk = ["", ""];
+        let dataSk;
 
         if (mode === "word") {
-          dataEn = text_en.split(" ");
-          dataCz = text_cz.split(" ");
-          dataSk = text_sk.split(" ");
+          dataEn = text_en
+            .map((textObj) => textObj.text)
+            .join(" ")
+            .split(" ");
+          dataCz = text_cz
+            .map((textObj) => textObj.text)
+            .join(" ")
+            .split(" ");
+          //dataSk = text_sk.map((textObj) => textObj.text).join(" ");
         } else {
-          dataEn = text_en.split(/(?<!Mr\.)(?<!Mrs\.)(?<=[.!?])\s/g);
-          dataCz = text_cz.split(/(?<!Mr\.)(?<!Mrs\.)(?<=[.!?])\s/g);
+          const sentencesByNo: {
+            [no: number]: { en: string[]; cz: string[] };
+          } = {};
+          for (const { text, sentence_no } of text_en) {
+            if (!sentencesByNo[sentence_no]) {
+              sentencesByNo[sentence_no] = { en: [], cz: [] };
+            }
+            sentencesByNo[sentence_no].en.push(text);
+          }
+          for (const { text, sentence_no } of text_cz) {
+            if (!sentencesByNo[sentence_no]) {
+              sentencesByNo[sentence_no] = { en: [], cz: [] };
+            }
+            sentencesByNo[sentence_no].cz.push(text);
+          }
+          const data = Object.values(sentencesByNo).map(({ en, cz }) => ({
+            en: en.join(" "),
+            cz: cz.join(" "),
+          }));
+          dataEn = data.map(({ en }) => en);
+          dataCz = data.map(({ cz }) => cz);
         }
-        setTranslationsEn(dataEn);
-        setTranslationsCz(dataCz);
-        setTranslationsSk(dataSk);
+        setTranslationsEn(Array.isArray(dataEn) ? dataEn : [dataEn]);
+        setTranslationsCz(Array.isArray(dataCz) ? dataCz : [dataCz]);
+        //setTranslationsSk(Array.isArray(dataSk) ? dataSk : [dataSk]);
       } catch (err) {
         setError(err as Error);
       }
@@ -95,6 +119,39 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           ))}
     </>
   );
+};
+
+const split_text = (text: string) => {
+  let sentences = [];
+  text = text.replace(/([.?!])\s+(“)/g, "$1$2");
+  text = text.replace(/([.?!])\s+(”)/g, "$1$2");
+  let start = 0;
+  for (let i = 0; i < text.length; i++) {
+    if (".?!“”".includes(text[i])) {
+      if (
+        (i > 2 && ["Mr", "Dr"].includes(text.slice(i - 2, i))) ||
+        (i > 3 && ["Mrs", "Rev"].includes(text.slice(i - 3, i)))
+      ) {
+        continue;
+      }
+      let next_char = i + 1 < text.length ? text[i + 1] : null;
+      if (next_char && next_char !== " " && !next_char.match(/\d/)) {
+        continue;
+      }
+      let sentence = text.slice(start, i + 1).trim();
+      if (sentence) {
+        sentences.push(sentence);
+      }
+      start = i + 1;
+    }
+  }
+  if (start < text.length) {
+    let sentence = text.slice(start).trim();
+    if (sentence) {
+      sentences.push(sentence);
+    }
+  }
+  return sentences;
 };
 
 export default TranslateBox;

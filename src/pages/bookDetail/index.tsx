@@ -17,7 +17,6 @@ import { WordData } from "@models/word.interface";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 
-const { Meta } = Card;
 const { Text } = Typography;
 
 const BookDetail: FC = () => {
@@ -28,8 +27,12 @@ const BookDetail: FC = () => {
   const [totalSentences, setTotalSentences] = useState(0);
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
-  const [texts_en, setTextsEn] = useState<string[]>([]);
-  const [texts_cz, setTextsCz] = useState<string[]>([]);
+  const [texts_en, setTextsEn] = useState<
+    { text: string; sentence_no: number }[]
+  >([]);
+  const [texts_cz, setTextsCz] = useState<
+    { text: string; sentence_no: number }[]
+  >([]);
   const [texts_sk, setTextsSk] = useState<string[]>([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
@@ -43,6 +46,7 @@ const BookDetail: FC = () => {
       const fetchDataAndUpdateState = async () => {
         setLoading(true);
         const data = await fetchData(sentenceFrom);
+        console.log(data);
         setTextsEn(
           data.sentences.map(
             (sentence_en: { content_en: any }) => sentence_en.content_en
@@ -68,11 +72,32 @@ const BookDetail: FC = () => {
   }, []);
 
   useEffect(() => {
+    if (
+      sentenceFrom + countOfSentences < currentPage * sentencesPerPage ||
+      currentPage * sentencesPerPage > sentenceFrom + countOfSentences ||
+      currentPage * sentencesPerPage < sentenceFrom
+    ) {
+      let localSentenceFrom = (currentPage - 1) * sentencesPerPage + 1;
+      setSentenceFrom(getRangeNumber(localSentenceFrom));
+      console.log("to je one" + getRangeNumber(localSentenceFrom));
+      //fetchDataAndUpdateState();
+    }
+  }, [currentPage, sentencesPerPage]);
+
+  useEffect(() => {
     const fetchDataAndUpdateState = async () => {
       setLoading(true);
       const data = await fetchData(sentenceFrom);
-      setTextsEn(data.sentences.map((s: { content_en: any }) => s.content_en));
-      setTextsCz(data.sentences.map((s: { content_cz: any }) => s.content_cz));
+      setTextsEn(
+        data.sentences.map((s: { content_en: any; sentence_no: any }) => {
+          return { text: s.content_en, sentence_no: s.sentence_no };
+        })
+      );
+      setTextsCz(
+        data.sentences.map((s: { content_cz: any; sentence_no: any }) => {
+          return { text: s.content_cz, sentence_no: s.sentence_no };
+        })
+      );
       setTextsSk(
         data.sentences.map(
           (s: { content_sk_sentences: any }) => s.content_sk_sentences
@@ -82,16 +107,8 @@ const BookDetail: FC = () => {
       setLoading(false);
     };
 
-    if (
-      sentenceFrom + countOfSentences < currentPage * sentencesPerPage ||
-      currentPage * sentencesPerPage > sentenceFrom + countOfSentences ||
-      currentPage * sentencesPerPage < sentenceFrom
-    ) {
-      let localSentenceFrom = (currentPage - 1) * sentencesPerPage + 1;
-      setSentenceFrom(localSentenceFrom);
-      fetchDataAndUpdateState();
-    }
-  }, [currentPage, sentencesPerPage]);
+    fetchDataAndUpdateState();
+  }, [sentenceFrom]);
 
   const handleClick = (word: string) => {
     if (!clickedWords.includes(word) && mode == "word") {
@@ -106,6 +123,15 @@ const BookDetail: FC = () => {
   ) => {
     setSentencesPerPage(pageSize);
   };
+
+  function getRangeNumber(num: number) {
+    if (num <= 100) {
+      return 1;
+    } else {
+      const base = Math.floor((num - 1) / 100) * 100 + 1;
+      return base;
+    }
+  }
 
   const handlePageChange = (page: number) => {
     setCurrentTextIndex((page - 1) * sentencesPerPage);
@@ -135,7 +161,6 @@ const BookDetail: FC = () => {
 
   useEffect(() => {
     if (clickedWord) {
-      console.log("spina" + JSON.stringify(user));
       // Fetch word details from public API
       fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${clickedWord}`)
         .then((response) => response.json())
@@ -189,13 +214,19 @@ const BookDetail: FC = () => {
                   (currentTextIndex + sentenceFrom - 1) % texts_en.length,
                   (currentTextIndex % texts_en.length) + sentencesPerPage
                 )
-                .join(" ")}
+                .map((textObj) => ({
+                  text: textObj.text,
+                  sentence_no: textObj.sentence_no,
+                }))}
               text_cz={texts_cz
                 .slice(
                   (currentTextIndex + sentenceFrom - 1) % texts_cz.length,
                   (currentTextIndex % texts_cz.length) + sentencesPerPage
                 )
-                .join(" ")}
+                .map((textObj) => ({
+                  text: textObj.text,
+                  sentence_no: textObj.sentence_no,
+                }))}
               text_sk={texts_sk
                 .slice(
                   (currentTextIndex + sentenceFrom - 1) % texts_en.length,
@@ -204,6 +235,12 @@ const BookDetail: FC = () => {
                 .join(" ")}
               onClick={handleClick}
             />
+            {/* {currentTextIndex + "\n"}
+            {sentenceFrom + "\n"}
+            {texts_en.length + "\n"}
+            {sentencesPerPage + "\n"}
+            {((currentTextIndex + sentenceFrom - 1) % texts_en.length) + "\n"}
+            {(currentTextIndex % texts_en.length) + sentencesPerPage + "\n"} */}
             <Pagination
               style={{
                 marginTop: "20px",

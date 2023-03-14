@@ -1,15 +1,18 @@
-import React, { FC, useEffect, Suspense, useCallback, useState } from "react";
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
+import React, { FC, useEffect, useState } from "react";
 import { MenuList, MenuChild } from "@/models/menu.interface";
 import { useGuide } from "../guide/useGuide";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import { useGetCurrentMenus } from "@/api";
 import { userState } from "@/stores/user";
 import { useRecoilState } from "recoil";
 
 import type { MenuDataItem } from "@ant-design/pro-layout";
 import ProLayout from "@ant-design/pro-layout";
-import { BookOutlined, HomeOutlined, FrownOutlined } from "@ant-design/icons";
+import {
+  ReadOutlined,
+  HomeOutlined,
+  FrownOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
 import { createBrowserHistory } from "history";
@@ -21,12 +24,13 @@ import Footer from "./components/Footer";
 const history = createBrowserHistory();
 
 const IconMap: { [key: string]: React.ReactNode } = {
-  book: <BookOutlined />,
+  book: <ReadOutlined />,
   home: <HomeOutlined />,
   frown: <FrownOutlined />,
+  vocabulary: <UnorderedListOutlined />,
 };
 
-const LayoutPage: FC = ({ children }) => {
+const LayoutPage: FC = () => {
   //const { data: menuList, error } = useGetCurrentMenus();
 
   const [user, setUser] = useRecoilState(userState);
@@ -142,7 +146,7 @@ const LayoutPage: FC = ({ children }) => {
           <span>{route.breadcrumbName}</span>
         );
       }}
-      menuDataRender={() => loopMenuItem(menuList)}
+      menuDataRender={() => loopMenuItem(user.menuList)}
       // menuDataRender={() => m}
       rightContentRender={() => <RightContent />}
       footerRender={() => <Footer />}
