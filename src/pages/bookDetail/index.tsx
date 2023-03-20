@@ -12,7 +12,11 @@ import PaginationControls from "./components/PaginationControls/PaginationContro
 import VocabularyList from "./components/VocabularyList/VocabularyList";
 import { FetchDataResponse } from "@models/services.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
-import { addWordToUser } from "@/services/bookService";
+import {
+  addWordToUser,
+  updateBookState,
+  updateUserReadingProgress,
+} from "@/services/bookService";
 
 const BookDetail: FC = () => {
   const [clickedWord, setClickedWord] = useState<string>();
@@ -39,7 +43,6 @@ const BookDetail: FC = () => {
   const [user, setUser] = useRecoilState(userState);
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("sk");
-  const [pageSizeChanged, setPageSizeChanged] = useState(false);
 
   const { title } = useParams();
 
@@ -62,6 +65,14 @@ const BookDetail: FC = () => {
     return data;
   };
 
+  /* useEffect(() => {
+    setLoading(true);
+    setCurrentPage(2);
+    setSentencesPerPage(100);
+    setSentenceFrom(101);
+    fetchDataAndUpdateState(201);
+  }, []); */
+
   useEffect(() => {
     setLoading(true);
     fetchDataAndUpdateState(sentenceFrom);
@@ -82,12 +93,6 @@ const BookDetail: FC = () => {
       setSentenceFrom(getRangeNumber(localSentenceFrom));
     }
   }, [currentPage, sentencesPerPage]);
-
-  useEffect(() => {
-    if (sentenceFrom === 1) {
-      fetchDataAndUpdateState(sentenceFrom);
-    }
-  }, []);
 
   useEffect(() => {
     if (clickedWord) {
@@ -151,6 +156,15 @@ const BookDetail: FC = () => {
   };
 
   const handlePageChange = async (page: number, pageSize: number) => {
+    // Save the book state in local storage
+    const bookState = {
+      page: page,
+      pageSieze: pageSize,
+    };
+    localStorage.setItem(`bookState-${title}`, JSON.stringify(bookState));
+
+    await updateBookState(title, page, pageSize);
+
     setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
     setCurrentPage(page);
   };

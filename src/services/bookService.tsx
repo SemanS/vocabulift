@@ -1,3 +1,5 @@
+import { debounce } from "lodash";
+
 export const addWordToUser = async (
   word: string,
   accessToken: string | null
@@ -18,10 +20,35 @@ export const addWordToUser = async (
   );
 };
 
+export const updateBookState = debounce(
+  async (book: string | undefined, page: number, pageSize: number) => {
+    // Update the book state in the backend
+    await fetch(
+      `${
+        import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+      }/user/update-reading-progress`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          book,
+          page,
+          pageSize,
+        }),
+      }
+    );
+  },
+  1000 // Debounce delay in milliseconds
+);
+
+/* 
 export const updateUserReadingProgress = async (
-  book: string,
-  page: string,
-  pageSize: string,
+  book: string | undefined,
+  page: number,
+  pageSize: number,
   accessToken: string | null
 ): Promise<void> => {
   await fetch(
@@ -35,9 +62,10 @@ export const updateUserReadingProgress = async (
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
-        language: "en",
-        word,
+        book,
+        page,
+        pageSize,
       }),
     }
   );
-};
+}; */
