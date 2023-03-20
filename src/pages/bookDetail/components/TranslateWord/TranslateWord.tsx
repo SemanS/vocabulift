@@ -8,49 +8,61 @@ const { Text, Link } = Typography;
 interface TranslateWordProps {
   word: string;
   translation: string;
-  onClick: (word: string) => void;
+  sentenceNumber: number;
+  onClick: (word: string, sentenceNumber: number) => void;
   mode: string;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
   word,
   translation,
+  sentenceNumber,
   onClick,
   mode,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  return (
-    <Tooltip
-      arrow={false}
-      mouseEnterDelay={0}
-      mouseLeaveDelay={0}
-      overlayInnerStyle={{
-        backgroundColor: "white",
-        color: "black",
-        borderRadius: "10px",
-        fontSize: "14px",
+  const renderTooltip = (children: React.ReactNode) => {
+    if (mode === "sentence") {
+      return (
+        <Tooltip
+          arrow={false}
+          mouseEnterDelay={0}
+          mouseLeaveDelay={0}
+          overlayInnerStyle={{
+            backgroundColor: "white",
+            color: "black",
+            borderRadius: "10px",
+            fontSize: "14px",
+          }}
+          getPopupContainer={(trigger) => {
+            return trigger;
+          }}
+          title={translation}
+        >
+          {children}
+        </Tooltip>
+      );
+    } else {
+      return children;
+    }
+  };
+
+  return renderTooltip(
+    <Text
+      style={{
+        cursor: mode === "word" ? "pointer" : "default",
       }}
-      getPopupContainer={(trigger) => {
-        return trigger;
-      }}
-      title={translation}
+      className={classNames(
+        isHovered ? styles.bubbleHovered : "",
+        styles.textbox
+      )}
+      onClick={() => onClick(word, sentenceNumber)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      <Text
-        style={{
-          cursor: mode == "word" ? "pointer" : "default",
-        }}
-        className={classNames(
-          isHovered ? styles.bubbleHovered : "",
-          styles.textbox
-        )}
-        onClick={() => onClick(word)}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
-        {word + " "}
-      </Text>
-    </Tooltip>
+      {word + " "}
+    </Text>
   );
 };
 

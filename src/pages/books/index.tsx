@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Avatar, Progress } from "antd";
+import { List, Card, Avatar, Progress, Col, Row } from "antd";
 import { useNavigate } from "react-router-dom";
 
 interface Book {
@@ -15,20 +15,20 @@ const Books: React.FC = () => {
 
   const data = [
     {
-      href: "/books/book1",
+      href: "/books/The Adventures of Huckleberry Finn",
       title: `The Adventures of Huckleberry Finn`,
-      description:
-        "Ant Design, a design language for background applications, is refined by Ant UED Team.",
+      description: "Book",
+      image: "The_Adventures_of_Huckleberry_Finn.jpg",
       content:
-        "We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.",
+        "The Adventures of Huckleberry Finn, written by Mark Twain, is a classic American novel that follows the story of Huck Finn, a young boy who embarks on a journey of self-discovery and moral growth along the Mississippi River.",
     },
     {
-      href: "/books/book1",
-      title: `The Adventures of Huckleberry Finn`,
-      description:
-        "Ant Design, a design language for background applications, is refined by Ant UED Team.",
+      href: "/books/Alice in the wonderland",
+      title: `Alice in the Wonderland`,
+      description: "Book",
+      image: "Alice_in_the_wonderland.jpg",
       content:
-        "We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.",
+        "Alice's Adventures in Wonderland, penned by Lewis Carroll, is a whimsical and imaginative tale that chronicles the journey of a young girl named Alice as she falls down a rabbit hole into a fantastical world filled with peculiar characters and nonsensical logic.",
     },
   ];
 
@@ -37,31 +37,40 @@ const Books: React.FC = () => {
       itemLayout="vertical"
       dataSource={data}
       renderItem={(item) => (
-        <List.Item
-          key={item.title}
-          extra={
-            <img
-              width={272}
-              alt="logo"
-              src={
-                new URL(
-                  "@/assets/books/The_Adventures_of_Huckleberry_Finn.png",
-                  import.meta.url
-                ).href
-              }
-            />
-          }
-        >
-          <List.Item.Meta
-            title={<a href={item.href}>{item.title}</a>}
-            description={item.description}
-          />
-          {item.content}
-          <Progress
-            style={{ marginTop: "10px" }}
-            percent={20}
-            strokeColor={{ "0%": "#000", "100%": "#000" }}
-          />
+        <List.Item key={item.title}>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} md={12}>
+              <img
+                style={{ width: "100%", height: "auto" }}
+                alt="logo"
+                src={`src/assets/books/${item.image}`}
+              />
+            </Col>
+            <Col xs={24} md={12}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  height: "100%",
+                }}
+              >
+                <div>
+                  <List.Item.Meta
+                    title={<a href={item.href}>{item.title}</a>}
+                    description={item.description}
+                  />
+                  {item.content}
+                </div>
+                <div>
+                  <Progress
+                    percent={20}
+                    strokeColor={{ "0%": "#000", "100%": "#000" }}
+                  />
+                </div>
+              </div>
+            </Col>
+          </Row>
         </List.Item>
       )}
     />

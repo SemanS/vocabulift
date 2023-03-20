@@ -12,7 +12,7 @@ const Settings: LayoutSettings & {
   fixedHeader: false,
   fixSiderbar: true,
   colorWeak: false,
-  title: "VocabuLift",
+  //title: "VocabuLift",
   pwa: false,
   iconfontUrl: "",
 };
