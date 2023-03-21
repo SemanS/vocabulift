@@ -1,7 +1,7 @@
-import React, { FC, useState, useEffect, useRef } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { Card, Row, Col, PaginationProps, Switch, Space } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { WordData } from "@/models/word.interface";
@@ -16,13 +16,20 @@ import { addWordToUser, updateBookState } from "@/services/bookService";
 
 const BookDetail: FC = () => {
   const { title } = useParams();
-  const [user, setUser] = useRecoilState(userState);
+  const location = useLocation();
+
+  const queryParams = new URLSearchParams(location.search);
+  const pageSizeFromQuery = parseInt(queryParams.get("pageSize") as string);
+  const currentPageFromQuery = parseInt(
+    queryParams.get("currentPage") as string
+  );
+
   const [clickedWord, setClickedWord] = useState<string>();
   const [clickedWords, setClickedWords] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
-  const [sentenceFrom, setSentenceFrom] = useState(201);
+  const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
   const [texts_en, setTextsEn] = useState<
     { text: string; sentence_no: number }[]
@@ -37,10 +44,9 @@ const BookDetail: FC = () => {
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<WordData>();
+  const [user, setUser] = useRecoilState(userState);
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("sk");
-
-  const isFirstRender = useRef(true);
 
   const fetchData = async (localSentenceFrom: number) => {
     const response = await fetch(
@@ -62,37 +68,12 @@ const BookDetail: FC = () => {
   };
 
   useEffect(() => {
-    const book = user.books.find((book) => book.title === title);
-    if (book) {
-      console.log(book);
-      setCurrentPage(book.lastReadPage);
-      setCurrentTextIndex(
-        (book.lastReadPage - 1) * (book.pageSize || sentencesPerPage)
-      );
-      setSentencesPerPage(book.pageSize);
+    if (currentPageFromQuery && pageSizeFromQuery) {
+      setCurrentPage(currentPageFromQuery);
+      setSentencesPerPage(pageSizeFromQuery);
+      handlePageChange(currentPageFromQuery, pageSizeFromQuery);
     }
-  }, [user]);
-
-  useEffect(() => {
-    setLoading(true);
-
-    const localSentenceFrom = (currentPage - 1) * sentencesPerPage + 1;
-    const adjustedSentenceFrom = getRangeNumber(localSentenceFrom);
-
-    if (
-      adjustedSentenceFrom !== sentenceFrom ||
-      adjustedSentenceFrom + countOfSentences <
-        currentPage * sentencesPerPage ||
-      currentPage * sentencesPerPage >
-        adjustedSentenceFrom + countOfSentences ||
-      currentPage * sentencesPerPage < adjustedSentenceFrom
-    ) {
-      setSentenceFrom(adjustedSentenceFrom);
-      fetchDataAndUpdateState(adjustedSentenceFrom);
-    } else {
-      fetchDataAndUpdateState(sentenceFrom);
-    }
-  }, [currentPage, sentencesPerPage]);
+  }, []);
 
   useEffect(() => {
     if (clickedWord) {
@@ -178,6 +159,18 @@ const BookDetail: FC = () => {
       return book;
     });
     setUser({ ...user, books: updatedBooks });
+    if (
+      sentenceFrom + countOfSentences < page * pageSize ||
+      page * pageSize > sentenceFrom + countOfSentences ||
+      page * pageSize < sentenceFrom
+    ) {
+      let localSentenceFrom = (page - 1) * pageSize + 1;
+      setSentenceFrom(getRangeNumber(localSentenceFrom));
+      setLoading(true);
+      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
+      setLoading(false);
+    }
+
     setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
     setCurrentPage(page);
   };
@@ -213,7 +206,6 @@ const BookDetail: FC = () => {
                 />
                 Translate by word or sentence
               </Col>
-              {currentTextIndex}
               <Col>
                 <Space>
                   <LanguageSelect
@@ -257,6 +249,7 @@ const BookDetail: FC = () => {
               handlePageChange={handlePageChange}
               totalSentences={totalSentences}
               sentencesPerPage={sentencesPerPage}
+              //pageSizeLimitReached={handlePageSizeLimitReached}
             />
           </Card>
         </Col>

@@ -40,10 +40,21 @@ const Books: React.FC = () => {
                   height: "100%",
                 }}
               >
-                {JSON.stringify(user.books)}
                 <div>
                   <List.Item.Meta
-                    title={<a href={item.href}>{item.title}</a>}
+                    title={
+                      <a
+                        href={
+                          item.href +
+                          "?currentPage=" +
+                          item.lastReadPage +
+                          "&pageSize=" +
+                          item.pageSize
+                        }
+                      >
+                        {item.title}
+                      </a>
+                    }
                     description={item.description}
                   />
                   {item.content}
