@@ -28,6 +28,7 @@ const BookDetail: FC = () => {
   const [clickedWords, setClickedWords] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [limitReached, setLimitReached] = useState(false);
   const [totalSentences, setTotalSentences] = useState(0);
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
@@ -117,7 +118,9 @@ const BookDetail: FC = () => {
     );
     setTotalSentences(data.totalSentences);
   };
-
+  useEffect(() => {
+    fetchDataAndUpdateState(sentenceFrom);
+  }, []);
   const handleClickedWord = async (word: string) => {
     if (!clickedWords.includes(word) && mode == "word") {
       setClickedWords([...clickedWords, word]);
@@ -166,7 +169,6 @@ const BookDetail: FC = () => {
     ) {
       let localSentenceFrom = (page - 1) * pageSize + 1;
       setSentenceFrom(getRangeNumber(localSentenceFrom));
-      setLoading(true);
       await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
       setLoading(false);
     }
