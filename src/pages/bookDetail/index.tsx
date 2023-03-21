@@ -1,10 +1,9 @@
 import React, { FC, useState, useEffect } from "react";
-import { Card, Row, Col, PaginationProps, Switch, Space } from "antd";
+import { Card, Row, Col, Switch, Space, PaginationProps } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
-import { WordData } from "@/models/word.interface";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
@@ -15,9 +14,9 @@ import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
 
 const BookDetail: FC = () => {
+  const navigate = useNavigate();
   const { title } = useParams();
   const location = useLocation();
-
   const queryParams = new URLSearchParams(location.search);
   const pageSizeFromQuery = parseInt(queryParams.get("pageSize") as string);
   const currentPageFromQuery = parseInt(
@@ -28,23 +27,22 @@ const BookDetail: FC = () => {
   const [clickedWords, setClickedWords] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [limitReached, setLimitReached] = useState(false);
   const [totalSentences, setTotalSentences] = useState(0);
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
-  const [texts_en, setTextsEn] = useState<
-    { text: string; sentence_no: number }[]
-  >([]);
-  const [texts_cz, setTextsCz] = useState<
-    { text: string; sentence_no: number }[]
-  >([]);
-  const [texts_sk, setTextsSk] = useState<
-    { text: string; sentence_no: number }[]
-  >([]);
+  const [texts, setTexts] = useState<{
+    en: { text: string; sentence_no: number }[];
+    cz: { text: string; sentence_no: number }[];
+    sk: { text: string; sentence_no: number }[];
+  }>({
+    en: [],
+    cz: [],
+    sk: [],
+  });
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
   const [mode, setMode] = useState<"word" | "sentence">("word");
-  const [wordData, setWordData] = useState<WordData>();
+  const [wordData, setWordData] = useState<any>();
   const [user, setUser] = useRecoilState(userState);
   const [sourceLanguage, setSourceLanguage] = useState("en");
   const [targetLanguage, setTargetLanguage] = useState("sk");
@@ -98,29 +96,23 @@ const BookDetail: FC = () => {
   };
 
   const updateState = async (data: FetchDataResponse) => {
-    setTextsEn((prev) =>
-      data.sentences.map(({ content_en, sentence_no }) => ({
+    setTexts({
+      en: data.sentences.map(({ content_en, sentence_no }) => ({
         text: content_en,
         sentence_no,
-      }))
-    );
-    setTextsCz((prev) =>
-      data.sentences.map(({ content_cz, sentence_no }) => ({
+      })),
+      cz: data.sentences.map(({ content_cz, sentence_no }) => ({
         text: content_cz,
         sentence_no,
-      }))
-    );
-    setTextsSk((prev) =>
-      data.sentences.map(({ content_sk, sentence_no }) => ({
+      })),
+      sk: data.sentences.map(({ content_sk, sentence_no }) => ({
         text: content_sk,
         sentence_no,
-      }))
-    );
+      })),
+    });
     setTotalSentences(data.totalSentences);
   };
-  useEffect(() => {
-    fetchDataAndUpdateState(sentenceFrom);
-  }, []);
+
   const handleClickedWord = async (word: string) => {
     if (!clickedWords.includes(word) && mode == "word") {
       setClickedWords([...clickedWords, word]);
@@ -140,6 +132,16 @@ const BookDetail: FC = () => {
   };
 
   const handlePageChange = async (page: number, pageSize: number) => {
+    // Update the URL parameters
+    const newQueryParams = new URLSearchParams(location.search);
+    newQueryParams.set("currentPage", page.toString());
+    newQueryParams.set("pageSize", pageSize.toString());
+
+    // Navigate to the new state
+    navigate({
+      pathname: location.pathname,
+      search: newQueryParams.toString(),
+    });
     // Save the book state in local storage
     const bookState = {
       page: page,
@@ -169,6 +171,7 @@ const BookDetail: FC = () => {
     ) {
       let localSentenceFrom = (page - 1) * pageSize + 1;
       setSentenceFrom(getRangeNumber(localSentenceFrom));
+      setLoading(true);
       await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
       setLoading(false);
     }
@@ -177,22 +180,10 @@ const BookDetail: FC = () => {
     setCurrentPage(page);
   };
 
-  const handleSourceLanguageChange = async (
-    value: React.SetStateAction<string>
-  ) => {
-    setSourceLanguage(value);
-  };
-
-  const handleTargetLanguageChange = async (
-    value: React.SetStateAction<string>
-  ) => {
-    setTargetLanguage(value);
-  };
-
   return (
     <PageContainer loading={loading}>
       <Row gutter={[16, 16]}>
-        <Col span={clickedWords.length == 0 ? 24 : 18}>
+        <Col span={clickedWords.length === 0 ? 24 : 18}>
           <Card>
             <Row
               justify="space-between"
@@ -212,7 +203,7 @@ const BookDetail: FC = () => {
                 <Space>
                   <LanguageSelect
                     defaultValue="en"
-                    onChange={handleSourceLanguageChange}
+                    onChange={setSourceLanguage}
                     disabledValue={targetLanguage}
                     options={[
                       { label: "English", value: "en" },
@@ -222,7 +213,7 @@ const BookDetail: FC = () => {
                   />
                   <LanguageSelect
                     defaultValue="sk"
-                    onChange={handleTargetLanguageChange}
+                    onChange={setTargetLanguage}
                     disabledValue={sourceLanguage}
                     options={[
                       { label: "Slovak", value: "sk" },
@@ -240,9 +231,7 @@ const BookDetail: FC = () => {
               sentenceFrom={sentenceFrom}
               sentencesPerPage={sentencesPerPage}
               mode={mode}
-              texts_en={texts_en}
-              texts_cz={texts_cz}
-              texts_sk={texts_sk}
+              texts={texts}
               onClick={handleClickedWord}
             />
             <PaginationControls
@@ -251,11 +240,10 @@ const BookDetail: FC = () => {
               handlePageChange={handlePageChange}
               totalSentences={totalSentences}
               sentencesPerPage={sentencesPerPage}
-              //pageSizeLimitReached={handlePageSizeLimitReached}
             />
           </Card>
         </Col>
-        {clickedWords.length != 0 && (
+        {clickedWords.length !== 0 && (
           <>
             <Col span={6}>
               <VocabularyList clickedWords={clickedWords} />

@@ -4,11 +4,13 @@ import React from "react";
 
 interface TranslateBoxProps {
   mode: string;
-  sourceLanguage: string;
-  targetLanguage: string;
-  texts_en: { text: string; sentence_no: number }[];
-  texts_cz: { text: string; sentence_no: number }[];
-  texts_sk: { text: string; sentence_no: number }[];
+  sourceLanguage: "en" | "cz" | "sk";
+  targetLanguage: "en" | "cz" | "sk";
+  texts: {
+    en: { text: string; sentence_no: number }[];
+    cz: { text: string; sentence_no: number }[];
+    sk: { text: string; sentence_no: number }[];
+  };
   currentTextIndex: number;
   sentenceFrom: number;
   sentencesPerPage: number;
@@ -19,42 +21,20 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   mode,
   sourceLanguage,
   targetLanguage,
-  texts_en,
-  texts_cz,
-  texts_sk,
+  texts,
   currentTextIndex,
   sentenceFrom,
   sentencesPerPage,
   onClick,
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  //const [mode, setMode] = useState<"word" | "sentence">("word");
 
   const getSourceTexts = () => {
-    switch (sourceLanguage) {
-      case "en":
-        return texts_en;
-      case "cz":
-        return texts_cz;
-      case "sk":
-        return texts_sk;
-      default:
-        return texts_en;
-    }
+    return texts[sourceLanguage];
   };
 
   const getTargetTexts = () => {
-    switch (targetLanguage) {
-      case "en":
-        return texts_en;
-      case "cz":
-        return texts_cz;
-      case "sk":
-        return texts_sk;
-      default:
-        return texts_en;
-    }
+    return texts[targetLanguage];
   };
 
   const sourceTexts = getSourceTexts();
@@ -72,10 +52,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const handleWordClick = (word: string, sentenceNumber: number) => {
     onClick(word, sentenceNumber);
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   if (error) {
     return <div>An error occurred: {error.message}</div>;
