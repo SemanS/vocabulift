@@ -1,41 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { List, Card, Avatar, Progress, Col, Row } from "antd";
-import { useNavigate } from "react-router-dom";
-
-interface Book {
-  name: string;
-  title: string;
-  author: string;
-  cover: string;
-}
+import { List, Progress, Col, Row } from "antd";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
 
 const Books: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const navigate = useNavigate();
+  const [user, setUser] = useRecoilState(userState);
 
-  const data = [
-    {
-      href: "/books/The Adventures of Huckleberry Finn",
-      title: `The Adventures of Huckleberry Finn`,
-      description: "Book",
-      image: "The_Adventures_of_Huckleberry_Finn.jpg",
-      content:
-        "The Adventures of Huckleberry Finn, written by Mark Twain, is a classic American novel that follows the story of Huck Finn, a young boy who embarks on a journey of self-discovery and moral growth along the Mississippi River.",
-    },
-    {
-      href: "/books/Alice in the wonderland",
-      title: `Alice in the Wonderland`,
-      description: "Book",
-      image: "Alice_in_the_wonderland.jpg",
-      content:
-        "Alice's Adventures in Wonderland, penned by Lewis Carroll, is a whimsical and imaginative tale that chronicles the journey of a young girl named Alice as she falls down a rabbit hole into a fantastical world filled with peculiar characters and nonsensical logic.",
-    },
-  ];
+  function calculateBookPercentage(
+    page: number,
+    sentencesPerPage: number,
+    totalSentences: number
+  ) {
+    const totalPages = Math.ceil(totalSentences / sentencesPerPage);
+    const currentPage = Math.min(page, totalPages);
+    const percentage = (currentPage / totalPages) * 100;
+    return Math.ceil(percentage);
+  }
 
   return (
     <List
       itemLayout="vertical"
-      dataSource={data}
+      dataSource={user.books}
       renderItem={(item) => (
         <List.Item key={item.title}>
           <Row gutter={[16, 16]}>
@@ -55,6 +40,7 @@ const Books: React.FC = () => {
                   height: "100%",
                 }}
               >
+                {JSON.stringify(user.books)}
                 <div>
                   <List.Item.Meta
                     title={<a href={item.href}>{item.title}</a>}
@@ -64,7 +50,15 @@ const Books: React.FC = () => {
                 </div>
                 <div>
                   <Progress
-                    percent={20}
+                    percent={
+                      item.lastReadPage == 1
+                        ? 1
+                        : calculateBookPercentage(
+                            item.lastReadPage,
+                            item.pageSize,
+                            item.totalSentences
+                          )
+                    }
                     strokeColor={{ "0%": "#000", "100%": "#000" }}
                   />
                 </div>

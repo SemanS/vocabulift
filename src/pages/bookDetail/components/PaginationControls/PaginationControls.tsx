@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { Pagination, PaginationProps } from "antd";
+import React, { FC } from "react";
+import { Pagination } from "antd";
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -7,7 +7,6 @@ interface PaginationControlsProps {
   handlePageChange: (pageNum: number, pageSize: number) => void;
   totalSentences: number;
   sentencesPerPage: number;
-  pageSizeLimitReached: (current: number, pageSize: number) => void;
 }
 
 const PaginationControls: FC<PaginationControlsProps> = ({
@@ -16,7 +15,6 @@ const PaginationControls: FC<PaginationControlsProps> = ({
   handlePageChange,
   totalSentences,
   sentencesPerPage,
-  pageSizeLimitReached,
 }) => {
   return (
     <Pagination

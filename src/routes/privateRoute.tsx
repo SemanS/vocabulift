@@ -39,9 +39,9 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
 
   //const { data: currentUser, error } = useGetCurrentUser();
 
-  useEffect(() => {
+  /* useEffect(() => {
     //setUser({ ...user, username: currentUser?.username || "", logged: true });
-  }, []);
+  }, []); */
 
   return user ? <div>{children}</div> : <Navigate to="/login" />;
 };

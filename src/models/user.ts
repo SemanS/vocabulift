@@ -10,7 +10,19 @@ export interface CurrentUserResult {
   role: Role;
 }
 
+export interface BookUser {
+  href: string | undefined;
+  description: string;
+  content: string;
+  image: string;
+  title: string | undefined;
+  lastReadPage: number;
+  pageSize: number;
+  totalSentences: number;
+}
+
 export interface User {
+  books: BookUser[];
   username: string;
 
   /** menu list for init tagsView */
