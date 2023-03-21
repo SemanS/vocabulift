@@ -23,6 +23,7 @@ const BookDetail: FC = () => {
     queryParams.get("currentPage") as string
   );
 
+  const [initState, setInitState] = useState<boolean>(true);
   const [clickedWord, setClickedWord] = useState<string>();
   const [clickedWords, setClickedWords] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,8 +45,12 @@ const BookDetail: FC = () => {
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<any>();
   const [user, setUser] = useRecoilState(userState);
-  const [sourceLanguage, setSourceLanguage] = useState("en");
-  const [targetLanguage, setTargetLanguage] = useState("sk");
+  const [sourceLanguage, setSourceLanguage] = useState<"en" | "sk" | "cz">(
+    "en"
+  );
+  const [targetLanguage, setTargetLanguage] = useState<"en" | "sk" | "cz">(
+    "sk"
+  );
 
   const fetchData = async (localSentenceFrom: number) => {
     const response = await fetch(
@@ -164,16 +169,26 @@ const BookDetail: FC = () => {
       return book;
     });
     setUser({ ...user, books: updatedBooks });
-    if (
+
+    const fetchAndUpdate = async (localSentenceFrom: number) => {
+      setLoading(true);
+      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
+      setLoading(false);
+    };
+    if (initState) {
+      let localSentenceFrom =
+        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+      setSentenceFrom(getRangeNumber(localSentenceFrom));
+      await fetchAndUpdate(localSentenceFrom);
+      setInitState(false);
+    } else if (
       sentenceFrom + countOfSentences < page * pageSize ||
       page * pageSize > sentenceFrom + countOfSentences ||
       page * pageSize < sentenceFrom
     ) {
       let localSentenceFrom = (page - 1) * pageSize + 1;
       setSentenceFrom(getRangeNumber(localSentenceFrom));
-      setLoading(true);
-      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
-      setLoading(false);
+      await fetchAndUpdate(localSentenceFrom);
     }
 
     setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
