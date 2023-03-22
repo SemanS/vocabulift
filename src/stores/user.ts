@@ -12,7 +12,7 @@ const initialState: User = {
     navigator.language ||
     "en-us") as Locale,
   newUser: JSON.parse(localStorage.getItem("newUser")!) ?? true,
-  logged: false,
+  isLogged: false,
   menuList: [],
   username: localStorage.getItem("username") || "",
   role: (localStorage.getItem("username") || "") as Role,

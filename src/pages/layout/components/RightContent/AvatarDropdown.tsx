@@ -38,7 +38,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     (event: { key: any }) => {
       const { key } = event;
       if (key === "logout" && user) {
-        setUser({ ...user, logged: false });
+        setUser({ ...user, isLogged: false });
         loginOut();
         return;
       }

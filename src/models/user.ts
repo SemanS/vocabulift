@@ -29,7 +29,7 @@ export interface User {
   menuList: MenuChild[];
 
   /** login status */
-  logged: boolean;
+  isLogged: boolean;
 
   role: Role;
 

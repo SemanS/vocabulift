@@ -1,18 +1,20 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Navigate, RouteProps, useLocation } from "react-router";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { getGlobalState } from "../models";
+import { Spin } from "antd";
 
 const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const [user, setUser] = useRecoilState(userState);
   const [cookies] = useCookies(["access_token"]);
+  const [loading, setLoading] = useState(true);
 
-  if (!cookies.access_token) {
+  /* if (!cookies.access_token) {
     return <Navigate to="/login" />;
-  }
+  } */
 
   useEffect(() => {
     if (import.meta.env.MODE === "development" && cookies.access_token) {
@@ -28,22 +30,18 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
             ...getGlobalState(),
             username: "Slavo",
             noticeCount: 0,
+            isLogged: true,
             ...response.data.body,
           });
         })
         .catch((error) => {
           console.error(error);
         });
+    } else {
     }
-  }, [cookies.access_token, setUser]);
+  }, []);
 
-  //const { data: currentUser, error } = useGetCurrentUser();
-
-  /* useEffect(() => {
-    //setUser({ ...user, username: currentUser?.username || "", logged: true });
-  }, []); */
-
-  return user ? <div>{children}</div> : <Navigate to="/login" />;
+  return user.isLogged ? <div>{children}</div> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

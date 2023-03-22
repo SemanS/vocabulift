@@ -8,15 +8,15 @@ import { useRoutes, RouteObject } from "react-router-dom";
 import BookDetail from "@/pages/bookDetail";
 import Books from "@/pages/books";
 import Vocabulary from "@/pages/vocabulary";
+import WebLayoutPage from "@/pages/webLayout";
 
 const NotFound = lazy(() => import("@/pages/404"));
 //const Project = lazy(() => import("@/pages/project"));
 
 const routeList: RouteObject[] = [
   {
-    path: "/",
     element: (
-      <WrapperRouteComponent auth={true}>
+      <WrapperRouteComponent>
         <LayoutPage />
       </WrapperRouteComponent>
     ),
@@ -24,7 +24,7 @@ const routeList: RouteObject[] = [
       {
         path: "/dashboard",
         element: (
-          <WrapperRouteComponent>
+          <WrapperRouteComponent auth={true}>
             <Dashboard />
           </WrapperRouteComponent>
         ),
@@ -32,7 +32,7 @@ const routeList: RouteObject[] = [
       {
         path: "/books/:title",
         element: (
-          <WrapperRouteComponent>
+          <WrapperRouteComponent auth={true}>
             <BookDetail />
           </WrapperRouteComponent>
         ),
@@ -40,7 +40,7 @@ const routeList: RouteObject[] = [
       {
         path: "/books",
         element: (
-          <WrapperRouteComponent>
+          <WrapperRouteComponent auth={true}>
             <Books />
           </WrapperRouteComponent>
         ),
@@ -48,19 +48,11 @@ const routeList: RouteObject[] = [
       {
         path: "/vocabulary",
         element: (
-          <WrapperRouteComponent>
+          <WrapperRouteComponent auth={true}>
             <Vocabulary />
           </WrapperRouteComponent>
         ),
       },
-      /* {
-        path: "/project/list",
-        element: (
-          <WrapperRouteComponent>
-            <Project />
-          </WrapperRouteComponent>
-        ),
-      }, */
       {
         path: "*",
         element: (
@@ -72,7 +64,15 @@ const routeList: RouteObject[] = [
     ],
   },
   {
-    path: "login",
+    path: "/",
+    element: (
+      <WrapperRouteComponent>
+        <WebLayoutPage />
+      </WrapperRouteComponent>
+    ),
+  },
+  {
+    path: "/login",
     element: <LoginPage />,
   },
 ];

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { List, Progress, Col, Row } from "antd";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
+import { Link } from "react-router-dom";
 
 const Books: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
@@ -44,8 +45,8 @@ const Books: React.FC = () => {
                 <div>
                   <List.Item.Meta
                     title={
-                      <a
-                        href={
+                      <Link
+                        to={
                           item.href +
                           "?currentPage=" +
                           item.lastReadPage +
@@ -54,7 +55,7 @@ const Books: React.FC = () => {
                         }
                       >
                         {item.title}
-                      </a>
+                      </Link>
                     }
                     description={item.description}
                   />
