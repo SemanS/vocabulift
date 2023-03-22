@@ -1,8 +1,9 @@
 import React, { Suspense, useMemo } from "react";
-import ReactDOM from "react-dom";
-import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
+
+import { QueryClient, QueryClientProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 import axios, { AxiosContext } from "./api/request";
+import { createRoot } from "react-dom/client";
 
 import "./index.css";
 import App from "./App";
@@ -32,27 +33,35 @@ const AxiosProvider = ({ children }: React.PropsWithChildren<unknown>) => {
   );
 };
 
-ReactDOM.render(
-  // <React.StrictMode>
-  <AxiosProvider>
-    <QueryClientProvider client={queryClient}>
-      <RecoilRoot>
-        {/* <ErrorBoundary
-          fallbackRender={({ error, resetErrorBoundary }) => (
-            <div>
-              There was an error!{" "}
-              <button onClick={() => resetErrorBoundary()}>Try again</button>
-              <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
-            </div>
-          )}
-        > */}
-        <Suspense fallback={<SuspendFallbackLoading />}>
-          <App />
-        </Suspense>
-        {/*  </ErrorBoundary> */}
-      </RecoilRoot>
-    </QueryClientProvider>
-  </AxiosProvider>,
-  // </React.StrictMode>,
-  document.getElementById("root")
+const rootElement = document.getElementById("root");
+
+if (!rootElement) {
+  throw new Error("Could not find root element");
+}
+
+const root = createRoot(rootElement);
+
+root.render(
+  <React.StrictMode>
+    <AxiosProvider>
+      <QueryClientProvider client={queryClient}>
+        <RecoilRoot>
+          <ErrorBoundary
+            fallbackRender={({ error, resetErrorBoundary }) => (
+              <div>
+                There was an error!{" "}
+                <button onClick={() => resetErrorBoundary()}>Try again</button>
+                <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
+              </div>
+            )}
+          >
+            <Suspense fallback={<SuspendFallbackLoading />}>
+              <App />
+            </Suspense>
+          </ErrorBoundary>
+        </RecoilRoot>
+      </QueryClientProvider>
+    </AxiosProvider>
+    ,
+  </React.StrictMode>
 );

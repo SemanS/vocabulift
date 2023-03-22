@@ -12,9 +12,10 @@ const Books: React.FC = () => {
     totalSentences: number
   ) {
     const totalPages = Math.ceil(totalSentences / sentencesPerPage);
-    const currentPage = Math.min(page, totalPages);
-    const percentage = (currentPage / totalPages) * 100;
-    return Math.ceil(percentage);
+    const percentage = (Math.min(page, totalPages) / totalPages) * 100;
+    return Math.floor(percentage) === 99 && page < totalSentences
+      ? 99
+      : Math.ceil(percentage);
   }
 
   return (

@@ -1,7 +1,6 @@
-import React, { FC, useEffect, useState } from "react";
-import { MenuList, MenuChild } from "@/models/menu.interface";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { useGuide } from "../guide/useGuide";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import { userState } from "@/stores/user";
 import { useRecoilState } from "recoil";
 
@@ -12,16 +11,16 @@ import {
   HomeOutlined,
   FrownOutlined,
   UnorderedListOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
-import { createBrowserHistory } from "history";
 import RightContent from "./components/RightContent";
 import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
-
-const history = createBrowserHistory();
+import { Space } from "antd";
 
 const IconMap: { [key: string]: React.ReactNode } = {
   book: <ReadOutlined />,
@@ -42,43 +41,33 @@ const LayoutPage: FC = () => {
   const navigate = useNavigate();
   const { formatMessage } = useLocale();
 
-  const menuList = [
-    {
-      path: "/dashboard",
-      name: "dashboard",
-      locale: "menu.dashboard",
-      icon: "home",
-    },
-    {
-      path: "/books",
-      name: "books",
-      icon: "book",
-    },
-  ];
-
-  useEffect(() => {
-    if (location.pathname === "/") {
-      navigate("/dashboard");
-    }
-  }, [navigate, location]);
-
+  const sidebarMenuRef = useRef<HTMLDivElement | null>(null);
   const toggle = () => {
     setUser({ ...user, collapsed: !collapsed });
   };
-
-  const initMenuListAll = (menu: MenuList) => {
-    const MenuListAll: MenuChild[] = [];
-    menu.forEach((m) => {
-      if (!m?.children?.length) {
-        MenuListAll.push(m);
-      } else {
-        m?.children.forEach((mu) => {
-          MenuListAll.push(mu);
-        });
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        sidebarMenuRef.current &&
+        !sidebarMenuRef.current.contains(event.target as Node) &&
+        !collapsed
+      ) {
+        toggle();
       }
-    });
-    return MenuListAll;
-  };
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [collapsed]);
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      navigate("/books");
+    }
+  }, [navigate, location]);
 
   useEffect(() => {
     newUser && driverStart();
@@ -88,86 +77,74 @@ const LayoutPage: FC = () => {
   const loopMenuItem = (menus?: MenuDataItem[]): MenuDataItem[] => {
     if (!menus) return [];
 
-    const m = menus.map(({ icon, children, ...item }) => ({
+    const m = menus.map(({ icon, items, ...item }) => ({
       ...item,
       icon: icon && IconMap[icon as string],
-      children: children && loopMenuItem(children),
+      items: items && loopMenuItem(items),
     }));
 
     return m;
   };
 
   return (
-    <ProLayout
-      fixSiderbar
-      collapsed={collapsed}
-      location={{
-        pathname: location.pathname,
-      }}
-      logo={
-        <a className={styles.layoutPageHeader}>
-          <LogoSvg />
-        </a>
-      }
-      {...settings}
-      onCollapse={toggle}
-      formatMessage={formatMessage}
-      onMenuHeaderClick={() => navigate("/")}
-      headerTitleRender={(logo, title, props) => (
-        <a className={styles.layoutPageHeader}>
-          <LogoSvg />
-          {title}
-        </a>
-      )}
-      menuHeaderRender={undefined}
-      menuItemRender={(menuItemProps, defaultDom) => {
-        if (
-          menuItemProps.isUrl ||
-          !menuItemProps.path ||
-          location.pathname === menuItemProps.path
-        ) {
-          return defaultDom;
-        }
+    <div ref={sidebarMenuRef}>
+      <ProLayout
+        fixSiderbar
+        collapsed={collapsed}
+        location={{
+          pathname: location.pathname,
+        }}
+        logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
+        {...settings}
+        onCollapse={() => toggle()}
+        formatMessage={formatMessage}
+        onMenuHeaderClick={() => navigate("/")}
+        headerTitleRender={() => (
+          <Space style={{ display: "flex", alignItems: "left" }}>
+            <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
+            <h1 style={{ marginLeft: "0px" }}>Vocabulift</h1>
+          </Space>
+        )}
+        menuItemRender={(menuItemProps, defaultDom) => {
+          if (
+            menuItemProps.isUrl ||
+            !menuItemProps.path ||
+            location.pathname === menuItemProps.path
+          ) {
+            return defaultDom;
+          }
 
-        return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-      }}
-      /* breadcrumbRender={(routers = []) => [
-        {
-          path: "/",
-          breadcrumbName: formatMessage({ id: "menu.home" }),
-        },
-        ...routers,
-      ]} */
-      itemRender={(route, params, routes, paths) => {
-        const first = routes.indexOf(route) === 0;
-        return first ? (
-          <Link to={paths.join("/")}>{route.breadcrumbName}</Link>
-        ) : (
-          <span>{route.breadcrumbName}</span>
-        );
-      }}
-      menuDataRender={() => loopMenuItem(user.menuList)}
-      // menuDataRender={() => m}
-      rightContentRender={() => <RightContent />}
-      footerRender={() => <Footer />}
-      /* collapsedButtonRender={() => {
-        return (
-          <div
-            onClick={() => toggle}
-            style={{
-              cursor: "pointer",
-              fontSize: "16px",
-            }}
-          >
-            <span id="sidebar-trigger">
-              {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            </span>
-          </div>
-        );
-      }} */
-    >
-      <Outlet />
-    </ProLayout>
+          return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+        }}
+        breadcrumbRender={(routers = []) => {
+          const { title } = useParams();
+          const isBookDetailPage = location.pathname.includes("/books/");
+          if (isBookDetailPage) {
+            const bookTitle = user.books.find(
+              (book) => book.title === title
+            )?.title;
+            if (bookTitle) {
+              routers.push({
+                path: location.pathname,
+                breadcrumbName: bookTitle,
+              });
+            }
+          }
+          return [
+            {
+              path: "/",
+              breadcrumbName: formatMessage({ id: "menu.home" }),
+            },
+            ...routers,
+          ];
+        }}
+        menuDataRender={() => loopMenuItem(user.menuList)}
+        rightContentRender={() => <RightContent />}
+        footerRender={() => <Footer />}
+      >
+        <Outlet />
+      </ProLayout>
+    </div>
   );
 };
 

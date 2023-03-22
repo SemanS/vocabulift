@@ -1,14 +1,9 @@
 import React, { useCallback } from "react";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import {
-  LogoutOutlined,
-  SettingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Avatar, Menu, Spin } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Spin } from "antd";
 
-import HeaderDropdown from "../HeaderDropdown";
 import classes from "./index.module.less";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
@@ -27,16 +22,11 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  /**
-   * Logout
-   */
   const loginOut = async () => {
-    // Note: There may be security issues, please note
     if (cookies.access_token) {
       setCookie("access_token", "", { expires: new Date(0) });
     }
-    sessionStorage.clear;
-    useCookies;
+    sessionStorage.clear();
     if (location.pathname !== "/login") {
       navigate("/login", {
         replace: true,
@@ -45,7 +35,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   };
 
   const onMenuClick = useCallback(
-    (event) => {
+    (event: { key: any }) => {
       const { key } = event;
       if (key === "logout" && user) {
         setUser({ ...user, logged: false });
@@ -77,17 +67,25 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     return loading;
   }
 
-  const menuHeaderDropdown = (
-    <Menu className={"menu"} selectedKeys={[]} onClick={onMenuClick}>
-      <Menu.Item key="logout">
-        <LogoutOutlined />
-        Sign Out
-      </Menu.Item>
-    </Menu>
-  );
+  const items = [
+    {
+      key: "logout",
+      label: (
+        <>
+          <LogoutOutlined /> Sign Out
+        </>
+      ),
+    },
+  ];
+
   return (
-    <HeaderDropdown overlay={menuHeaderDropdown}>
-      <span className={`${classes.action} ${classes.account}`}>
+    <Dropdown
+      placement="bottomRight"
+      className={`${classes.action} ${classes.account}`}
+      menu={{ items, onClick: onMenuClick }}
+      trigger={["click"]}
+    >
+      <span>
         <Avatar
           size="small"
           className={classes.avatar}
@@ -96,7 +94,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         />
         <span className={`${classes.name} anticon`}>{username}</span>
       </span>
-    </HeaderDropdown>
+    </Dropdown>
   );
 };
 
