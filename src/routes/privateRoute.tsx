@@ -36,10 +36,18 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         })
         .catch((error) => {
           console.error(error);
+        })
+        .finally(() => {
+          setLoading(false); // Set loading state to false when user information is obtained
         });
     } else {
+      setLoading(false); // Set loading state to false if there is no access token
     }
   }, []);
+
+  if (loading) {
+    return <Spin size="large" />;
+  }
 
   return user.isLogged ? <div>{children}</div> : <Navigate to="/login" />;
 };

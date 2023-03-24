@@ -71,7 +71,11 @@ const Vocabulary: React.FC = () => {
         loading={loading}
         onSearch={(value) => console.log(value)}
       />
-      <Card style={{ marginBottom: "20px" }}>
+      <Card
+        style={{
+          marginBottom: "20px",
+        }}
+      >
         <div
           id="scrollableDiv"
           style={{

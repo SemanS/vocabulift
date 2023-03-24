@@ -7,7 +7,7 @@ interface VocabularyListProps {
 
 const VocabularyList: FC<VocabularyListProps> = ({ clickedWords }) => {
   return (
-    <Card>
+    <Card style={{ backgroundColor: "rgb(253, 222, 184)" }}>
       <List
         size="small"
         header={

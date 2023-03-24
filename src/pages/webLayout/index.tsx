@@ -9,6 +9,7 @@ import { Space } from "antd";
 import { Settings as LayoutSettings } from "@ant-design/pro-layout";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
+import styles from "./index.module.less";
 
 const Settings: LayoutSettings & {
   pwa?: boolean;
@@ -31,6 +32,7 @@ const WebLayoutPage: FC = () => {
   return (
     <>
       <ProLayout
+        contentWidth={"Fluid"}
         hasSiderMenu={false}
         {...Settings}
         logo={<LogoSvg style={{ height: "40px" }} />}
@@ -43,7 +45,7 @@ const WebLayoutPage: FC = () => {
         rightContentRender={() => <RightContent />}
         footerRender={() => <Footer />}
       >
-        <PageContainer>
+        <PageContainer className={styles.container}>
           <LandingPage />
         </PageContainer>
       </ProLayout>

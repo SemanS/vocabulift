@@ -2,8 +2,8 @@ import React, { FC } from "react";
 import { Select } from "antd";
 
 interface LanguageSelectProps {
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  defaultValue?: "en" | "sk" | "cz";
+  onChange?: (value: "en" | "sk" | "cz") => void;
   options: { value: string; label: string }[];
   disabledValue?: string;
 }
