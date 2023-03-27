@@ -18,7 +18,7 @@ const initialState: User = {
   role: (localStorage.getItem("username") || "") as Role,
   avatar:
     "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
-  books: [],
+  library: [],
 };
 
 export const userState = atom({

@@ -18,7 +18,7 @@ export const useLogin = () => {
 
 export const useGetCurrentUser = () => {
   const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
-  return useGetOne<CurrentUserResult>("CurrentUser", `${baseUrl}/current/user`);
+  return useGetOne<CurrentUserResult>("CurrentUser", `${baseUrl}/user/current`);
 };
 
 export const useGetCurrentMenus = () => {

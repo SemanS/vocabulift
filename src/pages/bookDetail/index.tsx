@@ -9,13 +9,15 @@ import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCa
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import VocabularyList from "./components/VocabularyList/VocabularyList";
-import { FetchDataResponse } from "@models/services.interfaces";
+import { FetchDataResponse } from "@/models/services.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
+import { getSentences, getUserSentences } from "@/services/userService";
+import { UserSentence } from "@/models/userSentence.interface";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
-  const { title } = useParams();
+  const { id } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const pageSizeFromQuery = parseInt(queryParams.get("pageSize") as string);
@@ -42,6 +44,7 @@ const BookDetail: FC = () => {
   });
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
+  const [userSentences, setUserSentences] = useState<UserSentence[]>([]);
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<any>();
   const [user, setUser] = useRecoilState(userState);
@@ -52,11 +55,11 @@ const BookDetail: FC = () => {
     "sk"
   );
 
-  const fetchData = async (localSentenceFrom: number) => {
+  const fetchSentencesData = async (localSentenceFrom: number) => {
     const response = await fetch(
       `${
         import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-      }/sentence/${title}?sentenceFrom=${
+      }/sentence/${id}?sentenceFrom=${
         localSentenceFrom ? localSentenceFrom : sentenceFrom
       }&countOfSentences=${countOfSentences}`,
       {
@@ -87,35 +90,56 @@ const BookDetail: FC = () => {
         .then((data) => setWordData(data[0]))
         .catch((error) => console.error(error));
       // Make POST on backend to save word under user
-      addWordToUser(clickedWord, sessionStorage.getItem("access_token")).catch(
-        (error) => console.error(error)
-      );
+      sourceLanguage &&
+        targetLanguage &&
+        addWordToUser(
+          clickedWord,
+          sourceLanguage,
+          targetLanguage,
+          sessionStorage.getItem("access_token")
+        );
     }
   }, [clickedWord]);
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
-    const data: FetchDataResponse = await fetchData(localSentenceFrom);
+    const sentencesData: FetchDataResponse = await getSentences(
+      id,
+      sentenceFrom,
+      countOfSentences,
+      localSentenceFrom
+    );
+    const userSentencesData: UserSentence[] = await getUserSentences(
+      id,
+      sentenceFrom,
+      countOfSentences,
+      localSentenceFrom
+    );
 
-    await updateState(data);
+    await updateState(userSentencesData, sentencesData);
     setLoading(false);
   };
 
-  const updateState = async (data: FetchDataResponse) => {
+  const updateState = async (
+    userSentencesData: UserSentence[],
+    sentencesData: FetchDataResponse
+  ) => {
+    console.log(JSON.stringify(sentencesData));
     setTexts({
-      en: data.sentences.map(({ content_en, sentence_no }) => ({
+      en: sentencesData.sentences.map(({ content_en, sentence_no }) => ({
         text: content_en,
         sentence_no,
       })),
-      cz: data.sentences.map(({ content_cz, sentence_no }) => ({
+      cz: sentencesData.sentences.map(({ content_cz, sentence_no }) => ({
         text: content_cz,
         sentence_no,
       })),
-      sk: data.sentences.map(({ content_sk, sentence_no }) => ({
+      sk: sentencesData.sentences.map(({ content_sk, sentence_no }) => ({
         text: content_sk,
         sentence_no,
       })),
     });
-    setTotalSentences(data.totalSentences);
+    setTotalSentences(sentencesData.totalSentences);
+    setUserSentences(userSentencesData);
   };
 
   const handleClickedWord = async (word: string) => {
@@ -152,29 +176,31 @@ const BookDetail: FC = () => {
       page: page,
       pageSieze: pageSize,
     };
-    localStorage.setItem(`bookState-${title}`, JSON.stringify(bookState));
+    localStorage.setItem(`bookState-${id}`, JSON.stringify(bookState));
 
-    await updateBookState(title, page, pageSize);
+    await updateBookState(id, page, pageSize);
 
     //Update recoil state of the user
-    const updatedBooks = user.books.map((book) => {
-      if (book.title === title) {
+    //console.log(JSON.stringify(user.books));
+    /* const updatedItems = user.library.map((item) => {
+      if (item.id === id) {
         return {
-          ...book,
-          title,
+          ...item,
+          id,
           lastReadPage: page,
           pageSize: pageSize,
         };
       }
-      return book;
+      return item;
     });
-    setUser({ ...user, books: updatedBooks });
+    setUser({ ...user, library: updatedItems }); */
 
     const fetchAndUpdate = async (localSentenceFrom: number) => {
       setLoading(true);
       await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
       setLoading(false);
     };
+
     if (initState) {
       let localSentenceFrom =
         (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
@@ -197,6 +223,7 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer loading={loading}>
+      {JSON.stringify({ userSentences })}
       <Row gutter={[16, 16]}>
         <Col span={clickedWords.length === 0 ? 24 : 18}>
           <Card>

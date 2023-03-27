@@ -23,7 +23,6 @@ const PaginationControls: FC<PaginationControlsProps> = ({
         display: "flex",
         justifyContent: "center",
       }}
-      responsive={true}
       current={currentPage}
       onShowSizeChange={(pageNum, pageSize) => {
         if (pageSize * currentPage > totalSentences) {

@@ -30,7 +30,7 @@ const routeList: RouteObject[] = [
         ),
       },
       {
-        path: "/books/:title",
+        path: "/books/:id",
         element: (
           <WrapperRouteComponent auth={true}>
             <BookDetail />

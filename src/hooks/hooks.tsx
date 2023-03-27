@@ -1,6 +1,4 @@
-import { useState, useEffect } from "react";
-
-const useUserData = () => {
+/* const useUserData = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -15,4 +13,4 @@ const useUserData = () => {
   }, []);
 
   return user;
-};
+}; */

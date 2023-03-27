@@ -109,7 +109,7 @@ const LayoutPage: FC = () => {
 
             return <Link to={menuItemProps.path}>{defaultDom}</Link>;
           }}
-          breadcrumbRender={(routers = []) => {
+          /* breadcrumbRender={(routers = []) => {
             const { title } = useParams();
             const isBookDetailPage = location.pathname.includes("/books/");
             if (isBookDetailPage) {
@@ -130,7 +130,7 @@ const LayoutPage: FC = () => {
               },
               ...routers,
             ];
-          }}
+          }} */
           menuDataRender={() => loopMenuItem(user.menuList)}
           rightContentRender={() => <RightContent />}
           footerRender={() => <Footer />}

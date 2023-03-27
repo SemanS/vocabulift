@@ -17,10 +17,14 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
   } */
 
   useEffect(() => {
-    if (import.meta.env.MODE === "development" && cookies.access_token) {
+    if (
+      import.meta.env.MODE === "development" &&
+      cookies.access_token &&
+      !user.isLogged
+    ) {
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
-        .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/current/user`, {
+        .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`, {
           headers: {
             Authorization: `Bearer ${cookies.access_token}`,
           },

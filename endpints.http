@@ -8,7 +8,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2Q2OTBlMmI5M2Y3YTVjNmIzMGJjZWYiLCJpYXQiOjE2NzUwMDYxNzgsImV4cCI6MTY3NTAwNzA3OH0.i6T9LDG2iiHLsq-EduTFFaVZyIZSbwzQtf_vBFlJEw0ZmdW1hL8I_91dfHRhylWJVHmpqHFL-HPPzUQEIgp5gXARqJr1nO1FpF8h6ZUMkNAHC_nW_KrhHNZb13RIldrX_lZEFj0wfk64PDrHnzUp0GNC4yOok7Iask4Vl0i-gWxuWrA1fIX8A26R0ICesvd8QYwTHwq8YYZteRLIEl3FzYWD1B6cVzFmhsTG3fUaGBofFDqLxxqpe6tFESWLQ9pEE7Ml0LmDfZCUiBlqCn0qBJo5U5HyQyMKRFgOR5iVlbxIowYHIUiUqB0HcScCGvk8ChLT_jhicMo9kP_vf31gIg
 //Cookie: {{cookie}}
 
-GET {{baseUrl}}/api/v1/current/user
+GET {{baseUrl}}/api/v1/user/current
 Content-Type: application/json
 //Cookie: {{cookie}}
 

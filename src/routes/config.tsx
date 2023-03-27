@@ -24,7 +24,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
     if (import.meta.env.MODE === "development" && cookies.access_token) {
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
-        .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/current/user`, {
+        .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`, {
           headers: {
             Authorization: `Bearer ${cookies.access_token}`,
           },

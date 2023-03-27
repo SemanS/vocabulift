@@ -1,24 +1,30 @@
 import { debounce } from "lodash";
 
-export const addWordToUser = async (
-  word: string,
-  accessToken: string | null
-): Promise<void> => {
-  await fetch(
-    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-word`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        language: "en",
-        word,
-      }),
-    }
-  );
-};
+export const addWordToUser = debounce(
+  async (
+    word: string,
+    sourceLanguage: string,
+    targetLanguage: string,
+    accessToken: string | null
+  ): Promise<void> => {
+    await fetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-word`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          sourceLanguage,
+          targetLanguage,
+          word,
+        }),
+      }
+    );
+  },
+  1000
+);
 
 export const updateBookState = debounce(
   async (book: string | undefined, page: number, pageSize: number) => {

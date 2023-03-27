@@ -10,7 +10,8 @@ export interface CurrentUserResult {
   role: Role;
 }
 
-export interface BookUser {
+export interface LibraryUser {
+  id: string;
   href: string | undefined;
   description: string;
   content: string;
@@ -22,7 +23,7 @@ export interface BookUser {
 }
 
 export interface User {
-  books: BookUser[];
+  library: LibraryUser[];
   username: string;
 
   /** menu list for init tagsView */
