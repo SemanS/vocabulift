@@ -32,33 +32,54 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   userSentences,
 }) => {
   const [error, setError] = useState<Error | null>(null);
-  const [selectedWords, setSelectedWords] = useState<string[]>([]);
+  const [selectedWords, setSelectedWords] = useState<
+    { word: string; globalIndex: number; sentenceNumber: number }[]
+  >([]);
+
   const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
 
   const [mouseDown, setMouseDown] = useState(false);
 
-  const handleMouseDown = (word: string, sentenceNumber: number) => {
+  const handleMouseDown = (
+    word: string,
+    sentenceNumber: number,
+    globalIndex: number
+  ) => {
     setMouseDown(true);
     setSelectedSentence(sentenceNumber);
-    setSelectedWords([word]);
+    setSelectedWords([{ word, globalIndex, sentenceNumber }]);
   };
 
-  const handleMouseEnter = (word: string, sentenceNumber: number) => {
+  const handleMouseEnter = (
+    word: string,
+    sentenceNumber: number,
+    globalIndex: number
+  ) => {
     if (mouseDown && selectedSentence === sentenceNumber) {
       setSelectedWords((prevWords) => {
-        const wordIndex = prevWords.indexOf(word);
-        if (wordIndex === -1) {
-          return [...prevWords, word];
+        const wordIndexInSelected = prevWords.findIndex(
+          (w) =>
+            w.globalIndex === globalIndex && w.sentenceNumber === sentenceNumber
+        );
+
+        if (wordIndexInSelected === -1) {
+          return [...prevWords, { word, globalIndex, sentenceNumber }];
         } else {
-          return prevWords.slice(0, wordIndex + 1);
+          return prevWords.slice(0, wordIndexInSelected + 1);
         }
       });
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (sentenceNumber: number) => {
     setMouseDown(false);
-    console.log("Selected phrase:", selectedWords.join(" "));
+    const sortedSelectedWords = selectedWords.sort(
+      (a, b) => a.globalIndex - b.globalIndex
+    );
+    const selectedPhrase = sortedSelectedWords
+      .map(({ word }) => word)
+      .join(" ");
+    console.log("Selected phrase:", selectedPhrase);
   };
 
   const getSourceTexts = () => {
@@ -105,33 +126,63 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               />
             </div>
           ))
-        : visibleSourceTexts.map((sentence, index) => (
-            <div key={index} style={{ whiteSpace: "pre-wrap" }}>
-              {sentence.text.split(" ").map((word, wordIndex) => (
-                <TranslateWord
-                  key={`${index}-${wordIndex}`}
-                  word={word}
-                  translation={
-                    visibleTargetTexts[index].text.split(" ")[wordIndex]
-                  }
-                  sentenceNumber={sentence.sentence_no}
-                  mode={mode}
-                  onMouseDown={handleMouseDown}
-                  onMouseEnter={handleMouseEnter}
-                  onMouseUp={handleMouseUp}
-                  highlightPositions={getHighlightPositions(
-                    userSentences,
-                    sentence.sentence_no,
-                    wordIndex
-                  )}
-                  isHighlighted={
-                    selectedWords.includes(word) &&
-                    selectedSentence === sentence.sentence_no
-                  }
-                />
-              ))}
-            </div>
-          ))}
+        : visibleSourceTexts.map((sentence, index) => {
+            const sentenceLines = sentence.text.split("\n");
+            return (
+              <div key={index} style={{ whiteSpace: "pre-wrap" }}>
+                {sentenceLines.map((line, lineIndex) => (
+                  <React.Fragment key={`${index}-${lineIndex}`}>
+                    {line.split(" ").map((word, wordIndex) => {
+                      const globalIndex =
+                        wordIndex +
+                        lineIndex *
+                          visibleSourceTexts[index].text
+                            .split("\n")
+                            [lineIndex].split(" ").length;
+                      return (
+                        <TranslateWord
+                          key={`${index}-${lineIndex}-${wordIndex}`}
+                          word={word}
+                          translation={
+                            visibleTargetTexts[index].text
+                              .split("\n")
+                              [lineIndex].split(" ")[wordIndex]
+                          }
+                          sentenceNumber={sentence.sentence_no}
+                          mode={mode}
+                          onMouseDown={(word: string, sentenceNumber: number) =>
+                            handleMouseDown(word, sentenceNumber, globalIndex)
+                          }
+                          onMouseEnter={(
+                            word: string,
+                            sentenceNumber: number
+                          ) =>
+                            handleMouseEnter(word, sentenceNumber, globalIndex)
+                          }
+                          onMouseUp={handleMouseUp}
+                          highlightPositions={getHighlightPositions(
+                            userSentences,
+                            sentence.sentence_no,
+                            wordIndex
+                          )}
+                          isHighlighted={selectedWords.some(
+                            (selectedWord) =>
+                              selectedWord.word === word &&
+                              selectedWord.globalIndex === globalIndex &&
+                              selectedWord.sentenceNumber ===
+                                sentence.sentence_no
+                          )}
+                          wordIndex={wordIndex}
+                        />
+                      );
+                    })}
+
+                    {lineIndex < sentenceLines.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </div>
+            );
+          })}
     </>
   );
 };

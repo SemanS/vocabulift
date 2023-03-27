@@ -16,6 +16,7 @@ interface TranslateWordProps {
   onMouseUp?: (sentenceNumber: number) => void;
   highlightPositions?: boolean;
   isHighlighted?: boolean;
+  wordIndex: number;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
@@ -33,7 +34,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseDown = (event: React.MouseEvent) => {
-    event.stopPropagation();
+    //  event.stopPropagation();
     onMouseDown?.(word, sentenceNumber);
   };
 
