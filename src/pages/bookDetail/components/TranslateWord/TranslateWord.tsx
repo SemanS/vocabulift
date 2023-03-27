@@ -1,6 +1,6 @@
 import { Tooltip, Typography } from "antd";
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./TranslateWord.module.less";
 
 const { Text } = Typography;
@@ -11,9 +11,11 @@ interface TranslateWordProps {
   sentenceNumber: number;
   //onClick: (word: string, sentenceNumber: number) => void;
   mode: string;
-  onMouseDown?: (word: string) => void;
-  onMouseEnter?: (word: string) => void;
+  onMouseDown?: (word: string, sentenceNumber: number) => void;
+  onMouseEnter?: (word: string, sentenceNumber: number) => void;
   onMouseUp?: (sentenceNumber: number) => void;
+  highlightPositions?: boolean;
+  isHighlighted?: boolean;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
@@ -25,8 +27,25 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   onMouseDown,
   onMouseEnter,
   onMouseUp,
+  highlightPositions,
+  isHighlighted,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseDown = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    onMouseDown?.(word, sentenceNumber);
+  };
+
+  const handleMouseEnter = () => {
+    onMouseEnter?.(word, sentenceNumber);
+  };
+
+  const handleMouseUp = () => {
+    onMouseUp?.(sentenceNumber);
+  };
+
+  highlightPositions;
 
   const renderTooltip = (children: React.ReactNode) => {
     return mode === "sentence" ? (
@@ -59,20 +78,13 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
         whiteSpace: "pre-wrap",
       }}
       className={classNames(
-        isHovered ? styles.bubbleHovered : "",
+        isHovered || highlightPositions ? styles.bubbleHovered : "",
+        isHighlighted ? styles.bubbleHovered : null,
         styles.textbox
       )}
-      //onClick={() => onClick(word, sentenceNumber)}
-      onMouseDown={() => onMouseDown && onMouseDown(word)}
-      onMouseEnter={() => {
-        setIsHovered(true);
-        onMouseEnter && onMouseEnter(word);
-      }}
-      onMouseUp={() => {
-        console.log("triggered");
-        setIsHovered(false);
-        onMouseUp && onMouseUp(sentenceNumber);
-      }}
+      onMouseDown={handleMouseDown}
+      onMouseEnter={handleMouseEnter}
+      onMouseUp={handleMouseUp}
     >
       {word + " "}
     </Text>

@@ -228,6 +228,7 @@ const BookDetail: FC = () => {
               sentencesPerPage={sentencesPerPage}
               mode={mode}
               texts={texts}
+              userSentences={userSentences}
               onClick={handleClickedWord}
             />
             <PaginationControls

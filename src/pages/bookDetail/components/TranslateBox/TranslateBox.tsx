@@ -1,6 +1,8 @@
 import { useState } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
 import React from "react";
+import { getHighlightPositions } from "@/utils/getHighlightPosition";
+import { UserSentence } from "@/models/userSentence.interface";
 
 interface TranslateBoxProps {
   mode: string;
@@ -14,6 +16,7 @@ interface TranslateBoxProps {
   currentTextIndex: number;
   sentenceFrom: number;
   sentencesPerPage: number;
+  userSentences: UserSentence[];
   onClick?: (word: string) => void;
 }
 
@@ -26,31 +29,36 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   sentenceFrom,
   sentencesPerPage,
   onClick,
+  userSentences,
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
+  const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
 
-  const handleMouseDown = (word: string) => {
-    if (mode === "word") {
-      console.log(word);
-      setSelectedWords([...selectedWords, word]);
-    }
+  const [mouseDown, setMouseDown] = useState(false);
+
+  const handleMouseDown = (word: string, sentenceNumber: number) => {
+    setMouseDown(true);
+    setSelectedSentence(sentenceNumber);
+    setSelectedWords([word]);
   };
 
-  const handleMouseEnter = (word: string) => {
-    if (mode === "word" && selectedWords.length > 0) {
-      setSelectedWords([...selectedWords, word]);
+  const handleMouseEnter = (word: string, sentenceNumber: number) => {
+    if (mouseDown && selectedSentence === sentenceNumber) {
+      setSelectedWords((prevWords) => {
+        const wordIndex = prevWords.indexOf(word);
+        if (wordIndex === -1) {
+          return [...prevWords, word];
+        } else {
+          return prevWords.slice(0, wordIndex + 1);
+        }
+      });
     }
   };
 
   const handleMouseUp = () => {
-    if (mode === "word") {
-      const separator = " "; // Space character as a separator
-      const selectedWord = selectedWords.join(separator);
-      console.log(selectedWords);
-      onClick && onClick(selectedWord);
-      setSelectedWords([]);
-    }
+    setMouseDown(false);
+    console.log("Selected phrase:", selectedWords.join(" "));
   };
 
   const getSourceTexts = () => {
@@ -89,6 +97,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 sentenceNumber={textObj.sentence_no}
                 //onClick={handleWordClick}
                 mode={mode}
+                highlightPositions={getHighlightPositions(
+                  userSentences,
+                  textObj.sentence_no,
+                  index
+                )}
               />
             </div>
           ))
@@ -106,6 +119,15 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                   onMouseDown={handleMouseDown}
                   onMouseEnter={handleMouseEnter}
                   onMouseUp={handleMouseUp}
+                  highlightPositions={getHighlightPositions(
+                    userSentences,
+                    sentence.sentence_no,
+                    wordIndex
+                  )}
+                  isHighlighted={
+                    selectedWords.includes(word) &&
+                    selectedSentence === sentence.sentence_no
+                  }
                 />
               ))}
             </div>
