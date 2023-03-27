@@ -1,8 +1,11 @@
 import React, { FC } from "react";
 import { Card, List } from "antd";
+import { UserWord } from "@models/userSentence.interface";
 
 interface VocabularyListProps {
-  clickedWords: string[];
+  clickedWords: UserWord[];
+  sourceLanguage: "en" | "cz" | "sk";
+  targetLanguage: "en" | "cz" | "sk";
 }
 
 const VocabularyList: FC<VocabularyListProps> = ({ clickedWords }) => {
@@ -16,8 +19,10 @@ const VocabularyList: FC<VocabularyListProps> = ({ clickedWords }) => {
           </div>
         }
         dataSource={clickedWords}
-        renderItem={(word: string, index: number) => (
-          <List.Item>{word}</List.Item>
+        renderItem={(word: UserWord, index: number) => (
+          <List.Item>
+            {word.sourceText} - {word.targetText}
+          </List.Item>
         )}
       />
     </Card>

@@ -13,7 +13,8 @@ import { FetchDataResponse } from "@/models/services.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
 import { getSentences, getUserSentences } from "@/services/userService";
-import { UserSentence } from "@/models/userSentence.interface";
+import { UserSentence, UserWord } from "@/models/userSentence.interface";
+import { getAllUserWords } from "@/utils/getAllUserWords";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -25,9 +26,8 @@ const BookDetail: FC = () => {
     queryParams.get("currentPage") as string
   );
 
-  const [initState, setInitState] = useState<boolean>(true);
   const [clickedWord, setClickedWord] = useState<string>();
-  const [clickedWords, setClickedWords] = useState<string[]>([]);
+  const [clickedWords, setClickedWords] = useState<UserWord[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
@@ -55,30 +55,16 @@ const BookDetail: FC = () => {
     "sk"
   );
 
-  const fetchSentencesData = async (localSentenceFrom: number) => {
-    const response = await fetch(
-      `${
-        import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-      }/sentence/${id}?sentenceFrom=${
-        localSentenceFrom ? localSentenceFrom : sentenceFrom
-      }&countOfSentences=${countOfSentences}`,
-      {
-        headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-        },
-      }
-    );
-
-    const data = await response.json();
-    return data;
-  };
-
   useEffect(() => {
+    const fetchData = async () => {
+      let localSentenceFrom =
+        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+      setSentenceFrom(getRangeNumber(localSentenceFrom));
+      await fetchDataAndUpdateState(localSentenceFrom);
+    };
+
     if (currentPageFromQuery && pageSizeFromQuery) {
-      setCurrentPage(currentPageFromQuery);
-      setSentencesPerPage(pageSizeFromQuery);
-      handlePageChange(currentPageFromQuery, pageSizeFromQuery);
+      fetchData();
     }
   }, []);
 
@@ -112,18 +98,19 @@ const BookDetail: FC = () => {
       id,
       sentenceFrom,
       countOfSentences,
-      localSentenceFrom
+      localSentenceFrom,
+      sourceLanguage,
+      targetLanguage
     );
 
-    await updateState(userSentencesData, sentencesData);
+    await updateSentencesState(userSentencesData, sentencesData);
     setLoading(false);
   };
 
-  const updateState = async (
+  const updateSentencesState = async (
     userSentencesData: UserSentence[],
     sentencesData: FetchDataResponse
   ) => {
-    console.log(JSON.stringify(sentencesData));
     setTexts({
       en: sentencesData.sentences.map(({ content_en, sentence_no }) => ({
         text: content_en,
@@ -143,10 +130,10 @@ const BookDetail: FC = () => {
   };
 
   const handleClickedWord = async (word: string) => {
-    if (!clickedWords.includes(word) && mode == "word") {
+    /* if (!clickedWords.includes(word) && mode == "word") {
       setClickedWords([...clickedWords, word]);
       setClickedWord(word);
-    }
+    } */
   };
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = async (
@@ -171,51 +158,19 @@ const BookDetail: FC = () => {
       pathname: location.pathname,
       search: newQueryParams.toString(),
     });
+
     // Save the book state in local storage
     const bookState = {
       page: page,
-      pageSieze: pageSize,
+      pageSize: pageSize,
     };
     localStorage.setItem(`bookState-${id}`, JSON.stringify(bookState));
 
     await updateBookState(id, page, pageSize);
 
-    //Update recoil state of the user
-    //console.log(JSON.stringify(user.books));
-    /* const updatedItems = user.library.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          id,
-          lastReadPage: page,
-          pageSize: pageSize,
-        };
-      }
-      return item;
-    });
-    setUser({ ...user, library: updatedItems }); */
-
-    const fetchAndUpdate = async (localSentenceFrom: number) => {
-      setLoading(true);
-      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
-      setLoading(false);
-    };
-
-    if (initState) {
-      let localSentenceFrom =
-        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-      setSentenceFrom(getRangeNumber(localSentenceFrom));
-      await fetchAndUpdate(localSentenceFrom);
-      setInitState(false);
-    } else if (
-      sentenceFrom + countOfSentences < page * pageSize ||
-      page * pageSize > sentenceFrom + countOfSentences ||
-      page * pageSize < sentenceFrom
-    ) {
-      let localSentenceFrom = (page - 1) * pageSize + 1;
-      setSentenceFrom(getRangeNumber(localSentenceFrom));
-      await fetchAndUpdate(localSentenceFrom);
-    }
+    let localSentenceFrom = (page - 1) * pageSize + 1;
+    setSentenceFrom(getRangeNumber(localSentenceFrom));
+    await fetchDataAndUpdateState(localSentenceFrom);
 
     setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
     setCurrentPage(page);
@@ -223,9 +178,8 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer loading={loading}>
-      {JSON.stringify({ userSentences })}
       <Row gutter={[16, 16]}>
-        <Col span={clickedWords.length === 0 ? 24 : 18}>
+        <Col span={userSentences.length === 0 ? 24 : 18}>
           <Card>
             <Row
               justify="space-between"
@@ -285,10 +239,14 @@ const BookDetail: FC = () => {
             />
           </Card>
         </Col>
-        {clickedWords.length !== 0 && (
+        {userSentences.length !== 0 && (
           <>
             <Col span={6}>
-              <VocabularyList clickedWords={clickedWords} />
+              <VocabularyList
+                sourceLanguage={sourceLanguage}
+                targetLanguage={targetLanguage}
+                clickedWords={getAllUserWords(userSentences)}
+              />
             </Col>
             <Col span={18}>
               <WordDefinitionCard wordData={wordData} />
