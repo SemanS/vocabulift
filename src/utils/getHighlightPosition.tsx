@@ -15,7 +15,7 @@ export const getHighlightPositions = (
     return userWord.position == wordPosition; // Added return statement
   });
   const isPhraseHighlighted = sentence.phrases.some(
-    (userPhrase) => userPhrase.position === wordPosition
+    (userPhrase) => userPhrase.positionStart === wordPosition
   );
 
   return isWordHighlighted || isPhraseHighlighted;

@@ -54,17 +54,13 @@ const BookDetail: FC = () => {
   const [targetLanguage, setTargetLanguage] = useState<"en" | "sk" | "cz">(
     "sk"
   );
+  const [initState, setInitState] = useState<boolean>(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      let localSentenceFrom =
-        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-      setSentenceFrom(getRangeNumber(localSentenceFrom));
-      await fetchDataAndUpdateState(localSentenceFrom);
-    };
-
     if (currentPageFromQuery && pageSizeFromQuery) {
-      fetchData();
+      setCurrentPage(currentPageFromQuery);
+      setSentencesPerPage(pageSizeFromQuery);
+      handlePageChange(currentPageFromQuery, pageSizeFromQuery);
     }
   }, []);
 
@@ -158,19 +154,51 @@ const BookDetail: FC = () => {
       pathname: location.pathname,
       search: newQueryParams.toString(),
     });
-
     // Save the book state in local storage
     const bookState = {
       page: page,
-      pageSize: pageSize,
+      pageSieze: pageSize,
     };
     localStorage.setItem(`bookState-${id}`, JSON.stringify(bookState));
 
     await updateBookState(id, page, pageSize);
 
-    let localSentenceFrom = (page - 1) * pageSize + 1;
-    setSentenceFrom(getRangeNumber(localSentenceFrom));
-    await fetchDataAndUpdateState(localSentenceFrom);
+    //Update recoil state of the user
+    //console.log(JSON.stringify(user.books));
+    /* const updatedItems = user.library.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          id,
+          lastReadPage: page,
+          pageSize: pageSize,
+        };
+      }
+      return item;
+    });
+    setUser({ ...user, library: updatedItems }); */
+
+    const fetchAndUpdate = async (localSentenceFrom: number) => {
+      setLoading(true);
+      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
+      setLoading(false);
+    };
+
+    if (initState) {
+      let localSentenceFrom =
+        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+      setSentenceFrom(getRangeNumber(localSentenceFrom));
+      await fetchAndUpdate(localSentenceFrom);
+      setInitState(false);
+    } else if (
+      sentenceFrom + countOfSentences < page * pageSize ||
+      page * pageSize > sentenceFrom + countOfSentences ||
+      page * pageSize < sentenceFrom
+    ) {
+      let localSentenceFrom = (page - 1) * pageSize + 1;
+      setSentenceFrom(getRangeNumber(localSentenceFrom));
+      await fetchAndUpdate(localSentenceFrom);
+    }
 
     setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
     setCurrentPage(page);

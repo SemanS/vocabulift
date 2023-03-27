@@ -4,11 +4,18 @@ export interface UserSentence {
   sourceLanguage: string;
   targetLanguage: string;
   words: UserWord[];
-  phrases: UserWord[];
+  phrases: UserPhrase[];
 }
 
 export interface UserWord {
   sourceText: string;
   targetText: string;
   position: number;
+}
+
+export interface UserPhrase {
+  sourceText: string;
+  targetText: string;
+  positionStart: number;
+  positionEnd: number;
 }
