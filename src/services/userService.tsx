@@ -52,7 +52,7 @@ export const getUserSentences = async (
 ) => {
   const requestBody = {
     libraryId: libraryId,
-    sentenceFrom: sentenceFrom,
+    sentenceFrom: localSentenceFrom ? localSentenceFrom : sentenceFrom,
     countOfSentences: countOfSentences,
     localSentenceFrom: localSentenceFrom,
     sourceLanguage: sourceLanguage,

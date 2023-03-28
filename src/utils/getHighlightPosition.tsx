@@ -6,7 +6,7 @@ export const getHighlightPositions = (
   wordPosition: number
 ): boolean => {
   const sentence = userSentences.find((userSentence) => {
-    return userSentence.sentence_no === sentence_no; // Added return statement
+    return userSentence.sentence_no == sentence_no; // Added return statement
   });
 
   if (!sentence) return false;
@@ -15,8 +15,29 @@ export const getHighlightPositions = (
     return userWord.position == wordPosition; // Added return statement
   });
   const isPhraseHighlighted = sentence.phrases.some(
-    (userPhrase) => userPhrase.positionStart === wordPosition
+    (userPhrase) =>
+      userPhrase.positionStart <= wordPosition &&
+      userPhrase.positionEnd >= wordPosition
   );
 
-  return isWordHighlighted || isPhraseHighlighted;
+  return isPhraseHighlighted;
+};
+
+// New function isWordInHighlightedPhrase
+export const isWordInHighlightedPhrase = (
+  selectedWords: Array<{
+    word: string;
+    wordIndexInSentence: number;
+    sentenceNumber: number;
+  }>,
+  word: string,
+  wordIndexInSentence: number,
+  sentenceNumber: number
+): boolean => {
+  return selectedWords.some(
+    (selectedWord) =>
+      selectedWord.word == word &&
+      selectedWord.wordIndexInSentence == wordIndexInSentence &&
+      selectedWord.sentenceNumber == sentenceNumber
+  );
 };

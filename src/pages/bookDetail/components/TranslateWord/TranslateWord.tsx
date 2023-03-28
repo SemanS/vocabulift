@@ -9,7 +9,6 @@ interface TranslateWordProps {
   word: string;
   translation: string;
   sentenceNumber: number;
-  //onClick: (word: string, sentenceNumber: number) => void;
   mode: string;
   onMouseDown?: (word: string, sentenceNumber: number) => void;
   onMouseEnter?: (word: string, sentenceNumber: number) => void;
@@ -23,7 +22,6 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   word,
   translation,
   sentenceNumber,
-  //onClick,
   mode,
   onMouseDown,
   onMouseEnter,

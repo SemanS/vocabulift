@@ -143,6 +143,12 @@ const BookDetail: FC = () => {
     await handlePageChange(newCurrentPage, pageSize);
   };
 
+  const fetchAndUpdate = async (localSentenceFrom: number) => {
+    setLoading(true);
+    await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
+    setLoading(false);
+  };
+
   const handlePageChange = async (page: number, pageSize: number) => {
     // Update the URL parameters
     const newQueryParams = new URLSearchParams(location.search);
@@ -177,12 +183,6 @@ const BookDetail: FC = () => {
       return item;
     });
     setUser({ ...user, library: updatedItems }); */
-
-    const fetchAndUpdate = async (localSentenceFrom: number) => {
-      setLoading(true);
-      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
-      setLoading(false);
-    };
 
     if (initState) {
       let localSentenceFrom =
