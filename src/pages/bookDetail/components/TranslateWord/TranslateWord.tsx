@@ -77,8 +77,9 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
         whiteSpace: "pre-wrap",
       }}
       className={classNames(
-        isHovered || highlightPositions ? styles.bubbleHovered : "",
-        isHighlighted ? styles.bubbleHovered : null,
+        isHovered || highlightPositions || isHighlighted
+          ? styles.bubbleHovered
+          : "",
         styles.textbox
       )}
       onMouseDown={handleMouseDown}

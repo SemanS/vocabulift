@@ -73,3 +73,69 @@ export const getUserSentences = async (
   const data = await response.json();
   return data.results;
 };
+
+export const addUserPhrase = async (
+  word: string,
+  libraryId: string | undefined,
+  sentence_no: number | null,
+  startPosition: number | null,
+  endPosition: number | null,
+  sourceLanguage: string,
+  targetLanguage: string,
+  accessToken: string | null
+): Promise<any> => {
+  const requestBody = {
+    word: word,
+    libraryId: libraryId,
+    sentence_no: sentence_no,
+    startPosition: startPosition,
+    endPosition: endPosition,
+    sourceLanguage: sourceLanguage,
+    targetLanguage: targetLanguage,
+  };
+  const response = await fetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(requestBody),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return response.json();
+};
+
+export const deleteUserPhrase = async (
+  libraryId: string | undefined,
+  sentence_no: number | null,
+  startPosition: number | null,
+  sourceLanguage: string,
+  targetLanguage: string,
+  accessToken: string | null
+): Promise<void> => {
+  const requestBody = {
+    libraryId: libraryId,
+    sentence_no: sentence_no,
+    startPosition: startPosition,
+    sourceLanguage: sourceLanguage,
+    targetLanguage: targetLanguage,
+  };
+  await fetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/delete-phrase`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(requestBody),
+    }
+  );
+};

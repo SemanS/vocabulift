@@ -16,6 +16,6 @@ export interface UserWord {
 export interface UserPhrase {
   sourceText: string;
   targetText: string;
-  positionStart: number;
-  positionEnd: number;
+  startPosition: number;
+  endPosition: number;
 }

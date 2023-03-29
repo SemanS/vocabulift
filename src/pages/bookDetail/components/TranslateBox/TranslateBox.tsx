@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
 import React from "react";
 import {
@@ -7,6 +7,9 @@ import {
 } from "@/utils/getHighlightPosition";
 import { UserSentence } from "@/models/userSentence.interface";
 import { getHighlightedWords } from "@/utils/getHighlightedWords";
+import { addUserPhrase } from "@/services/userService";
+import { useParams } from "react-router-dom";
+import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 
 interface TranslateBoxProps {
   mode: string;
@@ -21,6 +24,7 @@ interface TranslateBoxProps {
   sentenceFrom: number;
   sentencesPerPage: number;
   userSentences: UserSentence[];
+  onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -32,15 +36,47 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   sentenceFrom,
   sentencesPerPage,
   userSentences,
+  onAddUserPhrase,
 }) => {
+  const { libraryId } = useParams();
+
   const [error, setError] = useState<Error | null>(null);
   const [selectedWords, setSelectedWords] = useState<
     { word: string; wordIndexInSentence: number; sentenceNumber: number }[]
   >([]);
-
   const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
-
   const [mouseDown, setMouseDown] = useState(false);
+  const [selectedPhrase, setSelectedPhrase] = useState<string | null>(null);
+  const [startPosition, setStartPosition] = useState<number | null>(null);
+  const [endPosition, setEndPosition] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (selectedPhrase) {
+      addUserPhrase(
+        selectedPhrase,
+        libraryId,
+        selectedSentence,
+        startPosition,
+        endPosition,
+        sourceLanguage,
+        targetLanguage,
+        sessionStorage.getItem("access_token")
+      ).then((response) => {
+        if (response.status === "success") {
+          const vocabularyListUserPhrase: VocabularyListUserPhrase = {
+            phrase: {
+              sourceText: selectedPhrase,
+              targetText: selectedPhrase,
+              startPosition: startPosition!,
+              endPosition: endPosition!,
+            },
+            sentence_no: selectedSentence!,
+          };
+          onAddUserPhrase(vocabularyListUserPhrase);
+        }
+      });
+    }
+  }, [selectedPhrase]);
 
   const handleMouseDown = (
     word: string,
@@ -140,12 +176,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       (a, b) => a.wordIndexInSentence - b.wordIndexInSentence
     );
     let stopOnCollision = false;
-    const selectedPhrase = sortedSelectedWords
+    const phrase = sortedSelectedWords
       .map(({ word, wordIndexInSentence }) => {
         if (
           stopOnCollision ||
           getHighlightedWords(userSentences, sentenceNumber).includes(
-            Number(wordIndexInSentence)
+            wordIndexInSentence
           )
         ) {
           stopOnCollision = true;
@@ -156,7 +192,18 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       })
       .filter((word) => word !== null)
       .join(" ");
-    console.log("Selected phrase:", selectedPhrase);
+    setSelectedPhrase(phrase);
+    // Get the start and end positions
+    if (sortedSelectedWords.length > 0) {
+      const startPosition = sortedSelectedWords[0].wordIndexInSentence;
+      const endPosition =
+        sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence;
+
+      setStartPosition(startPosition);
+      setEndPosition(endPosition);
+    }
+    console.log("Selected sentence from TranslateBox: ", selectedSentence);
+    console.log("Selected phrase: ", phrase);
   };
 
   const getSourceTexts = () => {
@@ -248,6 +295,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                             wordIndexInSentence
                           )}
                           isHighlighted={isWordInHighlightedPhrase(
+                            userSentences, // Add this argument
                             selectedWords,
                             word,
                             wordIndexInSentence,

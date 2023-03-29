@@ -17,7 +17,7 @@ export const getHighlightedWords = (
   }); */
 
   sentence.phrases.forEach((userPhrase) => {
-    for (let i = userPhrase.positionStart; i <= userPhrase.positionEnd; i++) {
+    for (let i = userPhrase.startPosition; i <= userPhrase.endPosition; i++) {
       highlightedWordPositions.push(i);
     }
   });

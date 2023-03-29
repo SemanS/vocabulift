@@ -12,13 +12,23 @@ import VocabularyList from "./components/VocabularyList/VocabularyList";
 import { FetchDataResponse } from "@/models/services.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
-import { getSentences, getUserSentences } from "@/services/userService";
-import { UserSentence, UserWord } from "@/models/userSentence.interface";
-import { getAllUserWords } from "@/utils/getAllUserWords";
+import {
+  addUserPhrase,
+  deleteUserPhrase,
+  getSentences,
+  getUserSentences,
+} from "@/services/userService";
+import {
+  UserPhrase,
+  UserSentence,
+  UserWord,
+} from "@/models/userSentence.interface";
+import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
+import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { libraryId } = useParams();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const pageSizeFromQuery = parseInt(queryParams.get("pageSize") as string);
@@ -45,6 +55,8 @@ const BookDetail: FC = () => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
   const [userSentences, setUserSentences] = useState<UserSentence[]>([]);
+  const [vocabularyListUserPhrases, setVocabularyListUserPhrases] =
+    useState<VocabularyListUserPhrase[]>();
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<any>();
   const [user, setUser] = useRecoilState(userState);
@@ -85,13 +97,13 @@ const BookDetail: FC = () => {
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
     const sentencesData: FetchDataResponse = await getSentences(
-      id,
+      libraryId,
       sentenceFrom,
       countOfSentences,
       localSentenceFrom
     );
     const userSentencesData: UserSentence[] = await getUserSentences(
-      id,
+      libraryId,
       sentenceFrom,
       countOfSentences,
       localSentenceFrom,
@@ -122,14 +134,60 @@ const BookDetail: FC = () => {
       })),
     });
     setTotalSentences(sentencesData.totalSentences);
+    console.log("nastavujem setUserSentenes");
+    setVocabularyListUserPhrases(
+      mapUserSentencesToVocabularyListUserPhrases(userSentencesData)
+    );
     setUserSentences(userSentencesData);
   };
 
-  const handleClickedWord = async (word: string) => {
-    /* if (!clickedWords.includes(word) && mode == "word") {
-      setClickedWords([...clickedWords, word]);
-      setClickedWord(word);
-    } */
+  const handleAddUserPhrase = async (
+    vocabularyListUserPhrase: VocabularyListUserPhrase
+  ) => {
+    try {
+      console.log(
+        "vocabularyListUserPhrase" + JSON.stringify(vocabularyListUserPhrase)
+      );
+
+      // Update the userSentences state
+      const updateVocabularyListUserPhrases = [
+        ...(vocabularyListUserPhrases || []),
+        vocabularyListUserPhrase,
+      ];
+      setVocabularyListUserPhrases(updateVocabularyListUserPhrases);
+    } catch (error) {
+      console.error("Error adding user phrase:", error);
+    }
+  };
+
+  const handleDeleteUserPhrase = async (
+    startPosition: number,
+    sentence_no: number
+  ) => {
+    try {
+      await deleteUserPhrase(
+        libraryId,
+        sentence_no,
+        startPosition,
+        sourceLanguage,
+        targetLanguage,
+        sessionStorage.getItem("access_token")
+      );
+
+      // Filter out the element with the specified startPosition and sentence_no
+      const updatedVocabularyListUserPhrases =
+        vocabularyListUserPhrases!.filter(
+          (item) =>
+            !(
+              item.phrase.startPosition === startPosition &&
+              item.sentence_no === sentence_no
+            )
+        );
+
+      setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
+    } catch (error) {
+      console.error("Error deleting user phrase:", error);
+    }
   };
 
   const onShowSizeChange: PaginationProps["onShowSizeChange"] = async (
@@ -165,9 +223,9 @@ const BookDetail: FC = () => {
       page: page,
       pageSieze: pageSize,
     };
-    localStorage.setItem(`bookState-${id}`, JSON.stringify(bookState));
+    localStorage.setItem(`bookState-${libraryId}`, JSON.stringify(bookState));
 
-    await updateBookState(id, page, pageSize);
+    await updateBookState(libraryId, page, pageSize);
 
     //Update recoil state of the user
     //console.log(JSON.stringify(user.books));
@@ -257,7 +315,7 @@ const BookDetail: FC = () => {
               mode={mode}
               texts={texts}
               userSentences={userSentences}
-              onClick={handleClickedWord}
+              onAddUserPhrase={handleAddUserPhrase}
             />
             <PaginationControls
               currentPage={currentPage}
@@ -272,14 +330,13 @@ const BookDetail: FC = () => {
           <>
             <Col span={6}>
               <VocabularyList
-                sourceLanguage={sourceLanguage}
-                targetLanguage={targetLanguage}
-                clickedWords={getAllUserWords(userSentences)}
+                phrases={vocabularyListUserPhrases}
+                onDeleteItem={handleDeleteUserPhrase}
               />
             </Col>
-            <Col span={18}>
+            {/* <Col span={18}>
               <WordDefinitionCard wordData={wordData} />
-            </Col>
+            </Col> */}
           </>
         )}
       </Row>
