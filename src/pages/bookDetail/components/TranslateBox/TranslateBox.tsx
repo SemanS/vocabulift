@@ -24,6 +24,7 @@ interface TranslateBoxProps {
   sentenceFrom: number;
   sentencesPerPage: number;
   userSentences: UserSentence[];
+  vocabularyListUserPhrases: VocabularyListUserPhrase[];
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
 }
 
@@ -36,6 +37,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   sentenceFrom,
   sentencesPerPage,
   userSentences,
+  vocabularyListUserPhrases,
   onAddUserPhrase,
 }) => {
   const { libraryId } = useParams();
@@ -230,6 +232,28 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     return <div>An error occurred: {error.message}</div>;
   }
 
+  const isWordInUserPhrases = (
+    vocabularyListUserPhrases: any[],
+    word: any,
+    wordIndexInSentence: number,
+    sentenceNumber: any
+  ) => {
+    return vocabularyListUserPhrases.some((phraseObj) => {
+      if (phraseObj.sentence_no !== sentenceNumber) {
+        return false;
+      }
+      const startPosition = phraseObj.phrase.startPosition;
+      const endPosition =
+        startPosition +
+        (phraseObj.phrase.text ? phraseObj.phrase.text.split(" ").length : 0) -
+        1;
+      return (
+        wordIndexInSentence >= startPosition &&
+        wordIndexInSentence <= endPosition
+      );
+    });
+  };
+
   return (
     <>
       {mode === "sentence"
@@ -291,17 +315,24 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                           onMouseUp={handleMouseUp}
                           highlightPositions={getHighlightPositions(
                             userSentences,
+                            vocabularyListUserPhrases, // Add this argument
                             sentence.sentence_no,
                             wordIndexInSentence
                           )}
                           isHighlighted={isWordInHighlightedPhrase(
-                            userSentences, // Add this argument
+                            userSentences,
                             selectedWords,
                             word,
                             wordIndexInSentence,
                             sentence.sentence_no
                           )}
                           wordIndex={wordIndexInSentence}
+                          isInUserPhrases={isWordInUserPhrases(
+                            vocabularyListUserPhrases,
+                            word,
+                            wordIndexInSentence,
+                            sentence.sentence_no
+                          )}
                         />
                       );
                     })}

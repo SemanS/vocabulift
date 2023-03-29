@@ -16,6 +16,7 @@ interface TranslateWordProps {
   highlightPositions?: boolean;
   isHighlighted?: boolean;
   wordIndex: number;
+  isInUserPhrases: boolean;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
@@ -28,6 +29,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   onMouseUp,
   highlightPositions,
   isHighlighted,
+  isInUserPhrases,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -77,7 +79,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
         whiteSpace: "pre-wrap",
       }}
       className={classNames(
-        isHovered || highlightPositions || isHighlighted
+        isHovered || highlightPositions || isHighlighted || isInUserPhrases
           ? styles.bubbleHovered
           : "",
         styles.textbox

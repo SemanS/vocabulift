@@ -37,7 +37,6 @@ const VocabularyList: FC<VocabularyListProps> = ({ phrases, onDeleteItem }) => {
           >
             <List.Item.Meta avatar={<DeleteOutlined />} />
             {word.phrase.sourceText} - {word.phrase.targetText} -{" "}
-            {word.sentence_no}
           </List.Item>
         )}
       />

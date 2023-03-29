@@ -25,6 +25,7 @@ import {
 } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
+import { mapVocabularyListUserPhrasesToUserSentences } from "@/utils/mapVocabularyListUserPhrasesToUserSentences";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -145,16 +146,24 @@ const BookDetail: FC = () => {
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => {
     try {
-      console.log(
-        "vocabularyListUserPhrase" + JSON.stringify(vocabularyListUserPhrase)
-      );
-
-      // Update the userSentences state
       const updateVocabularyListUserPhrases = [
         ...(vocabularyListUserPhrases || []),
         vocabularyListUserPhrase,
       ];
+
+      const userSentence: UserSentence = {
+        libraryId: libraryId!,
+        sentence_no: vocabularyListUserPhrase.sentence_no,
+        sourceLanguage: sourceLanguage,
+        targetLanguage: targetLanguage,
+        words: [],
+        phrases: [vocabularyListUserPhrase.phrase],
+      };
+
+      const updateUserSentences = [...(userSentences || []), userSentence];
+
       setVocabularyListUserPhrases(updateVocabularyListUserPhrases);
+      setUserSentences(updateUserSentences);
     } catch (error) {
       console.error("Error adding user phrase:", error);
     }
@@ -226,21 +235,6 @@ const BookDetail: FC = () => {
     localStorage.setItem(`bookState-${libraryId}`, JSON.stringify(bookState));
 
     await updateBookState(libraryId, page, pageSize);
-
-    //Update recoil state of the user
-    //console.log(JSON.stringify(user.books));
-    /* const updatedItems = user.library.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          id,
-          lastReadPage: page,
-          pageSize: pageSize,
-        };
-      }
-      return item;
-    });
-    setUser({ ...user, library: updatedItems }); */
 
     if (initState) {
       let localSentenceFrom =
@@ -316,6 +310,7 @@ const BookDetail: FC = () => {
               texts={texts}
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
+              vocabularyListUserPhrases={vocabularyListUserPhrases!}
             />
             <PaginationControls
               currentPage={currentPage}
@@ -326,7 +321,7 @@ const BookDetail: FC = () => {
             />
           </Card>
         </Col>
-        {userSentences.length !== 0 && (
+        {vocabularyListUserPhrases?.length !== 0 && (
           <>
             <Col span={6}>
               <VocabularyList

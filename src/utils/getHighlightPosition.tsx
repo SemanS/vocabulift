@@ -1,7 +1,9 @@
 import { UserSentence } from "@/models/userSentence.interface";
+import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 
 export const getHighlightPositions = (
   userSentences: UserSentence[],
+  vocabularyListUserPhrases: VocabularyListUserPhrase[], // Add this parameter
   sentence_no: number,
   wordPosition: number
 ): boolean => {
@@ -27,7 +29,20 @@ export const getHighlightPositions = (
         userPhrase.endPosition >= wordPosition
     );
 
-  return isPhraseHighlighted || isWordHighlighted;
+  const isInVocabularyListUserPhrases = vocabularyListUserPhrases.some(
+    (phraseObj) => {
+      if (phraseObj.sentence_no !== sentence_no) {
+        return false;
+      }
+      const startPosition = phraseObj.phrase.startPosition;
+      const endPosition = phraseObj.phrase.endPosition;
+      return wordPosition >= startPosition && wordPosition <= endPosition;
+    }
+  );
+
+  return (
+    isPhraseHighlighted || isWordHighlighted || isInVocabularyListUserPhrases
+  );
 };
 
 // New function isWordInHighlightedPhrase
