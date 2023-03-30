@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
-import React from "react";
+import { useParams } from "react-router-dom";
 import {
   getHighlightPositions,
   isWordInHighlightedPhrase,
@@ -8,18 +8,14 @@ import {
 import { UserSentence } from "@/models/userSentence.interface";
 import { getHighlightedWords } from "@/utils/getHighlightedWords";
 import { addUserPhrase } from "@/services/userService";
-import { useParams } from "react-router-dom";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
+import React from "react";
 
 interface TranslateBoxProps {
   mode: string;
   sourceLanguage: "en" | "cz" | "sk";
   targetLanguage: "en" | "cz" | "sk";
-  texts: {
-    en: { text: string; sentence_no: number }[];
-    cz: { text: string; sentence_no: number }[];
-    sk: { text: string; sentence_no: number }[];
-  };
+  texts: Record<"en" | "cz" | "sk", { text: string; sentence_no: number }[]>;
   currentTextIndex: number;
   sentenceFrom: number;
   sentencesPerPage: number;
@@ -41,11 +37,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   onAddUserPhrase,
 }) => {
   const { libraryId } = useParams();
-
   const [error, setError] = useState<Error | null>(null);
-  const [selectedWords, setSelectedWords] = useState<
-    { word: string; wordIndexInSentence: number; sentenceNumber: number }[]
-  >([]);
+  const [selectedWords, setSelectedWords] = useState<any[]>([]);
   const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
   const [mouseDown, setMouseDown] = useState(false);
   const [selectedPhrase, setSelectedPhrase] = useState<string | null>(null);
@@ -65,10 +58,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         sessionStorage.getItem("access_token")
       ).then((response) => {
         if (response.status === "success") {
+          console.log(JSON.stringify(response.data));
           const vocabularyListUserPhrase: VocabularyListUserPhrase = {
             phrase: {
               sourceText: selectedPhrase,
-              targetText: selectedPhrase,
+              targetText:
+                response.data.phrases[response.data.phrases.length - 1]
+                  .targetText,
               startPosition: startPosition!,
               endPosition: endPosition!,
             },
@@ -80,22 +76,21 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   }, [selectedPhrase]);
 
-  const handleMouseDown = (
+  const handleMouseEvent = (
+    eventType: "down" | "enter",
     word: string,
     sentenceNumber: number,
     wordIndexInSentence: number
   ) => {
-    setMouseDown(true);
-    setSelectedSentence(sentenceNumber);
-    setSelectedWords([{ word, wordIndexInSentence, sentenceNumber }]);
-  };
-
-  const handleMouseEnter = (
-    word: string,
-    sentenceNumber: number,
-    wordIndexInSentence: number
-  ) => {
-    if (mouseDown && selectedSentence == sentenceNumber) {
+    if (eventType === "down") {
+      setMouseDown(true);
+      setSelectedSentence(sentenceNumber);
+      setSelectedWords([{ word, wordIndexInSentence, sentenceNumber }]);
+    } else if (
+      eventType === "enter" &&
+      mouseDown &&
+      selectedSentence === sentenceNumber
+    ) {
       setSelectedWords((prevWords: any) => {
         if (!prevWords || prevWords.length == 0) {
           return [];
@@ -177,82 +172,39 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     const sortedSelectedWords = selectedWords.sort(
       (a, b) => a.wordIndexInSentence - b.wordIndexInSentence
     );
-    let stopOnCollision = false;
+    const highlightedWords = getHighlightedWords(userSentences, sentenceNumber);
     const phrase = sortedSelectedWords
-      .map(({ word, wordIndexInSentence }) => {
-        if (
-          stopOnCollision ||
-          getHighlightedWords(userSentences, sentenceNumber).includes(
-            wordIndexInSentence
-          )
-        ) {
-          stopOnCollision = true;
-          return null;
-        } else {
-          return word;
-        }
-      })
+      .map(({ word, wordIndexInSentence }) =>
+        !highlightedWords.includes(wordIndexInSentence) ? word : null
+      )
       .filter((word) => word !== null)
       .join(" ");
     setSelectedPhrase(phrase);
-    // Get the start and end positions
     if (sortedSelectedWords.length > 0) {
-      const startPosition = sortedSelectedWords[0].wordIndexInSentence;
-      const endPosition =
-        sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence;
-
-      setStartPosition(startPosition);
-      setEndPosition(endPosition);
+      setStartPosition(sortedSelectedWords[0].wordIndexInSentence);
+      setEndPosition(
+        sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence
+      );
     }
-    console.log("Selected sentence from TranslateBox: ", selectedSentence);
-    console.log("Selected phrase: ", phrase);
   };
 
-  const getSourceTexts = () => {
-    return texts[sourceLanguage];
-  };
+  const getTexts = (language: "en" | "cz" | "sk") => texts[language];
 
-  const getTargetTexts = () => {
-    return texts[targetLanguage];
-  };
+  const sourceTexts = getTexts(sourceLanguage);
+  const targetTexts = getTexts(targetLanguage);
 
-  const sourceTexts = getSourceTexts();
-  const targetTexts = getTargetTexts();
+  const getVisibleTexts = (textArray: any[]) =>
+    textArray.slice(
+      currentTextIndex - sentenceFrom + 1,
+      currentTextIndex - sentenceFrom + 1 + sentencesPerPage
+    );
 
-  const visibleSourceTexts = sourceTexts.slice(
-    currentTextIndex - sentenceFrom + 1,
-    currentTextIndex - sentenceFrom + 1 + sentencesPerPage
-  );
-  const visibleTargetTexts = targetTexts.slice(
-    currentTextIndex - sentenceFrom + 1,
-    currentTextIndex - sentenceFrom + 1 + sentencesPerPage
-  );
+  const visibleSourceTexts = getVisibleTexts(sourceTexts);
+  const visibleTargetTexts = getVisibleTexts(targetTexts);
 
   if (error) {
     return <div>An error occurred: {error.message}</div>;
   }
-
-  const isWordInUserPhrases = (
-    vocabularyListUserPhrases: any[],
-    word: any,
-    wordIndexInSentence: number,
-    sentenceNumber: any
-  ) => {
-    return vocabularyListUserPhrases.some((phraseObj) => {
-      if (phraseObj.sentence_no !== sentenceNumber) {
-        return false;
-      }
-      const startPosition = phraseObj.phrase.startPosition;
-      const endPosition =
-        startPosition +
-        (phraseObj.phrase.text ? phraseObj.phrase.text.split(" ").length : 0) -
-        1;
-      return (
-        wordIndexInSentence >= startPosition &&
-        wordIndexInSentence <= endPosition
-      );
-    });
-  };
 
   return (
     <>
@@ -264,13 +216,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 word={textObj.text}
                 translation={visibleTargetTexts[index].text}
                 sentenceNumber={textObj.sentence_no}
-                //onClick={handleWordClick}
                 mode={mode}
-                highlightPositions={getHighlightPositions(
-                  userSentences,
-                  textObj.sentence_no,
-                  index
-                )}
               />
             </div>
           ))
@@ -279,7 +225,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
             let wordCounter = 0;
             return (
               <div key={index} style={{ whiteSpace: "pre-wrap" }}>
-                {sentenceLines.map((line, lineIndex) => (
+                {sentenceLines.map((line: string, lineIndex: number) => (
                   <React.Fragment key={`${index}-${lineIndex}`}>
                     {line.split(" ").map((word, wordIndex) => {
                       const wordIndexInSentence = wordCounter++;
@@ -296,7 +242,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                           sentenceNumber={sentence.sentence_no}
                           mode={mode}
                           onMouseDown={(word: string, sentenceNumber: number) =>
-                            handleMouseDown(
+                            handleMouseEvent(
+                              "down",
                               word,
                               sentenceNumber,
                               wordIndexInSentence
@@ -306,7 +253,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                             word: string,
                             sentenceNumber: number
                           ) =>
-                            handleMouseEnter(
+                            handleMouseEvent(
+                              "enter",
                               word,
                               sentenceNumber,
                               wordIndexInSentence
@@ -327,12 +275,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                             sentence.sentence_no
                           )}
                           wordIndex={wordIndexInSentence}
-                          isInUserPhrases={isWordInUserPhrases(
-                            vocabularyListUserPhrases,
-                            word,
-                            wordIndexInSentence,
-                            sentence.sentence_no
-                          )}
                         />
                       );
                     })}

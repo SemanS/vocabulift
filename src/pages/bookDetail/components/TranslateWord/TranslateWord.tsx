@@ -1,22 +1,21 @@
 import { Tooltip, Typography } from "antd";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./TranslateWord.module.less";
 
 const { Text } = Typography;
 
 interface TranslateWordProps {
-  word: string;
-  translation: string;
-  sentenceNumber: number;
+  word?: string;
+  translation?: string;
+  sentenceNumber?: number;
   mode: string;
   onMouseDown?: (word: string, sentenceNumber: number) => void;
   onMouseEnter?: (word: string, sentenceNumber: number) => void;
   onMouseUp?: (sentenceNumber: number) => void;
   highlightPositions?: boolean;
   isHighlighted?: boolean;
-  wordIndex: number;
-  isInUserPhrases: boolean;
+  wordIndex?: number;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
@@ -29,12 +28,10 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   onMouseUp,
   highlightPositions,
   isHighlighted,
-  isInUserPhrases,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleMouseDown = (event: React.MouseEvent) => {
-    //  event.stopPropagation();
+  const handleMouseDown = () => {
     onMouseDown?.(word, sentenceNumber);
   };
 
@@ -79,7 +76,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
         whiteSpace: "pre-wrap",
       }}
       className={classNames(
-        isHovered || highlightPositions || isHighlighted || isInUserPhrases
+        isHovered || highlightPositions || isHighlighted
           ? styles.bubbleHovered
           : "",
         styles.textbox

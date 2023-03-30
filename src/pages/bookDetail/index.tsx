@@ -5,7 +5,6 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
-import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import VocabularyList from "./components/VocabularyList/VocabularyList";
@@ -13,19 +12,13 @@ import { FetchDataResponse } from "@/models/services.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
 import {
-  addUserPhrase,
   deleteUserPhrase,
   getSentences,
   getUserSentences,
 } from "@/services/userService";
-import {
-  UserPhrase,
-  UserSentence,
-  UserWord,
-} from "@/models/userSentence.interface";
+import { UserSentence, UserWord } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
-import { mapVocabularyListUserPhrasesToUserSentences } from "@/utils/mapVocabularyListUserPhrasesToUserSentences";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();

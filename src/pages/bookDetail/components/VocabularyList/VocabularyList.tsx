@@ -1,8 +1,7 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import { Card, List } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
-import { UserSentence } from "@/models/userSentence.interface";
 
 interface VocabularyListProps {
   phrases: VocabularyListUserPhrase[] | undefined;
@@ -35,8 +34,18 @@ const VocabularyList: FC<VocabularyListProps> = ({ phrases, onDeleteItem }) => {
               handleDeleteItem(word.phrase.startPosition, word.sentence_no)
             }
           >
-            <List.Item.Meta avatar={<DeleteOutlined />} />
-            {word.phrase.sourceText} - {word.phrase.targetText} -{" "}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+            >
+              <List.Item.Meta avatar={<DeleteOutlined />} />
+              <span>
+                {word.phrase.sourceText} - {word.phrase.targetText}
+              </span>
+            </div>
           </List.Item>
         )}
       />
