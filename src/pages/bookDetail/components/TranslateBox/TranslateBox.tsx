@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
 import { useParams } from "react-router-dom";
 import {
@@ -10,6 +10,7 @@ import { getHighlightedWords } from "@/utils/getHighlightedWords";
 import { addUserPhrase } from "@/services/userService";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 import React from "react";
+import { SentenceWord } from "@/models/sentences.interfaces";
 
 interface TranslateBoxProps {
   mode: string;
@@ -21,6 +22,7 @@ interface TranslateBoxProps {
   sentencesPerPage: number;
   userSentences: UserSentence[];
   vocabularyListUserPhrases: VocabularyListUserPhrase[];
+  sentenceWords: SentenceWord[];
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
 }
 
@@ -34,6 +36,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   sentencesPerPage,
   userSentences,
   vocabularyListUserPhrases,
+  sentenceWords,
   onAddUserPhrase,
 }) => {
   const { libraryId } = useParams();
@@ -75,6 +78,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       });
     }
   }, [selectedPhrase]);
+
+  useEffect(() => {
+    // This effect will run whenever vocabularyListUserPhrases changes
+    setSelectedWords([]);
+  }, [vocabularyListUserPhrases]);
 
   const handleMouseEvent = (
     eventType: "down" | "enter",
@@ -206,6 +214,36 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     return <div>An error occurred: {error.message}</div>;
   }
 
+  interface MappedSentenceWord {
+    sourceWord: string;
+    targetWord: string;
+  }
+
+  interface MappedSentenceWords {
+    [sentenceNo: number]: MappedSentenceWord[];
+  }
+
+  const mappedSentenceWords = useMemo(() => {
+    const mapSentenceWords = (
+      sentenceWords: SentenceWord[]
+    ): MappedSentenceWords => {
+      const mappedData: MappedSentenceWords = {};
+
+      sentenceWords.forEach((sentenceWord) => {
+        mappedData[sentenceWord.sentence_no] = sentenceWord.sentenceWord.map(
+          (wordDetail) => ({
+            sourceWord: wordDetail.sourceWordText,
+            targetWord: wordDetail.targetWordText,
+          })
+        );
+      });
+
+      return mappedData;
+    };
+
+    return mapSentenceWords(sentenceWords);
+  }, [sentenceWords]);
+
   return (
     <>
       {mode === "sentence"
@@ -229,16 +267,17 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                   <React.Fragment key={`${index}-${lineIndex}`}>
                     {line.split(" ").map((word, wordIndex) => {
                       const wordIndexInSentence = wordCounter++;
+                      const currentSentenceMappedWords =
+                        mappedSentenceWords[sentence.sentence_no] || [];
+                      const translation = currentSentenceMappedWords.find(
+                        (mappedWord) => mappedWord.sourceWord === word
+                      )?.targetWord;
 
                       return (
                         <TranslateWord
                           key={`${index}-${lineIndex}-${wordIndex}`}
                           word={word}
-                          translation={
-                            visibleTargetTexts[index].text
-                              .split("\n")
-                              [lineIndex].split(" ")[wordIndex]
-                          }
+                          translation={translation}
                           sentenceNumber={sentence.sentence_no}
                           mode={mode}
                           onMouseDown={(word: string, sentenceNumber: number) =>

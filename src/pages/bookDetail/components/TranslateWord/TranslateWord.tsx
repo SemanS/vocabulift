@@ -1,3 +1,4 @@
+import { SentenceWord } from "@/models/sentences.interfaces";
 import { Tooltip, Typography } from "antd";
 import classNames from "classnames";
 import React, { useState } from "react";
@@ -32,24 +33,24 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseDown = () => {
-    onMouseDown?.(word, sentenceNumber);
+    onMouseDown?.(word!, sentenceNumber!);
   };
 
   const handleMouseEnter = () => {
-    onMouseEnter?.(word, sentenceNumber);
+    onMouseEnter?.(word!, sentenceNumber!);
   };
 
   const handleMouseUp = () => {
-    onMouseUp?.(sentenceNumber);
+    onMouseUp?.(sentenceNumber!);
   };
 
   highlightPositions;
 
   const renderTooltip = (children: React.ReactNode) => {
-    return mode === "sentence" ? (
+    return (
       <Tooltip
         arrow={false}
-        mouseEnterDelay={0}
+        mouseEnterDelay={0.15}
         mouseLeaveDelay={0}
         overlayInnerStyle={{
           backgroundColor: "white",
@@ -64,8 +65,6 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
       >
         {children}
       </Tooltip>
-    ) : (
-      <>{children}</>
     );
   };
 

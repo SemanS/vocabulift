@@ -8,7 +8,7 @@ import TranslateBox from "./components/TranslateBox/TranslateBox";
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import VocabularyList from "./components/VocabularyList/VocabularyList";
-import { FetchDataResponse } from "@/models/services.interfaces";
+import { SentenceResponse, SentenceWord } from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
 import {
@@ -61,6 +61,7 @@ const BookDetail: FC = () => {
     "sk"
   );
   const [initState, setInitState] = useState<boolean>(true);
+  const [sentenceWords, setSentenceWords] = useState<SentenceWord[]>([]);
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -90,11 +91,13 @@ const BookDetail: FC = () => {
   }, [clickedWord]);
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
-    const sentencesData: FetchDataResponse = await getSentences(
+    const sentencesData: SentenceResponse = await getSentences(
       libraryId,
       sentenceFrom,
       countOfSentences,
-      localSentenceFrom
+      localSentenceFrom,
+      sourceLanguage,
+      targetLanguage
     );
     const userSentencesData: UserSentence[] = await getUserSentences(
       libraryId,
@@ -111,7 +114,7 @@ const BookDetail: FC = () => {
 
   const updateSentencesState = async (
     userSentencesData: UserSentence[],
-    sentencesData: FetchDataResponse
+    sentencesData: SentenceResponse
   ) => {
     setTexts({
       en: sentencesData.sentences.map(({ content_en, sentence_no }) => ({
@@ -127,8 +130,8 @@ const BookDetail: FC = () => {
         sentence_no,
       })),
     });
+    setSentenceWords(sentencesData.sentenceWords);
     setTotalSentences(sentencesData.totalSentences);
-    console.log("nastavujem setUserSentenes");
     setVocabularyListUserPhrases(
       mapUserSentencesToVocabularyListUserPhrases(userSentencesData)
     );
@@ -166,6 +169,28 @@ const BookDetail: FC = () => {
     startPosition: number,
     sentence_no: number
   ) => {
+    // Update sentences in TranslateBox by deleted sentences
+    const updatedUserSentences = userSentences.map((sentence) => {
+      if (sentence.sentence_no === sentence_no) {
+        return {
+          ...sentence,
+          phrases: sentence.phrases.filter(
+            (phrase) => phrase.startPosition !== startPosition
+          ),
+        };
+      }
+      return sentence;
+    });
+
+    // Update sentences in VocabularyList by deleted sentences
+    const updatedVocabularyListUserPhrases = vocabularyListUserPhrases!.filter(
+      (item) =>
+        !(
+          item.phrase.startPosition === startPosition &&
+          item.sentence_no === sentence_no
+        )
+    );
+
     try {
       await deleteUserPhrase(
         libraryId,
@@ -174,19 +199,12 @@ const BookDetail: FC = () => {
         sourceLanguage,
         targetLanguage,
         sessionStorage.getItem("access_token")
-      );
+      ).then(() => {
+        setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
+        setUserSentences(updatedUserSentences);
+      });
 
       // Filter out the element with the specified startPosition and sentence_no
-      const updatedVocabularyListUserPhrases =
-        vocabularyListUserPhrases!.filter(
-          (item) =>
-            !(
-              item.phrase.startPosition === startPosition &&
-              item.sentence_no === sentence_no
-            )
-        );
-
-      setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
     } catch (error) {
       console.error("Error deleting user phrase:", error);
     }
@@ -304,6 +322,7 @@ const BookDetail: FC = () => {
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
               vocabularyListUserPhrases={vocabularyListUserPhrases!}
+              sentenceWords={sentenceWords}
             />
             <PaginationControls
               currentPage={currentPage}

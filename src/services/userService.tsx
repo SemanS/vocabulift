@@ -22,14 +22,16 @@ export const getSentences = async (
   id: string | undefined,
   sentenceFrom: number,
   countOfSentences: number,
-  localSentenceFrom: number
+  localSentenceFrom: number,
+  sourceLanguage: string,
+  targetLanguage: string
 ) => {
   const response = await fetch(
     `${
       import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
     }/sentence/${id}?sentenceFrom=${
       localSentenceFrom ? localSentenceFrom : sentenceFrom
-    }&countOfSentences=${countOfSentences}`,
+    }&countOfSentences=${countOfSentences}&sourceLanguage=${sourceLanguage}&targetLanguage=${targetLanguage}`,
     {
       headers: {
         "Content-Type": "text/plain;charset=UTF-8",
