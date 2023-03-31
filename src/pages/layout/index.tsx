@@ -95,7 +95,7 @@ const LayoutPage: FC = () => {
           headerTitleRender={() => (
             <Space style={{ display: "flex", alignItems: "left" }}>
               <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
-              <h1 style={{ marginLeft: "0px" }}>Vocabulift</h1>
+              <h1 style={{ marginLeft: "0px" }}>VocabuLift</h1>
             </Space>
           )}
           menuItemRender={(menuItemProps, defaultDom) => {

@@ -1,18 +1,20 @@
-import React, { lazy, FC } from "react";
+import React, { lazy, FC, Suspense } from "react";
 
 import Dashboard from "@/pages/dashboard";
 import LoginPage from "@/pages/login";
 import LayoutPage from "@/pages/layout";
 import WrapperRouteComponent from "./config";
-import { useRoutes, RouteObject } from "react-router-dom";
+import { useRoutes, RouteObject, Routes, Route } from "react-router-dom";
 import BookDetail from "@/pages/bookDetail";
 import Books from "@/pages/books";
 import Vocabulary from "@/pages/vocabulary";
-import WebLayoutPage from "@/pages/webLayout";
-
+//import WebLayoutPage from "@/pages/webLayout";
+import Footer from "@/pages/webLayout/shared/components/Footer";
+import Header from "@/pages/webLayout/shared/components/Header";
+import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
 const NotFound = lazy(() => import("@/pages/404"));
 //const Project = lazy(() => import("@/pages/project"));
-
+const WebLayoutPage = lazy(() => import("@/pages/webLayout"));
 const routeList: RouteObject[] = [
   {
     element: (
@@ -66,9 +68,10 @@ const routeList: RouteObject[] = [
   {
     path: "/",
     element: (
-      <WrapperRouteComponent>
+      <>
         <WebLayoutPage />
-      </WrapperRouteComponent>
+        <GlobalStyles />
+      </>
     ),
   },
   {
