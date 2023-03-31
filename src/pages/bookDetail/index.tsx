@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useState, useEffect, useCallback } from "react";
 import { Card, Row, Col, Switch, Space, PaginationProps } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -8,7 +8,11 @@ import TranslateBox from "./components/TranslateBox/TranslateBox";
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import VocabularyList from "./components/VocabularyList/VocabularyList";
-import { SentenceResponse, SentenceWord } from "@/models/sentences.interfaces";
+import {
+  SentenceData,
+  SentenceResponse,
+  SentenceWord,
+} from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
 import {
@@ -90,6 +94,23 @@ const BookDetail: FC = () => {
     }
   }, [clickedWord]);
 
+  const memoizeTexts = (sentences: SentenceData[]) => {
+    return {
+      en: sentences.map(({ content_en, sentence_no }) => ({
+        text: content_en,
+        sentence_no,
+      })),
+      cz: sentences.map(({ content_cz, sentence_no }) => ({
+        text: content_cz,
+        sentence_no,
+      })),
+      sk: sentences.map(({ content_sk, sentence_no }) => ({
+        text: content_sk,
+        sentence_no,
+      })),
+    };
+  };
+
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
     const sentencesData: SentenceResponse = await getSentences(
       libraryId,
@@ -116,20 +137,7 @@ const BookDetail: FC = () => {
     userSentencesData: UserSentence[],
     sentencesData: SentenceResponse
   ) => {
-    setTexts({
-      en: sentencesData.sentences.map(({ content_en, sentence_no }) => ({
-        text: content_en,
-        sentence_no,
-      })),
-      cz: sentencesData.sentences.map(({ content_cz, sentence_no }) => ({
-        text: content_cz,
-        sentence_no,
-      })),
-      sk: sentencesData.sentences.map(({ content_sk, sentence_no }) => ({
-        text: content_sk,
-        sentence_no,
-      })),
-    });
+    setTexts(memoizeTexts(sentencesData.sentences));
     setSentenceWords(sentencesData.sentenceWords);
     setTotalSentences(sentencesData.totalSentences);
     setVocabularyListUserPhrases(
@@ -138,88 +146,90 @@ const BookDetail: FC = () => {
     setUserSentences(userSentencesData);
   };
 
-  const handleAddUserPhrase = async (
-    vocabularyListUserPhrase: VocabularyListUserPhrase
-  ) => {
-    try {
-      const updateVocabularyListUserPhrases = [
-        ...(vocabularyListUserPhrases || []),
-        vocabularyListUserPhrase,
-      ];
+  const handleAddUserPhrase = useCallback(
+    async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
+      try {
+        const updateVocabularyListUserPhrases = [
+          ...(vocabularyListUserPhrases || []),
+          vocabularyListUserPhrase,
+        ];
 
-      const userSentence: UserSentence = {
-        libraryId: libraryId!,
-        sentence_no: vocabularyListUserPhrase.sentence_no,
-        sourceLanguage: sourceLanguage,
-        targetLanguage: targetLanguage,
-        words: [],
-        phrases: [vocabularyListUserPhrase.phrase],
-      };
-
-      const updateUserSentences = [...(userSentences || []), userSentence];
-
-      setVocabularyListUserPhrases(updateVocabularyListUserPhrases);
-      setUserSentences(updateUserSentences);
-    } catch (error) {
-      console.error("Error adding user phrase:", error);
-    }
-  };
-
-  const handleDeleteUserPhrase = async (
-    startPosition: number,
-    sentence_no: number
-  ) => {
-    // Update sentences in TranslateBox by deleted sentences
-    const updatedUserSentences = userSentences.map((sentence) => {
-      if (sentence.sentence_no === sentence_no) {
-        return {
-          ...sentence,
-          phrases: sentence.phrases.filter(
-            (phrase) => phrase.startPosition !== startPosition
-          ),
+        const userSentence: UserSentence = {
+          libraryId: libraryId!,
+          sentence_no: vocabularyListUserPhrase.sentence_no,
+          sourceLanguage: sourceLanguage,
+          targetLanguage: targetLanguage,
+          words: [],
+          phrases: [vocabularyListUserPhrase.phrase],
         };
+
+        const updateUserSentences = [...(userSentences || []), userSentence];
+
+        setVocabularyListUserPhrases(updateVocabularyListUserPhrases);
+        setUserSentences(updateUserSentences);
+      } catch (error) {
+        console.error("Error adding user phrase:", error);
       }
-      return sentence;
-    });
+    },
+    [userSentences, vocabularyListUserPhrases]
+  );
 
-    // Update sentences in VocabularyList by deleted sentences
-    const updatedVocabularyListUserPhrases = vocabularyListUserPhrases!.filter(
-      (item) =>
-        !(
-          item.phrase.startPosition === startPosition &&
-          item.sentence_no === sentence_no
-        )
-    );
-
-    try {
-      await deleteUserPhrase(
-        libraryId,
-        sentence_no,
-        startPosition,
-        sourceLanguage,
-        targetLanguage,
-        sessionStorage.getItem("access_token")
-      ).then(() => {
-        setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
-        setUserSentences(updatedUserSentences);
+  const handleDeleteUserPhrase = useCallback(
+    async (startPosition: number, sentence_no: number) => {
+      // Update sentences in TranslateBox by deleted sentences
+      const updatedUserSentences = userSentences.map((sentence) => {
+        if (sentence.sentence_no === sentence_no) {
+          return {
+            ...sentence,
+            phrases: sentence.phrases.filter(
+              (phrase) => phrase.startPosition !== startPosition
+            ),
+          };
+        }
+        return sentence;
       });
 
-      // Filter out the element with the specified startPosition and sentence_no
-    } catch (error) {
-      console.error("Error deleting user phrase:", error);
-    }
-  };
+      // Update sentences in VocabularyList by deleted sentences
+      const updatedVocabularyListUserPhrases =
+        vocabularyListUserPhrases!.filter(
+          (item) =>
+            !(
+              item.phrase.startPosition === startPosition &&
+              item.sentence_no === sentence_no
+            )
+        );
 
-  const onShowSizeChange: PaginationProps["onShowSizeChange"] = async (
-    current,
-    pageSize
-  ) => {
-    // Calculate the new current page based on the new page size
-    const newCurrentPage =
-      Math.floor(((current - 1) * sentencesPerPage) / pageSize) + 1;
-    setSentencesPerPage(pageSize);
-    await handlePageChange(newCurrentPage, pageSize);
-  };
+      try {
+        await deleteUserPhrase(
+          libraryId,
+          sentence_no,
+          startPosition,
+          sourceLanguage,
+          targetLanguage,
+          sessionStorage.getItem("access_token")
+        ).then(() => {
+          setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
+          setUserSentences(updatedUserSentences);
+        });
+
+        // Filter out the element with the specified startPosition and sentence_no
+      } catch (error) {
+        console.error("Error deleting user phrase:", error);
+      }
+    },
+    [userSentences, vocabularyListUserPhrases]
+  );
+
+  const onShowSizeChange = useCallback(
+    async (current: number, pageSize: number) => {
+      // Calculate the new current page based on the new page size
+      const newCurrentPage =
+        Math.floor(((current - 1) * sentencesPerPage) / pageSize) + 1;
+      setSentencesPerPage(pageSize);
+      await handlePageChange(newCurrentPage, pageSize);
+    },
+    [sentencesPerPage]
+  );
 
   const fetchAndUpdate = async (localSentenceFrom: number) => {
     setLoading(true);
@@ -227,45 +237,55 @@ const BookDetail: FC = () => {
     setLoading(false);
   };
 
-  const handlePageChange = async (page: number, pageSize: number) => {
-    // Update the URL parameters
-    const newQueryParams = new URLSearchParams(location.search);
-    newQueryParams.set("currentPage", page.toString());
-    newQueryParams.set("pageSize", pageSize.toString());
+  const handlePageChange = useCallback(
+    async (page: number, pageSize: number) => {
+      // Update the URL parameters
+      const newQueryParams = new URLSearchParams(location.search);
+      newQueryParams.set("currentPage", page.toString());
+      newQueryParams.set("pageSize", pageSize.toString());
 
-    // Navigate to the new state
-    navigate({
-      pathname: location.pathname,
-      search: newQueryParams.toString(),
-    });
-    // Save the book state in local storage
-    const bookState = {
-      page: page,
-      pageSieze: pageSize,
-    };
-    localStorage.setItem(`bookState-${libraryId}`, JSON.stringify(bookState));
+      // Navigate to the new state
+      navigate({
+        pathname: location.pathname,
+        search: newQueryParams.toString(),
+      });
+      // Save the book state in local storage
+      const bookState = {
+        page: page,
+        pageSieze: pageSize,
+      };
+      localStorage.setItem(`bookState-${libraryId}`, JSON.stringify(bookState));
 
-    await updateBookState(libraryId, page, pageSize);
+      await updateBookState(libraryId, page, pageSize);
 
-    if (initState) {
-      let localSentenceFrom =
-        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-      setSentenceFrom(getRangeNumber(localSentenceFrom));
-      await fetchAndUpdate(localSentenceFrom);
-      setInitState(false);
-    } else if (
-      sentenceFrom + countOfSentences < page * pageSize ||
-      page * pageSize > sentenceFrom + countOfSentences ||
-      page * pageSize < sentenceFrom
-    ) {
-      let localSentenceFrom = (page - 1) * pageSize + 1;
-      setSentenceFrom(getRangeNumber(localSentenceFrom));
-      await fetchAndUpdate(localSentenceFrom);
-    }
+      if (initState) {
+        let localSentenceFrom =
+          (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+        setSentenceFrom(getRangeNumber(localSentenceFrom));
+        await fetchAndUpdate(localSentenceFrom);
+        setInitState(false);
+      } else if (
+        sentenceFrom + countOfSentences < page * pageSize ||
+        page * pageSize > sentenceFrom + countOfSentences ||
+        page * pageSize < sentenceFrom
+      ) {
+        let localSentenceFrom = (page - 1) * pageSize + 1;
+        setSentenceFrom(getRangeNumber(localSentenceFrom));
+        await fetchAndUpdate(localSentenceFrom);
+      }
 
-    setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
-    setCurrentPage(page);
-  };
+      setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
+      setCurrentPage(page);
+    },
+    [
+      initState,
+      currentPageFromQuery,
+      pageSizeFromQuery,
+      sentenceFrom,
+      countOfSentences,
+      sentencesPerPage,
+    ]
+  );
 
   return (
     <PageContainer loading={loading}>

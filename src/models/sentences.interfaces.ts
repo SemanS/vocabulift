@@ -4,7 +4,7 @@ export interface SentenceResponse {
   totalSentences: number;
 }
 
-interface SentenceData {
+export interface SentenceData {
   content_en: string;
   content_cz: string;
   content_sk: string;
