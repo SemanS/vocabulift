@@ -34,19 +34,22 @@ const RightBlock = ({
               <h6>{title}</h6>
               <Content>{content}</Content>
               <ButtonWrapper>
-                {typeof button === "object" &&
-                  button.map((item: any, id: number) => {
-                    return (
-                      <Button
-                        key={id}
-                        color={item.color}
-                        fixedWidth={true}
-                        onClick={() => scrollTo("about")}
-                      >
-                        {item.title}
-                      </Button>
-                    );
-                  })}
+                <Button
+                  key={id}
+                  color={"red"}
+                  fixedWidth={true}
+                  onClick={() => scrollTo("about")}
+                >
+                  {"hi"}
+                </Button>
+                <Button
+                  key={id}
+                  color={"red"}
+                  fixedWidth={true}
+                  onClick={() => scrollTo("about")}
+                >
+                  {"hi"}
+                </Button>
               </ButtonWrapper>
             </ContentWrapper>
           </Col>

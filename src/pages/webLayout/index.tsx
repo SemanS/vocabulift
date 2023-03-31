@@ -50,7 +50,6 @@ const WebLayoutPage: FC = () => {
       <Container>
         <ScrollToTop />
         <ContentBlock
-          className={classes.fullWidthBg}
           type="right"
           title={formatMessage({ id: "web.introContent.title" })}
           content={formatMessage({ id: "web.introContent.text" })}

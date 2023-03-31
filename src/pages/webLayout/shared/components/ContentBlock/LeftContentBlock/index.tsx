@@ -21,7 +21,7 @@ const LeftContentBlock = ({
   className,
 }: IContentBlockProps) => {
   return (
-    <LeftContentSection className={className}>
+    <LeftContentSection style={{ backgroundColor: "red" }}>
       <Fade direction="left" triggerOnce>
         <Row justify="space-between" align="middle" id={id}>
           <Col lg={11} md={11} sm={12} xs={24}>

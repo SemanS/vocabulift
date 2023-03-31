@@ -5,10 +5,12 @@ import { MenuOutlined } from "@ant-design/icons";
 export const HeaderSection = styled.header`
   padding: 1rem 0.5rem;
 
+  position: fixed;
   .ant-row-space-between {
     align-items: center;
     text-align: center;
   }
+  padding-top: 40px
 
   top: 0;
   left: 0;
@@ -26,6 +28,7 @@ export const HeaderSection = styled.header`
 
 export const LogoContainer = styled(Link)`
   display: flex;
+  padding-left: 60px;
 `;
 
 export const NavLink = styled.div`
