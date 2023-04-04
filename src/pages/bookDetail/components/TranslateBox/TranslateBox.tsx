@@ -50,7 +50,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   >(null);
 
   useEffect(() => {
-    console.log("okejko" + selectedWordTranslation);
     if (selectedPhrase) {
       addUserPhrase(
         selectedPhrase,
@@ -178,6 +177,33 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   };
 
+  useEffect(() => {
+    const handleDocumentMouseUp = () => {
+      if (selectedWords.length > 0) {
+        const { sentenceNumber, wordIndexInSentence } =
+          selectedWords[selectedWords.length - 1];
+
+        const targetSentence = visibleTargetTexts.find(
+          (target) => target.sentenceNo === sentenceNumber
+        );
+
+        const translation = selectedWords
+          .map(
+            ({ wordIndexInSentence }) =>
+              targetSentence?.sentenceWords[wordIndexInSentence]?.wordText || ""
+          )
+          .join(" ");
+
+        handleMouseUp(sentenceNumber, translation);
+      }
+    };
+
+    document.addEventListener("mouseup", handleDocumentMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", handleDocumentMouseUp);
+    };
+  }, [selectedWords]);
+
   const handleMouseUp = (sentenceNumber: number, translation?: string) => {
     setMouseDown(false);
     const sortedSelectedWords = selectedWords.sort(
@@ -242,7 +268,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
                   const translation =
                     targetSentence?.sentenceWords[wordIndex]?.wordText || "";
-                  console.log("visible" + JSON.stringify(visibleTargetTexts));
                   return (
                     <TranslateWord
                       key={`${index}-${wordIndex}`}
@@ -281,6 +306,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                         sourceSentence.sentenceNo
                       )}
                       wordIndex={sourceWord.position}
+                      isSelecting={mouseDown}
                     />
                   );
                 })}

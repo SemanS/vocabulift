@@ -1,7 +1,6 @@
-import { SentenceWord } from "@/models/sentences.interfaces";
 import { Tooltip, Typography } from "antd";
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./TranslateWord.module.less";
 
 const { Text } = Typography;
@@ -17,6 +16,7 @@ interface TranslateWordProps {
   highlightPositions?: boolean;
   isHighlighted?: boolean;
   wordIndex?: number;
+  isSelecting?: boolean;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
@@ -29,6 +29,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   onMouseUp,
   highlightPositions,
   isHighlighted,
+  isSelecting,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -44,9 +45,10 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
     onMouseUp?.(sentenceNumber!, translation!);
   };
 
-  highlightPositions;
-
   const renderTooltip = (children: React.ReactNode) => {
+    if (isSelecting) {
+      return children as React.ReactElement;
+    }
     return (
       <Tooltip
         arrow={false}
