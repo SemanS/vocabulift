@@ -42,26 +42,25 @@ if (!rootElement) {
 const root = createRoot(rootElement);
 
 root.render(
-  <React.StrictMode>
-    <AxiosProvider>
-      <QueryClientProvider client={queryClient}>
-        <RecoilRoot>
-          <ErrorBoundary
-            fallbackRender={({ error, resetErrorBoundary }) => (
-              <div>
-                There was an error!{" "}
-                <button onClick={() => resetErrorBoundary()}>Try again</button>
-                <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
-              </div>
-            )}
-          >
-            <Suspense fallback={<SuspendFallbackLoading />}>
-              <App />
-            </Suspense>
-          </ErrorBoundary>
-        </RecoilRoot>
-      </QueryClientProvider>
-    </AxiosProvider>
-    ,
-  </React.StrictMode>
+  //<React.StrictMode>
+  <AxiosProvider>
+    <QueryClientProvider client={queryClient}>
+      <RecoilRoot>
+        <ErrorBoundary
+          fallbackRender={({ error, resetErrorBoundary }) => (
+            <div>
+              There was an error!{" "}
+              <button onClick={() => resetErrorBoundary()}>Try again</button>
+              <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
+            </div>
+          )}
+        >
+          <Suspense fallback={<SuspendFallbackLoading />}>
+            <App />
+          </Suspense>
+        </ErrorBoundary>
+      </RecoilRoot>
+    </QueryClientProvider>
+  </AxiosProvider>
+  //</React.StrictMode>
 );

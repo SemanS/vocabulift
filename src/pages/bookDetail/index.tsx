@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useCallback } from "react";
-import { Card, Row, Col, Switch, Space, PaginationProps } from "antd";
+import { Card, Row, Col, Switch, Space } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -8,11 +8,7 @@ import TranslateBox from "./components/TranslateBox/TranslateBox";
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import VocabularyList from "./components/VocabularyList/VocabularyList";
-import {
-  SentenceData,
-  SentenceResponse,
-  SentenceWord,
-} from "@/models/sentences.interfaces";
+import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { addWordToUser, updateBookState } from "@/services/bookService";
 import {
@@ -41,15 +37,7 @@ const BookDetail: FC = () => {
   const [totalSentences, setTotalSentences] = useState(0);
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
-  const [texts, setTexts] = useState<{
-    en: { text: string; sentence_no: number }[];
-    cz: { text: string; sentence_no: number }[];
-    sk: { text: string; sentence_no: number }[];
-  }>({
-    en: [],
-    cz: [],
-    sk: [],
-  });
+  const [sentencesData, setSentencesData] = useState<SentenceData[]>([]);
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
   const [userSentences, setUserSentences] = useState<UserSentence[]>([]);
@@ -65,7 +53,7 @@ const BookDetail: FC = () => {
     "sk"
   );
   const [initState, setInitState] = useState<boolean>(true);
-  const [sentenceWords, setSentenceWords] = useState<SentenceWord[]>([]);
+  //const [sentenceWords, setSentenceWords] = useState<SentenceWord[]>([]);
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -95,20 +83,16 @@ const BookDetail: FC = () => {
   }, [clickedWord]);
 
   const memoizeTexts = (sentences: SentenceData[]) => {
-    return {
-      en: sentences.map(({ content_en, sentence_no }) => ({
-        text: content_en,
-        sentence_no,
-      })),
-      cz: sentences.map(({ content_cz, sentence_no }) => ({
-        text: content_cz,
-        sentence_no,
-      })),
-      sk: sentences.map(({ content_sk, sentence_no }) => ({
-        text: content_sk,
-        sentence_no,
-      })),
-    };
+    return sentences.map((sentence) => {
+      const { sentenceNo, language, sentenceText, sentenceWords } = sentence;
+      const sentenceData: SentenceData = {
+        sentenceNo: sentenceNo,
+        language: language,
+        sentenceText: sentenceText,
+        sentenceWords: sentenceWords,
+      };
+      return sentenceData;
+    });
   };
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
@@ -137,8 +121,9 @@ const BookDetail: FC = () => {
     userSentencesData: UserSentence[],
     sentencesData: SentenceResponse
   ) => {
-    setTexts(memoizeTexts(sentencesData.sentences));
-    setSentenceWords(sentencesData.sentenceWords);
+    setSentencesData(memoizeTexts(sentencesData.sentences));
+
+    //setSentenceWords([]);
     setTotalSentences(sentencesData.totalSentences);
     setVocabularyListUserPhrases(
       mapUserSentencesToVocabularyListUserPhrases(userSentencesData)
@@ -338,11 +323,10 @@ const BookDetail: FC = () => {
               sentenceFrom={sentenceFrom}
               sentencesPerPage={sentencesPerPage}
               mode={mode}
-              texts={texts}
+              sentencesData={sentencesData}
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
               vocabularyListUserPhrases={vocabularyListUserPhrases!}
-              sentenceWords={sentenceWords}
             />
             <PaginationControls
               currentPage={currentPage}

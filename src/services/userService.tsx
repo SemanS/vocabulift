@@ -19,7 +19,7 @@ export const getUserLibraryItems = async (
 };
 
 export const getSentences = async (
-  id: string | undefined,
+  libraryid: string | undefined,
   sentenceFrom: number,
   countOfSentences: number,
   localSentenceFrom: number,
@@ -29,9 +29,11 @@ export const getSentences = async (
   const response = await fetch(
     `${
       import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-    }/sentence/${id}?sentenceFrom=${
+    }/sentence/${libraryid}?sentenceFrom=${
       localSentenceFrom ? localSentenceFrom : sentenceFrom
-    }&countOfSentences=${countOfSentences}&sourceLanguage=${sourceLanguage}&targetLanguage=${targetLanguage}`,
+    }&countOfSentences=${countOfSentences}&languages=${encodeURIComponent(
+      [sourceLanguage, targetLanguage].join(",")
+    )}`,
     {
       headers: {
         "Content-Type": "text/plain;charset=UTF-8",
@@ -41,6 +43,7 @@ export const getSentences = async (
   );
 
   const data = await response.json();
+  console.log("data" + JSON.stringify(data));
   return data;
 };
 
@@ -78,6 +81,7 @@ export const getUserSentences = async (
 
 export const addUserPhrase = async (
   word: string,
+  selectedWordTranslation: string | null,
   libraryId: string | undefined,
   sentence_no: number | null,
   startPosition: number | null,
@@ -88,6 +92,7 @@ export const addUserPhrase = async (
 ): Promise<any> => {
   const requestBody = {
     word: word,
+    selectedWordTranslation: selectedWordTranslation,
     libraryId: libraryId,
     sentence_no: sentence_no,
     startPosition: startPosition,
@@ -95,6 +100,7 @@ export const addUserPhrase = async (
     sourceLanguage: sourceLanguage,
     targetLanguage: targetLanguage,
   };
+  console.log(accessToken);
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
     {

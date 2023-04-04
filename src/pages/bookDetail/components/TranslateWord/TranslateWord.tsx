@@ -13,7 +13,7 @@ interface TranslateWordProps {
   mode: string;
   onMouseDown?: (word: string, sentenceNumber: number) => void;
   onMouseEnter?: (word: string, sentenceNumber: number) => void;
-  onMouseUp?: (sentenceNumber: number) => void;
+  onMouseUp?: (sentenceNumber: number, translation: string) => void;
   highlightPositions?: boolean;
   isHighlighted?: boolean;
   wordIndex?: number;
@@ -41,7 +41,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   };
 
   const handleMouseUp = () => {
-    onMouseUp?.(sentenceNumber!);
+    onMouseUp?.(sentenceNumber!, translation!);
   };
 
   highlightPositions;
