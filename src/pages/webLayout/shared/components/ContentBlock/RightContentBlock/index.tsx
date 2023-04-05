@@ -9,7 +9,8 @@ import {
   ContentWrapper,
   ButtonWrapper,
 } from "./styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import styles from "./index.module.less";
 
 const RightBlock = ({
   title,
@@ -19,6 +20,10 @@ const RightBlock = ({
   id,
   className,
 }: IContentBlockProps) => {
+  const [fadeVisible, setFadeVisible] = useState(false);
+  useEffect(() => {
+    setFadeVisible(true);
+  }, []);
   const scrollTo = (id: string) => {
     const element = document.getElementById(id) as HTMLDivElement;
     element.scrollIntoView({
@@ -28,14 +33,18 @@ const RightBlock = ({
   return (
     <RightBlockContainer>
       <Fade direction="right" triggerOnce>
-        <Row justify="space-between" align="middle" id={id}>
+        <Row
+          justify="space-between"
+          align="middle"
+          id={id}
+          className={fadeVisible ? styles.visible : styles.notVisible}
+        >
           <Col lg={11} md={11} sm={11} xs={24}>
             <ContentWrapper>
               <h6>{title}</h6>
               <Content>{content}</Content>
               <ButtonWrapper>
                 <Button
-                  key={id}
                   color={"red"}
                   fixedWidth={true}
                   onClick={() => scrollTo("about")}
@@ -43,7 +52,6 @@ const RightBlock = ({
                   {"hi"}
                 </Button>
                 <Button
-                  key={id}
                   color={"red"}
                   fixedWidth={true}
                   onClick={() => scrollTo("about")}

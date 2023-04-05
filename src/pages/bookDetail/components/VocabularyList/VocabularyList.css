@@ -1,0 +1,19 @@
+.selected-word {
+  position: relative;
+}
+
+.selected-word::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -24px;
+  right: -24px;
+  bottom: 0;
+  background-color: rgb(253, 222, 184);
+  z-index: 0;
+}
+
+.list-item-content {
+  position: relative;
+  z-index: 1;
+}

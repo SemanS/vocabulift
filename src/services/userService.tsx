@@ -43,7 +43,6 @@ export const getSentences = async (
   );
 
   const data = await response.json();
-  console.log("data" + JSON.stringify(data));
   return data;
 };
 

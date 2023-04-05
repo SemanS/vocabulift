@@ -53,7 +53,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
     return <Spin size="large" />;
   }
 
-  return user.isLogged ? <div>{children}</div> : <Navigate to="/login" />;
+  return user.isLogged ? <>{children}</> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

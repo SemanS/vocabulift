@@ -8,4 +8,5 @@ export const enUS_menu = {
   "menu.notfound": "404",
   "menu.books": "Library",
   "menu.vocabulary": "Vocabulary",
+  "menu.settings": "Settings",
 };

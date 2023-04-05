@@ -8,4 +8,5 @@ export const skSK_menu = {
   "menu.notfound": "404",
   "menu.books": "Knižnica",
   "menu.vocabulary": "Slovník",
+  "menu.settings": "Nastavenia",
 };

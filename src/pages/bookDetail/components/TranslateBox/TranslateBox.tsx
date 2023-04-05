@@ -49,10 +49,24 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     string | null
   >(null);
 
+  const removeSpecialChars = (input: string) => {
+    const regex = /[.,?!“”„:]+/g;
+    return input.replace(regex, "");
+  };
+
+  function isSingleWord(text: string) {
+    // Check if the text contains any whitespace characters
+    return !/\s/.test(text);
+  }
+
   useEffect(() => {
     if (selectedPhrase) {
+      console.log(isSingleWord(selectedPhrase!));
+      console.log(removeSpecialChars(selectedPhrase!));
       addUserPhrase(
-        selectedPhrase,
+        isSingleWord(selectedPhrase)
+          ? removeSpecialChars(selectedPhrase)
+          : selectedPhrase,
         selectedWordTranslation,
         libraryId,
         selectedSentence,
@@ -65,7 +79,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         if (response.status === "success") {
           const vocabularyListUserPhrase: VocabularyListUserPhrase = {
             phrase: {
-              sourceText: selectedPhrase,
+              sourceText:
+                response.data.phrases[response.data.phrases.length - 1]
+                  .sourceText,
               targetText:
                 response.data.phrases[response.data.phrases.length - 1]
                   .targetText,

@@ -10,7 +10,8 @@ import {
   MinTitle,
   MinPara,
 } from "./styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import styles from "./index.module.less";
 
 const LeftContentBlock = ({
   icon,
@@ -20,10 +21,20 @@ const LeftContentBlock = ({
   id,
   className,
 }: IContentBlockProps) => {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    setVisible(true);
+  }, []);
+
   return (
     <LeftContentSection style={{ backgroundColor: "red" }}>
-      <Fade direction="left" triggerOnce>
-        <Row justify="space-between" align="middle" id={id}>
+      <Fade direction="left" triggerOnce delay={3000}>
+        <Row
+          justify="space-between"
+          align="middle"
+          id={id}
+          className={visible ? styles.visible : styles.nvisible}
+        >
           <Col lg={11} md={11} sm={12} xs={24}>
             <SvgIcon src={icon} width="100%" height="100%" />
           </Col>

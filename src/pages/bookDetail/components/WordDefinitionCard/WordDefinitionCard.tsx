@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { List, Card, Typography } from "antd";
+import { List, Card, Typography, Divider } from "antd";
 import { CaretRightOutlined } from "@ant-design/icons";
 import { WordData } from "@models/word.interface";
 
@@ -32,12 +32,19 @@ const WordDefinitionCard: React.FC<WordDefinitionCardProps> = ({
         </span>
       }
       extra={[
-        <Typography.Text>{wordData?.phonetics[0].text} </Typography.Text>,
-        <audio ref={audioRef} src={wordData?.phonetics[0].audio} />,
-        <CaretRightOutlined onClick={togglePlay} />,
+        <Typography.Text key="text">
+          {wordData?.phonetics?.[0]?.text || ""}{" "}
+        </Typography.Text>,
+        <audio
+          key="audio"
+          ref={audioRef}
+          src={wordData?.phonetics?.[0]?.audio}
+        />,
+        <CaretRightOutlined key="icon" onClick={togglePlay} />,
       ]}
     >
       <List
+        size="small"
         grid={{ gutter: 0, column: 1 }}
         dataSource={wordData?.meanings}
         renderItem={({ partOfSpeech, definitions }, index) => (
@@ -53,6 +60,7 @@ const WordDefinitionCard: React.FC<WordDefinitionCardProps> = ({
                     <Typography.Text italic>
                       Example: {definition.example}
                     </Typography.Text>
+                    <Divider style={{ margin: "10px 10px" }}></Divider>
                   </div>
                 ) : (
                   ""

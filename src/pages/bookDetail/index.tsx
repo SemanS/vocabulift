@@ -1,5 +1,5 @@
-import React, { FC, useState, useEffect, useCallback } from "react";
-import { Card, Row, Col, Switch, Space } from "antd";
+import React, { FC, useState, useEffect, useCallback, useMemo } from "react";
+import { Card, Row, Col, Switch, Space, Checkbox, Button, Drawer } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -10,15 +10,17 @@ import PaginationControls from "./components/PaginationControls/PaginationContro
 import VocabularyList from "./components/VocabularyList/VocabularyList";
 import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
-import { addWordToUser, updateBookState } from "@/services/bookService";
+import { updateBookState } from "@/services/bookService";
 import {
   deleteUserPhrase,
   getSentences,
   getUserSentences,
 } from "@/services/userService";
-import { UserSentence, UserWord } from "@/models/userSentence.interface";
+import { UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
+import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
+import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -30,8 +32,6 @@ const BookDetail: FC = () => {
     queryParams.get("currentPage") as string
   );
 
-  const [clickedWord, setClickedWord] = useState<string>();
-  const [clickedWords, setClickedWords] = useState<UserWord[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
@@ -53,7 +53,9 @@ const BookDetail: FC = () => {
     "sk"
   );
   const [initState, setInitState] = useState<boolean>(true);
-  //const [sentenceWords, setSentenceWords] = useState<SentenceWord[]>([]);
+  const [showVocabularyList, setShowVocabularyList] = useState(true);
+  const [showWordDefinition, setShowWordDefinition] = useState(true);
+  const [selectAll, setSelectAll] = useState(false);
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -63,24 +65,23 @@ const BookDetail: FC = () => {
     }
   }, []);
 
-  useEffect(() => {
-    if (clickedWord) {
-      // Fetch word details from public API
-      fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${clickedWord}`)
-        .then((response) => response.json())
-        .then((data) => setWordData(data[0]))
-        .catch((error) => console.error(error));
-      // Make POST on backend to save word under user
-      sourceLanguage &&
-        targetLanguage &&
-        addWordToUser(
-          clickedWord,
-          sourceLanguage,
-          targetLanguage,
-          sessionStorage.getItem("access_token")
-        );
-    }
-  }, [clickedWord]);
+  const handleAddWordDefinition = async (word: string) => {
+    console.log(JSON.stringify(word));
+    // Fetch word details from public API
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+      .then((response) => response.json())
+      .then((data) => setWordData(data[0]))
+      .catch((error) => console.error(error));
+    // Make POST on backend to save word under user
+    /* sourceLanguage &&
+      targetLanguage &&
+      addWordToUser(
+        word,
+        sourceLanguage,
+        targetLanguage,
+        sessionStorage.getItem("access_token")
+      ); */
+  };
 
   const memoizeTexts = (sentences: SentenceData[]) => {
     return sentences.map((sentence) => {
@@ -94,6 +95,10 @@ const BookDetail: FC = () => {
       return sentenceData;
     });
   };
+  const memoizedSentencesData = useMemo(
+    () => memoizeTexts(sentencesData),
+    [sentencesData]
+  );
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
     const sentencesData: SentenceResponse = await getSentences(
@@ -134,6 +139,13 @@ const BookDetail: FC = () => {
   const handleAddUserPhrase = useCallback(
     async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
       try {
+        if (
+          vocabularyListUserPhrase.phrase.endPosition -
+            vocabularyListUserPhrase.phrase.startPosition ===
+          0
+        ) {
+          handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
+        }
         const updateVocabularyListUserPhrases = [
           ...(vocabularyListUserPhrases || []),
           vocabularyListUserPhrase,
@@ -272,28 +284,68 @@ const BookDetail: FC = () => {
     ]
   );
 
-  return (
-    <PageContainer loading={loading}>
-      <Row gutter={[16, 16]}>
-        <Col span={userSentences.length === 0 ? 24 : 18}>
-          <Card>
-            <Row
-              justify="space-between"
-              align="middle"
-              style={{ marginBottom: "16px" }}
-            >
-              <Col>
-                <Switch
-                  checked={mode === "sentence"}
-                  onChange={() =>
-                    setMode(mode === "word" ? "sentence" : "word")
-                  }
-                />
-                Translate by word or sentence
+  const onCheckboxChange = (e: any) => {
+    if (e.target.name === "vocabularyList") {
+      setShowVocabularyList(e.target.checked);
+    } else if (e.target.name === "wordDefinition") {
+      setShowWordDefinition(e.target.checked);
+    }
+    if (e.target.checked && showVocabularyList && showWordDefinition) {
+      setSelectAll(true);
+    } else {
+      setSelectAll(false);
+    }
+  };
+
+  const onSelectAllChange = (e: any) => {
+    const isChecked = e.target.checked;
+    setShowVocabularyList(isChecked);
+    setShowWordDefinition(isChecked);
+    setSelectAll(isChecked);
+  };
+
+  const calculateColSpan = useMemo(() => {
+    if (showVocabularyList && showWordDefinition) {
+      return 12;
+    } else if (showVocabularyList || showWordDefinition) {
+      return 18;
+    } else {
+      return 24;
+    }
+  }, [showVocabularyList, showWordDefinition, vocabularyListUserPhrases]);
+
+  const { toggleSettingsDrawer, settingsDrawerVisible } =
+    useSettingsDrawerContext();
+
+  const renderSettingsDrawerContent = () => {
+    return (
+      <>
+        <Row
+          justify="space-between"
+          align="middle"
+          style={{ marginBottom: "16px" }}
+        >
+          <Col>
+            <Row gutter={[16, 16]}>
+              <Col style={{ marginTop: "4px" }}>
+                <Space>
+                  <label htmlFor="switchMode">
+                    Translate by word or sentence:
+                  </label>
+                  <Switch
+                    id="switchMode"
+                    checked={mode === "sentence"}
+                    onChange={() =>
+                      setMode(mode === "word" ? "sentence" : "word")
+                    }
+                  />
+                </Space>
               </Col>
               <Col>
                 <Space>
+                  <label htmlFor="sourceLanguageSelect">Source Language:</label>
                   <LanguageSelect
+                    id="sourceLanguageSelect"
                     defaultValue="en"
                     onChange={setSourceLanguage}
                     disabledValue={targetLanguage}
@@ -303,7 +355,13 @@ const BookDetail: FC = () => {
                       { label: "Slovak", value: "sk" },
                     ]}
                   />
+                </Space>
+              </Col>
+              <Col>
+                <Space>
+                  <label htmlFor="targetLanguageSelect">Target Language:</label>
                   <LanguageSelect
+                    id="targetLanguageSelect"
                     defaultValue="sk"
                     onChange={setTargetLanguage}
                     disabledValue={sourceLanguage}
@@ -315,7 +373,70 @@ const BookDetail: FC = () => {
                   />
                 </Space>
               </Col>
+              <Col>
+                <Space>
+                  <Checkbox
+                    name="vocabularyList"
+                    checked={showVocabularyList}
+                    onChange={onCheckboxChange}
+                  >
+                    Vocabulary List
+                  </Checkbox>
+                  <Checkbox
+                    name="wordDefinition"
+                    checked={showWordDefinition}
+                    onChange={onCheckboxChange}
+                  >
+                    Word Definition
+                  </Checkbox>
+                </Space>
+              </Col>
+              <Col>
+                <Space>
+                  <Checkbox
+                    name="selectAll"
+                    checked={selectAll}
+                    onChange={onSelectAllChange}
+                  >
+                    Select All
+                  </Checkbox>
+                </Space>
+              </Col>
             </Row>
+          </Col>
+        </Row>
+      </>
+    );
+  };
+
+  return (
+    <PageContainer loading={loading}>
+      {/* <Button
+        type="primary"
+        onClick={toggleSettingsDrawer}
+        style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
+      >
+        Show/Hide Settings
+      </Button> */}
+      <Drawer
+        title="Settings"
+        placement="left"
+        onClose={toggleSettingsDrawer}
+        open={settingsDrawerVisible}
+        width={320}
+      >
+        {renderSettingsDrawerContent()}
+      </Drawer>
+      <Row gutter={[16, 16]}>
+        <Col
+          xxl={calculateColSpan}
+          xl={calculateColSpan}
+          lg={calculateColSpan}
+          md={24}
+          sm={24}
+          xs={24}
+        >
+          <Card>
             <TranslateBox
               sourceLanguage={sourceLanguage}
               targetLanguage={targetLanguage}
@@ -323,7 +444,7 @@ const BookDetail: FC = () => {
               sentenceFrom={sentenceFrom}
               sentencesPerPage={sentencesPerPage}
               mode={mode}
-              sentencesData={sentencesData}
+              sentencesData={memoizedSentencesData}
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
               vocabularyListUserPhrases={vocabularyListUserPhrases!}
@@ -339,15 +460,20 @@ const BookDetail: FC = () => {
         </Col>
         {vocabularyListUserPhrases?.length !== 0 && (
           <>
-            <Col span={6}>
-              <VocabularyList
-                phrases={vocabularyListUserPhrases}
-                onDeleteItem={handleDeleteUserPhrase}
-              />
-            </Col>
-            {/* <Col span={18}>
-              <WordDefinitionCard wordData={wordData} />
-            </Col> */}
+            {showVocabularyList && (
+              <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
+                <VocabularyList
+                  phrases={vocabularyListUserPhrases}
+                  onDeleteItem={handleDeleteUserPhrase}
+                  onWordClick={handleAddWordDefinition}
+                />
+              </Col>
+            )}
+            {showWordDefinition && (
+              <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
+                <WordDefinitionCard wordData={wordData}></WordDefinitionCard>
+              </Col>
+            )}
           </>
         )}
       </Row>

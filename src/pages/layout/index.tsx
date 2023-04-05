@@ -3,7 +3,7 @@ import { useGuide } from "../guide/useGuide";
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import { userState } from "@/stores/user";
 import { useRecoilState } from "recoil";
-
+import { SettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import { MenuDataItem } from "@ant-design/pro-layout";
 import ProLayout from "@ant-design/pro-layout";
 import {
@@ -11,6 +11,7 @@ import {
   HomeOutlined,
   FrownOutlined,
   UnorderedListOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
@@ -18,13 +19,14 @@ import RightContent from "./components/RightContent";
 import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
-import { Space } from "antd";
+import { Button, Space } from "antd";
 
 const IconMap: { [key: string]: React.ReactNode } = {
   book: <ReadOutlined />,
   home: <HomeOutlined />,
   frown: <FrownOutlined />,
   vocabulary: <UnorderedListOutlined />,
+  settings: <SettingOutlined />,
 };
 
 const LayoutPage: FC = () => {
@@ -38,28 +40,6 @@ const LayoutPage: FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { formatMessage } = useLocale();
-
-  const sidebarMenuRef = useRef<HTMLDivElement | null>(null);
-  const toggle = () => {
-    setUser({ ...user, collapsed: !collapsed });
-  };
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        sidebarMenuRef.current &&
-        !sidebarMenuRef.current.contains(event.target as Node) &&
-        !collapsed
-      ) {
-        toggle();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [collapsed]);
 
   useEffect(() => {
     newUser && driverStart();
@@ -75,70 +55,74 @@ const LayoutPage: FC = () => {
       items: items && loopMenuItem(items),
     }));
 
+    m.push({
+      path: "/",
+      name: "settings",
+      locale: "menu.settings",
+      icon: IconMap["settings" as string],
+      items: undefined,
+    });
+
     return m;
   };
 
-  return (
-    <>
-      <div ref={sidebarMenuRef}>
-        <ProLayout
-          fixSiderbar
-          collapsed={collapsed}
-          location={{
-            pathname: location.pathname,
-          }}
-          logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
-          {...settings}
-          onCollapse={() => toggle()}
-          formatMessage={formatMessage}
-          onMenuHeaderClick={() => navigate("/")}
-          headerTitleRender={() => (
-            <Space style={{ display: "flex", alignItems: "left" }}>
-              <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
-              <h1 style={{ marginLeft: "0px" }}>VocabuLift</h1>
-            </Space>
-          )}
-          menuItemRender={(menuItemProps, defaultDom) => {
-            if (
-              menuItemProps.isUrl ||
-              !menuItemProps.path ||
-              location.pathname === menuItemProps.path
-            ) {
-              return defaultDom;
-            }
+  const [settingsDrawerVisible, setSettingsDrawerVisible] = useState(false);
 
+  const toggleSettingsDrawer = () => {
+    setSettingsDrawerVisible(!settingsDrawerVisible);
+  };
+
+  return (
+    <SettingsDrawerContext.Provider
+      value={{
+        toggleSettingsDrawer,
+        settingsDrawerVisible,
+      }}
+    >
+      <ProLayout
+        location={{
+          pathname: location.pathname,
+        }}
+        layout="top"
+        logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
+        //{...settings}
+        formatMessage={formatMessage}
+        onMenuHeaderClick={() => navigate("/")}
+        headerTitleRender={() => (
+          <Space style={{ display: "flex", alignItems: "left" }}>
+            <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
+            <h1 style={{ marginLeft: "0px" }}>VocabuLift</h1>
+          </Space>
+        )}
+        menuDataRender={() => [...loopMenuItem(user.menuList)]}
+        menuItemRender={(menuItemProps, defaultDom) => {
+          console.log(menuItemProps.name);
+          if (
+            menuItemProps.isUrl ||
+            !menuItemProps.path ||
+            location.pathname === menuItemProps.path
+          ) {
+            return defaultDom;
+          }
+          if (menuItemProps.name === "settings") {
+            return (
+              <Button
+                style={{ marginTop: "6px", backgroundColor: "#D7DFEA" }}
+                onClick={toggleSettingsDrawer}
+              >
+                {defaultDom}
+              </Button>
+            );
+          } else {
             return <Link to={menuItemProps.path}>{defaultDom}</Link>;
-          }}
-          /* breadcrumbRender={(routers = []) => {
-            const { title } = useParams();
-            const isBookDetailPage = location.pathname.includes("/books/");
-            if (isBookDetailPage) {
-              const bookTitle = user.books.find(
-                (book) => book.title === title
-              )?.title;
-              if (bookTitle) {
-                routers.push({
-                  path: location.pathname,
-                  breadcrumbName: bookTitle,
-                });
-              }
-            }
-            return [
-              {
-                path: "/",
-                breadcrumbName: formatMessage({ id: "menu.home" }),
-              },
-              ...routers,
-            ];
-          }} */
-          menuDataRender={() => loopMenuItem(user.menuList)}
-          rightContentRender={() => <RightContent />}
-          footerRender={() => <Footer />}
-        >
-          <Outlet />
-        </ProLayout>
-      </div>
-    </>
+          }
+        }}
+        rightContentRender={() => <RightContent />}
+        footerRender={() => <Footer />}
+      >
+        <Outlet />
+      </ProLayout>
+    </SettingsDrawerContext.Provider>
   );
 };
 
