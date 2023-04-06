@@ -1,16 +1,23 @@
 import React, { FC, useState } from "react";
-import { Card, List } from "antd";
+import { Card, List, Space } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import "./VocabularyList.css";
+import classNames from "classnames";
 
 interface VocabularyListProps {
+  mode: string;
+  title: string;
+  style: React.CSSProperties | undefined;
   phrases: VocabularyListUserPhrase[] | undefined;
   onDeleteItem: (startPosition: number, sentence_no: number) => void;
   onWordClick?: (word: string) => void;
 }
 
 const VocabularyList: FC<VocabularyListProps> = ({
+  mode,
+  title,
+  style,
   phrases,
   onDeleteItem,
   onWordClick,
@@ -25,7 +32,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
   };
 
   return (
-    <Card>
+    <Card
+      style={style}
+      title={<span style={{ fontWeight: "normal" }}>{title}: </span>}
+    >
       <List
         size="small"
         dataSource={phrases}
@@ -33,43 +43,44 @@ const VocabularyList: FC<VocabularyListProps> = ({
           const isSelected = selectedWord === word.phrase.sourceText;
 
           return (
-            <div
+            <List.Item
               key={word.sentence_no + word.phrase.startPosition}
-              className={isSelected ? "selected-word" : ""}
+              className={isSelected && mode === "words" ? "selected-word" : ""}
+              style={{ padding: "4px 0" }}
+              onClick={() => {
+                mode === "words" &&
+                  onWordClick &&
+                  onWordClick(word.phrase.sourceText);
+                setSelectedWord(word.phrase.sourceText);
+              }}
             >
-              <List.Item
-                className="list-item-content"
-                style={{ padding: "3px 0" }}
-                onClick={() => {
-                  onWordClick && onWordClick(word.phrase.sourceText);
-                  setSelectedWord(word.phrase.sourceText);
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    cursor: "pointer",
-                  }}
-                >
-                  <List.Item.Meta
-                    avatar={
-                      <DeleteOutlined
-                        onClick={() =>
-                          handleDeleteItem(
-                            word.phrase.startPosition,
-                            word.sentence_no
-                          )
-                        }
-                      />
+              <List.Item.Meta
+                className={mode === "words" ? "list-item-content" : ""}
+                style={{ display: "flex", alignItems: "center" }}
+                avatar={
+                  <DeleteOutlined
+                    onClick={() =>
+                      handleDeleteItem(
+                        word.phrase.startPosition,
+                        word.sentence_no
+                      )
                     }
                   />
-                  <span>
-                    {word.phrase.sourceText} - {word.phrase.targetText}
-                  </span>
-                </div>
-              </List.Item>
-            </div>
+                }
+                title={
+                  <Space>
+                    <span
+                      style={{
+                        fontWeight: "normal",
+                        cursor: mode === "phrases" ? "default" : "pointer",
+                      }}
+                    >
+                      {word.phrase.sourceText} - {word.phrase.targetText}
+                    </span>
+                  </Space>
+                }
+              />
+            </List.Item>
           );
         }}
       />

@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect, useCallback, useMemo } from "react";
-import { Card, Row, Col, Switch, Space, Checkbox, Button, Drawer } from "antd";
+import { Card, Row, Col, Switch, Space, Checkbox, Drawer } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -21,6 +21,7 @@ import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
 import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
 import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
+import FilteredVocabularyList from "./components/VocabularyList/FilteredVocabularyList";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -411,14 +412,8 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer loading={loading}>
-      {/* <Button
-        type="primary"
-        onClick={toggleSettingsDrawer}
-        style={{ position: "absolute", top: 0, left: 0, zIndex: 1 }}
-      >
-        Show/Hide Settings
-      </Button> */}
       <Drawer
+        style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
         placement="left"
         onClose={toggleSettingsDrawer}
@@ -462,8 +457,18 @@ const BookDetail: FC = () => {
           <>
             {showVocabularyList && (
               <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
-                <VocabularyList
-                  phrases={vocabularyListUserPhrases}
+                <FilteredVocabularyList
+                  title="Words list"
+                  mode={"words"}
+                  phrases={vocabularyListUserPhrases!}
+                  onDeleteItem={handleDeleteUserPhrase}
+                  onWordClick={handleAddWordDefinition}
+                />
+                <FilteredVocabularyList
+                  title="Phrases list"
+                  style={{ marginTop: "16px" }}
+                  mode={"phrases"}
+                  phrases={vocabularyListUserPhrases!}
                   onDeleteItem={handleDeleteUserPhrase}
                   onWordClick={handleAddWordDefinition}
                 />
