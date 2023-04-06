@@ -6,22 +6,61 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import { getGlobalState } from "../models";
 import { Spin } from "antd";
+import { User } from "@/models/user";
 
 const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const [user, setUser] = useRecoilState(userState);
   const [cookies] = useCookies(["access_token"]);
   const [loading, setLoading] = useState(true);
 
-  /* if (!cookies.access_token) {
-    return <Navigate to="/login" />;
-  } */
-
   useEffect(() => {
-    if (
-      import.meta.env.MODE === "development" &&
-      cookies.access_token &&
-      !user.isLogged
-    ) {
+    if (import.meta.env.MODE === "development") {
+      sessionStorage.setItem("access_token", "641880e55febd60caa927162");
+      const devUser: User = {
+        ...getGlobalState(),
+        username: "Slavo",
+        isLogged: true,
+        menuList: [
+          {
+            path: "/dashboard",
+            name: "dashboard",
+            label: {
+              zh_CN: "仪表板",
+              en_US: "Dashboard",
+            },
+            icon: "home",
+            key: "dashboard",
+          },
+          {
+            path: "/books",
+            name: "books",
+            label: {
+              zh_CN: "图书",
+              en_US: "Books",
+            },
+            icon: "book",
+            key: "books",
+          },
+          {
+            path: "/vocabulary",
+            name: "vocabulary",
+            label: {
+              zh_CN: "词汇",
+              en_US: "Vocabulary",
+            },
+            icon: "vocabulary",
+            key: "vocabulary",
+          },
+        ],
+        locale: "en-us",
+        library: [],
+        role: "guest",
+        newUser: false,
+        avatar: "",
+      };
+      setUser(devUser);
+      setLoading(false);
+    } else if (cookies.access_token && !user.isLogged) {
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
         .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`, {

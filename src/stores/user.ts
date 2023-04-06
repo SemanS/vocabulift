@@ -1,12 +1,10 @@
-import { atom, selector } from "recoil";
-
+import { atom } from "recoil";
 import { Role } from "@/models/login";
 import { Locale, User } from "@/models/user";
 import { getGlobalState } from "@/models";
 
 const initialState: User = {
   ...getGlobalState(),
-  noticeCount: 0,
   locale: (localStorage.getItem("locale")! ||
     (navigator.languages && navigator.languages[0]) ||
     navigator.language ||

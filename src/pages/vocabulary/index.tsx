@@ -1,9 +1,7 @@
-import { Skeleton, Divider, List, Avatar, Card, Typography } from "antd";
+import { Card } from "antd";
 import React from "react";
 import { useEffect, useState } from "react";
-import InfiniteScroll from "react-infinite-scroller";
 import { Input } from "antd";
-import WordDetail from "@/pages/bookDetail/components/WordDetail/WordDetail";
 
 const { Search } = Input;
 
@@ -26,7 +24,6 @@ export interface Word {
 const Vocabulary: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Word[]>([]);
-  const [selectedWord, setSelectedWord] = useState<Word | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -57,10 +54,6 @@ const Vocabulary: React.FC = () => {
     loadMoreData();
   }, []);
 
-  const handleWordClick = (word: Word) => {
-    setSelectedWord(word);
-  };
-
   return (
     <>
       <Search
@@ -75,41 +68,7 @@ const Vocabulary: React.FC = () => {
         style={{
           marginBottom: "20px",
         }}
-      >
-        <div
-          id="scrollableDiv"
-          style={{
-            height: 400,
-            overflow: "auto",
-            padding: "0 16px",
-          }}
-        >
-          <InfiniteScroll
-            pageStart={0}
-            loadMore={loadMoreData}
-            //hasMore={hasMore}
-            loader={<div key={0}>Loading...</div>}
-            /* scrollableTarget="scrollableDiv" */
-          >
-            <List
-              dataSource={data}
-              renderItem={(item) => (
-                <List.Item
-                  style={{ cursor: "pointer" }}
-                  key={item.word}
-                  onClick={() => handleWordClick(item)}
-                >
-                  <List.Item.Meta
-                    title={item.word}
-                    description={item.translations[0].name}
-                  />
-                </List.Item>
-              )}
-            />
-          </InfiniteScroll>
-        </div>
-      </Card>
-      {selectedWord && <WordDetail word={selectedWord} />}
+      ></Card>
     </>
   );
 };

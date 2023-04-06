@@ -7,7 +7,6 @@ import { userState } from "@/stores/user";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
-import VocabularyList from "./components/VocabularyList/VocabularyList";
 import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import { updateBookState } from "@/services/bookService";
@@ -116,7 +115,8 @@ const BookDetail: FC = () => {
       countOfSentences,
       localSentenceFrom,
       sourceLanguage,
-      targetLanguage
+      targetLanguage,
+      "sentenceNo"
     );
 
     await updateSentencesState(userSentencesData, sentencesData);

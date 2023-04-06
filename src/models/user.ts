@@ -26,12 +26,13 @@ export interface User {
   library: LibraryUser[];
   username: string;
 
-  /** menu list for init tagsView */
+  /** menu list */
   menuList: MenuChild[];
 
   /** login status */
   isLogged: boolean;
 
+  /** role */
   role: Role;
 
   /** user's device */
@@ -39,9 +40,6 @@ export interface User {
 
   /** menu collapsed status */
   collapsed: boolean;
-
-  /** notification count */
-  noticeCount: number;
 
   /** user's language */
   locale: Locale;

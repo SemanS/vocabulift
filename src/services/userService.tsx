@@ -52,7 +52,8 @@ export const getUserSentences = async (
   countOfSentences: number,
   localSentenceFrom: number,
   sourceLanguage: string,
-  targetLanguage: string
+  targetLanguage: string,
+  orderBy: string
 ) => {
   const requestBody = {
     libraryId: libraryId,
@@ -61,6 +62,7 @@ export const getUserSentences = async (
     localSentenceFrom: localSentenceFrom,
     sourceLanguage: sourceLanguage,
     targetLanguage: targetLanguage,
+    orderBy: orderBy,
   };
 
   const response = await fetch(
