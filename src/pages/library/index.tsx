@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { List, Progress, Col, Row, Card, Typography } from "antd";
-import { useRecoilState } from "recoil";
-import { userState } from "@/stores/user";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
 import { getLibraryItems } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
@@ -12,15 +11,22 @@ import { getUserLibraryItems } from "@/services/userService";
 import { UserLibraryItem } from "@/models/userLibraryItem.interface";
 import { PageContainer } from "@ant-design/pro-layout";
 import { mergeObjects } from "@/utils/mergeItems";
+import {
+  libraryIdState,
+  currentPageState,
+  pageSizeState,
+} from "@/stores/library";
 
 const Library: React.FC = () => {
-  const [user, setUser] = useRecoilState(userState);
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [activeCard, setActiveCard] = useState<string>("");
   const [userLibraryItems, setUserLibraryItems] = useState<UserLibraryItem[]>(
     []
   );
   const [loading, setLoading] = useState(true);
+  const setLibraryId = useSetRecoilState(libraryIdState);
+  const setCurrentPage = useSetRecoilState(currentPageState);
+  const setPageSize = useSetRecoilState(pageSizeState);
 
   const fetchData = async () => {
     await getLibraryItems(
@@ -73,6 +79,16 @@ const Library: React.FC = () => {
     })
   );
 
+  const handleLibraryItemClick = (
+    libraryId: string,
+    currentPage: number,
+    pageSize: number
+  ) => {
+    setLibraryId(libraryId);
+    setCurrentPage(currentPage);
+    setPageSize(pageSize);
+  };
+
   return (
     <PageContainer loading={loading}>
       <Card
@@ -90,13 +106,8 @@ const Library: React.FC = () => {
             onMouseLeave={() => setActiveCard("")}
           >
             <Link
-              to={
-                item.id +
-                "?currentPage=" +
-                (item.userLibrary ? item.userLibrary.lastReadPage : 1) +
-                "&pageSize=" +
-                (item.userLibrary ? item.userLibrary.pageSize : 10)
-              }
+              onClick={() => handleLibraryItemClick(item.id, 1, 10)}
+              to={item.id + "?currentPage=" + 1 + "&pageSize=" + 10}
               style={{ color: "inherit" }}
             >
               <Row gutter={[32, 32]}>
@@ -136,7 +147,7 @@ const Library: React.FC = () => {
                       className={classNames(styles.progressContainer)}
                       style={{ marginTop: "auto" }}
                     >
-                      {item.totalSentences == 5603 && (
+                      {/* {item.totalSentences == 5603 && (
                         <Progress
                           percent={
                             item.lastReadPage == 1
@@ -149,7 +160,7 @@ const Library: React.FC = () => {
                           }
                           strokeColor={{ "0%": "#000", "100%": "#000" }}
                         />
-                      )}
+                      )} */}
                     </div>
                   </div>
                 </Col>

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useGuide } from "../guide/useGuide";
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import { userState } from "@/stores/user";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { SettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import { MenuDataItem } from "@ant-design/pro-layout";
 import ProLayout from "@ant-design/pro-layout";
@@ -22,6 +22,11 @@ import Footer from "./components/Footer";
 import { Button, Space } from "antd";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import LanguageSelect from "@/pages/bookDetail/components/LanguageSelect/LanguageSelect";
+import {
+  libraryIdState,
+  currentPageState,
+  pageSizeState,
+} from "@/stores/library";
 
 const IconMap: { [key: string]: React.ReactNode } = {
   book: <ReadOutlined />,
@@ -47,6 +52,9 @@ const LayoutPage: FC = () => {
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
+  const libraryId = useRecoilValue(libraryIdState);
+  const currentPage = useRecoilValue(currentPageState);
+  const pageSize = useRecoilValue(pageSizeState);
 
   useEffect(() => {
     newUser && driverStart();
@@ -62,13 +70,23 @@ const LayoutPage: FC = () => {
       items: items && loopMenuItem(items),
     }));
 
-    m.push({
-      path: "/",
-      name: "settings",
-      locale: "menu.settings",
-      icon: IconMap["settings" as string],
-      items: undefined,
-    });
+    if (libraryId) {
+      m.push({
+        path: `/library/${libraryId}?currentPage=${currentPage}&pageSize=${pageSize}`,
+        name: "library",
+        locale: "menu.library",
+        icon: IconMap["library" as string],
+        items: undefined,
+      });
+
+      m.push({
+        path: "/",
+        name: "settings",
+        locale: "menu.settings",
+        icon: IconMap["settings" as string],
+        items: undefined,
+      });
+    }
 
     return m;
   };

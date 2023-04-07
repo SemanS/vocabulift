@@ -21,6 +21,9 @@ import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCa
 import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import FilteredVocabularyList from "./components/VocabularyList/FilteredVocabularyList";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
+import { libraryIdState } from "@/stores/library";
+import { currentPageState } from "@/stores/library";
+import { pageSizeState } from "@/stores/library";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -54,6 +57,10 @@ const BookDetail: FC = () => {
   const [showVocabularyList, setShowVocabularyList] = useState(true);
   const [showWordDefinition, setShowWordDefinition] = useState(true);
   const [selectAll, setSelectAll] = useState(false);
+  const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
+  const [recoilCurrentPage, setRecoilCurrentPage] =
+    useRecoilState(currentPageState); // Add this line
+  const [recoilPageSize, setRecoilPageSize] = useRecoilState(pageSizeState);
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -61,6 +68,9 @@ const BookDetail: FC = () => {
       setSentencesPerPage(pageSizeFromQuery);
       handlePageChange(currentPageFromQuery, pageSizeFromQuery);
     }
+    setRecoilLibraryId(libraryId!);
+    setRecoilCurrentPage(currentPageFromQuery);
+    setRecoilPageSize(pageSizeFromQuery);
   }, []);
 
   const handleAddWordDefinition = async (word: string) => {
