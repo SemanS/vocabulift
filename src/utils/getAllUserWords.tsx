@@ -11,7 +11,7 @@ export const getAllUserWords = (
     ) => {
       const phrasesWithSentenceNo = userSentence.phrases.map((phrase) => ({
         phrase,
-        sentence_no: userSentence.sentence_no,
+        sentenceNo: userSentence.sentenceNo,
       }));
       return [...allUserPhrases, ...phrasesWithSentenceNo];
     },

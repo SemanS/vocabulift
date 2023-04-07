@@ -1,6 +1,6 @@
 export interface UserSentence {
   libraryId: string;
-  sentence_no: number;
+  sentenceNo: number;
   sourceLanguage: string;
   targetLanguage: string;
   words: UserWord[];

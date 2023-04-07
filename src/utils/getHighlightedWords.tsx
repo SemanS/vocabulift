@@ -2,10 +2,10 @@ import { UserSentence } from "@/models/userSentence.interface";
 
 export const getHighlightedWords = (
   userSentences: UserSentence[],
-  sentence_no: number
+  sentenceNo: number
 ): number[] => {
   const sentence = userSentences.find(
-    (userSentence) => userSentence.sentence_no === sentence_no
+    (userSentence) => userSentence.sentenceNo === sentenceNo
   );
 
   if (!sentence) return [];

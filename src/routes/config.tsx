@@ -1,22 +1,17 @@
-import React, { FC, useEffect, useState } from "react";
-import { Navigate, PathRouteProps } from "react-router";
+import React, { FC, Suspense, useEffect } from "react";
+import { PathRouteProps } from "react-router";
 import PrivateRoute from "./privateRoute";
-import { useIntl } from "react-intl";
 import { getGlobalState } from "@/models";
 import { userState } from "@/stores/user";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useRecoilState } from "recoil";
-import { PageContainer } from "@ant-design/pro-layout";
-import { Spin } from "antd";
 
 export interface WrapperRouteProps extends PathRouteProps {
-  /** authorization？ */
   auth?: boolean;
 }
 
 const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
-  const { formatMessage } = useIntl();
   const [user, setUser] = useRecoilState(userState);
   const [cookies] = useCookies(["access_token"]);
 
@@ -47,7 +42,11 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
   }, []);
 
   if (auth) {
-    return <PrivateRoute>{children}</PrivateRoute>;
+    return (
+      <PrivateRoute>
+        <Suspense>{children}</Suspense>
+      </PrivateRoute>
+    );
   }
   return <>{children}</>;
 };

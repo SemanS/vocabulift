@@ -1,5 +1,5 @@
 import { Space } from "antd";
-import React from "react";
+import React, { ReactNode } from "react";
 
 import Avatar from "./AvatarDropdown";
 import classes from "./index.module.less";
@@ -12,7 +12,11 @@ import classNames from "classnames";
 
 export type SiderTheme = "light" | "dark";
 
-const GlobalHeaderRight: React.FC = () => {
+interface GlobalHeaderRightProps {
+  children?: ReactNode;
+}
+
+const GlobalHeaderRight: React.FC<GlobalHeaderRightProps> = ({ children }) => {
   const [user, setUser] = useRecoilState(userState);
   const navigate = useNavigate();
 
@@ -25,6 +29,7 @@ const GlobalHeaderRight: React.FC = () => {
 
   return (
     <Space className={className}>
+      {children}
       {user.isLogged ? (
         <Avatar />
       ) : (
@@ -35,7 +40,6 @@ const GlobalHeaderRight: React.FC = () => {
           Log In
         </div>
       )}
-
       <SelectLang />
     </Space>
   );

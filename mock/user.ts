@@ -8,8 +8,8 @@ const mockMenuList = [
     icon: "heart",
   },
   {
-    path: "/books",
-    name: "books",
+    path: "/library",
+    name: "library",
   },
   {
     path: "/project",

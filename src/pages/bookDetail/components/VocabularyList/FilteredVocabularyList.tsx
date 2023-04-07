@@ -7,7 +7,7 @@ interface FilteredVocabularyListProps {
   phrases: VocabularyListUserPhrase[];
   title: string;
   style?: React.CSSProperties;
-  onDeleteItem: (startPosition: number, sentence_no: number) => void;
+  onDeleteItem: (startPosition: number, sentenceNo: number) => void;
   onWordClick: (word: string) => void;
 }
 

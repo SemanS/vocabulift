@@ -1,26 +1,27 @@
 import React, { FC } from "react";
 import { Select } from "antd";
+import { RecoilState, useRecoilState } from "recoil";
 
 interface LanguageSelectProps {
   id: string;
-  defaultValue?: "en" | "sk" | "cz";
-  onChange?: (value: "en" | "sk" | "cz") => void;
+  atom: RecoilState<"en" | "sk" | "cz">;
   options: { value: string; label: string }[];
   disabledValue?: string;
 }
 
 const LanguageSelect: FC<LanguageSelectProps> = ({
   id,
-  defaultValue,
-  onChange,
+  atom,
   options,
   disabledValue,
 }) => {
+  const [language, setLanguage] = useRecoilState(atom);
+
   return (
     <Select
-      defaultValue={defaultValue}
+      value={language}
       style={{ width: 120 }}
-      onChange={onChange}
+      onChange={(value) => setLanguage(value as "en" | "sk" | "cz")}
       options={options.map((option) => ({
         ...option,
         disabled: option.value === disabledValue,

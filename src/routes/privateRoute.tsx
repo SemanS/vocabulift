@@ -22,24 +22,14 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         isLogged: true,
         menuList: [
           {
-            path: "/dashboard",
-            name: "dashboard",
-            label: {
-              zh_CN: "仪表板",
-              en_US: "Dashboard",
-            },
-            icon: "home",
-            key: "dashboard",
-          },
-          {
-            path: "/books",
-            name: "books",
+            path: "/library",
+            name: "library",
             label: {
               zh_CN: "图书",
-              en_US: "Books",
+              en_US: "library",
             },
             icon: "book",
-            key: "books",
+            key: "library",
           },
           {
             path: "/vocabulary",

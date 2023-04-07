@@ -1,39 +1,6 @@
-import React, { FC, lazy, Suspense, useEffect } from "react";
-import { PageContainer } from "@ant-design/pro-layout";
-import ProLayout from "@ant-design/pro-layout";
-import LandingPage from "@/pages/landingPage/LandingPage";
-import RightContent from "@/pages/layout/components/RightContent";
-import Footer from "@/pages/layout/components/Footer";
-import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
-import { ConfigProvider, Space } from "antd";
-import { Settings as LayoutSettings } from "@ant-design/pro-layout";
-import { useRecoilState } from "recoil";
-import { userState } from "@/stores/user";
-import styles from "./index.module.less";
+import React, { FC, lazy, Suspense } from "react";
 import Header from "./shared/components/Header";
 import { useLocale } from "@/locales";
-import { IntlProvider } from "react-intl";
-import moment from "moment";
-import enUS from "antd/es/locale/en_US";
-import skSK from "antd/es/locale/sk_SK";
-import { localeConfig } from "@/config/locale";
-import classes from "./index.module.less";
-
-const Settings: LayoutSettings & {
-  pwa?: boolean;
-  logo?: string;
-} = {
-  navTheme: "light",
-  // 拂晓蓝
-  //primaryColor: "#1890ff"
-  layout: "top",
-  contentWidth: "Fluid",
-  fixedHeader: false,
-  colorWeak: false,
-  //title: "VocabuLift",
-  pwa: false,
-  iconfontUrl: "",
-};
 
 const WebLayoutPage: FC = () => {
   const Contact = lazy(() => import("./shared/components/ContactForm"));

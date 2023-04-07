@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useGuide } from "../guide/useGuide";
 import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import { userState } from "@/stores/user";
@@ -20,6 +20,8 @@ import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
 import { Button, Space } from "antd";
+import { sourceLanguageState, targetLanguageState } from "@/stores/language";
+import LanguageSelect from "@/pages/bookDetail/components/LanguageSelect/LanguageSelect";
 
 const IconMap: { [key: string]: React.ReactNode } = {
   book: <ReadOutlined />,
@@ -40,6 +42,11 @@ const LayoutPage: FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { formatMessage } = useLocale();
+
+  const [sourceLanguage, setSourceLanguage] =
+    useRecoilState(sourceLanguageState);
+  const [targetLanguage, setTargetLanguage] =
+    useRecoilState(targetLanguageState);
 
   useEffect(() => {
     newUser && driverStart();
@@ -96,7 +103,6 @@ const LayoutPage: FC = () => {
         )}
         menuDataRender={() => [...loopMenuItem(user.menuList)]}
         menuItemRender={(menuItemProps, defaultDom) => {
-          console.log(menuItemProps.name);
           if (
             menuItemProps.isUrl ||
             !menuItemProps.path ||
@@ -117,7 +123,36 @@ const LayoutPage: FC = () => {
             return <Link to={menuItemProps.path}>{defaultDom}</Link>;
           }
         }}
-        rightContentRender={() => <RightContent />}
+        rightContentRender={() => (
+          <RightContent>
+            <Space>
+              <label htmlFor="sourceLanguageSelect">Source Language:</label>
+              <LanguageSelect
+                id="sourceLanguageSelect"
+                atom={sourceLanguageState}
+                disabledValue={targetLanguage}
+                options={[
+                  { label: "English", value: "en" },
+                  { label: "Czech", value: "cz" },
+                  { label: "Slovak", value: "sk" },
+                ]}
+              />
+            </Space>
+            <Space>
+              <label htmlFor="targetLanguageSelect">Target Language:</label>
+              <LanguageSelect
+                id="targetLanguageSelect"
+                atom={targetLanguageState}
+                disabledValue={sourceLanguage}
+                options={[
+                  { label: "Slovak", value: "sk" },
+                  { label: "Czech", value: "cz" },
+                  { label: "English", value: "en" },
+                ]}
+              />
+            </Space>
+          </RightContent>
+        )}
         footerRender={() => <Footer />}
       >
         <Outlet />

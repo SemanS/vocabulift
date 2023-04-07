@@ -19,7 +19,7 @@ export const getUserLibraryItems = async (
 };
 
 export const getSentences = async (
-  libraryid: string | undefined,
+  libraryId: string | undefined,
   sentenceFrom: number,
   countOfSentences: number,
   localSentenceFrom: number,
@@ -29,7 +29,7 @@ export const getSentences = async (
   const response = await fetch(
     `${
       import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-    }/sentence/${libraryid}?sentenceFrom=${
+    }/sentence/${libraryId}?sentenceFrom=${
       localSentenceFrom ? localSentenceFrom : sentenceFrom
     }&countOfSentences=${countOfSentences}&languages=${encodeURIComponent(
       [sourceLanguage, targetLanguage].join(",")
@@ -47,22 +47,22 @@ export const getSentences = async (
 };
 
 export const getUserSentences = async (
-  libraryId: string | undefined,
   sentenceFrom: number,
   countOfSentences: number,
   localSentenceFrom: number,
   sourceLanguage: string,
   targetLanguage: string,
-  orderBy: string
+  orderBy: string,
+  libraryId?: string | undefined
 ) => {
   const requestBody = {
-    libraryId: libraryId,
     sentenceFrom: localSentenceFrom ? localSentenceFrom : sentenceFrom,
     countOfSentences: countOfSentences,
     localSentenceFrom: localSentenceFrom,
     sourceLanguage: sourceLanguage,
     targetLanguage: targetLanguage,
     orderBy: orderBy,
+    libraryId: libraryId,
   };
 
   const response = await fetch(
@@ -84,7 +84,7 @@ export const addUserPhrase = async (
   word: string,
   selectedWordTranslation: string | null,
   libraryId: string | undefined,
-  sentence_no: number | null,
+  sentenceNo: number | null,
   startPosition: number | null,
   endPosition: number | null,
   sourceLanguage: string,
@@ -95,13 +95,12 @@ export const addUserPhrase = async (
     word: word,
     selectedWordTranslation: selectedWordTranslation,
     libraryId: libraryId,
-    sentence_no: sentence_no,
+    sentenceNo: sentenceNo,
     startPosition: startPosition,
     endPosition: endPosition,
     sourceLanguage: sourceLanguage,
     targetLanguage: targetLanguage,
   };
-  console.log(accessToken);
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
     {
@@ -123,7 +122,7 @@ export const addUserPhrase = async (
 
 export const deleteUserPhrase = async (
   libraryId: string | undefined,
-  sentence_no: number | null,
+  sentenceNo: number | null,
   startPosition: number | null,
   sourceLanguage: string,
   targetLanguage: string,
@@ -131,7 +130,7 @@ export const deleteUserPhrase = async (
 ): Promise<void> => {
   const requestBody = {
     libraryId: libraryId,
-    sentence_no: sentence_no,
+    sentenceNo: sentenceNo,
     startPosition: startPosition,
     sourceLanguage: sourceLanguage,
     targetLanguage: targetLanguage,
@@ -145,6 +144,31 @@ export const deleteUserPhrase = async (
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(requestBody),
+    }
+  );
+};
+
+export const updateReadingProgress = async (
+  book: string | undefined,
+  page: number,
+  pageSize: number
+) => {
+  // Update the book state in the backend
+  await fetch(
+    `${
+      import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+    }/user/update-reading-progress`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify({
+        book,
+        page,
+        pageSize,
+      }),
     }
   );
 };

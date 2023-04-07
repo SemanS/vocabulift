@@ -6,7 +6,7 @@ export const skSK_menu = {
   "menu.permission": "Povolenie",
   "menu.permission.list": "Zoznam povolení",
   "menu.notfound": "404",
-  "menu.books": "Knižnica",
+  "menu.library": "Knižnica",
   "menu.vocabulary": "Slovník",
   "menu.settings": "Nastavenia",
 };

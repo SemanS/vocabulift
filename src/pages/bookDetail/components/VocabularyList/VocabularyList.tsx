@@ -10,7 +10,7 @@ interface VocabularyListProps {
   title: string;
   style: React.CSSProperties | undefined;
   phrases: VocabularyListUserPhrase[] | undefined;
-  onDeleteItem: (startPosition: number, sentence_no: number) => void;
+  onDeleteItem: (startPosition: number, sentenceNo: number) => void;
   onWordClick?: (word: string) => void;
 }
 
@@ -26,9 +26,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
 
   const handleDeleteItem = async (
     startPosition: number,
-    sentence_no: number
+    sentenceNo: number
   ) => {
-    onDeleteItem(startPosition, sentence_no);
+    onDeleteItem(startPosition, sentenceNo);
   };
 
   return (
@@ -44,7 +44,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
 
           return (
             <List.Item
-              key={word.sentence_no + word.phrase.startPosition}
+              key={word.sentenceNo + word.phrase.startPosition}
               className={isSelected && mode === "words" ? "selected-word" : ""}
               style={{ padding: "4px 0" }}
               onClick={() => {
@@ -62,7 +62,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                     onClick={() =>
                       handleDeleteItem(
                         word.phrase.startPosition,
-                        word.sentence_no
+                        word.sentenceNo
                       )
                     }
                   />

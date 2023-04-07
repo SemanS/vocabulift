@@ -27,7 +27,7 @@ const LoginForm: FC = () => {
 
   // const dispatch = useAppDispatch();
 
-  const from = ((location.state as any)?.from.pathname as string) || "/books";
+  const from = ((location.state as any)?.from.pathname as string) || "/library";
 
   const onFailure = (response: any) => {
     console.error(response);

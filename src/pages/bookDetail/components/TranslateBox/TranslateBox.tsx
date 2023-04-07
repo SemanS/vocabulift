@@ -88,7 +88,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               startPosition: startPosition!,
               endPosition: endPosition!,
             },
-            sentence_no: selectedSentence!,
+            sentenceNo: selectedSentence!,
           };
           onAddUserPhrase(vocabularyListUserPhrase);
           setSelectedWordTranslation(null);

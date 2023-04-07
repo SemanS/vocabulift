@@ -6,7 +6,7 @@ export const enUS_menu = {
   "menu.permission": "Permission",
   "menu.permission.list": "Permission list",
   "menu.notfound": "404",
-  "menu.books": "Library",
+  "menu.library": "Library",
   "menu.vocabulary": "Vocabulary",
   "menu.settings": "Settings",
 };

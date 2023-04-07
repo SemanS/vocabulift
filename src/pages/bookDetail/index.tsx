@@ -5,15 +5,14 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
-import LanguageSelect from "./components/LanguageSelect/LanguageSelect";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
-import { updateBookState } from "@/services/bookService";
 import {
   deleteUserPhrase,
   getSentences,
   getUserSentences,
+  updateReadingProgress,
 } from "@/services/userService";
 import { UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
@@ -21,6 +20,7 @@ import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSent
 import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
 import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import FilteredVocabularyList from "./components/VocabularyList/FilteredVocabularyList";
+import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -46,12 +46,10 @@ const BookDetail: FC = () => {
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<any>();
   const [user, setUser] = useRecoilState(userState);
-  const [sourceLanguage, setSourceLanguage] = useState<"en" | "sk" | "cz">(
-    "en"
-  );
-  const [targetLanguage, setTargetLanguage] = useState<"en" | "sk" | "cz">(
-    "sk"
-  );
+  const [sourceLanguage, setSourceLanguage] =
+    useRecoilState(sourceLanguageState);
+  const [targetLanguage, setTargetLanguage] =
+    useRecoilState(targetLanguageState);
   const [initState, setInitState] = useState<boolean>(true);
   const [showVocabularyList, setShowVocabularyList] = useState(true);
   const [showWordDefinition, setShowWordDefinition] = useState(true);
@@ -110,13 +108,13 @@ const BookDetail: FC = () => {
       targetLanguage
     );
     const userSentencesData: UserSentence[] = await getUserSentences(
-      libraryId,
       sentenceFrom,
       countOfSentences,
       localSentenceFrom,
       sourceLanguage,
       targetLanguage,
-      "sentenceNo"
+      "sentenceNo",
+      libraryId
     );
 
     await updateSentencesState(userSentencesData, sentencesData);
@@ -154,7 +152,7 @@ const BookDetail: FC = () => {
 
         const userSentence: UserSentence = {
           libraryId: libraryId!,
-          sentence_no: vocabularyListUserPhrase.sentence_no,
+          sentenceNo: vocabularyListUserPhrase.sentenceNo,
           sourceLanguage: sourceLanguage,
           targetLanguage: targetLanguage,
           words: [],
@@ -173,10 +171,10 @@ const BookDetail: FC = () => {
   );
 
   const handleDeleteUserPhrase = useCallback(
-    async (startPosition: number, sentence_no: number) => {
+    async (startPosition: number, sentenceNo: number) => {
       // Update sentences in TranslateBox by deleted sentences
       const updatedUserSentences = userSentences.map((sentence) => {
-        if (sentence.sentence_no === sentence_no) {
+        if (sentence.sentenceNo === sentenceNo) {
           return {
             ...sentence,
             phrases: sentence.phrases.filter(
@@ -193,14 +191,14 @@ const BookDetail: FC = () => {
           (item) =>
             !(
               item.phrase.startPosition === startPosition &&
-              item.sentence_no === sentence_no
+              item.sentenceNo === sentenceNo
             )
         );
 
       try {
         await deleteUserPhrase(
           libraryId,
-          sentence_no,
+          sentenceNo,
           startPosition,
           sourceLanguage,
           targetLanguage,
@@ -210,7 +208,7 @@ const BookDetail: FC = () => {
           setUserSentences(updatedUserSentences);
         });
 
-        // Filter out the element with the specified startPosition and sentence_no
+        // Filter out the element with the specified startPosition and sentenceNo
       } catch (error) {
         console.error("Error deleting user phrase:", error);
       }
@@ -247,14 +245,8 @@ const BookDetail: FC = () => {
         pathname: location.pathname,
         search: newQueryParams.toString(),
       });
-      // Save the book state in local storage
-      const bookState = {
-        page: page,
-        pageSieze: pageSize,
-      };
-      localStorage.setItem(`bookState-${libraryId}`, JSON.stringify(bookState));
 
-      await updateBookState(libraryId, page, pageSize);
+      await updateReadingProgress(libraryId, page, pageSize);
 
       if (initState) {
         let localSentenceFrom =
@@ -339,38 +331,6 @@ const BookDetail: FC = () => {
                     onChange={() =>
                       setMode(mode === "word" ? "sentence" : "word")
                     }
-                  />
-                </Space>
-              </Col>
-              <Col>
-                <Space>
-                  <label htmlFor="sourceLanguageSelect">Source Language:</label>
-                  <LanguageSelect
-                    id="sourceLanguageSelect"
-                    defaultValue="en"
-                    onChange={setSourceLanguage}
-                    disabledValue={targetLanguage}
-                    options={[
-                      { label: "English", value: "en" },
-                      { label: "Czech", value: "cz" },
-                      { label: "Slovak", value: "sk" },
-                    ]}
-                  />
-                </Space>
-              </Col>
-              <Col>
-                <Space>
-                  <label htmlFor="targetLanguageSelect">Target Language:</label>
-                  <LanguageSelect
-                    id="targetLanguageSelect"
-                    defaultValue="sk"
-                    onChange={setTargetLanguage}
-                    disabledValue={sourceLanguage}
-                    options={[
-                      { label: "Slovak", value: "sk" },
-                      { label: "Czech", value: "cz" },
-                      { label: "English", value: "en" },
-                    ]}
                   />
                 </Space>
               </Col>

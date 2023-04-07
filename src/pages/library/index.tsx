@@ -13,7 +13,7 @@ import { UserLibraryItem } from "@/models/userLibraryItem.interface";
 import { PageContainer } from "@ant-design/pro-layout";
 import { mergeObjects } from "@/utils/mergeItems";
 
-const Books: React.FC = () => {
+const Library: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [activeCard, setActiveCard] = useState<string>("");
@@ -231,4 +231,4 @@ const Books: React.FC = () => {
   );
 };
 
-export default Books;
+export default Library;

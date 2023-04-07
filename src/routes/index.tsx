@@ -1,19 +1,14 @@
-import React, { lazy, FC, Suspense } from "react";
-
+import React, { lazy, FC } from "react";
 import Dashboard from "@/pages/dashboard";
-import LoginPage from "@/pages/login";
-import LayoutPage from "@/pages/layout";
-import WrapperRouteComponent from "./config";
-import { useRoutes, RouteObject, Routes, Route } from "react-router-dom";
-import BookDetail from "@/pages/bookDetail";
-import Books from "@/pages/books";
-import Vocabulary from "@/pages/vocabulary";
-//import WebLayoutPage from "@/pages/webLayout";
-import Footer from "@/pages/webLayout/shared/components/Footer";
-import Header from "@/pages/webLayout/shared/components/Header";
+import { useRoutes, RouteObject } from "react-router-dom";
 import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
+const LoginPage = lazy(() => import("@/pages/login"));
+const WrapperRouteComponent = lazy(() => import("./config"));
+const LayoutPage = lazy(() => import("@/pages/layout"));
+const BookDetail = lazy(() => import("@/pages/bookDetail"));
 const NotFound = lazy(() => import("@/pages/404"));
-//const Project = lazy(() => import("@/pages/project"));
+const Library = lazy(() => import("@/pages/library"));
+const Vocabulary = lazy(() => import("@/pages/vocabulary"));
 const WebLayoutPage = lazy(() => import("@/pages/webLayout"));
 const routeList: RouteObject[] = [
   {
@@ -32,7 +27,7 @@ const routeList: RouteObject[] = [
         ),
       },
       {
-        path: "/books/:libraryId",
+        path: "/library/:libraryId",
         element: (
           <WrapperRouteComponent auth={true}>
             <BookDetail />
@@ -40,10 +35,10 @@ const routeList: RouteObject[] = [
         ),
       },
       {
-        path: "/books",
+        path: "/library",
         element: (
           <WrapperRouteComponent auth={true}>
-            <Books />
+            <Library />
           </WrapperRouteComponent>
         ),
       },

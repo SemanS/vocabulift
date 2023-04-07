@@ -4,14 +4,14 @@ import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 export const getHighlightPositions = (
   userSentences: UserSentence[],
   vocabularyListUserPhrases: VocabularyListUserPhrase[], // Add this parameter
-  sentence_no: number,
+  sentenceNo: number,
   wordPosition: number
 ): boolean => {
   const sortedSentences = userSentences.sort(
-    (a, b) => a.sentence_no - b.sentence_no
+    (a, b) => a.sentenceNo - b.sentenceNo
   );
   const sentence = sortedSentences.find((userSentence) => {
-    return userSentence.sentence_no === sentence_no; // Use strict equality operator
+    return userSentence.sentenceNo === sentenceNo; // Use strict equality operator
   });
 
   if (!sentence) return false;
@@ -31,7 +31,7 @@ export const getHighlightPositions = (
 
   const isInVocabularyListUserPhrases = vocabularyListUserPhrases.some(
     (phraseObj) => {
-      if (phraseObj.sentence_no !== sentence_no) {
+      if (phraseObj.sentenceNo !== sentenceNo) {
         return false;
       }
       const startPosition = phraseObj.phrase.startPosition;
