@@ -3,7 +3,6 @@ import { Card, Row, Col, Switch, Space, Checkbox, Drawer } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { userState } from "@/stores/user";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
@@ -24,6 +23,7 @@ import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { libraryIdState } from "@/stores/library";
 import { currentPageState } from "@/stores/library";
 import { pageSizeState } from "@/stores/library";
+import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -48,7 +48,6 @@ const BookDetail: FC = () => {
     useState<VocabularyListUserPhrase[]>();
   const [mode, setMode] = useState<"word" | "sentence">("word");
   const [wordData, setWordData] = useState<any>();
-  const [user, setUser] = useRecoilState(userState);
   const [sourceLanguage, setSourceLanguage] =
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
@@ -401,6 +400,7 @@ const BookDetail: FC = () => {
           sm={24}
           xs={24}
         >
+          <EmbeddedVideo videoId="FVcfCHmoCvM" title="Your Video Title" />
           <Card>
             <TranslateBox
               sourceLanguage={sourceLanguage}

@@ -1,8 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { List, Progress, Col, Row, Card, Typography } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  List,
+  Col,
+  Row,
+  Card,
+  Typography,
+  Select,
+  Tabs,
+} from "antd";
+
+const { TabPane } = Tabs;
+
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { Link } from "react-router-dom";
-import { getLibraryItems } from "@/services/libraryService";
+import {
+  getLibraryItems,
+  postLibraryInputVideoLanguages,
+} from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import classNames from "classnames";
 import styles from "./index.module.less";
@@ -16,8 +33,16 @@ import {
   currentPageState,
   pageSizeState,
 } from "@/stores/library";
+import { targetLanguageState } from "@/stores/language";
+
+interface Option {
+  value: string;
+  label: string;
+}
 
 const Library: React.FC = () => {
+  const [targetLanguage, setTargetLanguage] =
+    useRecoilState(targetLanguageState);
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [activeCard, setActiveCard] = useState<string>("");
   const [userLibraryItems, setUserLibraryItems] = useState<UserLibraryItem[]>(
@@ -27,6 +52,44 @@ const Library: React.FC = () => {
   const setLibraryId = useSetRecoilState(libraryIdState);
   const setCurrentPage = useSetRecoilState(currentPageState);
   const setPageSize = useSetRecoilState(pageSizeState);
+  const [inputValue, setInputValue] = useState("");
+  const [selectOptions, setSelectOptions] = useState<Option[]>([]);
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [isFetchValid, setIsFetchValid] = useState(true);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
+    string | null
+  >(null);
+
+  useEffect(() => {
+    setSourceLanguageFromVideo(selectedOption?.value || null);
+  }, [selectedOption]);
+
+  const fetchOptions = async (input: string) => {
+    try {
+      const response = await postLibraryInputVideoLanguages(input);
+
+      if (!response.ok) {
+        // If the response is not ok, clear the options, set isFetchValid to false, and disable the button
+        setIsFetchValid(false);
+        setButtonDisabled(true);
+        throw new Error("Failed to fetch options");
+      }
+
+      const data = await response.json();
+      // Update the options using the languageCodes from the response
+      const options = data.languageCodes.map((code: any) => ({
+        value: code,
+        label: code,
+      }));
+      setSelectOptions(options);
+      setIsFetchValid(true);
+    } catch (error) {
+      // If there's an error, clear the options
+      setSelectOptions([]);
+      console.error("Error fetching options:", error);
+    }
+  };
 
   const fetchData = async () => {
     await getLibraryItems(
@@ -48,6 +111,10 @@ const Library: React.FC = () => {
     fetchData();
     setLoading(false);
   }, []);
+
+  useEffect(() => {
+    setButtonDisabled(!selectedOption || !inputValue || !isFetchValid);
+  }, [selectedOption, inputValue, isFetchValid]);
 
   function calculateBookPercentage(
     page: number,
@@ -89,13 +156,114 @@ const Library: React.FC = () => {
     setPageSize(pageSize);
   };
 
+  const handleButtonClick = async () => {
+    await fetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/video`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify({
+          input: inputValue,
+          sourceLanguage: sourceLanguageFromVideo,
+          targetLanguage: targetLanguage,
+        }),
+      }
+    );
+  };
+
   return (
     <PageContainer loading={loading}>
       <Card
-        style={{ borderRadius: 0, marginTop: "12px" }}
+        style={{ borderRadius: 0, marginTop: "0px" }}
         className={classNames(styles.gridLayout)}
         loading={loading}
       >
+        <Card.Grid style={{ paddingTop: "12px" }}>
+          <Tabs style={{ marginTop: "0px" }}>
+            <TabPane tab="Video" key="1">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/320px-YouTube_Logo_2017.svg.png"
+                alt="YouTube Logo"
+                style={{
+                  margin: "0 auto",
+                  marginBottom: "24px",
+                }}
+              />
+              <Row gutter={16}>
+                <Col span={16} style={{ marginBottom: "24px" }}>
+                  <Form
+                    onFinish={(values) => {
+                      console.log("YouTube Video URL:", values.youtubeUrl);
+                      // Handle the submission here
+                    }}
+                    style={{ display: "inline-block", width: "100%" }}
+                  >
+                    <Form.Item
+                      name="youtubeUrl"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please input the YouTube video URL",
+                        },
+                      ]}
+                      style={{ marginBottom: 0 }}
+                    >
+                      <Input
+                        placeholder="YouTube Video URL"
+                        value={inputValue}
+                        onChange={(e) => {
+                          setInputValue(e.target.value);
+                          if (e.target.value) {
+                            fetchOptions(e.target.value);
+                            // Clear the selected option and disable the button when the input changes
+                            setSelectedOption(null);
+                            setButtonDisabled(true);
+                          } else {
+                            setSelectOptions([]);
+                          }
+                        }}
+                        style={{ width: "100%" }}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Col>
+                <Col span={4}>
+                  <Select
+                    placeholder="Select an option"
+                    value={selectedOption?.value}
+                    onChange={(value, option) => {
+                      setSelectedOption(option as Option);
+                    }}
+                    disabled={!isFetchValid}
+                  >
+                    {selectOptions &&
+                      selectOptions.map((option, index) => (
+                        <Select.Option key={index} value={option.value}>
+                          {option.label}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    disabled={buttonDisabled}
+                    onClick={handleButtonClick}
+                  >
+                    Add Video
+                  </Button>
+                </Col>
+              </Row>
+            </TabPane>
+            <TabPane tab="Text" key="2"></TabPane>
+          </Tabs>
+        </Card.Grid>
         {combinedItems.map((item) => (
           <Card.Grid
             key={item.title}

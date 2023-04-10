@@ -7,6 +7,8 @@ export interface SentenceData {
   language: string;
   sentenceText: string;
   sentenceWords: SentenceWordData[];
+  start?: string;
+  duration?: string;
 }
 
 export interface SentenceWordData {

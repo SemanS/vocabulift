@@ -61,8 +61,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 
   useEffect(() => {
     if (selectedPhrase) {
-      console.log(isSingleWord(selectedPhrase!));
-      console.log(removeSpecialChars(selectedPhrase!));
       addUserPhrase(
         isSingleWord(selectedPhrase)
           ? removeSpecialChars(selectedPhrase)
