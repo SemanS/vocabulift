@@ -58,11 +58,12 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
           backgroundColor: "white",
           color: "black",
           borderRadius: "10px",
-          fontSize: "14px",
+          fontSize: "16px",
         }}
-        getPopupContainer={(trigger) => {
+        //open={isHighlighted}
+        /* getPopupContainer={(trigger) => {
           return trigger;
-        }}
+        }} */
         title={translation}
       >
         {children}

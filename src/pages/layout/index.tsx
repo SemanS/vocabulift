@@ -108,6 +108,7 @@ const LayoutPage: FC = () => {
         location={{
           pathname: location.pathname,
         }}
+        breadcrumbRender={false}
         layout="top"
         logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
         //{...settings}

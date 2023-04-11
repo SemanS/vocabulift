@@ -1,6 +1,7 @@
 export interface SentenceResponse {
   sentences: SentenceData[];
   totalSentences: number;
+  videoId?: string | undefined;
 }
 export interface SentenceData {
   sentenceNo: number;

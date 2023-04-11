@@ -38,6 +38,7 @@ const BookDetail: FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
+  const [videoId, setVideoId] = useState<string | undefined>("");
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
   const [sentencesData, setSentencesData] = useState<SentenceData[]>([]);
@@ -60,6 +61,9 @@ const BookDetail: FC = () => {
   const [recoilCurrentPage, setRecoilCurrentPage] =
     useRecoilState(currentPageState); // Add this line
   const [recoilPageSize, setRecoilPageSize] = useRecoilState(pageSizeState);
+  const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -92,12 +96,21 @@ const BookDetail: FC = () => {
 
   const memoizeTexts = (sentences: SentenceData[]) => {
     return sentences.map((sentence) => {
-      const { sentenceNo, language, sentenceText, sentenceWords } = sentence;
+      const {
+        sentenceNo,
+        language,
+        sentenceText,
+        sentenceWords,
+        start,
+        duration,
+      } = sentence;
       const sentenceData: SentenceData = {
         sentenceNo: sentenceNo,
         language: language,
         sentenceText: sentenceText,
         sentenceWords: sentenceWords,
+        ...(start !== undefined && { start: start }),
+        ...(duration !== undefined && { duration: duration }),
       };
       return sentenceData;
     });
@@ -134,9 +147,8 @@ const BookDetail: FC = () => {
     userSentencesData: UserSentence[],
     sentencesData: SentenceResponse
   ) => {
+    setVideoId(sentencesData.videoId);
     setSentencesData(memoizeTexts(sentencesData.sentences));
-
-    //setSentenceWords([]);
     setTotalSentences(sentencesData.totalSentences);
     setVocabularyListUserPhrases(
       mapUserSentencesToVocabularyListUserPhrases(userSentencesData)
@@ -400,7 +412,13 @@ const BookDetail: FC = () => {
           sm={24}
           xs={24}
         >
-          <EmbeddedVideo videoId="FVcfCHmoCvM" title="Your Video Title" />
+          <EmbeddedVideo
+            key={videoId}
+            videoId={videoId}
+            title="Your Video Title"
+            sentencesData={memoizedSentencesData}
+            onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+          />
           <Card>
             <TranslateBox
               sourceLanguage={sourceLanguage}
@@ -412,7 +430,8 @@ const BookDetail: FC = () => {
               sentencesData={memoizedSentencesData}
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
-              vocabularyListUserPhrases={vocabularyListUserPhrases!}
+              vocabularyListUserPhrases={vocabularyListUserPhrases}
+              highlightedSentenceIndex={highlightedSubtitleIndex}
             />
             <PaginationControls
               currentPage={currentPage}

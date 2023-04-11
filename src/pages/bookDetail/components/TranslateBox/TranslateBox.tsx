@@ -21,7 +21,8 @@ interface TranslateBoxProps {
   sentenceFrom: number;
   sentencesPerPage: number;
   userSentences: UserSentence[];
-  vocabularyListUserPhrases: VocabularyListUserPhrase[];
+  vocabularyListUserPhrases?: VocabularyListUserPhrase[] | null;
+  highlightedSentenceIndex?: number | null;
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
 }
 
@@ -35,6 +36,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   sentencesPerPage,
   userSentences,
   vocabularyListUserPhrases,
+  highlightedSentenceIndex,
   onAddUserPhrase,
 }) => {
   const { libraryId } = useParams();
@@ -270,7 +272,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 translation={visibleTargetTexts[index].sentenceText}
                 sentenceNumber={textObj.sentenceNo}
                 mode={mode}
+                isHighlighted={index === highlightedSentenceIndex}
               />
+              {highlightedSentenceIndex}
             </div>
           ))
         : visibleSourceTexts.map((sourceSentence, index) => {
@@ -308,7 +312,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                       onMouseUp={handleMouseUp}
                       highlightPositions={getHighlightPositions(
                         userSentences,
-                        vocabularyListUserPhrases,
+                        vocabularyListUserPhrases!,
                         sourceSentence.sentenceNo,
                         sourceWord.position
                       )}

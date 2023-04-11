@@ -154,7 +154,7 @@ export const updateReadingProgress = async (
   pageSize: number
 ) => {
   // Update the book state in the backend
-  await fetch(
+  /* await fetch(
     `${
       import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
     }/user/update-reading-progress`,
@@ -170,5 +170,5 @@ export const updateReadingProgress = async (
         pageSize,
       }),
     }
-  );
+  ); */
 };
