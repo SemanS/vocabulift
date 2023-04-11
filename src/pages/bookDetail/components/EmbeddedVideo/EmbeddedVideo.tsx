@@ -15,6 +15,9 @@ interface EmbeddedVideoProps {
   title: string;
   sentencesData: SentenceData[];
   onHighlightedSubtitleIndexChange?: (index: number | null) => void;
+  currentPage: number;
+  sentencesPerPage: number;
+  onCurrentPageChange?: (highlightedSubtitleIndex: number | null) => void;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -22,6 +25,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   title,
   sentencesData,
   onHighlightedSubtitleIndexChange,
+  currentPage,
+  sentencesPerPage,
 }) => {
   const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
     number | null
@@ -73,19 +78,23 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (playerRef.current && playerRef.current.getCurrentTime) {
       const currentTime = playerRef.current.getCurrentTime();
 
-      const newHighlightedIndex = sentencesData.findIndex(
-        (sentence) =>
-          currentTime >= sentence.start! &&
-          currentTime <= sentence.start! + sentence.duration!
-      );
+      const startIndex = (currentPage - 1) * sentencesPerPage;
+
+      const newHighlightedIndex = sentencesData
+        .slice(startIndex)
+        .findIndex(
+          (sentence) =>
+            currentTime >= sentence.start! &&
+            currentTime <= sentence.start! + sentence.duration!
+        );
 
       if (newHighlightedIndex !== highlightedSubtitleIndex) {
         setHighlightedSubtitleIndex(
-          newHighlightedIndex !== -1 ? newHighlightedIndex : null
+          newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
         );
         if (onHighlightedSubtitleIndexChange) {
           onHighlightedSubtitleIndexChange(
-            newHighlightedIndex !== -1 ? newHighlightedIndex : null
+            newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
           );
         }
       }

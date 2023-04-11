@@ -82,7 +82,6 @@ const BookDetail: FC = () => {
   }, []);
 
   const handleAddWordDefinition = async (word: string) => {
-    console.log(JSON.stringify(word));
     // Fetch word details from public API
     fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
       .then((response) => response.json())
@@ -143,7 +142,6 @@ const BookDetail: FC = () => {
       "sentenceNo",
       libraryId
     );
-
     await updateSentencesState(userSentencesData, sentencesData);
     setLoading(false);
   };
@@ -280,6 +278,7 @@ const BookDetail: FC = () => {
           (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
         setSentenceFrom(getRangeNumber(localSentenceFrom));
         await fetchAndUpdate(localSentenceFrom);
+        console.log("init" + initState);
         setInitState(false);
       } else if (
         sentenceFrom + countOfSentences < page * pageSize ||
@@ -336,6 +335,39 @@ const BookDetail: FC = () => {
 
   const { toggleSettingsDrawer, settingsDrawerVisible } =
     useSettingsDrawerContext();
+
+  useEffect(() => {
+    if (label === LabelType.VIDEO) {
+      if (highlightedSubtitleIndex !== null) {
+        const newPage = Math.ceil(
+          (highlightedSubtitleIndex + 1) / sentencesPerPage
+        );
+        if (newPage !== currentPage) {
+          handlePageChange(newPage, sentencesPerPage);
+        }
+      } else if (currentPage !== 1) {
+        handlePageChange(1, sentencesPerPage);
+      }
+    }
+  }, [
+    highlightedSubtitleIndex,
+    currentPage,
+    handlePageChange,
+    sentencesPerPage,
+  ]);
+
+  const setCurrentPageFromHighlight = (
+    highlightedSubtitleIndex: number | null
+  ) => {
+    if (highlightedSubtitleIndex !== null) {
+      const newPage = Math.ceil(
+        (highlightedSubtitleIndex + 1) / sentencesPerPage
+      );
+      if (newPage !== currentPage) {
+        handlePageChange(newPage, sentencesPerPage);
+      }
+    }
+  };
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -404,32 +436,37 @@ const BookDetail: FC = () => {
           sm={24}
           xs={24}
         >
-          <Card
-            title={"title"}
-            style={{ marginBottom: "16px" }}
-            extra={
-              <Space>
-                <label htmlFor="switchMode">
-                  Translate by word or sentence:
-                </label>
-                <Switch
-                  id="switchMode"
-                  checked={mode === "sentence"}
-                  onChange={() =>
-                    setMode(mode === "word" ? "sentence" : "word")
-                  }
-                />
-              </Space>
-            }
-          >
-            <EmbeddedVideo
-              key={videoId}
-              videoId={videoId}
-              title="Your Video Title"
-              sentencesData={memoizedSentencesData}
-              onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-            />
-          </Card>
+          {label === LabelType.VIDEO && (
+            <Card
+              title={"title"}
+              style={{ marginBottom: "16px" }}
+              extra={
+                <Space>
+                  <label htmlFor="switchMode">
+                    Translate by word or sentence:
+                  </label>
+                  <Switch
+                    id="switchMode"
+                    checked={mode === "sentence"}
+                    onChange={() =>
+                      setMode(mode === "word" ? "sentence" : "word")
+                    }
+                  />
+                </Space>
+              }
+            >
+              <EmbeddedVideo
+                key={videoId}
+                videoId={videoId}
+                title="Your Video Title"
+                sentencesData={memoizedSentencesData}
+                onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+                currentPage={currentPage}
+                sentencesPerPage={sentencesPerPage}
+                //onCurrentPageChange={setCurrentPageFromHighlight}
+              />
+            </Card>
+          )}
           <Card
             title={label !== LabelType.VIDEO && "title"}
             extra={
@@ -460,7 +497,11 @@ const BookDetail: FC = () => {
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
               vocabularyListUserPhrases={vocabularyListUserPhrases}
-              highlightedSentenceIndex={highlightedSubtitleIndex}
+              highlightedSentenceIndex={
+                highlightedSubtitleIndex !== null
+                  ? highlightedSubtitleIndex - currentTextIndex
+                  : null
+              }
             />
             <PaginationControls
               currentPage={currentPage}
