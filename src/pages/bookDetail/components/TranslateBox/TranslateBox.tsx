@@ -274,7 +274,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 mode={mode}
                 isHighlighted={index === highlightedSentenceIndex}
               />
-              {highlightedSentenceIndex}
             </div>
           ))
         : visibleSourceTexts.map((sourceSentence, index) => {

@@ -5,7 +5,11 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
-import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
+import {
+  LabelType,
+  SentenceData,
+  SentenceResponse,
+} from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import {
   deleteUserPhrase,
@@ -39,6 +43,7 @@ const BookDetail: FC = () => {
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
   const [videoId, setVideoId] = useState<string | undefined>("");
+  const [label, setLabel] = useState<LabelType | undefined>(LabelType.TEXT);
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
   const [sentencesData, setSentencesData] = useState<SentenceData[]>([]);
@@ -147,6 +152,7 @@ const BookDetail: FC = () => {
     userSentencesData: UserSentence[],
     sentencesData: SentenceResponse
   ) => {
+    setLabel(sentencesData.label);
     setVideoId(sentencesData.videoId);
     setSentencesData(memoizeTexts(sentencesData.sentences));
     setTotalSentences(sentencesData.totalSentences);
@@ -341,20 +347,6 @@ const BookDetail: FC = () => {
         >
           <Col>
             <Row gutter={[16, 16]}>
-              <Col style={{ marginTop: "4px" }}>
-                <Space>
-                  <label htmlFor="switchMode">
-                    Translate by word or sentence:
-                  </label>
-                  <Switch
-                    id="switchMode"
-                    checked={mode === "sentence"}
-                    onChange={() =>
-                      setMode(mode === "word" ? "sentence" : "word")
-                    }
-                  />
-                </Space>
-              </Col>
               <Col>
                 <Space>
                   <Checkbox
@@ -392,7 +384,7 @@ const BookDetail: FC = () => {
   };
 
   return (
-    <PageContainer loading={loading}>
+    <PageContainer loading={loading} title={false}>
       <Drawer
         style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
@@ -412,14 +404,51 @@ const BookDetail: FC = () => {
           sm={24}
           xs={24}
         >
-          <EmbeddedVideo
-            key={videoId}
-            videoId={videoId}
-            title="Your Video Title"
-            sentencesData={memoizedSentencesData}
-            onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-          />
-          <Card>
+          <Card
+            title={"title"}
+            style={{ marginBottom: "16px" }}
+            extra={
+              <Space>
+                <label htmlFor="switchMode">
+                  Translate by word or sentence:
+                </label>
+                <Switch
+                  id="switchMode"
+                  checked={mode === "sentence"}
+                  onChange={() =>
+                    setMode(mode === "word" ? "sentence" : "word")
+                  }
+                />
+              </Space>
+            }
+          >
+            <EmbeddedVideo
+              key={videoId}
+              videoId={videoId}
+              title="Your Video Title"
+              sentencesData={memoizedSentencesData}
+              onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+            />
+          </Card>
+          <Card
+            title={label !== LabelType.VIDEO && "title"}
+            extra={
+              label !== LabelType.VIDEO && (
+                <Space>
+                  <label htmlFor="switchMode">
+                    Translate by word or sentence:
+                  </label>
+                  <Switch
+                    id="switchMode"
+                    checked={mode === "sentence"}
+                    onChange={() =>
+                      setMode(mode === "word" ? "sentence" : "word")
+                    }
+                  />
+                </Space>
+              )
+            }
+          >
             <TranslateBox
               sourceLanguage={sourceLanguage}
               targetLanguage={targetLanguage}

@@ -30,7 +30,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const playerRef = useRef<any>(null);
 
   useEffect(() => {
-    console.log(videoId);
     const onYouTubeIframeAPIReady = () => {
       if (playerDivRef.current && !playerRef.current) {
         playerRef.current = new YT.Player(playerDivRef.current, {
@@ -52,12 +51,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         (window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady);
       document.body.appendChild(script);
     }
-
-    /* return () => {
-      if (playerRef.current) {
-        playerRef.current.destroy();
-      }
-    }; */
   }, [videoId]);
 
   const handlePlayerStateChange = (event: any) => {
@@ -100,20 +93,18 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   };
 
   return (
-    <Card title={title} style={{ marginBottom: "16px" }}>
-      <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
-        <div
-          ref={playerDivRef}
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-          }}
-        />
-      </div>
-    </Card>
+    <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+      <div
+        ref={playerDivRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+        }}
+      />
+    </div>
   );
 };
 

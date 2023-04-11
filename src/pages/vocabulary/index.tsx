@@ -11,6 +11,7 @@ import {
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { useRecoilState } from "recoil";
 import { Table } from "antd";
+import { PageContainer } from "@ant-design/pro-layout";
 
 const { Search } = Input;
 
@@ -84,7 +85,7 @@ const Vocabulary: React.FC = () => {
   };
 
   return (
-    <>
+    <PageContainer loading={loading} title={false}>
       {/*  <Search
         style={{ marginBottom: "20px" }}
         placeholder="input search text"
@@ -113,7 +114,7 @@ const Vocabulary: React.FC = () => {
           }}
         />
       </Card>
-    </>
+    </PageContainer>
   );
 };
 
