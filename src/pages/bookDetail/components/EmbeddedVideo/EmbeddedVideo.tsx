@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Card } from "antd";
 import { SentenceData } from "@/models/sentences.interfaces";
 
@@ -17,7 +17,7 @@ interface EmbeddedVideoProps {
   onHighlightedSubtitleIndexChange?: (index: number | null) => void;
   currentPage: number;
   sentencesPerPage: number;
-  onCurrentPageChange?: (highlightedSubtitleIndex: number | null) => void;
+  handlePageChange: (page: number, pageSize: number) => void;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -27,18 +27,74 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   onHighlightedSubtitleIndexChange,
   currentPage,
   sentencesPerPage,
+  handlePageChange,
 }) => {
-  const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
-    number | null
-  >(null);
   const playerDivRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
+  const currentPageRef = useRef(currentPage);
+  const sentencesPerPageRef = useRef(sentencesPerPage);
+
+  useEffect(() => {
+    currentPageRef.current = currentPage;
+  }, [currentPage]);
+
+  useEffect(() => {
+    sentencesPerPageRef.current = sentencesPerPage;
+  }, [sentencesPerPage]);
+
+  const handlePlayerStateChange = () => {
+    if (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
+      handleTimeUpdate();
+      setTimeout(handlePlayerStateChange, 500);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    console.log(currentPageRef.current + "okej");
+    if (playerRef.current?.getCurrentTime) {
+      const currentTime = playerRef.current.getCurrentTime();
+      changePageOnVideoPlay();
+      const startIndex =
+        (currentPageRef.current - 1) * sentencesPerPageRef.current;
+
+      const newHighlightedIndex = sentencesData
+        .slice(startIndex)
+        .findIndex(
+          (sentence) =>
+            currentTime >= sentence.start! &&
+            currentTime <= sentence.start! + sentence.duration
+        );
+
+      if (onHighlightedSubtitleIndexChange) {
+        onHighlightedSubtitleIndexChange(
+          newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
+        );
+      }
+    }
+  };
+
+  const changePageOnVideoPlay = () => {
+    const currentTime = playerRef.current.getCurrentTime();
+    const newPage = Math.ceil(
+      (sentencesData.findIndex(
+        (sentence) =>
+          currentTime >= sentence.start! &&
+          currentTime <= sentence.start! + sentence.duration
+      ) +
+        1) /
+        sentencesPerPageRef.current
+    );
+
+    if (newPage !== currentPageRef.current && newPage > 0) {
+      handlePageChange(newPage, sentencesPerPageRef.current);
+    }
+  };
 
   useEffect(() => {
     const onYouTubeIframeAPIReady = () => {
       if (playerDivRef.current && !playerRef.current) {
         playerRef.current = new YT.Player(playerDivRef.current, {
-          videoId: videoId,
+          videoId,
           events: {
             onStateChange: handlePlayerStateChange,
           },
@@ -57,49 +113,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       document.body.appendChild(script);
     }
   }, [videoId]);
-
-  const handlePlayerStateChange = (event: any) => {
-    if (event.data === YT.PlayerState.PLAYING) {
-      updateHighlight();
-    }
-  };
-
-  const updateHighlight = () => {
-    if (
-      playerRef.current &&
-      playerRef.current.getPlayerState() === YT.PlayerState.PLAYING
-    ) {
-      handleTimeUpdate();
-      setTimeout(updateHighlight, 500);
-    }
-  };
-
-  const handleTimeUpdate = () => {
-    if (playerRef.current && playerRef.current.getCurrentTime) {
-      const currentTime = playerRef.current.getCurrentTime();
-
-      const startIndex = (currentPage - 1) * sentencesPerPage;
-
-      const newHighlightedIndex = sentencesData
-        .slice(startIndex)
-        .findIndex(
-          (sentence) =>
-            currentTime >= sentence.start! &&
-            currentTime <= sentence.start! + sentence.duration!
-        );
-
-      if (newHighlightedIndex !== highlightedSubtitleIndex) {
-        setHighlightedSubtitleIndex(
-          newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
-        );
-        if (onHighlightedSubtitleIndexChange) {
-          onHighlightedSubtitleIndexChange(
-            newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
-          );
-        }
-      }
-    }
-  };
 
   return (
     <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>

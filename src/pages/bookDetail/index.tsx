@@ -1,5 +1,14 @@
 import React, { FC, useState, useEffect, useCallback, useMemo } from "react";
-import { Card, Row, Col, Switch, Space, Checkbox, Drawer } from "antd";
+import {
+  Card,
+  Row,
+  Col,
+  Space,
+  Checkbox,
+  Drawer,
+  RadioChangeEvent,
+  Radio,
+} from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -69,6 +78,7 @@ const BookDetail: FC = () => {
   const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
     number | null
   >(null);
+  const [updatePage, setUpdatePage] = useState<boolean>(false);
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -96,6 +106,10 @@ const BookDetail: FC = () => {
         targetLanguage,
         sessionStorage.getItem("access_token")
       ); */
+  };
+
+  const handleModeChange = (e: RadioChangeEvent) => {
+    setMode(e.target.value);
   };
 
   const memoizeTexts = (sentences: SentenceData[]) => {
@@ -278,7 +292,6 @@ const BookDetail: FC = () => {
           (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
         setSentenceFrom(getRangeNumber(localSentenceFrom));
         await fetchAndUpdate(localSentenceFrom);
-        console.log("init" + initState);
         setInitState(false);
       } else if (
         sentenceFrom + countOfSentences < page * pageSize ||
@@ -335,39 +348,6 @@ const BookDetail: FC = () => {
 
   const { toggleSettingsDrawer, settingsDrawerVisible } =
     useSettingsDrawerContext();
-
-  useEffect(() => {
-    if (label === LabelType.VIDEO) {
-      if (highlightedSubtitleIndex !== null) {
-        const newPage = Math.ceil(
-          (highlightedSubtitleIndex + 1) / sentencesPerPage
-        );
-        if (newPage !== currentPage) {
-          handlePageChange(newPage, sentencesPerPage);
-        }
-      } else if (currentPage !== 1) {
-        handlePageChange(1, sentencesPerPage);
-      }
-    }
-  }, [
-    highlightedSubtitleIndex,
-    currentPage,
-    handlePageChange,
-    sentencesPerPage,
-  ]);
-
-  const setCurrentPageFromHighlight = (
-    highlightedSubtitleIndex: number | null
-  ) => {
-    if (highlightedSubtitleIndex !== null) {
-      const newPage = Math.ceil(
-        (highlightedSubtitleIndex + 1) / sentencesPerPage
-      );
-      if (newPage !== currentPage) {
-        handlePageChange(newPage, sentencesPerPage);
-      }
-    }
-  };
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -439,20 +419,12 @@ const BookDetail: FC = () => {
           {label === LabelType.VIDEO && (
             <Card
               title={"title"}
-              style={{ marginBottom: "16px" }}
               extra={
-                <Space>
-                  <label htmlFor="switchMode">
-                    Translate by word or sentence:
-                  </label>
-                  <Switch
-                    id="switchMode"
-                    checked={mode === "sentence"}
-                    onChange={() =>
-                      setMode(mode === "word" ? "sentence" : "word")
-                    }
-                  />
-                </Space>
+                <Radio.Group onChange={handleModeChange} value={mode}>
+                  <Radio.Button value="word">Word</Radio.Button>
+                  <Radio.Button value="sentence">Sentence</Radio.Button>
+                  <Radio.Button value="all">All</Radio.Button>
+                </Radio.Group>
               }
             >
               <EmbeddedVideo
@@ -463,7 +435,7 @@ const BookDetail: FC = () => {
                 onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
                 currentPage={currentPage}
                 sentencesPerPage={sentencesPerPage}
-                //onCurrentPageChange={setCurrentPageFromHighlight}
+                handlePageChange={handlePageChange}
               />
             </Card>
           )}
@@ -471,18 +443,11 @@ const BookDetail: FC = () => {
             title={label !== LabelType.VIDEO && "title"}
             extra={
               label !== LabelType.VIDEO && (
-                <Space>
-                  <label htmlFor="switchMode">
-                    Translate by word or sentence:
-                  </label>
-                  <Switch
-                    id="switchMode"
-                    checked={mode === "sentence"}
-                    onChange={() =>
-                      setMode(mode === "word" ? "sentence" : "word")
-                    }
-                  />
-                </Space>
+                <Radio.Group onChange={handleModeChange} value={mode}>
+                  <Radio.Button value="word">Word</Radio.Button>
+                  <Radio.Button value="sentence">Sentence</Radio.Button>
+                  <Radio.Button value="all">All</Radio.Button>
+                </Radio.Group>
               )
             }
           >

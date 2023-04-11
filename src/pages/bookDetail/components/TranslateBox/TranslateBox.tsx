@@ -263,7 +263,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 
   return (
     <>
-      {mode === "sentence"
+      {
+        /* mode === "sentence"
         ? visibleSourceTexts.map((textObj, index) => (
             <div key={index} style={{ whiteSpace: "pre-wrap" }}>
               <TranslateWord
@@ -276,62 +277,65 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               />
             </div>
           ))
-        : visibleSourceTexts.map((sourceSentence, index) => {
-            const targetSentence = visibleTargetTexts.find(
-              (target) => target.sentenceNo === sourceSentence.sentenceNo
-            );
-            return (
-              <div key={index} style={{ whiteSpace: "pre-wrap" }}>
-                {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
-                  const translation =
-                    targetSentence?.sentenceWords[wordIndex]?.wordText || "";
-                  return (
-                    <TranslateWord
-                      key={`${index}-${wordIndex}`}
-                      word={sourceWord.wordText}
-                      translation={translation}
-                      sentenceNumber={sourceSentence.sentenceNo}
-                      mode={mode}
-                      onMouseDown={(word: string, sentenceNumber: number) =>
-                        handleMouseEvent(
-                          "down",
-                          word,
-                          sentenceNumber,
-                          sourceWord.position
-                        )
-                      }
-                      onMouseEnter={(word: string, sentenceNumber: number) =>
-                        handleMouseEvent(
-                          "enter",
-                          word,
-                          sentenceNumber,
-                          sourceWord.position
-                        )
-                      }
-                      onMouseUp={handleMouseUp}
-                      highlightPositions={getHighlightPositions(
-                        userSentences,
-                        vocabularyListUserPhrases!,
-                        sourceSentence.sentenceNo,
+        : */
+        visibleSourceTexts.map((sourceSentence, index) => {
+          const targetSentence = visibleTargetTexts.find(
+            (target) => target.sentenceNo === sourceSentence.sentenceNo
+          );
+          return (
+            <div key={index} style={{ whiteSpace: "pre-wrap" }}>
+              {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
+                const translation =
+                  targetSentence?.sentenceWords[wordIndex]?.wordText || "";
+                return (
+                  <TranslateWord
+                    key={`${index}-${wordIndex}`}
+                    word={sourceWord.wordText}
+                    translation={translation}
+                    sentenceNumber={sourceSentence.sentenceNo}
+                    mode={mode}
+                    onMouseDown={(word: string, sentenceNumber: number) =>
+                      handleMouseEvent(
+                        "down",
+                        word,
+                        sentenceNumber,
                         sourceWord.position
-                      )}
-                      isHighlighted={
-                        isWordInHighlightedPhrase(
-                          userSentences,
-                          selectedWords,
-                          sourceWord.wordText,
-                          sourceWord.position,
-                          sourceSentence.sentenceNo
-                        ) || index === highlightedSentenceIndex
-                      }
-                      wordIndex={sourceWord.position}
-                      isSelecting={mouseDown}
-                    />
-                  );
-                })}
-              </div>
-            );
-          })}
+                      )
+                    }
+                    onMouseEnter={(word: string, sentenceNumber: number) =>
+                      handleMouseEvent(
+                        "enter",
+                        word,
+                        sentenceNumber,
+                        sourceWord.position
+                      )
+                    }
+                    onMouseUp={handleMouseUp}
+                    highlightPositions={getHighlightPositions(
+                      userSentences,
+                      vocabularyListUserPhrases!,
+                      sourceSentence.sentenceNo,
+                      sourceWord.position
+                    )}
+                    isHighlighted={
+                      isWordInHighlightedPhrase(
+                        userSentences,
+                        selectedWords,
+                        sourceWord.wordText,
+                        sourceWord.position,
+                        sourceSentence.sentenceNo
+                      ) || index === highlightedSentenceIndex
+                    }
+                    wordIndex={sourceWord.position}
+                    isSelecting={mouseDown}
+                    sentenceTranslation={targetSentence?.sentenceText || ""}
+                  />
+                );
+              })}
+            </div>
+          );
+        })
+      }
     </>
   );
 };

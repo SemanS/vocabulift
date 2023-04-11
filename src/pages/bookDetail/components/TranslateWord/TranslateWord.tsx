@@ -17,6 +17,7 @@ interface TranslateWordProps {
   isHighlighted?: boolean;
   wordIndex?: number;
   isSelecting?: boolean;
+  sentenceTranslation?: string;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = ({
@@ -30,6 +31,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   highlightPositions,
   isHighlighted,
   isSelecting,
+  sentenceTranslation,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -39,6 +41,10 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
 
   const handleMouseEnter = () => {
     onMouseEnter?.(word!, sentenceNumber!);
+    setIsHovered(true);
+  };
+  const handleMouseLeave = () => {
+    setIsHovered(false); // Set isHovered to false when the mouse leaves
   };
 
   const handleMouseUp = () => {
@@ -49,32 +55,83 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
     if (isSelecting) {
       return children as React.ReactElement;
     }
-    return (
-      <Tooltip
-        arrow={false}
-        mouseEnterDelay={0.15}
-        mouseLeaveDelay={0}
-        overlayInnerStyle={{
-          backgroundColor: "white",
-          color: "black",
-          borderRadius: "10px",
-          fontSize: "16px",
-        }}
-        //open={isHighlighted}
-        /* getPopupContainer={(trigger) => {
-          return trigger;
-        }} */
-        title={translation}
-      >
-        {children}
-      </Tooltip>
-    );
+    if (mode === "word") {
+      return (
+        <Tooltip
+          arrow={false}
+          mouseEnterDelay={0.15}
+          mouseLeaveDelay={0}
+          placement="top"
+          overlayInnerStyle={{
+            backgroundColor: "white",
+            color: "black",
+            borderRadius: "10px",
+            fontSize: "16px",
+          }}
+          title={translation}
+        >
+          {children}
+        </Tooltip>
+      );
+    } else if (mode === "sentence") {
+      return (
+        <Tooltip
+          arrow={false}
+          mouseEnterDelay={0.15}
+          mouseLeaveDelay={0}
+          placement="top"
+          overlayInnerStyle={{
+            backgroundColor: "white",
+            color: "black",
+            borderRadius: "10px",
+            fontSize: "16px",
+          }}
+          title={sentenceTranslation}
+        >
+          {children}
+        </Tooltip>
+      );
+    } else {
+      return (
+        <Tooltip
+          arrow={false}
+          mouseEnterDelay={0.15}
+          mouseLeaveDelay={0}
+          placement="top"
+          align={{ offset: [0, -10] }}
+          overlayInnerStyle={{
+            backgroundColor: "white",
+            color: "black",
+            borderRadius: "10px",
+            fontSize: "16px",
+          }}
+          title={translation}
+        >
+          <Tooltip
+            arrow={false}
+            mouseEnterDelay={0.15}
+            mouseLeaveDelay={0}
+            placement="top"
+            align={{ offset: [0, -50] }}
+            overlayInnerStyle={{
+              backgroundColor: "white",
+              color: "black",
+              borderRadius: "10px",
+              fontSize: "16px",
+            }}
+            title={sentenceTranslation}
+          >
+            {children}
+          </Tooltip>
+        </Tooltip>
+      );
+    }
   };
 
   return renderTooltip(
     <Text
       style={{
-        cursor: mode === "word" ? "pointer" : "default",
+        cursor: "pointer",
         whiteSpace: "pre-wrap",
       }}
       className={classNames(
@@ -83,6 +140,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
           : "",
         styles.textbox
       )}
+      onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
