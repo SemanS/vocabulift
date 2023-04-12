@@ -1,17 +1,15 @@
-import { Card } from "antd";
 import React, { useEffect } from "react";
+import { Card } from "antd";
 import { useState } from "react";
 import { Input } from "antd";
 import { getUserSentences } from "@/services/userService";
-import {
-  UserPhrase,
-  UserSentence,
-  UserWord,
-} from "@/models/userSentence.interface";
+import { UserPhrase, UserSentence } from "@/models/userSentence.interface";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { useRecoilState } from "recoil";
 import { Table } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
+import styles from "./index.module.less";
+import { Link } from "react-router-dom";
 
 const { Search } = Input;
 
@@ -32,40 +30,91 @@ const Vocabulary: React.FC = () => {
 
   const columns = [
     {
-      title: "Library ID",
-      dataIndex: "libraryId",
-      key: "libraryId",
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      render: (title: string, row: any) => (
+        <Link
+          style={{ textDecoration: "none", color: "black" }}
+          to={`/library/${row.libraryId}?currentPage=${row.currentPage}&pageSize=${row.sentencesPerPage}`}
+        >
+          {title}
+        </Link>
+      ),
     },
     {
-      title: "Sentence No.",
-      dataIndex: "sentenceNo",
-      key: "sentenceNo",
-    },
-    {
-      title: "Source Language",
-      dataIndex: "sourceLanguage",
-      key: "sourceLanguage",
-    },
-    {
-      title: "Target Language",
-      dataIndex: "targetLanguage",
-      key: "targetLanguage",
-    },
-    {
-      title: "Words",
-      dataIndex: "words",
-      key: "words",
-      render: (words: UserWord[]) =>
-        words.map((word) => word.sourceText).join(", "),
+      title: "Text",
+      dataIndex: "sentenceText",
+      key: "sentenceText",
+      render: (text: string, row: any) => {
+        return (
+          <Link
+            style={{ textDecoration: "none", color: "black" }}
+            to={`/library/${row.libraryId}?currentPage=${row.currentPage}&pageSize=${row.sentencesPerPage}`}
+          >
+            <>
+              {text.split(" ").map((word, index) => (
+                <span
+                  key={index}
+                  className={
+                    isWordInPhrases(word, row.phrases)
+                      ? styles.bubbleHovered
+                      : ""
+                  }
+                >
+                  {word}
+                  &nbsp;
+                </span>
+              ))}
+            </>
+          </Link>
+        );
+      },
     },
     {
       title: "Phrases",
-      dataIndex: "phrases",
-      key: "phrases",
-      render: (phrases: UserPhrase[]) =>
-        phrases.map((phrase) => phrase.sourceText).join(", "),
+      dataIndex: "sourceText",
+      key: "sourceText",
+      render: (sourceText: string, row: any) => (
+        <Link
+          style={{ textDecoration: "none", color: "black" }}
+          to={`/library/${row.libraryId}?currentPage=${row.currentPage}&pageSize=${row.sentencesPerPage}`}
+        >
+          {sourceText}
+        </Link>
+      ),
+    },
+    {
+      title: "Phrases",
+      dataIndex: "targetText",
+      key: "targetText",
+      render: (targetText: string, row: any) => (
+        <Link
+          style={{ textDecoration: "none", color: "black" }}
+          to={`/library/${row.libraryId}?currentPage=${row.currentPage}&pageSize=${row.sentencesPerPage}`}
+        >
+          {targetText}
+        </Link>
+      ),
     },
   ];
+
+  const flattenedSentences = userSentences.reduce(
+    (acc: UserPhrase[], sentence: UserSentence) => {
+      return acc.concat(
+        sentence.phrases.map((phrase) => ({
+          ...phrase,
+          libraryId: sentence.libraryId,
+          title: sentence.title,
+          sentenceText: sentence.sentenceText,
+          phrases: sentence.phrases,
+          currentPage: sentence.currentPage,
+          sentencesPerPage: sentence.sentencesPerPage,
+        }))
+      );
+    },
+    []
+  );
 
   const fetchDataAndUpdateState = async (
     localSentenceFrom: number,
@@ -82,6 +131,14 @@ const Vocabulary: React.FC = () => {
 
     setUserSentences(userSentencesData);
     setLoading(false);
+  };
+
+  const isWordInPhrases = (word: string, phrases: UserPhrase[]) => {
+    return phrases.some(
+      (phrase) =>
+        phrase.sourceText.split(" ").includes(word) ||
+        phrase.targetText.split(" ").includes(word)
+    );
   };
 
   return (
@@ -101,7 +158,7 @@ const Vocabulary: React.FC = () => {
       >
         <Table
           columns={columns}
-          dataSource={userSentences}
+          dataSource={flattenedSentences}
           rowKey="libraryId"
           pagination={{
             current: 1,

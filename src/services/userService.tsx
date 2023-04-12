@@ -85,10 +85,14 @@ export const addUserPhrase = async (
   selectedWordTranslation: string | null,
   libraryId: string | undefined,
   sentenceNo: number | null,
+  sentenceText: string | null,
   startPosition: number | null,
   endPosition: number | null,
   sourceLanguage: string,
   targetLanguage: string,
+  sentencesPerPage: number,
+  currentPage: number,
+  libraryTitle: string | undefined,
   accessToken: string | null
 ): Promise<any> => {
   const requestBody = {
@@ -96,11 +100,16 @@ export const addUserPhrase = async (
     selectedWordTranslation: selectedWordTranslation,
     libraryId: libraryId,
     sentenceNo: sentenceNo,
+    sentenceText: sentenceText,
     startPosition: startPosition,
     endPosition: endPosition,
     sourceLanguage: sourceLanguage,
     targetLanguage: targetLanguage,
+    sentencesPerPage: sentencesPerPage,
+    currentPage: currentPage,
+    title: libraryTitle,
   };
+  console.log("ss" + sentenceText);
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
     {

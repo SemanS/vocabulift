@@ -10,6 +10,7 @@ export interface SentenceResponse {
   totalSentences: number;
   videoId?: string | undefined;
   label?: LabelType | undefined;
+  title?: string | undefined;
 }
 export interface SentenceData {
   sentenceNo: number;

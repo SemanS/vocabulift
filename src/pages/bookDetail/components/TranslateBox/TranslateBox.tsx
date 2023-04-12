@@ -20,6 +20,8 @@ interface TranslateBoxProps {
   currentTextIndex: number;
   sentenceFrom: number;
   sentencesPerPage: number;
+  currentPage: number;
+  libraryTitle: string | undefined;
   userSentences: UserSentence[];
   vocabularyListUserPhrases?: VocabularyListUserPhrase[] | null;
   highlightedSentenceIndex?: number | null;
@@ -34,6 +36,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   currentTextIndex,
   sentenceFrom,
   sentencesPerPage,
+  currentPage,
+  libraryTitle,
   userSentences,
   vocabularyListUserPhrases,
   highlightedSentenceIndex,
@@ -50,6 +54,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [selectedWordTranslation, setSelectedWordTranslation] = useState<
     string | null
   >(null);
+  const [selectedSentenceText, setSelectedSentenceText] = useState("");
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
@@ -70,10 +75,14 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         selectedWordTranslation,
         libraryId,
         selectedSentence,
+        selectedSentenceText,
         startPosition,
         endPosition,
         sourceLanguage,
         targetLanguage,
+        sentencesPerPage,
+        currentPage,
+        libraryTitle,
         sessionStorage.getItem("access_token")
       ).then((response) => {
         if (response.status === "success") {
@@ -106,12 +115,14 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     eventType: "down" | "enter",
     word: string,
     sentenceNumber: number,
+    sentenceText: string,
     wordIndexInSentence: number
   ) => {
     if (eventType === "down") {
       setMouseDown(true);
       setSelectedSentence(sentenceNumber);
       setSelectedWords([{ word, wordIndexInSentence, sentenceNumber }]);
+      setSelectedSentenceText(sentenceText);
     } else if (
       eventType === "enter" &&
       mouseDown &&
@@ -125,8 +136,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         const sentenceObj: SentenceData | undefined = visibleSourceTexts.find(
           (s) => s.sentenceNo == sentenceNumber
         );
-        const sentenceText = sentenceObj!.sentenceText;
-        const sentenceLines = sentenceText.split("\n");
+        const sentenceFromText = sentenceObj!.sentenceText;
+        const sentenceLines = sentenceFromText.split("\n");
         const wordsArray = sentenceLines.flatMap((line: any) =>
           line
             .split(" ")
@@ -293,20 +304,31 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     word={sourceWord.wordText}
                     translation={translation}
                     sentenceNumber={sourceSentence.sentenceNo}
+                    sentenceText={sourceSentence.sentenceText}
                     mode={mode}
-                    onMouseDown={(word: string, sentenceNumber: number) =>
+                    onMouseDown={(
+                      word: string,
+                      sentenceNumber: number,
+                      sentenceText: string
+                    ) =>
                       handleMouseEvent(
                         "down",
                         word,
                         sentenceNumber,
+                        sentenceText,
                         sourceWord.position
                       )
                     }
-                    onMouseEnter={(word: string, sentenceNumber: number) =>
+                    onMouseEnter={(
+                      word: string,
+                      sentenceNumber: number,
+                      sentenceText: string
+                    ) =>
                       handleMouseEvent(
                         "enter",
                         word,
                         sentenceNumber,
+                        sentenceText,
                         sourceWord.position
                       )
                     }

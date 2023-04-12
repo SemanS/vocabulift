@@ -52,7 +52,6 @@ const BookDetail: FC = () => {
   const [loading, setLoading] = useState(true);
   const [totalSentences, setTotalSentences] = useState(0);
   const [videoId, setVideoId] = useState<string | undefined>("");
-  const [label, setLabel] = useState<LabelType | undefined>(LabelType.TEXT);
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
   const [sentencesData, setSentencesData] = useState<SentenceData[]>([]);
@@ -78,7 +77,8 @@ const BookDetail: FC = () => {
   const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
     number | null
   >(null);
-  const [updatePage, setUpdatePage] = useState<boolean>(false);
+  const [label, setLabel] = useState<LabelType | undefined>(LabelType.TEXT);
+  const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
 
   useEffect(() => {
     if (currentPageFromQuery && pageSizeFromQuery) {
@@ -93,7 +93,11 @@ const BookDetail: FC = () => {
 
   const handleAddWordDefinition = async (word: string) => {
     // Fetch word details from public API
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+    fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(
+        word
+      )}`
+    )
       .then((response) => response.json())
       .then((data) => setWordData(data[0]))
       .catch((error) => console.error(error));
@@ -164,6 +168,7 @@ const BookDetail: FC = () => {
     userSentencesData: UserSentence[],
     sentencesData: SentenceResponse
   ) => {
+    setLibraryTitle(sentencesData.title);
     setLabel(sentencesData.label);
     setVideoId(sentencesData.videoId);
     setSentencesData(memoizeTexts(sentencesData.sentences));
@@ -177,13 +182,14 @@ const BookDetail: FC = () => {
   const handleAddUserPhrase = useCallback(
     async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
       try {
-        if (
+        handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
+        /* if (
           vocabularyListUserPhrase.phrase.endPosition -
             vocabularyListUserPhrase.phrase.startPosition ===
           0
         ) {
           handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
-        }
+        } */
         const updateVocabularyListUserPhrases = [
           ...(vocabularyListUserPhrases || []),
           vocabularyListUserPhrase,
@@ -418,7 +424,7 @@ const BookDetail: FC = () => {
         >
           {label === LabelType.VIDEO && (
             <Card
-              title={"title"}
+              title={libraryTitle}
               extra={
                 <Radio.Group onChange={handleModeChange} value={mode}>
                   <Radio.Button value="word">Word</Radio.Button>
@@ -457,6 +463,8 @@ const BookDetail: FC = () => {
               currentTextIndex={currentTextIndex}
               sentenceFrom={sentenceFrom}
               sentencesPerPage={sentencesPerPage}
+              currentPage={currentPage}
+              libraryTitle={libraryTitle}
               mode={mode}
               sentencesData={memoizedSentencesData}
               userSentences={userSentences}

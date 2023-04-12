@@ -1,6 +1,6 @@
 import { Tooltip, Typography } from "antd";
 import classNames from "classnames";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "./TranslateWord.module.less";
 
 const { Text } = Typography;
@@ -9,9 +9,18 @@ interface TranslateWordProps {
   word?: string;
   translation?: string;
   sentenceNumber?: number;
+  sentenceText?: string;
   mode: string;
-  onMouseDown?: (word: string, sentenceNumber: number) => void;
-  onMouseEnter?: (word: string, sentenceNumber: number) => void;
+  onMouseDown?: (
+    word: string,
+    sentenceNumber: number,
+    sentenceText: string
+  ) => void;
+  onMouseEnter?: (
+    word: string,
+    sentenceNumber: number,
+    sentenceText: string
+  ) => void;
   onMouseUp?: (sentenceNumber: number, translation: string) => void;
   highlightPositions?: boolean;
   isHighlighted?: boolean;
@@ -24,6 +33,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   word,
   translation,
   sentenceNumber,
+  sentenceText,
   mode,
   onMouseDown,
   onMouseEnter,
@@ -36,11 +46,11 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseDown = () => {
-    onMouseDown?.(word!, sentenceNumber!);
+    onMouseDown?.(word!, sentenceNumber!, sentenceText!);
   };
 
   const handleMouseEnter = () => {
-    onMouseEnter?.(word!, sentenceNumber!);
+    onMouseEnter?.(word!, sentenceNumber!, sentenceText!);
     setIsHovered(true);
   };
   const handleMouseLeave = () => {

@@ -1,10 +1,14 @@
 export interface UserSentence {
   libraryId: string;
   sentenceNo: number;
+  sentenceText: string;
   sourceLanguage: string;
   targetLanguage: string;
   words: UserWord[];
   phrases: UserPhrase[];
+  title: string;
+  sentencesPerPage: number;
+  currentPage: number;
 }
 
 export interface UserWord {
