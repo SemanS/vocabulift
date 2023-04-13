@@ -46,25 +46,20 @@ export const getSentences = async (
   return data;
 };
 
-export const getUserSentences = async (
-  sentenceFrom: number,
-  countOfSentences: number,
-  localSentenceFrom: number,
-  sourceLanguage: string,
-  targetLanguage: string,
-  orderBy: string,
-  libraryId?: string | undefined
-) => {
+export const getUserSentences = async (options: {
+  sentenceFrom: number;
+  countOfSentences: number;
+  sourceLanguage: string;
+  targetLanguage: string;
+  orderBy?: string | null;
+  libraryId?: string | undefined;
+  localSentenceFrom?: number | null;
+  dateFilter?: string | undefined;
+}) => {
   const requestBody = {
-    sentenceFrom: localSentenceFrom ? localSentenceFrom : sentenceFrom,
-    countOfSentences: countOfSentences,
-    localSentenceFrom: localSentenceFrom,
-    sourceLanguage: sourceLanguage,
-    targetLanguage: targetLanguage,
-    orderBy: orderBy,
-    libraryId: libraryId,
+    ...options,
   };
-
+  // one method for vocabulary and for bookDetail
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/sentences`,
     {
@@ -76,8 +71,16 @@ export const getUserSentences = async (
       body: JSON.stringify(requestBody),
     }
   );
+
   const data = await response.json();
-  return data.results;
+  if (options.dateFilter) {
+    return {
+      results: data.results.userSentences,
+      countOfSentences: data.results.countOfSentences,
+    };
+  } else {
+    return data.results;
+  }
 };
 
 export const addUserPhrase = async (
@@ -109,7 +112,6 @@ export const addUserPhrase = async (
     currentPage: currentPage,
     title: libraryTitle,
   };
-  console.log("ss" + sentenceText);
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
     {

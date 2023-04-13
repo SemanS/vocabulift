@@ -63,11 +63,9 @@ const recoilState = {
 };
 
 root.render(
-  <React.StrictMode>
-    <AxiosProvider>
-      <QueryClientProvider client={queryClient}>
-        <RecoilRoot {...recoilState} />
-      </QueryClientProvider>
-    </AxiosProvider>
-  </React.StrictMode>
+  <AxiosProvider>
+    <QueryClientProvider client={queryClient}>
+      <RecoilRoot {...recoilState} />
+    </QueryClientProvider>
+  </AxiosProvider>
 );

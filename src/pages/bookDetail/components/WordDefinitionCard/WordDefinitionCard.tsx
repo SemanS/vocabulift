@@ -50,8 +50,8 @@ const WordDefinitionCard: React.FC<WordDefinitionCardProps> = ({
         renderItem={({ partOfSpeech, definitions }, index) => (
           <List.Item key={index}>
             {definitions.map((definition, subIndex) => (
-              <>
-                <div key={`${index}-${subIndex}`}>
+              <React.Fragment key={`${index}-${subIndex}`}>
+                <div>
                   <Typography.Text strong>{partOfSpeech}</Typography.Text>
                   <Typography.Text>: {definition.definition}</Typography.Text>
                 </div>
@@ -65,7 +65,7 @@ const WordDefinitionCard: React.FC<WordDefinitionCardProps> = ({
                 ) : (
                   ""
                 )}
-              </>
+              </React.Fragment>
             ))}
           </List.Item>
         )}

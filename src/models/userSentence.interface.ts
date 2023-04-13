@@ -4,11 +4,11 @@ export interface UserSentence {
   sentenceText: string;
   sourceLanguage: string;
   targetLanguage: string;
-  words: UserWord[];
   phrases: UserPhrase[];
   title: string;
   sentencesPerPage: number;
   currentPage: number;
+  createdAt: Date;
 }
 
 export interface UserWord {
@@ -18,8 +18,10 @@ export interface UserWord {
 }
 
 export interface UserPhrase {
+  sentenceNo: number;
   sourceText: string;
   targetText: string;
   startPosition: number;
   endPosition: number;
+  createdAt: Date;
 }

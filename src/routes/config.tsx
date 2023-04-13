@@ -25,7 +25,6 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
           },
         })
         .then((response) => {
-          console.log(JSON.stringify(response));
           setUser({
             ...getGlobalState(),
             username: "Slavo",

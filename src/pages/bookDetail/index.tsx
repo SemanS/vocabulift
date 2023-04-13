@@ -151,15 +151,15 @@ const BookDetail: FC = () => {
       sourceLanguage,
       targetLanguage
     );
-    const userSentencesData: UserSentence[] = await getUserSentences(
+    const userSentencesData: UserSentence[] = await getUserSentences({
       sentenceFrom,
       countOfSentences,
-      localSentenceFrom,
       sourceLanguage,
       targetLanguage,
-      "sentenceNo",
-      libraryId
-    );
+      orderBy: "sentenceNo",
+      libraryId,
+      localSentenceFrom,
+    });
     await updateSentencesState(userSentencesData, sentencesData);
     setLoading(false);
   };
@@ -200,7 +200,6 @@ const BookDetail: FC = () => {
           sentenceNo: vocabularyListUserPhrase.sentenceNo,
           sourceLanguage: sourceLanguage,
           targetLanguage: targetLanguage,
-          words: [],
           phrases: [vocabularyListUserPhrase.phrase],
         };
 

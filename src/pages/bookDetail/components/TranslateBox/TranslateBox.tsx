@@ -5,7 +5,7 @@ import {
   getHighlightPositions,
   isWordInHighlightedPhrase,
 } from "@/utils/getHighlightPosition";
-import { UserSentence } from "@/models/userSentence.interface";
+import { UserPhrase, UserSentence } from "@/models/userSentence.interface";
 import { getHighlightedWords } from "@/utils/getHighlightedWords";
 import { addUserPhrase } from "@/services/userService";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
@@ -87,18 +87,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       ).then((response) => {
         if (response.status === "success") {
           const vocabularyListUserPhrase: VocabularyListUserPhrase = {
-            phrase: {
-              sourceText:
-                response.data.phrases[response.data.phrases.length - 1]
-                  .sourceText,
-              targetText:
-                response.data.phrases[response.data.phrases.length - 1]
-                  .targetText,
-              startPosition: startPosition!,
-              endPosition: endPosition!,
-            },
-            sentenceNo: selectedSentence!,
+            phrase: response.data,
+            sentenceNo: response.data.sentenceNo,
           };
+
           onAddUserPhrase(vocabularyListUserPhrase);
           setSelectedWordTranslation(null);
         }

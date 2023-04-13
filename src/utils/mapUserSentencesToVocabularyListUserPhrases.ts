@@ -10,7 +10,7 @@ export const mapUserSentencesToVocabularyListUserPhrases = (
     userSentence.phrases.forEach((userPhrase) => {
       const vocabularyListUserPhrase: VocabularyListUserPhrase = {
         phrase: userPhrase,
-        sentenceNo: userSentence.sentenceNo,
+        sentenceNo: userPhrase.sentenceNo,
       };
 
       vocabularyListUserPhrases.push(vocabularyListUserPhrase);
