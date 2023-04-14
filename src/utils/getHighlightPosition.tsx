@@ -10,17 +10,15 @@ export const getHighlightPositions = (
   const sortedSentences = userSentences.sort(
     (a, b) => a.sentenceNo - b.sentenceNo
   );
-  const sentence = sortedSentences.find((userSentence) => {
+
+  console.log("" + JSON.stringify(userSentences, null, 2));
+
+  const sentence = sortedSentences.find((userSentence: UserSentence) => {
     return userSentence.sentenceNo === sentenceNo; // Use strict equality operator
   });
 
   if (!sentence) return false;
 
-  const isWordHighlighted =
-    sentence.words &&
-    sentence.words.some((userWord) => {
-      return userWord.position == wordPosition;
-    });
   const isPhraseHighlighted =
     sentence.phrases &&
     sentence.phrases.some(
@@ -40,9 +38,9 @@ export const getHighlightPositions = (
     }
   );
 
-  return (
-    isPhraseHighlighted || isWordHighlighted || isInVocabularyListUserPhrases
-  );
+  console.log("vocabularyListUserPhrases" + vocabularyListUserPhrases, null, 2);
+
+  return isPhraseHighlighted || isInVocabularyListUserPhrases;
 };
 
 // New function isWordInHighlightedPhrase

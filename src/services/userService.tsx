@@ -47,7 +47,7 @@ export const getSentences = async (
 };
 
 export const getUserSentences = async (options: {
-  sentenceFrom: number;
+  nextCursor: number;
   countOfSentences: number;
   sourceLanguage: string;
   targetLanguage: string;
@@ -81,6 +81,40 @@ export const getUserSentences = async (options: {
   } else {
     return data.results;
   }
+};
+
+export const getUserPhrases = async (options: {
+  nextCursor: number;
+  countOfPhrases: number;
+  sourceLanguage: string;
+  targetLanguage: string;
+  orderBy?: string | null;
+  libraryId?: string | undefined;
+  dateFilter?: string | undefined;
+}) => {
+  const requestBody = {
+    ...options,
+  };
+  // one method for vocabulary and for bookDetail
+  const response = await fetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/phrases`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify(requestBody),
+    }
+  );
+
+  const data = await response.json();
+
+  return {
+    results: data.results.userPhrases,
+    countOfPhrases: data.results.countOfPhrases,
+    nextCursor: data.results.nextCursor,
+  };
 };
 
 export const addUserPhrase = async (
@@ -132,19 +166,13 @@ export const addUserPhrase = async (
 };
 
 export const deleteUserPhrase = async (
-  libraryId: string | undefined,
-  sentenceNo: number | null,
-  startPosition: number | null,
-  sourceLanguage: string,
-  targetLanguage: string,
+  phraseId: string,
+  sentenceId: string,
   accessToken: string | null
 ): Promise<void> => {
   const requestBody = {
-    libraryId: libraryId,
-    sentenceNo: sentenceNo,
-    startPosition: startPosition,
-    sourceLanguage: sourceLanguage,
-    targetLanguage: targetLanguage,
+    phraseId: phraseId,
+    sentenceId: sentenceId,
   };
   await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/delete-phrase`,

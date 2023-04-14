@@ -1,4 +1,4 @@
-import { Word } from "@/pages/vocabulary";
+/* import { Word } from "@/pages/vocabulary";
 import { Card, List, Typography } from "antd";
 import React from "react";
 
@@ -37,3 +37,4 @@ const WordDetail: React.FC<WordDetailProps> = ({ word }) => {
 };
 
 export default WordDetail;
+ */

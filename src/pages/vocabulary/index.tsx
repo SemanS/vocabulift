@@ -1,266 +1,226 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { Card, Col, Input, Radio, Row, Table } from "antd";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useMemo, useEffect } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { getUserPhrases } from "@/services/userService";
 import { useRecoilState } from "recoil";
-import { getUserSentences } from "@/services/userService";
-import { UserPhrase, UserSentence } from "@/models/userSentence.interface";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
-import { PageContainer } from "@ant-design/pro-layout";
+import { Table, Typography, theme } from "antd";
+import classNames from "classnames";
+import { Link } from "react-router-dom";
+import { UserPhrase } from "@/models/userSentence.interface";
 import styles from "./index.module.less";
-import { PaginationConfig } from "antd/lib/pagination";
+import { VariableSizeGrid as Grid } from "react-window";
+import ResizeObserver from "rc-resize-observer";
 
-const { Search } = Input;
+type DateFilter = "today" | "last week" | "last month" | "all";
 
 const Vocabulary: React.FC = () => {
-  const [loading, setLoading] = useState(false);
-  const [sentenceFrom, setSentenceFrom] = useState(1);
-  const [countOfSentences, setCountOfSentences] = useState(10);
-  const [hasMore, setHasMore] = useState(true);
-  const [userSentences, setUserSentences] = useState<UserSentence[]>([]);
-  const [sourceLanguage, setSourceLanguage] =
-    useRecoilState(sourceLanguageState);
-  const [targetLanguage, setTargetLanguage] =
-    useRecoilState(targetLanguageState);
-  const [dateFilter, setDateFilter] = useState<
-    "today" | "last week" | "last month" | "all"
-  >("all");
-  const [sortOrder, setSortOrder] = useState<"ascend" | "descend" | undefined>(
-    "descend"
+  const [loading, setLoading] = useState<boolean>(false);
+  const [sourceLanguage] = useRecoilState(sourceLanguageState);
+  const [targetLanguage] = useRecoilState(targetLanguageState);
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [tableWidth, setTableWidth] = useState(0);
+
+  const fetchSize = 5;
+  const scroll = { y: 300, x: "100vw" };
+
+  const fetchPhrases = async ({ pageParam = 0 }) => {
+    const {
+      results: phrasesData,
+      countOfPhrases: totalCount,
+      nextCursor: nextCursor,
+    } = await getUserPhrases({
+      nextCursor: pageParam,
+      countOfPhrases: fetchSize,
+      sourceLanguage,
+      targetLanguage,
+      dateFilter,
+    });
+
+    return { phrasesData, totalCount, nextCursor };
+  };
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ["phrases", sourceLanguage, targetLanguage, dateFilter],
+    queryFn: fetchPhrases,
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    refetchOnWindowFocus: false,
+  });
+
+  const columns = useMemo(
+    () => [
+      { title: "Title", dataIndex: "sentenceNo", key: "sentenceNo" },
+      {
+        title: "Text",
+        dataIndex: "sentenceText",
+        key: "sentenceText",
+        width: 200,
+      },
+      {
+        title: "SourceText",
+        dataIndex: "sourceText",
+        key: "sourceText",
+      },
+      {
+        title: "TargetText",
+        dataIndex: "targetText",
+        key: "targetText",
+      },
+    ],
+    []
   );
 
-  const handleDateFilterChange = useCallback((value: any) => {
-    setDateFilter(value);
-    setSentenceFrom(1);
-    setUserSentences([]); // Clear the userSentences state
-    setHasMore(true); // Reset the hasMore state
-    fetchDataAndUpdateState(value); // Pass the dateFilter value to fetchDataAndUpdateState
-  }, []);
+  const dataSource = useMemo(
+    () => data?.pages.flatMap((page) => page.phrasesData) || [],
+    [data]
+  );
 
-  const observer = useRef<IntersectionObserver | null>(null);
-  const scrollableDivRef = useRef<HTMLDivElement | null>(null);
+  const mergedColumns = useMemo(
+    () =>
+      columns.map((column: any) => {
+        if (column.width) {
+          return column;
+        }
+        return {
+          ...column,
+          width: Math.floor(
+            tableWidth / columns.filter(({ width }) => !width).length
+          ),
+        };
+      }),
+    [columns, tableWidth]
+  );
 
-  // Add a new useRef for the sentinel (the last element in the list)
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    fetchDataAndUpdateState();
-  }, [dateFilter]);
-
-  useEffect(() => {
-    // Create a new observer
-    observer.current = new IntersectionObserver(
-      (entries) => {
-        const firstEntry = entries[0];
-        if (firstEntry.isIntersecting && hasMore) {
-          fetchDataAndUpdateState(dateFilter, sentenceFrom);
+  const gridRef = useRef<any>();
+  const [connectObject] = useState<any>(() => {
+    const obj = {};
+    Object.defineProperty(obj, "scrollLeft", {
+      get: () => {
+        if (gridRef.current) {
+          return gridRef.current?.state?.scrollLeft;
+        }
+        return null;
+      },
+      set: (scrollLeft: number) => {
+        if (gridRef.current) {
+          gridRef.current.scrollTo({ scrollLeft });
         }
       },
-      { threshold: 1 }
-    );
+    });
 
-    const currentObserver = observer.current;
-    const currentSentinel = sentinelRef.current;
+    return obj;
+  });
 
-    if (currentSentinel) {
-      currentObserver.observe(currentSentinel);
-    }
-
-    return () => {
-      if (currentSentinel) {
-        currentObserver.unobserve(currentSentinel);
-      }
-    };
-  }, [dateFilter, hasMore, sentenceFrom]);
-
-  // Update fetchDataAndUpdateState function to receive nextSentenceFrom
-  const fetchDataAndUpdateState = async (
-    dateFilter: "today" | "last week" | "last month" | "all" = "all",
-    nextSentenceFrom: number = sentenceFrom
-  ) => {
-    setLoading(true);
-
-    const { results: userSentencesData, countOfSentences: totalCount } =
-      await getUserSentences({
-        sentenceFrom: nextSentenceFrom,
-        countOfSentences,
-        sourceLanguage,
-        targetLanguage,
-        dateFilter,
-      });
-
-    if (
-      userSentencesData.length === 0 ||
-      nextSentenceFrom + userSentencesData.length >= totalCount
-    ) {
-      setHasMore(false);
-    } else {
-      setSentenceFrom(nextSentenceFrom + countOfSentences);
-    }
-
-    // Only update the state with unique sentences
-    setUserSentences((prevUserSentences) => {
-      // Create a new Set from the existing and new fetched sentences
-      const uniqueUserSentences = new Set([
-        ...prevUserSentences,
-        ...userSentencesData,
-      ]);
-
-      // Convert the Set back to an array and return it
-      return Array.from(uniqueUserSentences);
+  const resetVirtualGrid = () => {
+    gridRef.current?.resetAfterIndices({
+      columnIndex: 0,
+      shouldForceUpdate: true,
     });
   };
 
-  const isWordInPhrases = (word: string, phrases: UserPhrase[]) => {
-    return phrases.some(
-      (phrase) =>
-        phrase.sourceText.split(" ").includes(word) ||
-        phrase.targetText.split(" ").includes(word)
-    );
-  };
+  const { token } = theme.useToken();
 
-  const renderLink = (content: any, row: any) => (
-    <Link
-      style={{ textDecoration: "none", color: "black" }}
-      to={`/library/${row.libraryId}?currentPage=${row.currentPage}&pageSize=${row.sentencesPerPage}`}
-    >
-      {content}
-    </Link>
-  );
+  useEffect(() => {
+    resetVirtualGrid();
+    fetchNextPage();
+  }, [dateFilter, tableWidth]);
 
-  const renderPhraseColumns = (
-    sourceText: string,
-    targetText: string,
-    row: any
-  ) => (
-    <>
-      {renderLink(sourceText, row)}
-      <br />
-      {renderLink(targetText, row)}
-    </>
-  );
-
-  const renderColumn = (text: string, row: any, type: string) => {
-    switch (type) {
-      case "sentenceText":
+  const renderVirtualList = useMemo(
+    () =>
+      (rawData: readonly object[], { scrollbarSize, ref, onScroll }: any) => {
+        ref.current = connectObject;
+        const totalHeight = rawData.length * 54;
         return (
-          <>
-            {text.split(" ").map((word, index) => (
-              <span
-                key={index}
-                className={
-                  isWordInPhrases(word, row.phrases) ? styles.bubbleHovered : ""
-                }
+          <Grid
+            ref={gridRef}
+            className={styles.virtualGrid}
+            columnCount={mergedColumns.length}
+            columnWidth={(index: number) => {
+              const { width } = mergedColumns[index];
+              return totalHeight > (scroll?.y as number) &&
+                index === mergedColumns.length - 1
+                ? (width as number) - scrollbarSize - 1
+                : (width as number);
+            }}
+            height={scroll!.y as number}
+            rowCount={rawData.length}
+            rowHeight={() => 54}
+            width={tableWidth}
+            onScroll={({ scrollLeft, scrollTop }) => {
+              onScroll({ scrollLeft });
+              const isScrolledToBottom = scrollTop + scroll.y >= totalHeight;
+              if (isScrolledToBottom) {
+                fetchNextPage();
+              }
+            }}
+          >
+            {({
+              columnIndex,
+              rowIndex,
+              style,
+            }: {
+              columnIndex: number;
+              rowIndex: number;
+              style: React.CSSProperties;
+            }) => (
+              <div
+                className={classNames("virtual-table-cell", {
+                  "virtual-table-cell-last":
+                    columnIndex === mergedColumns.length - 1,
+                })}
+                style={{
+                  ...style,
+                  boxSizing: "border-box",
+                  padding: token.padding,
+                  borderBottom: `${token.lineWidth}px ${token.lineType} ${token.colorSplit}`,
+                  background: token.colorBgContainer,
+                }}
               >
-                {word}
-                &nbsp;
-              </span>
-            ))}
-          </>
+                {
+                  (rawData[rowIndex] as any)[
+                    (mergedColumns as any)[columnIndex].dataIndex
+                  ]
+                }
+              </div>
+            )}
+          </Grid>
         );
-      default:
-        return text;
-    }
-  };
-
-  const columns = [
-    { title: "Title", dataIndex: "title", key: "title" },
-    { title: "Text", dataIndex: "sentenceText", key: "sentenceText" },
-    { title: "Phrases", key: "phrases" },
-    // ...remaining columns
-  ].reduce((acc: any[], column) => {
-    const { dataIndex, ...otherProps } = column;
-    const render = (text: string, row: any) => {
-      if (dataIndex === "sentenceText") {
-        return renderLink(renderColumn(text, row, dataIndex), row);
-      }
-      if (column.key === "phrases") {
-        return renderPhraseColumns(row.sourceText, row.targetText, row);
-      }
-      return renderLink(text, row);
-    };
-
-    return [
-      ...acc,
-      {
-        ...otherProps,
-        dataIndex,
-        render,
       },
-    ];
-  }, []);
-
-  const flattenedSentences = useMemo(() => {
-    return userSentences.reduce((acc: UserPhrase[], sentence: UserSentence) => {
-      return acc.concat(
-        sentence.phrases.map((phrase) => ({
-          ...phrase,
-          libraryId: sentence.libraryId,
-          title: sentence.title,
-          sentenceText: sentence.sentenceText,
-          phrases: sentence.phrases,
-          currentPage: sentence.currentPage,
-          sentencesPerPage: sentence.sentencesPerPage,
-          createdAt: sentence.createdAt,
-          phraseCreatedAt: phrase.createdAt,
-        }))
-      );
-    }, []);
-  }, [userSentences]);
+    [mergedColumns, tableWidth, scroll]
+  );
 
   return (
-    <PageContainer loading={loading} title={false}>
-      <Row justify="center">
-        <Col span={16}>
-          {userSentences.length}
-          {flattenedSentences.length}
-          <Card
-            className={styles.cardCentered}
-            style={{ marginBottom: "20px" }}
-            /* extra={
-              <Radio.Group
-                value={dateFilter}
-                onChange={(e) => handleDateFilterChange(e.target.value)}
-              >
-                <Radio.Button value="all">All</Radio.Button>
-                <Radio.Button value="today">Today</Radio.Button>
-                <Radio.Button value="last week">Last week</Radio.Button>
-                <Radio.Button value="last month">Last month</Radio.Button>
-              </Radio.Group>
-            } */
-          >
-            <div
-              id="scrollableDiv"
-              ref={scrollableDivRef}
-              style={{ height: 400, overflow: "auto" }}
-            >
-              <Table
-                columns={columns}
-                dataSource={flattenedSentences}
-                rowKey={(record) =>
-                  `${record.sourceText}-${record.targetText}-${record.createdAt}`
-                }
-                pagination={false}
-              />
-              {/* Add sentinel */}
-              <div
-                ref={sentinelRef}
-                style={{
-                  height: 1,
-                  width: "100%",
-                  backgroundColor: "transparent",
-                }}
-              ></div>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-    </PageContainer>
+    <>
+      <div>
+        <button onClick={() => setDateFilter("today")}>Today</button>
+        <button onClick={() => setDateFilter("last week")}>Last Week</button>
+        <button onClick={() => setDateFilter("last month")}>Last Month</button>
+        <button onClick={() => setDateFilter("all")}>All</button>
+        <button onClick={() => fetchNextPage()}>asd</button>
+      </div>
+      <ResizeObserver
+        onResize={({ width }) => {
+          setTableWidth(width);
+        }}
+      >
+        <Table
+          columns={mergedColumns}
+          scroll={scroll}
+          className={styles.virtualTable}
+          dataSource={dataSource}
+          pagination={false}
+          components={{
+            body: renderVirtualList,
+          }}
+        />
+      </ResizeObserver>
+    </>
   );
 };
 

@@ -10,7 +10,12 @@ interface VocabularyListProps {
   title: string;
   style: React.CSSProperties | undefined;
   phrases: VocabularyListUserPhrase[] | undefined;
-  onDeleteItem: (startPosition: number, sentenceNo: number) => void;
+  onDeleteItem: (
+    phraseId: string,
+    sentenceId: string,
+    startPosition: number,
+    sentenceNo: number
+  ) => void;
   onWordClick?: (word: string) => void;
 }
 
@@ -25,10 +30,12 @@ const VocabularyList: FC<VocabularyListProps> = ({
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 
   const handleDeleteItem = async (
+    phraseId: string,
+    sentenceId: string,
     startPosition: number,
     sentenceNo: number
   ) => {
-    onDeleteItem(startPosition, sentenceNo);
+    onDeleteItem(phraseId, sentenceId, startPosition, sentenceNo);
   };
 
   return (
@@ -61,6 +68,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   <DeleteOutlined
                     onClick={() =>
                       handleDeleteItem(
+                        word.phrase.id,
+                        word.phrase.sentenceId,
                         word.phrase.startPosition,
                         word.sentenceNo
                       )

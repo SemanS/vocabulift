@@ -9,6 +9,8 @@ const BookDetail = lazy(() => import("@/pages/bookDetail"));
 const NotFound = lazy(() => import("@/pages/404"));
 const Library = lazy(() => import("@/pages/library"));
 const Vocabulary = lazy(() => import("@/pages/vocabulary"));
+//import Vocabulary from "@/pages/vocabulary";
+
 const WebLayoutPage = lazy(() => import("@/pages/webLayout"));
 const routeList: RouteObject[] = [
   {

@@ -1,7 +1,5 @@
 import React, { Suspense, useMemo } from "react";
 
-import { QueryClient, QueryClientProvider } from "react-query";
-
 import axios, { AxiosContext } from "./api/request";
 import { createRoot } from "react-dom/client";
 
@@ -10,6 +8,7 @@ import App from "./App";
 import { ErrorBoundary } from "react-error-boundary";
 import SuspendFallbackLoading from "./pages/layout/suspendFallbackLoading";
 import { RecoilRoot } from "recoil";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({
   defaultOptions: {
