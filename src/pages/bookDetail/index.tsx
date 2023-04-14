@@ -21,7 +21,7 @@ import {
 } from "@/models/sentences.interfaces";
 import { getRangeNumber } from "@/utils/stringUtils";
 import {
-  deleteUserPhrase,
+  deleteUserPhrases,
   getSentences,
   getUserSentences,
   updateReadingProgress,
@@ -68,8 +68,12 @@ const BookDetail: FC = () => {
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
   const [initState, setInitState] = useState<boolean>(true);
-  const [showVocabularyList, setShowVocabularyList] = useState(true);
-  const [showWordDefinition, setShowWordDefinition] = useState(true);
+  const [showVocabularyList, setShowVocabularyList] = useState(
+    vocabularyListUserPhrases && vocabularyListUserPhrases.length > 0
+  );
+  const [showWordDefinition, setShowWordDefinition] = useState(
+    vocabularyListUserPhrases && vocabularyListUserPhrases.length > 0
+  );
   const [selectAll, setSelectAll] = useState(false);
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [recoilCurrentPage, setRecoilCurrentPage] =
@@ -80,6 +84,7 @@ const BookDetail: FC = () => {
   >(null);
   const [label, setLabel] = useState<LabelType | undefined>(LabelType.TEXT);
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
+  const [colSpan, setColSpan] = useState(24);
 
   const handlePageChange = useCallback(
     async (page: number, pageSize: number) => {
@@ -296,11 +301,7 @@ const BookDetail: FC = () => {
             )
         );
       try {
-        await deleteUserPhrase(
-          phraseId,
-          sentenceId,
-          sessionStorage.getItem("access_token")
-        ).then(() => {
+        await deleteUserPhrases([phraseId]).then(() => {
           setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
           setUserSentences(updatedUserSentences);
         });
@@ -350,18 +351,30 @@ const BookDetail: FC = () => {
     setSelectAll(isChecked);
   };
 
-  const calculateColSpan = useMemo(() => {
+  useEffect(() => {
+    let newColSpan = 24;
+
     if (showVocabularyList && showWordDefinition) {
-      return 12;
+      newColSpan = 12;
     } else if (showVocabularyList || showWordDefinition) {
-      return 18;
-    } else {
-      return 24;
+      newColSpan = 18;
     }
-  }, [showVocabularyList, showWordDefinition, vocabularyListUserPhrases]);
+
+    setColSpan(newColSpan);
+  }, [showVocabularyList, showWordDefinition]);
 
   const { toggleSettingsDrawer, settingsDrawerVisible } =
     useSettingsDrawerContext();
+
+  useEffect(() => {
+    if (vocabularyListUserPhrases && vocabularyListUserPhrases.length === 0) {
+      setShowVocabularyList(false);
+      setShowWordDefinition(false);
+    } else {
+      setShowVocabularyList(true);
+      setShowWordDefinition(true);
+    }
+  }, [vocabularyListUserPhrases]);
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -422,14 +435,7 @@ const BookDetail: FC = () => {
         {renderSettingsDrawerContent()}
       </Drawer>
       <Row gutter={[16, 16]}>
-        <Col
-          xxl={calculateColSpan}
-          xl={calculateColSpan}
-          lg={calculateColSpan}
-          md={24}
-          sm={24}
-          xs={24}
-        >
+        <Col xxl={colSpan} xl={colSpan} lg={colSpan} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (
             <Card
               title={libraryTitle}
@@ -514,7 +520,7 @@ const BookDetail: FC = () => {
                 />
               </Col>
             )}
-            {showWordDefinition && (
+            {wordData && showWordDefinition && (
               <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
                 <WordDefinitionCard wordData={wordData}></WordDefinitionCard>
               </Col>

@@ -24,8 +24,7 @@ import { LibraryItem } from "@/models/libraryItem.interface";
 import classNames from "classnames";
 import styles from "./index.module.less";
 import { ReadOutlined } from "@ant-design/icons";
-import { getUserLibraryItems } from "@/services/userService";
-import { UserLibraryItem } from "@/models/userLibraryItem.interface";
+import { YoutubeOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import { mergeObjects } from "@/utils/mergeItems";
 import {
@@ -34,6 +33,7 @@ import {
   pageSizeState,
 } from "@/stores/library";
 import { targetLanguageState } from "@/stores/language";
+import { LabelType } from "@/models/sentences.interfaces";
 
 interface Option {
   value: string;
@@ -45,9 +45,6 @@ const Library: React.FC = () => {
     useRecoilState(targetLanguageState);
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [activeCard, setActiveCard] = useState<string>("");
-  const [userLibraryItems, setUserLibraryItems] = useState<UserLibraryItem[]>(
-    []
-  );
   const [loading, setLoading] = useState(true);
   const setLibraryId = useSetRecoilState(libraryIdState);
   const setCurrentPage = useSetRecoilState(currentPageState);
@@ -76,7 +73,6 @@ const Library: React.FC = () => {
         throw new Error("Failed to fetch options");
       }
 
-      const data = await response.json();
       // Update the options using the languageCodes from the response
       const options = data.languageCodes.map((code: any) => ({
         value: code,
@@ -92,18 +88,8 @@ const Library: React.FC = () => {
   };
 
   const fetchData = async () => {
-    await getLibraryItems(
-      sessionStorage.getItem("access_token"),
-      (data: LibraryItem[]) => {
-        setLibraryItems(data);
-      }
-    );
-    await getUserLibraryItems(
-      sessionStorage.getItem("access_token"),
-      (data: UserLibraryItem[]) => {
-        setUserLibraryItems(data);
-      }
-    );
+    const data = await getLibraryItems(sessionStorage.getItem("access_token"));
+    setLibraryItems(data);
   };
 
   useEffect(() => {
@@ -127,24 +113,6 @@ const Library: React.FC = () => {
       ? 99
       : Math.ceil(percentage);
   }
-
-  const combinedItems = mergeObjects(
-    libraryItems,
-    userLibraryItems,
-    (libraryItem, userLibraryItem) =>
-      userLibraryItem.libraryId === libraryItem.id,
-    (libraryItem, userLibraryItem) => ({
-      ...libraryItem,
-      userLibrary: {
-        id: userLibraryItem.id,
-        libraryId: userLibraryItem.libraryId,
-        sourceLanguage: userLibraryItem.sourceLanguage,
-        targetLanguage: userLibraryItem.targetLanguage,
-        pageSize: userLibraryItem.pageSize,
-        lastReadPage: userLibraryItem.lastReadPage,
-      },
-    })
-  );
 
   const handleLibraryItemClick = (
     libraryId: string,
@@ -175,7 +143,7 @@ const Library: React.FC = () => {
   };
 
   return (
-    <PageContainer loading={loading}>
+    <PageContainer loading={loading} title={false}>
       <Card
         style={{ borderRadius: 0, marginTop: "0px" }}
         className={classNames(styles.gridLayout)}
@@ -264,7 +232,7 @@ const Library: React.FC = () => {
             <TabPane tab="Text" key="2"></TabPane>
           </Tabs>
         </Card.Grid>
-        {combinedItems.map((item) => (
+        {libraryItems.map((item) => (
           <Card.Grid
             key={item.title}
             className={classNames({
@@ -282,7 +250,11 @@ const Library: React.FC = () => {
                 <Col xs={24} sm={24} md={24} xl={12} xxl={12}>
                   <div className={classNames(styles.gridItemContent)}>
                     <div>
-                      <ReadOutlined style={{ marginRight: "5px" }} />
+                      {item.label === LabelType.BOOK ? (
+                        <ReadOutlined style={{ marginRight: "5px" }} />
+                      ) : (
+                        <YoutubeOutlined style={{ marginRight: "5px" }} />
+                      )}
                       <strong>{item.title}</strong>
                     </div>
                     <div style={{ marginTop: "16px" }}>{item.description}</div>

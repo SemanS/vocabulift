@@ -1,9 +1,8 @@
 import { LibraryItem } from "@/models/libraryItem.interface";
 
 export const getLibraryItems = async (
-  accessToken: string | null,
-  onSuccess: (data: LibraryItem[]) => void
-): Promise<void> => {
+  accessToken: string | null
+): Promise<LibraryItem[]> => {
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library`,
     {
@@ -15,7 +14,8 @@ export const getLibraryItems = async (
     }
   );
   const data = await response.json();
-  onSuccess(data.libraryItems);
+  return data.libraryItems;
+  //onSuccess(data.libraryItems);
 };
 
 export const postLibraryInputVideoLanguages = async (input: string) => {

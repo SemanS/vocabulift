@@ -1,23 +1,3 @@
-import { UserLibraryItem } from "@/models/userLibraryItem.interface";
-
-export const getUserLibraryItems = async (
-  accessToken: string | null,
-  onSuccess: (data: UserLibraryItem[]) => void
-): Promise<void> => {
-  const response = await fetch(
-    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/library`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    }
-  );
-  const data = await response.json();
-  onSuccess(data.results);
-};
-
 export const getSentences = async (
   libraryId: string | undefined,
   sentenceFrom: number,
@@ -47,7 +27,7 @@ export const getSentences = async (
 };
 
 export const getUserSentences = async (options: {
-  nextCursor: number;
+  sentenceFrom: number;
   countOfSentences: number;
   sourceLanguage: string;
   targetLanguage: string;
@@ -91,6 +71,7 @@ export const getUserPhrases = async (options: {
   orderBy?: string | null;
   libraryId?: string | undefined;
   dateFilter?: string | undefined;
+  filterBy?: any;
 }) => {
   const requestBody = {
     ...options,
@@ -109,7 +90,7 @@ export const getUserPhrases = async (options: {
   );
 
   const data = await response.json();
-
+  console.log("data" + JSON.stringify(data, null, 2));
   return {
     results: data.results.userPhrases,
     countOfPhrases: data.results.countOfPhrases,
@@ -144,7 +125,7 @@ export const addUserPhrase = async (
     targetLanguage: targetLanguage,
     sentencesPerPage: sentencesPerPage,
     currentPage: currentPage,
-    title: libraryTitle,
+    libraryTitle: libraryTitle,
   };
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
@@ -165,22 +146,18 @@ export const addUserPhrase = async (
   return response.json();
 };
 
-export const deleteUserPhrase = async (
-  phraseId: string,
-  sentenceId: string,
-  accessToken: string | null
-): Promise<void> => {
+export const deleteUserPhrases = async (phraseIds: string[]): Promise<void> => {
   const requestBody = {
-    phraseId: phraseId,
-    sentenceId: sentenceId,
+    phraseIds: phraseIds,
   };
+
   await fetch(
-    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/delete-phrase`,
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/delete-phrases`,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
       },
       body: JSON.stringify(requestBody),
     }

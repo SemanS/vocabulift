@@ -36,7 +36,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
     );
   }
 
-  return (
+  return filteredPhrases.length > 0 ? (
     <VocabularyList
       mode={mode}
       title={title}
@@ -45,7 +45,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       onDeleteItem={onDeleteItem}
       onWordClick={onWordClick}
     />
-  );
+  ) : null;
 };
 
 export default FilteredVocabularyList;
