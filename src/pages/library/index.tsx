@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import {
   getLibraryItems,
   postLibraryInputVideoLanguages,
+  postLibraryVideo,
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import classNames from "classnames";
@@ -26,24 +27,34 @@ import styles from "./index.module.less";
 import { ReadOutlined } from "@ant-design/icons";
 import { YoutubeOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
-import { mergeObjects } from "@/utils/mergeItems";
 import {
   libraryIdState,
   currentPageState,
   pageSizeState,
 } from "@/stores/library";
-import { targetLanguageState } from "@/stores/language";
+import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
+import CustomSlider from "./components/CustomSlider";
 
 interface Option {
   value: string;
   label: string;
 }
 
+interface ApiResponse {
+  video: LibraryItem[];
+  book: LibraryItem[];
+  text: LibraryItem[];
+  article: LibraryItem[];
+}
+
 const Library: React.FC = () => {
+  const [sourceLanguage, setSourceLanguage] =
+    useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
-  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
+  const [libraryItems, setLibraryItems] =
+    useState<Record<LabelType, LibraryItem[]>>();
   const [activeCard, setActiveCard] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const setLibraryId = useSetRecoilState(libraryIdState);
@@ -57,6 +68,7 @@ const Library: React.FC = () => {
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
   >(null);
+  const [selectedItem, setSelectedItem] = React.useState(null);
 
   useEffect(() => {
     setSourceLanguageFromVideo(selectedOption?.value || null);
@@ -65,13 +77,14 @@ const Library: React.FC = () => {
   const fetchOptions = async (input: string) => {
     try {
       const response = await postLibraryInputVideoLanguages(input);
-
       if (!response.ok) {
         // If the response is not ok, clear the options, set isFetchValid to false, and disable the button
         setIsFetchValid(false);
         setButtonDisabled(true);
         throw new Error("Failed to fetch options");
       }
+
+      const data = await response.json(); // Add this line to parse the JSON data from the response
 
       // Update the options using the languageCodes from the response
       const options = data.languageCodes.map((code: any) => ({
@@ -88,12 +101,24 @@ const Library: React.FC = () => {
   };
 
   const fetchData = async () => {
-    const data = await getLibraryItems(sessionStorage.getItem("access_token"));
-    setLibraryItems(data);
+    const data: ApiResponse = await getLibraryItems(
+      sessionStorage.getItem("access_token")
+    );
+    setLibraryItems({
+      video: data.video,
+      book: data.book,
+      text: data.text,
+      article: data.article,
+    });
   };
 
   useEffect(() => {
     setLoading(true);
+    /* postLibraryVideo(
+      sourceLanguage,
+      targetLanguage,
+      "https://www.youtube.com/watch?v=FVcfCHmoCvM&ab_channel=HIMVEVO"
+    ); */
     fetchData();
     setLoading(false);
   }, []);
@@ -142,242 +167,38 @@ const Library: React.FC = () => {
     );
   };
 
-  return (
-    <PageContainer loading={loading} title={false}>
-      <Card
-        style={{ borderRadius: 0, marginTop: "0px" }}
-        className={classNames(styles.gridLayout)}
-        loading={loading}
-      >
-        <Card.Grid style={{ paddingTop: "12px" }}>
-          <Tabs style={{ marginTop: "0px" }}>
-            <TabPane tab="Video" key="1">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/320px-YouTube_Logo_2017.svg.png"
-                alt="YouTube Logo"
-                style={{
-                  margin: "0 auto",
-                  marginBottom: "24px",
-                }}
-              />
-              <Row gutter={16}>
-                <Col span={16} style={{ marginBottom: "24px" }}>
-                  <Form
-                    onFinish={(values) => {
-                      console.log("YouTube Video URL:", values.youtubeUrl);
-                      // Handle the submission here
-                    }}
-                    style={{ display: "inline-block", width: "100%" }}
-                  >
-                    <Form.Item
-                      name="youtubeUrl"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input the YouTube video URL",
-                        },
-                      ]}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <Input
-                        placeholder="YouTube Video URL"
-                        value={inputValue}
-                        onChange={(e) => {
-                          setInputValue(e.target.value);
-                          if (e.target.value) {
-                            fetchOptions(e.target.value);
-                            // Clear the selected option and disable the button when the input changes
-                            setSelectedOption(null);
-                            setButtonDisabled(true);
-                          } else {
-                            setSelectOptions([]);
-                          }
-                        }}
-                        style={{ width: "100%" }}
-                      />
-                    </Form.Item>
-                  </Form>
-                </Col>
-                <Col span={4}>
-                  <Select
-                    placeholder="Select an option"
-                    value={selectedOption?.value}
-                    onChange={(value, option) => {
-                      setSelectedOption(option as Option);
-                    }}
-                    disabled={!isFetchValid}
-                  >
-                    {selectOptions &&
-                      selectOptions.map((option, index) => (
-                        <Select.Option key={index} value={option.value}>
-                          {option.label}
-                        </Select.Option>
-                      ))}
-                  </Select>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    disabled={buttonDisabled}
-                    onClick={handleButtonClick}
-                  >
-                    Add Video
-                  </Button>
-                </Col>
-              </Row>
-            </TabPane>
-            <TabPane tab="Text" key="2"></TabPane>
-          </Tabs>
-        </Card.Grid>
-        {libraryItems.map((item) => (
-          <Card.Grid
-            key={item.title}
-            className={classNames({
-              [styles.gridItemHover]: activeCard === item.title,
-            })}
-            onMouseEnter={() => setActiveCard(item.title)}
-            onMouseLeave={() => setActiveCard("")}
-          >
-            <Link
-              onClick={() => handleLibraryItemClick(item.id, 1, 10)}
-              to={item.id + "?currentPage=" + 1 + "&pageSize=" + 10}
-              style={{ color: "inherit" }}
-            >
-              <Row gutter={[32, 32]}>
-                <Col xs={24} sm={24} md={24} xl={12} xxl={12}>
-                  <div className={classNames(styles.gridItemContent)}>
-                    <div>
-                      {item.label === LabelType.BOOK ? (
-                        <ReadOutlined style={{ marginRight: "5px" }} />
-                      ) : (
-                        <YoutubeOutlined style={{ marginRight: "5px" }} />
-                      )}
-                      <strong>{item.title}</strong>
-                    </div>
-                    <div style={{ marginTop: "16px" }}>{item.description}</div>
-                  </div>
-                </Col>
-                <Col xs={24} sm={24} md={24} xl={12} xxl={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "100%",
-                    }}
-                  >
-                    <div className={classNames(styles.imageWrapper)}>
-                      <img
-                        style={{ width: "100%", height: "100%" }}
-                        alt="logo"
-                        src={`src/assets/books/The_Adventures_of_huckleberry_Finn.jpg`}
-                      />
-                    </div>
-                    <div style={{ marginTop: "12px" }}>
-                      <Typography.Text strong>Level:</Typography.Text>
-                      <Typography.Text> C2</Typography.Text>
-                    </div>
-                    <div>
-                      <Typography.Text strong>Sentences:</Typography.Text>
-                      <Typography.Text> 5603</Typography.Text>
-                    </div>
-                    <div
-                      className={classNames(styles.progressContainer)}
-                      style={{ marginTop: "auto" }}
-                    >
-                      {/* {item.totalSentences == 5603 && (
-                        <Progress
-                          percent={
-                            item.lastReadPage == 1
-                              ? 1
-                              : calculateBookPercentage(
-                                  item.lastReadPage,
-                                  item.pageSize,
-                                  item.totalSentences
-                                )
-                          }
-                          strokeColor={{ "0%": "#000", "100%": "#000" }}
-                        />
-                      )} */}
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </Link>
-          </Card.Grid>
-        ))}
-      </Card>
+  const [sliderSettings, setSliderSettings] = useState<any[]>([
+    {
+      dots: false,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 4,
+      slidesToScroll: 2,
+      adaptiveHeight: true,
+      variableWidth: true,
+      // Add any other settings for the first slider here
+    },
+    {
+      dots: false,
+      infinite: true,
+      speed: 500,
+      slidesToShow: 4,
+      slidesToScroll: 2,
+      adaptiveHeight: true,
+      variableWidth: true,
+      // Add any other settings for the second slider here
+    },
+  ]);
 
-      <Card
-        title="Card title"
-        style={{ borderRadius: "0px" }}
-        className={classNames(styles.listLayout)}
-      >
-        <List
-          itemLayout="vertical"
-          dataSource={libraryItems}
-          renderItem={(item) => (
-            <List.Item key={item.title}>
-              <Row gutter={[16, 16]}>
-                <Col xs={24} md={12}>
-                  <img
-                    style={{ width: "100%", height: "auto" }}
-                    alt="logo"
-                    src={`src/assets/books/Alice_in_the_wonderland.jpg`}
-                  />
-                </Col>
-                <Col xs={24} md={12}>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "space-between",
-                      height: "100%",
-                    }}
-                  >
-                    <div>
-                      <List.Item.Meta
-                        title={
-                          <Link
-                            to={
-                              ""
-                              /* item.href +
-                          "?currentPage=" +
-                          item.lastReadPage +
-                          "&pageSize=" +
-                          item.pageSize */
-                            }
-                          >
-                            {item.title}
-                          </Link>
-                        }
-                        description={item.description}
-                      />
-                      {item.description}
-                    </div>
-                    <div>
-                      {/* <Progress
-                    percent={
-                      item.lastReadPage == 1
-                        ? 1
-                        : calculateBookPercentage(
-                            item.lastReadPage,
-                            item.pageSize,
-                            item.totalSentences
-                          )
-                    }
-                    strokeColor={{ "0%": "#000", "100%": "#000" }}
-                  /> */}
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </List.Item>
-          )}
+  return (
+    <PageContainer title={false}>
+      {Object.values(libraryItems || {}).map((items, index) => (
+        <CustomSlider
+          key={`slider${index + 1}`}
+          items={items}
+          sliderId={`slider${index + 1}`}
         />
-      </Card>
+      ))}
     </PageContainer>
   );
 };

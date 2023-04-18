@@ -5,4 +5,6 @@ export interface LibraryItem {
   image: string;
   description: string;
   totalSentences: number;
+  videoThumbnail?: string | undefined;
+  videoId: string;
 }

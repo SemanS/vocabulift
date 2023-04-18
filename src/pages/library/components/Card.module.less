@@ -1,0 +1,48 @@
+.card {
+  cursor: pointer;
+  position: relative;
+  width: 100%;
+}
+
+.cardImg {
+  transition: transform 0.1s ease-in-out;
+  border-radius: 0.2rem;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.zoomedImage {
+  transform: translateY(-40%) scale(1.4);
+  z-index: 1;
+}
+
+.hoverTransition {
+  transition: transform 0.3s ease-in-out 0.4s;
+}
+
+.details {
+  pointer-events: none;
+  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255);
+  text-align: center;
+  opacity: 0;
+}
+
+.visibleDetails {
+  opacity: 1;
+}
+
+.zoomedDetails {
+  transform: translateY(0%) scale(1.4);
+  z-index: 1;
+}
+
+.hoverDetailsTransition {
+  transition: opacity 0.1s ease-in-out 0.4s, transform 0.3s ease-in-out 0.4s;
+}

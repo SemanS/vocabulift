@@ -1,12 +1,10 @@
 import { createContext, ReactNode } from "react";
-import Axios, { AxiosInstance, AxiosTransformer } from "axios";
+import Axios, { AxiosInstance } from "axios";
 import { notification } from "antd";
 import { useContext } from "react";
 import { createBrowserHistory } from "history";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import qs from "qs";
-import { result } from "cypress/types/lodash";
-import { useCookies } from "react-cookie";
 
 const history = createBrowserHistory();
 
@@ -164,7 +162,7 @@ const useGetList = <T>(
     params.filter = transformFilters(filters);
     params.order = transformSorter(sorter);
 
-    const transformRequest: AxiosTransformer = (data, headers) => {};
+    const transformRequest: any = (data, headers) => {};
     console.log("params: ", params);
     const data: T = await axios.get(`${url}`, {
       params,

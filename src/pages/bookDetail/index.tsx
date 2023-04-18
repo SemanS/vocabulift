@@ -149,8 +149,19 @@ const BookDetail: FC = () => {
       )}`
     )
       .then((response) => response.json())
-      .then((data) => setWordData(data[0]))
-      .catch((error) => console.error(error));
+      .then((data) => {
+        if (data && data[0]) {
+          setWordData(data[0]);
+          setShowWordDefinition(true); // Show word definition when data is available
+        } else {
+          setWordData(null);
+          //setShowWordDefinition(false); // Hide word definition when data is not available
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        //setShowWordDefinition(false); // Hide word definition when there is an error
+      });
     // Make POST on backend to save word under user
     /* sourceLanguage &&
       targetLanguage &&
@@ -357,7 +368,7 @@ const BookDetail: FC = () => {
     if (showVocabularyList && showWordDefinition) {
       newColSpan = 12;
     } else if (showVocabularyList || showWordDefinition) {
-      newColSpan = 18;
+      newColSpan = 24;
     }
 
     setColSpan(newColSpan);
@@ -520,7 +531,7 @@ const BookDetail: FC = () => {
                 />
               </Col>
             )}
-            {wordData && showWordDefinition && (
+            {showWordDefinition && (
               <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
                 <WordDefinitionCard wordData={wordData}></WordDefinitionCard>
               </Col>

@@ -50,7 +50,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   };
 
   const handleTimeUpdate = () => {
-    console.log(currentPageRef.current + "okej");
     if (playerRef.current?.getCurrentTime) {
       const currentTime = playerRef.current.getCurrentTime();
       changePageOnVideoPlay();
