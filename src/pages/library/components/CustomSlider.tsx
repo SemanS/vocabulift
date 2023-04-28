@@ -34,9 +34,9 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
 
   const settings = {
     dots: true,
-    infinite: true,
+    infinite: false,
     speed: 500,
-    slidesToShow: 5,
+    slidesToShow: 4,
     slidesToScroll: 1,
     arrows: true,
     swipeToSlide: true,
@@ -44,11 +44,20 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
     className: "slick-slider",
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1980,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: 6,
           slidesToScroll: 3,
-          infinite: true,
+          infinite: false,
+          dots: true,
+        },
+      },
+      {
+        breakpoint: 1490,
+        settings: {
+          slidesToShow: 4,
+          slidesToScroll: 3,
+          infinite: false,
           dots: true,
         },
       },
@@ -81,7 +90,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      <h1>{sliderId}</h1>
+      <h1>{"Video"}</h1>
       <div className={`${styles.slider}`}>
         <Slider {...settings} ref={sliderRef}>
           {items.map((item, index) => {

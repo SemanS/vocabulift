@@ -6,7 +6,7 @@
 
 .cardImg {
   transition: transform 0.1s ease-in-out;
-  border-radius: 0.2rem;
+  //border-radius: 0.2rem;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -14,7 +14,8 @@
 
 .zoomedImage {
   transform: translateY(-40%) scale(1.4);
-  z-index: 1;
+  z-index: 3;
+  position: relative;
 }
 
 .hoverTransition {
@@ -22,7 +23,7 @@
 }
 
 .details {
-  pointer-events: none;
+  padding: 10px;
   transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
   z-index: 2;
   position: absolute;
@@ -30,8 +31,19 @@
   height: 100%;
   width: 100%;
   background-color: rgba(255, 255, 255);
-  text-align: center;
+  text-align: left;
   opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+}
+
+.description {
+  max-height: 50%; /* Adjust the max-height according to your design requirements */
+  overflow-y: auto;
+  //padding: 0 1rem;
+  text-align: left;
 }
 
 .visibleDetails {
@@ -45,4 +57,13 @@
 
 .hoverDetailsTransition {
   transition: opacity 0.1s ease-in-out 0.4s, transform 0.3s ease-in-out 0.4s;
+}
+
+.playIcon {
+  font-size: 34px;
+}
+
+.customDivider {
+  border-top: 1px solid #f0f0f0;
+  margin: 5px 0;
 }

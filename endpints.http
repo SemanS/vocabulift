@@ -3,6 +3,26 @@
 //@cookie = auth="86a48dc5-04d4-4ddb-b97b-31fde0321d57"
 
 ###
+POST {{baseUrl}}/library/video
+Content-Type: application/json
+
+{
+  "input": "https://www.youtube.com/watch?v=FVcfCHmoCvM&ab_channel=HIMVEVO",
+  "sourceLanguage": "en",
+  "targetLanguage": "sk"
+}
+
+###
+GET {{baseUrl}}/word?word=abdominous
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2RhZDg4Yzc5NTUwMTUyYzU0MWYzYzUiLCJpYXQiOjE2NzU4NDYzMjAsImV4cCI6MTY3NTg0NzIyMH0.F5nNa0ZyQeArjEQ9EBbxCMsjFvJhX_e1bmNW2EzfbdIhXfU1a2XY-ESnk8XK3McGqwuqn77YrRn1Zldp1gSdlD-I-Sb_NhsNtVFnmQaWLaTe34lZqE3OO4VfMosBrQejlWIFRJlHVtgNnDJaB-qaImIvPrDoaj2UPgLafO8VqTBKmfiJy_qr0NxeyOaTrThWZ907PlFUaWd0-tG5x3jWLALmQxCxvW_fbs-2ZEbtG-5-I4oT_jtIkHcrHk-cZybojMycAwLjLDUzm-i1WU9gXmPT2HT24fH16_bq2Zqytf855K5mkCjKUbEA8YRLdH8s2AgRYocf91cw87omryyt8Q
+//Cookie: {{cookie}}
+
+###
+GET https://api-free.deepl.com/v2/translate?auth_key=4a62e59c-5716-b6d6-c0e6-6b488407dee7:fx&text=the&target_lang=SK
+
+
+###
 GET {{baseUrl}}/user/create
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2Q2OTBlMmI5M2Y3YTVjNmIzMGJjZWYiLCJpYXQiOjE2NzUwMDYxNzgsImV4cCI6MTY3NTAwNzA3OH0.i6T9LDG2iiHLsq-EduTFFaVZyIZSbwzQtf_vBFlJEw0ZmdW1hL8I_91dfHRhylWJVHmpqHFL-HPPzUQEIgp5gXARqJr1nO1FpF8h6ZUMkNAHC_nW_KrhHNZb13RIldrX_lZEFj0wfk64PDrHnzUp0GNC4yOok7Iask4Vl0i-gWxuWrA1fIX8A26R0ICesvd8QYwTHwq8YYZteRLIEl3FzYWD1B6cVzFmhsTG3fUaGBofFDqLxxqpe6tFESWLQ9pEE7Ml0LmDfZCUiBlqCn0qBJo5U5HyQyMKRFgOR5iVlbxIowYHIUiUqB0HcScCGvk8ChLT_jhicMo9kP_vf31gIg
@@ -16,18 +36,3 @@ Content-Type: application/json
   "role": "admin",
   "username": "decker"
 }
-
-###
-GET https://wordsapiv1.p.rapidapi.com/words/car
-Content-Type: application/json
-X-RapidAPI-Key: 6df5f8a9e9msh13b25260fa387e0p1cd93ejsnc2560c2739bf
-X-RapidAPI-Host: wordsapiv1.p.rapidapi.com
-
-###
-GET {{baseUrl}}/word?word=abdominous
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2RhZDg4Yzc5NTUwMTUyYzU0MWYzYzUiLCJpYXQiOjE2NzU4NDYzMjAsImV4cCI6MTY3NTg0NzIyMH0.F5nNa0ZyQeArjEQ9EBbxCMsjFvJhX_e1bmNW2EzfbdIhXfU1a2XY-ESnk8XK3McGqwuqn77YrRn1Zldp1gSdlD-I-Sb_NhsNtVFnmQaWLaTe34lZqE3OO4VfMosBrQejlWIFRJlHVtgNnDJaB-qaImIvPrDoaj2UPgLafO8VqTBKmfiJy_qr0NxeyOaTrThWZ907PlFUaWd0-tG5x3jWLALmQxCxvW_fbs-2ZEbtG-5-I4oT_jtIkHcrHk-cZybojMycAwLjLDUzm-i1WU9gXmPT2HT24fH16_bq2Zqytf855K5mkCjKUbEA8YRLdH8s2AgRYocf91cw87omryyt8Q
-//Cookie: {{cookie}}
-
-###
-GET https://api-free.deepl.com/v2/translate?auth_key=4a62e59c-5716-b6d6-c0e6-6b488407dee7:fx&text=the&target_lang=SK

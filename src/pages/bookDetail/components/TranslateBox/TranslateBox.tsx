@@ -338,7 +338,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                         sourceWord.wordText,
                         sourceWord.position,
                         sourceSentence.sentenceNo
-                      ) || index - 1 === highlightedSentenceIndex
+                      ) || index === highlightedSentenceIndex
                     }
                     wordIndex={sourceWord.position}
                     isSelecting={mouseDown}

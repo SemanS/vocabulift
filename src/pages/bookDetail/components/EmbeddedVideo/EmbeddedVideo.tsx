@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { Card } from "antd";
 import { SentenceData } from "@/models/sentences.interfaces";
 
 declare var YT: any;

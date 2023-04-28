@@ -1,6 +1,22 @@
 import React, { useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
+import {
+  Col,
+  Divider,
+  Progress,
+  Row,
+  Space,
+  Statistic,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
+import {
+  DislikeOutlined,
+  LikeOutlined,
+  PlayCircleOutlined,
+} from "@ant-design/icons";
 
 interface CardProps {
   itemData: LibraryItem;
@@ -18,10 +34,12 @@ export const Card: React.FC<CardProps> = ({ itemData }) => {
   };
 
   return (
-    <div className={styles.card}>
+    <div
+      className={styles.card}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <img
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         className={`${styles.cardImg} ${isHovered ? styles.zoomedImage : ""} ${
           isHovered ? styles.hoverTransition : ""
         }`}
@@ -36,8 +54,59 @@ export const Card: React.FC<CardProps> = ({ itemData }) => {
           isHovered ? styles.hoverDetailsTransition : ""
         }`}
       >
-        <h3>{itemData.title}</h3>
-        <div>{itemData.description}</div>
+        <Row>
+          <Col span={4}>
+            <PlayCircleOutlined
+              className={`${styles.playIcon} ${
+                isHovered ? styles.playIconHovered : ""
+              }`}
+            />
+          </Col>
+          <Col span={20}>
+            <Typography.Text strong style={{ fontSize: "11px" }}>
+              {itemData.title}
+            </Typography.Text>
+          </Col>
+        </Row>
+        <Row align="middle" className={styles.stats}>
+          <Col span={4}>
+            <Tooltip title="Likes">
+              <LikeOutlined style={{ fontSize: "10px" }} />
+            </Tooltip>
+            <Typography.Text className={styles.likeDislikeCount}>
+              <span style={{ fontSize: "10px" }}>{4}</span>
+            </Typography.Text>
+          </Col>
+          <Col span={4}>
+            <Tooltip title="Dislikes">
+              <DislikeOutlined style={{ fontSize: "10px" }} />
+            </Tooltip>
+            <Typography.Text className={styles.likeDislikeCount}>
+              <span style={{ fontSize: "10px" }}>{2}</span>
+            </Typography.Text>
+          </Col>
+        </Row>
+        <Typography.Text
+          className={styles.description}
+          style={{ fontSize: "10px" }}
+        >
+          {itemData.description}
+        </Typography.Text>
+
+        <div className={styles.customDivider} />
+
+        <Row justify="space-between">
+          <Col>
+            <Typography.Text style={{ fontSize: "10px" }}>
+              Level: C1
+            </Typography.Text>
+          </Col>
+          <Col>
+            <Typography.Text style={{ fontSize: "10px" }}>
+              Duration: 11:22
+            </Typography.Text>
+          </Col>
+        </Row>
       </div>
     </div>
   );

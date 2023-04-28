@@ -10,6 +10,8 @@ import {
   Typography,
   Select,
   Tabs,
+  Slider,
+  Modal,
 } from "antd";
 
 const { TabPane } = Tabs;
@@ -69,6 +71,7 @@ const Library: React.FC = () => {
     string | null
   >(null);
   const [selectedItem, setSelectedItem] = React.useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     setSourceLanguageFromVideo(selectedOption?.value || null);
@@ -117,7 +120,7 @@ const Library: React.FC = () => {
     /* postLibraryVideo(
       sourceLanguage,
       targetLanguage,
-      "https://www.youtube.com/watch?v=FVcfCHmoCvM&ab_channel=HIMVEVO"
+      "https://www.youtube.com/watch?v=OEiNJNkSRoU&t=40s&ab_channel=BBCNews"
     ); */
     fetchData();
     setLoading(false);
@@ -167,31 +170,42 @@ const Library: React.FC = () => {
     );
   };
 
-  const [sliderSettings, setSliderSettings] = useState<any[]>([
-    {
-      dots: false,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 4,
-      slidesToScroll: 2,
-      adaptiveHeight: true,
-      variableWidth: true,
-      // Add any other settings for the first slider here
-    },
-    {
-      dots: false,
-      infinite: true,
-      speed: 500,
-      slidesToShow: 4,
-      slidesToScroll: 2,
-      adaptiveHeight: true,
-      variableWidth: true,
-      // Add any other settings for the second slider here
-    },
-  ]);
+  const onChange = (value: number | [number, number]) => {
+    console.log("onChange: ", value);
+  };
+
+  const onAfterChange = (value: number | [number, number]) => {
+    console.log("onAfterChange: ", value);
+  };
+
+  // Add this function to handle the click event for the "Add" button
+  const handleAddButtonClick = () => {
+    setIsModalVisible(true);
+  };
+
+  // Add this function to handle the "Cancel" button click inside the modal
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <PageContainer title={false}>
+      <Row gutter={[16, 16]}>
+        <Col span={12}>
+          <Slider
+            range
+            step={10}
+            defaultValue={[20, 50]}
+            onChange={onChange}
+            onAfterChange={onAfterChange}
+          />
+        </Col>
+        <Col span={12}>
+          <Button type="primary" onClick={handleAddButtonClick}>
+            Add
+          </Button>
+        </Col>
+      </Row>
       {Object.values(libraryItems || {}).map((items, index) => (
         <CustomSlider
           key={`slider${index + 1}`}
@@ -199,6 +213,26 @@ const Library: React.FC = () => {
           sliderId={`slider${index + 1}`}
         />
       ))}
+      <Modal
+        title="Add Video"
+        open={isModalVisible}
+        onCancel={handleModalCancel}
+        footer={[
+          <Button key="cancel" onClick={handleModalCancel}>
+            Cancel
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={handleButtonClick}
+            disabled={buttonDisabled}
+          >
+            Add Video
+          </Button>,
+        ]}
+      >
+        {/* Add your form or other content for the modal here */}
+      </Modal>
     </PageContainer>
   );
 };

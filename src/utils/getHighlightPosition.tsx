@@ -11,8 +11,6 @@ export const getHighlightPositions = (
     (a, b) => a.sentenceNo - b.sentenceNo
   );
 
-  console.log("" + JSON.stringify(userSentences, null, 2));
-
   const sentence = sortedSentences.find((userSentence: UserSentence) => {
     return userSentence.sentenceNo === sentenceNo; // Use strict equality operator
   });
@@ -37,8 +35,6 @@ export const getHighlightPositions = (
       return wordPosition >= startPosition && wordPosition <= endPosition;
     }
   );
-
-  console.log("vocabularyListUserPhrases" + vocabularyListUserPhrases, null, 2);
 
   return isPhraseHighlighted || isInVocabularyListUserPhrases;
 };
