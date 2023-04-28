@@ -48,10 +48,6 @@ const LayoutPage: FC = () => {
   const navigate = useNavigate();
   const { formatMessage } = useLocale();
 
-  const [sourceLanguage, setSourceLanguage] =
-    useRecoilState(sourceLanguageState);
-  const [targetLanguage, setTargetLanguage] =
-    useRecoilState(targetLanguageState);
   const libraryId = useRecoilValue(libraryIdState);
   const currentPage = useRecoilValue(currentPageState);
   const pageSize = useRecoilValue(pageSizeState);
@@ -142,36 +138,7 @@ const LayoutPage: FC = () => {
             return <Link to={menuItemProps.path}>{defaultDom}</Link>;
           }
         }}
-        rightContentRender={() => (
-          <RightContent>
-            <Space>
-              <label htmlFor="sourceLanguageSelect">Source Language:</label>
-              <LanguageSelect
-                id="sourceLanguageSelect"
-                atom={sourceLanguageState}
-                disabledValue={targetLanguage}
-                options={[
-                  { label: "English", value: "en" },
-                  { label: "Czech", value: "cz" },
-                  { label: "Slovak", value: "sk" },
-                ]}
-              />
-            </Space>
-            <Space>
-              <label htmlFor="targetLanguageSelect">Target Language:</label>
-              <LanguageSelect
-                id="targetLanguageSelect"
-                atom={targetLanguageState}
-                disabledValue={sourceLanguage}
-                options={[
-                  { label: "Slovak", value: "sk" },
-                  { label: "Czech", value: "cz" },
-                  { label: "English", value: "en" },
-                ]}
-              />
-            </Space>
-          </RightContent>
-        )}
+        rightContentRender={() => <RightContent></RightContent>}
         footerRender={() => <Footer />}
       >
         <Outlet />

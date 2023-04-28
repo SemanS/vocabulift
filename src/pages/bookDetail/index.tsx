@@ -446,7 +446,7 @@ const BookDetail: FC = () => {
         {renderSettingsDrawerContent()}
       </Drawer>
       <Row gutter={[16, 16]}>
-        <Col xxl={colSpan} xl={colSpan} lg={colSpan} md={24} sm={24} xs={24}>
+        <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (
             <Card
               title={libraryTitle}
@@ -470,18 +470,9 @@ const BookDetail: FC = () => {
               />
             </Card>
           )}
-          <Card
-            title={label !== LabelType.VIDEO && "title"}
-            extra={
-              label !== LabelType.VIDEO && (
-                <Radio.Group onChange={handleModeChange} value={mode}>
-                  <Radio.Button value="word">Word</Radio.Button>
-                  <Radio.Button value="sentence">Sentence</Radio.Button>
-                  <Radio.Button value="all">All</Radio.Button>
-                </Radio.Group>
-              )
-            }
-          >
+        </Col>
+        <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
+          <Card>
             <TranslateBox
               sourceLanguage={sourceLanguage}
               targetLanguage={targetLanguage}
@@ -510,35 +501,35 @@ const BookDetail: FC = () => {
             />
           </Card>
         </Col>
-        {vocabularyListUserPhrases?.length !== 0 && (
-          <>
-            {showVocabularyList && (
-              <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
-                <FilteredVocabularyList
-                  title="Words list"
-                  mode={"words"}
-                  phrases={vocabularyListUserPhrases!}
-                  onDeleteItem={handleDeleteUserPhrase}
-                  onWordClick={handleAddWordDefinition}
-                />
-                <FilteredVocabularyList
-                  title="Phrases list"
-                  style={{ marginTop: "16px" }}
-                  mode={"phrases"}
-                  phrases={vocabularyListUserPhrases!}
-                  onDeleteItem={handleDeleteUserPhrase}
-                  onWordClick={handleAddWordDefinition}
-                />
-              </Col>
-            )}
-            {showWordDefinition && (
-              <Col xxl={6} xl={6} lg={6} md={12} sm={24} xs={24}>
-                <WordDefinitionCard wordData={wordData}></WordDefinitionCard>
-              </Col>
-            )}
-          </>
-        )}
       </Row>
+      {vocabularyListUserPhrases?.length !== 0 && (
+        <Row gutter={[16, 16]}>
+          {showVocabularyList && (
+            <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+              <FilteredVocabularyList
+                title="Words list"
+                mode={"words"}
+                phrases={vocabularyListUserPhrases!}
+                onDeleteItem={handleDeleteUserPhrase}
+                onWordClick={handleAddWordDefinition}
+              />
+              <FilteredVocabularyList
+                title="Phrases list"
+                style={{ marginTop: "16px" }}
+                mode={"phrases"}
+                phrases={vocabularyListUserPhrases!}
+                onDeleteItem={handleDeleteUserPhrase}
+                onWordClick={handleAddWordDefinition}
+              />
+            </Col>
+          )}
+          {showWordDefinition && (
+            <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+              <WordDefinitionCard wordData={wordData}></WordDefinitionCard>
+            </Col>
+          )}
+        </Row>
+      )}
     </PageContainer>
   );
 };

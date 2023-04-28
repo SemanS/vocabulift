@@ -12,6 +12,8 @@ import {
   Tabs,
   Slider,
   Modal,
+  Space,
+  Divider,
 } from "antd";
 
 const { TabPane } = Tabs;
@@ -37,6 +39,7 @@ import {
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
 import CustomSlider from "./components/CustomSlider";
+import LanguageSelect from "@/pages/bookDetail/components/LanguageSelect/LanguageSelect";
 
 interface Option {
   value: string;
@@ -51,6 +54,7 @@ interface ApiResponse {
 }
 
 const Library: React.FC = () => {
+  const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
   const [sourceLanguage, setSourceLanguage] =
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
@@ -72,6 +76,10 @@ const Library: React.FC = () => {
   >(null);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [sliderValue, setSliderValue] = useState<[number, number]>([
+    0,
+    customRange.length - 1,
+  ]);
 
   useEffect(() => {
     setSourceLanguageFromVideo(selectedOption?.value || null);
@@ -117,11 +125,6 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    /* postLibraryVideo(
-      sourceLanguage,
-      targetLanguage,
-      "https://www.youtube.com/watch?v=OEiNJNkSRoU&t=40s&ab_channel=BBCNews"
-    ); */
     fetchData();
     setLoading(false);
   }, []);
@@ -188,17 +191,77 @@ const Library: React.FC = () => {
     setIsModalVisible(false);
   };
 
+  const convertToCustomRange = (sliderValue: number[]): string[] => {
+    return sliderValue.map((value) => customRange[value]);
+  };
+
+  const convertToSliderValue = (customRangeValue: string[]): number[] => {
+    return customRangeValue.map((value) => customRange.indexOf(value));
+  };
+
+  const handleChange = (value: number | [number, number]) => {
+    if (Array.isArray(value)) {
+      setSliderValue(value as [number, number]);
+    }
+  };
+
+  const selectedRange: string[] = convertToCustomRange(sliderValue);
+
+  const marks = customRange.reduce((acc, value, index) => {
+    acc[index] = value;
+    return acc;
+  }, {} as { [key: number]: string });
+
   return (
     <PageContainer title={false}>
       <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <Space>
+            <label htmlFor="sourceLanguageSelect">Source Language:</label>
+            <LanguageSelect
+              id="sourceLanguageSelect"
+              atom={sourceLanguageState}
+              disabledValue={targetLanguage}
+              options={[
+                { label: "English", value: "en" },
+                { label: "Czech", value: "cz" },
+                { label: "Slovak", value: "sk" },
+              ]}
+            />
+          </Space>
+        </Col>
+        <Col span={24}>
+          <Space>
+            <label htmlFor="targetLanguageSelect">Target Language:</label>
+            <LanguageSelect
+              id="targetLanguageSelect"
+              atom={targetLanguageState}
+              disabledValue={sourceLanguage}
+              options={[
+                { label: "Slovak", value: "sk" },
+                { label: "Czech", value: "cz" },
+                { label: "English", value: "en" },
+              ]}
+            />
+          </Space>
+        </Col>
         <Col span={12}>
           <Slider
             range
-            step={10}
-            defaultValue={[20, 50]}
-            onChange={onChange}
-            onAfterChange={onAfterChange}
+            min={0}
+            max={customRange.length - 1}
+            value={sliderValue}
+            onChange={handleChange}
+            marks={marks}
+            tooltip={{ open: false }}
           />
+          {/* <div>
+            Selected range: {selectedRange[0]} - {selectedRange[1]}
+          </div>
+          <div>
+            Output:{" "}
+            {customRange.slice(sliderValue[0], sliderValue[1] + 1).join(", ")}
+          </div> */}
         </Col>
         <Col span={12}>
           <Button type="primary" onClick={handleAddButtonClick}>
@@ -206,6 +269,7 @@ const Library: React.FC = () => {
           </Button>
         </Col>
       </Row>
+      <Divider />
       {Object.values(libraryItems || {}).map((items, index) => (
         <CustomSlider
           key={`slider${index + 1}`}
@@ -232,6 +296,87 @@ const Library: React.FC = () => {
         ]}
       >
         {/* Add your form or other content for the modal here */}
+        <Tabs style={{ marginTop: "0px" }}>
+          <TabPane tab="Video" key="1">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/320px-YouTube_Logo_2017.svg.png"
+              alt="YouTube Logo"
+              style={{
+                margin: "0 auto",
+                marginBottom: "24px",
+              }}
+            />
+            <Row gutter={16}>
+              <Col span={16} style={{ marginBottom: "24px" }}>
+                <Form
+                  onFinish={(values) => {
+                    console.log("YouTube Video URL:", values.youtubeUrl);
+                    // Handle the submission here
+                  }}
+                  style={{ display: "inline-block", width: "100%" }}
+                >
+                  <Form.Item
+                    name="youtubeUrl"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the YouTube video URL",
+                      },
+                    ]}
+                    style={{ marginBottom: 0 }}
+                  >
+                    <Input
+                      placeholder="YouTube Video URL"
+                      value={inputValue}
+                      onChange={(e) => {
+                        setInputValue(e.target.value);
+                        if (e.target.value) {
+                          fetchOptions(e.target.value);
+                          // Clear the selected option and disable the button when the input changes
+                          setSelectedOption(null);
+                          setButtonDisabled(true);
+                        } else {
+                          setSelectOptions([]);
+                        }
+                      }}
+                      style={{ width: "100%" }}
+                    />
+                  </Form.Item>
+                </Form>
+              </Col>
+              <Col span={4}>
+                <Select
+                  placeholder="Select an option"
+                  value={selectedOption?.value}
+                  onChange={(value, option) => {
+                    setSelectedOption(option as Option);
+                  }}
+                  disabled={!isFetchValid}
+                >
+                  {selectOptions &&
+                    selectOptions.map((option, index) => (
+                      <Select.Option key={index} value={option.value}>
+                        {option.label}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  disabled={buttonDisabled}
+                  onClick={handleButtonClick}
+                >
+                  Add Video
+                </Button>
+              </Col>
+            </Row>
+          </TabPane>
+          <TabPane tab="Text" key="2"></TabPane>
+        </Tabs>
       </Modal>
     </PageContainer>
   );
