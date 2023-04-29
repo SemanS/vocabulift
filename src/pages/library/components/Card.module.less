@@ -6,7 +6,7 @@
 
 .cardImg {
   cursor: pointer; // Add this line
-  transition: transform 0.1s ease-in-out;
+  transition: transform 0.4s ease-in-out; /* Updated transition time */
   //border-radius: 0.2rem;
   width: 100%;
   height: 100%;
@@ -15,7 +15,7 @@
 
 .zoomedImage {
   transform: translateY(-40%) scale(1.4);
-  z-index: 1;
+  z-index: 4;
   position: relative;
 }
 
@@ -25,7 +25,7 @@
 
 .details {
   padding: 10px;
-  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+  transition: opacity 0.4s ease-in-out, transform 0.1s ease-in-out;
   z-index: 2;
   position: absolute;
   left: 0;
@@ -52,12 +52,13 @@
 }
 
 .zoomedDetails {
-  transform: translateY(-1px) scale(1.4);
-  z-index: 1;
+  transition: opacity 0.1s ease-in-out;
+  opacity:1;
+  z-index: 4;
 }
 
 .hoverDetailsTransition {
-  transition: opacity 0.1s ease-in-out 0.4s, transform 0.3s ease-in-out 0.4s;
+  transition: opacity 0.1s ease-in-out;
 }
 
 .playIcon {
@@ -67,4 +68,10 @@
 .customDivider {
   border-top: 1px solid #f0f0f0;
   margin: 5px 0;
+}
+
+.cardContainer {
+  transition: transform 0.4s ease-in-out 0.4s; /* Updated transition time and added delay */
+  width: 100%;
+  height: 100%;
 }

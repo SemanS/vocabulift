@@ -19,17 +19,9 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   sliderId,
 }) => {
   const [showControls, setShowControls] = useState(false);
+  const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
 
   const sliderRef = useRef<Slider>(null);
-
-  const handleDirection = (direction: "left" | "right") => {
-    if (!sliderRef.current) return;
-    if (direction === "left") {
-      sliderRef.current.slickPrev();
-    } else {
-      sliderRef.current.slickNext();
-    }
-  };
 
   const settings = {
     dots: false,
@@ -48,7 +40,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
           slidesToShow: 6,
           slidesToScroll: 3,
           infinite: false,
-          dots: true,
+          dots: false,
         },
       },
       {
@@ -78,6 +70,9 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   };
 
   const sliderClassName = `slider_${sliderId}`;
+  const onCardHover = (hoveredIndex: number | null) => {
+    setHoveredCardIndex(hoveredIndex);
+  };
   return (
     <div
       className={`${
@@ -91,7 +86,15 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
         <div className={styles.sliderDotsContainer}>
           <Slider {...settings} ref={sliderRef}>
             {items.map((item, index) => {
-              return <Card key={index} itemData={item} />;
+              return (
+                <Card
+                  key={index}
+                  itemData={item}
+                  onCardHover={onCardHover}
+                  cardIndex={index}
+                  isHovered={hoveredCardIndex === index}
+                />
+              );
             })}
           </Slider>
         </div>

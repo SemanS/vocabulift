@@ -24,7 +24,7 @@ import {
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
-import { PlusSquareTwoTone } from "@ant-design/icons";
+import { BookFilled, PlusSquareFilled, YoutubeFilled } from "@ant-design/icons";
 import { YoutubeOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import {
@@ -168,14 +168,6 @@ const Library: React.FC = () => {
     );
   };
 
-  const onChange = (value: number | [number, number]) => {
-    console.log("onChange: ", value);
-  };
-
-  const onAfterChange = (value: number | [number, number]) => {
-    console.log("onAfterChange: ", value);
-  };
-
   // Add this function to handle the click event for the "Add" button
   const handleAddButtonClick = () => {
     setIsModalVisible(true);
@@ -234,18 +226,27 @@ const Library: React.FC = () => {
           />
         </Col>
         <Col span={24} className={styles.centeredColumn}>
-          <Col span={12} style={{ textAlign: "right" }}>
-            <div className={styles.iconContainer}>
-              <PlusSquareTwoTone
-                className={styles.icon}
-                onClick={handleAddButtonClick}
-              />
-              <Typography.Text className={styles.text}>Add</Typography.Text>
-            </div>
-            {/* <Button type="primary" onClick={handleAddButtonClick}>
-                Add
-              </Button> */}
-          </Col>
+          <div className={styles.iconContainer}>
+            <PlusSquareFilled
+              className={styles.icon}
+              onClick={handleAddButtonClick}
+            />
+            <Typography.Text className={styles.text}>Add</Typography.Text>
+          </div>
+          <div className={styles.iconContainer}>
+            <YoutubeFilled
+              className={styles.icon}
+              onClick={handleAddButtonClick}
+            />
+            <Typography.Text className={styles.text}>Video</Typography.Text>
+          </div>
+          <div className={styles.iconContainer}>
+            <BookFilled
+              className={styles.icon}
+              onClick={handleAddButtonClick}
+            />
+            <Typography.Text className={styles.text}>Book</Typography.Text>
+          </div>
         </Col>
       </Row>
       <Divider />
