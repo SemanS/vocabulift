@@ -18,7 +18,6 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   items,
   sliderId,
 }) => {
-  const listRef = useRef<HTMLDivElement>(null);
   const [showControls, setShowControls] = useState(false);
 
   const sliderRef = useRef<Slider>(null);
@@ -33,7 +32,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   };
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: false,
     speed: 500,
     slidesToShow: 4,
@@ -58,7 +57,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
           slidesToShow: 4,
           slidesToScroll: 3,
           infinite: false,
-          dots: true,
+          dots: false,
         },
       },
       {
@@ -75,9 +74,6 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
           slidesToScroll: 1,
         },
       },
-      // You can unslick at a given breakpoint now by adding:
-      // settings: "unslick"
-      // instead of a settings object
     ],
   };
 
@@ -92,11 +88,13 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
     >
       <h1>{"Video"}</h1>
       <div className={`${styles.slider}`}>
-        <Slider {...settings} ref={sliderRef}>
-          {items.map((item, index) => {
-            return <Card key={index} itemData={item} />;
-          })}
-        </Slider>
+        <div className={styles.sliderDotsContainer}>
+          <Slider {...settings} ref={sliderRef}>
+            {items.map((item, index) => {
+              return <Card key={index} itemData={item} />;
+            })}
+          </Slider>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,43 @@
+.customPopover {
+    width: 100%;
+    max-width: 300px;
+  }
+  
+  .item {
+    display: flex;
+    padding: 6px 2px;
+    font-size: 14px;
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+  
+  .flag {
+    margin-right: 8px;
+    margin-top: 3px;
+  }
+  
+  .item:first-child {
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+  }
+  
+  .item:last-child {
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+  }
+
+  .languageSelectorBox {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background-color: #f5f5f5;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .languageSelectorBox:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }

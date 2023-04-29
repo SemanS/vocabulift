@@ -1,10 +1,11 @@
 .card {
-  cursor: pointer;
+  //cursor: pointer;
   position: relative;
   width: 100%;
 }
 
 .cardImg {
+  cursor: pointer; // Add this line
   transition: transform 0.1s ease-in-out;
   //border-radius: 0.2rem;
   width: 100%;
@@ -14,7 +15,7 @@
 
 .zoomedImage {
   transform: translateY(-40%) scale(1.4);
-  z-index: 3;
+  z-index: 1;
   position: relative;
 }
 
@@ -51,7 +52,7 @@
 }
 
 .zoomedDetails {
-  transform: translateY(0%) scale(1.4);
+  transform: translateY(-1px) scale(1.4);
   z-index: 1;
 }
 

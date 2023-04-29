@@ -3,10 +3,8 @@ import {
   Form,
   Input,
   Button,
-  List,
   Col,
   Row,
-  Card,
   Typography,
   Select,
   Tabs,
@@ -19,16 +17,14 @@ import {
 const { TabPane } = Tabs;
 
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { Link } from "react-router-dom";
 import {
   getLibraryItems,
   postLibraryInputVideoLanguages,
   postLibraryVideo,
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
-import classNames from "classnames";
 import styles from "./index.module.less";
-import { ReadOutlined } from "@ant-design/icons";
+import { PlusSquareTwoTone } from "@ant-design/icons";
 import { YoutubeOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import {
@@ -39,7 +35,7 @@ import {
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
 import CustomSlider from "./components/CustomSlider";
-import LanguageSelect from "@/pages/bookDetail/components/LanguageSelect/LanguageSelect";
+import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 
 interface Option {
   value: string;
@@ -55,13 +51,13 @@ interface ApiResponse {
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
   const [sourceLanguage, setSourceLanguage] =
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
-  const [activeCard, setActiveCard] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const setLibraryId = useSetRecoilState(libraryIdState);
   const setCurrentPage = useSetRecoilState(currentPageState);
@@ -74,7 +70,6 @@ const Library: React.FC = () => {
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
   >(null);
-  const [selectedItem, setSelectedItem] = React.useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [sliderValue, setSliderValue] = useState<[number, number]>([
     0,
@@ -214,34 +209,16 @@ const Library: React.FC = () => {
 
   return (
     <PageContainer title={false}>
-      <Row gutter={[16, 16]}>
-        <Col span={24}>
+      <Row gutter={[16, 16]} justify="center">
+        <Col span={24} className={styles.centeredColumn}>
           <Space>
-            <label htmlFor="sourceLanguageSelect">Source Language:</label>
-            <LanguageSelect
-              id="sourceLanguageSelect"
+            <LanguageSelector
               atom={sourceLanguageState}
-              disabledValue={targetLanguage}
-              options={[
-                { label: "English", value: "en" },
-                { label: "Czech", value: "cz" },
-                { label: "Slovak", value: "sk" },
-              ]}
+              disabledLanguage={targetLanguage}
             />
-          </Space>
-        </Col>
-        <Col span={24}>
-          <Space>
-            <label htmlFor="targetLanguageSelect">Target Language:</label>
-            <LanguageSelect
-              id="targetLanguageSelect"
+            <LanguageSelector
               atom={targetLanguageState}
-              disabledValue={sourceLanguage}
-              options={[
-                { label: "Slovak", value: "sk" },
-                { label: "Czech", value: "cz" },
-                { label: "English", value: "en" },
-              ]}
+              disabledLanguage={sourceLanguage}
             />
           </Space>
         </Col>
@@ -255,18 +232,20 @@ const Library: React.FC = () => {
             marks={marks}
             tooltip={{ open: false }}
           />
-          {/* <div>
-            Selected range: {selectedRange[0]} - {selectedRange[1]}
-          </div>
-          <div>
-            Output:{" "}
-            {customRange.slice(sliderValue[0], sliderValue[1] + 1).join(", ")}
-          </div> */}
         </Col>
-        <Col span={12}>
-          <Button type="primary" onClick={handleAddButtonClick}>
-            Add
-          </Button>
+        <Col span={24} className={styles.centeredColumn}>
+          <Col span={12} style={{ textAlign: "right" }}>
+            <div className={styles.iconContainer}>
+              <PlusSquareTwoTone
+                className={styles.icon}
+                onClick={handleAddButtonClick}
+              />
+              <Typography.Text className={styles.text}>Add</Typography.Text>
+            </div>
+            {/* <Button type="primary" onClick={handleAddButtonClick}>
+                Add
+              </Button> */}
+          </Col>
         </Col>
       </Row>
       <Divider />
