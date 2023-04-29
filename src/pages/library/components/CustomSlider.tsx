@@ -71,7 +71,9 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
 
   const sliderClassName = `slider_${sliderId}`;
   const onCardHover = (hoveredIndex: number | null) => {
-    setHoveredCardIndex(hoveredIndex);
+    setTimeout(() => {
+      setHoveredCardIndex(hoveredIndex);
+    });
   };
   return (
     <div

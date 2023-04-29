@@ -60,95 +60,6 @@
   align-items: center;
 }
 
-.card {
-  //cursor: pointer;
-  position: relative;
-  width: 100%;
-}
-
-.cardImg {
-  cursor: pointer; // Add this line
-  transition: transform 0.1s ease-in-out;
-  //border-radius: 0.2rem;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.zoomedImage {
-  transform: translateY(-40%) scale(1.4);
-  z-index: 4;
-  position: relative;
-}
-
-.hoverTransition {
-  transition: transform 0.3s ease-in-out 0.4s;
-}
-
-.details {
-  padding: 10px;
-  transition: opacity 0.4s ease-in-out, transform 0.1s ease-in-out;
-  z-index: 2;
-  position: absolute;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-color: rgba(255, 255, 255);
-  text-align: left;
-  opacity: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  align-items: left;
-}
-
-.description {
-  max-height: 50%; /* Adjust the max-height according to your design requirements */
-  overflow-y: auto;
-  //padding: 0 1rem;
-  text-align: left;
-}
-
-.visibleDetails {
-  opacity: 1;
-}
-
-.zoomedDetails {
-  transition: opacity 0.1s ease-in-out;
-  opacity:1;
-  z-index: 4;
-}
-
-.hoverDetailsTransition {
-  transition: opacity 0.1s ease-in-out;
-}
-
-.playIcon {
-  font-size: 34px;
-}
-
-.customDivider {
-  border-top: 1px solid #f0f0f0;
-  margin: 5px 0;
-}
-
-.cardContainer {
-  transition: transform 0.8s ease-in-out;
-  width: 100%;
-  height: 100%;
-}
-
-/* .slider {
-  :global {
-    .slick-list {
-      overflow: visible;
-    }
-    .slick-slide {
-      padding-right: 4px;
-    }
-  }
-} */
-
 .slider {
   :global {
     .slick-list {
@@ -158,5 +69,20 @@
       padding-right: 8px;
     }
     
+  }
+}
+
+.slider {
+  :global {
+    .slick-list {
+      overflow: visible;
+    }
+    .slick-slide {
+      padding-right: 4px;
+    }
+    .conditionalZIndex {
+      z-index: 10 !important;
+      position:relative;
+    }
   }
 }

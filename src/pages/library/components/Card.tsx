@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
 import {
@@ -34,6 +34,24 @@ export const Card: React.FC<CardProps> = ({
   isHovered,
 }) => {
   const [isImgHovered, setIsImgHovered] = useState(false);
+  const [isDelayPassed, setIsDelayPassed] = useState(false);
+
+  useEffect(() => {
+    let timeoutId: any;
+    if (isHovered) {
+      timeoutId = setTimeout(() => {
+        setIsDelayPassed(true);
+      }, 500);
+    } else {
+      timeoutId = setTimeout(() => {
+        setIsDelayPassed(false);
+      }, 500);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isHovered, isDelayPassed]);
 
   const handleMouseEnter = () => {
     setIsImgHovered(true);
@@ -45,11 +63,14 @@ export const Card: React.FC<CardProps> = ({
     onCardHover(null);
   };
 
-  //const cardClassName = classNames("slick-slide", { hovered: isHovered });
+  const cardClassName = classNames("slick-slide", {
+    conditionalZIndex: isDelayPassed,
+  });
 
   return (
     <div
-      //  className={cardClassName}
+      className={cardClassName}
+      data-index={cardIndex}
       onMouseEnter={() => onCardHover(cardIndex)}
       onMouseLeave={() => onCardHover(null)}
     >
