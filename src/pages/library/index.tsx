@@ -25,7 +25,6 @@ import {
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
 import { BookFilled, PlusSquareFilled, YoutubeFilled } from "@ant-design/icons";
-import { YoutubeOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import {
   libraryIdState,

@@ -35,17 +35,18 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   const [isImgHovered, setIsImgHovered] = useState(false);
   const [isDelayPassed, setIsDelayPassed] = useState(false);
+  const [transitionState, setTransitionState] = useState("");
 
   useEffect(() => {
     let timeoutId: any;
     if (isHovered) {
       timeoutId = setTimeout(() => {
         setIsDelayPassed(true);
-      }, 500);
+      }, 300);
     } else {
       timeoutId = setTimeout(() => {
         setIsDelayPassed(false);
-      }, 500);
+      }, 300);
     }
 
     return () => {
@@ -56,11 +57,13 @@ export const Card: React.FC<CardProps> = ({
   const handleMouseEnter = () => {
     setIsImgHovered(true);
     onCardHover(cardIndex);
+    setTransitionState("scalingUp");
   };
 
   const handleMouseLeave = () => {
     setIsImgHovered(false);
     onCardHover(null);
+    setTransitionState("scalingDown");
   };
 
   const cardClassName = classNames("slick-slide", {
@@ -77,7 +80,7 @@ export const Card: React.FC<CardProps> = ({
       <div
         className={`${styles.cardContainer} ${
           isImgHovered ? styles.zoomedImage : ""
-        }`}
+        } ${styles[transitionState]}`}
       >
         <Link
           to={itemData.id + "?currentPage=" + 1 + "&pageSize=" + 10}

@@ -7,4 +7,5 @@ export interface LibraryItem {
   totalSentences: number;
   videoThumbnail?: string | undefined;
   videoId: string;
+  category: string;
 }
