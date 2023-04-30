@@ -26,7 +26,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   const [countries, setCountries] = useState(() => {
     if (options) {
       return options.map((option) => ({
-        name: getLoption.label,
+        name: option.label,
         code: option.value,
       }));
     }
