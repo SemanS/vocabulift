@@ -148,7 +148,7 @@ export const Card: React.FC<CardProps> = ({
           <Row justify="space-between">
             <Col>
               <Typography.Text style={{ fontSize: "10px" }}>
-                Level: C1
+                Level: {itemData.level}
               </Typography.Text>
             </Col>
             <Col>

@@ -8,4 +8,5 @@ export interface LibraryItem {
   videoThumbnail?: string | undefined;
   videoId: string;
   category: string;
+  level: string;
 }

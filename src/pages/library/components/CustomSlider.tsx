@@ -92,7 +92,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      {/* <h1>{category}</h1> */}
+      <h1>{category}</h1>
       <div className={`${styles.slider}`}>
         <Slider {...settings} ref={sliderRef}>
           {items.map((item, index) => {
