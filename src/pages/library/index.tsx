@@ -74,6 +74,9 @@ const Library: React.FC = () => {
     0,
     customRange.length - 1,
   ]);
+  const [selectedLabelType, setSelectedLabelType] = useState<LabelType>(
+    LabelType.VIDEO
+  );
 
   useEffect(() => {
     setSourceLanguageFromVideo(selectedOption?.value || null);
@@ -198,6 +201,27 @@ const Library: React.FC = () => {
     return acc;
   }, {} as { [key: number]: string });
 
+  const handleLabelTypeButtonClick = (labelType: LabelType) => {
+    setSelectedLabelType(labelType);
+  };
+
+  const groupedItemsByCategory = (items: LibraryItem[]) => {
+    return items.reduce((acc, item) => {
+      if (acc[item.category]) {
+        acc[item.category].push(item);
+      } else {
+        acc[item.category] = [item];
+      }
+      return acc;
+    }, {} as Record<string, LibraryItem[]>);
+  };
+
+  const filteredLibraryItems = Object.values(libraryItems || {})
+    .flat()
+    .filter((item) => item.label === selectedLabelType);
+
+  const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
+
   return (
     <PageContainer title={false}>
       <Row gutter={[16, 16]} justify="center">
@@ -248,12 +272,23 @@ const Library: React.FC = () => {
           </div>
         </Col>
       </Row>
+      <Row gutter={[16, 16]} justify="center">
+        {Object.values(LabelType).map((labelType) => (
+          <Col key={labelType} span={6}>
+            <Button onClick={() => handleLabelTypeButtonClick(labelType)}>
+              {labelType}
+            </Button>
+          </Col>
+        ))}
+      </Row>
+      <Row gutter={[16, 16]} justify="center"></Row>
       <Divider />
-      {Object.values(libraryItems || {}).map((items, index) => (
+      {Object.entries(categorizedItems).map(([category, items], index) => (
         <CustomSlider
           key={`slider${index + 1}`}
-          items={items}
+          items={items as LibraryItem[]}
           sliderId={`slider${index + 1}`}
+          category={category}
         />
       ))}
       <Modal

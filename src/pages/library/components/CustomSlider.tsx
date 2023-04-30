@@ -12,11 +12,13 @@ import "slick-carousel/slick/slick-theme.css";
 interface CustomSliderProps {
   items: LibraryItem[];
   sliderId: string;
+  category: string;
 }
 
 export const CustomSlider: React.FC<CustomSliderProps> = ({
   items,
   sliderId,
+  category,
 }) => {
   const [showControls, setShowControls] = useState(false);
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
@@ -53,6 +55,13 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
         },
       },
       {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 2,
+        },
+      },
+      {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,
@@ -83,23 +92,21 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
-      <h1>{"Video"}</h1>
+      {/* <h1>{category}</h1> */}
       <div className={`${styles.slider}`}>
-        <div className={styles.sliderDotsContainer}>
-          <Slider {...settings} ref={sliderRef}>
-            {items.map((item, index) => {
-              return (
-                <Card
-                  key={index}
-                  itemData={item}
-                  onCardHover={onCardHover}
-                  cardIndex={index}
-                  isHovered={hoveredCardIndex === index}
-                />
-              );
-            })}
-          </Slider>
-        </div>
+        <Slider {...settings} ref={sliderRef}>
+          {items.map((item, index) => {
+            return (
+              <Card
+                key={index}
+                itemData={item}
+                onCardHover={onCardHover}
+                cardIndex={index}
+                isHovered={hoveredCardIndex === index}
+              />
+            );
+          })}
+        </Slider>
       </div>
     </div>
   );
