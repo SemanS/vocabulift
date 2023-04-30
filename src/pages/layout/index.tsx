@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { useGuide } from "../guide/useGuide";
-import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { userState } from "@/stores/user";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { SettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
@@ -20,8 +20,6 @@ import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
 import { Button, Space } from "antd";
-import { sourceLanguageState, targetLanguageState } from "@/stores/language";
-import LanguageSelect from "@/pages/bookDetail/components/LanguageSelect/LanguageSelect";
 import {
   libraryIdState,
   currentPageState,
@@ -37,8 +35,6 @@ const IconMap: { [key: string]: React.ReactNode } = {
 };
 
 const LayoutPage: FC = () => {
-  //const { data: menuList, error } = useGetCurrentMenus();
-
   const [user, setUser] = useRecoilState(userState);
   const [pathname, setPathname] = useState("/welcome");
   const { device, collapsed, newUser, settings } = user;
