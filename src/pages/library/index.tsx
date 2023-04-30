@@ -232,6 +232,24 @@ const Library: React.FC = () => {
     });
   });
   //console.log("filteredLibraryItems", filteredLibraryItems);
+  const flattenedItems = Object.values(libraryItems || {}).flat();
+  console.log("flattenedItems", flattenedItems);
+
+  const filteredByLabelType = flattenedItems.filter(
+    (item) => item.label === selectedLabelType
+  );
+  console.log("filteredByLabelType", filteredByLabelType);
+
+  const filteredLibraryItems = filteredByLabelType.filter((item) => {
+    return item.level.some((level) => {
+      const levelIndex = customRange.indexOf(level.toUpperCase());
+      console.log("level", level);
+      console.log("levelIndex", levelIndex);
+      console.log("sliderValue", sliderValue);
+      return levelIndex >= sliderValue[0] && levelIndex <= sliderValue[1];
+    });
+  });
+  console.log("filteredLibraryItems", filteredLibraryItems);
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
 
