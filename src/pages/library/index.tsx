@@ -20,7 +20,6 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   getLibraryItems,
   postLibraryInputVideoLanguages,
-  postLibraryVideo,
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
@@ -216,11 +215,32 @@ const Library: React.FC = () => {
     }, {} as Record<string, LibraryItem[]>);
   };
 
-  const filteredLibraryItems = Object.values(libraryItems || {})
-    .flat()
-    .filter((item) => item.label === selectedLabelType);
+  const flattenedItems = Object.values(libraryItems || {}).flat();
+  console.log("flattenedItems", flattenedItems);
+
+  const filteredByLabelType = flattenedItems.filter(
+    (item) => item.label === selectedLabelType
+  );
+  console.log("filteredByLabelType", filteredByLabelType);
+
+  const filteredLibraryItems = filteredByLabelType.filter((item) => {
+    return item.level.some((level) => {
+      const levelIndex = customRange.indexOf(level.toUpperCase());
+      console.log("level", level);
+      console.log("levelIndex", levelIndex);
+      console.log("sliderValue", sliderValue);
+      return levelIndex >= sliderValue[0] && levelIndex <= sliderValue[1];
+    });
+  });
+  console.log("filteredLibraryItems", filteredLibraryItems);
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
+
+  const layout = {
+    labelCol: { span: 8 },
+    wrapperCol: { span: 16 },
+    style: { marginBottom: "16px" },
+  };
 
   return (
     <PageContainer title={false}>
@@ -292,13 +312,9 @@ const Library: React.FC = () => {
         />
       ))}
       <Modal
-        title="Add Video"
         open={isModalVisible}
         onCancel={handleModalCancel}
         footer={[
-          <Button key="cancel" onClick={handleModalCancel}>
-            Cancel
-          </Button>,
           <Button
             key="submit"
             type="primary"
@@ -309,20 +325,15 @@ const Library: React.FC = () => {
           </Button>,
         ]}
       >
-        {/* Add your form or other content for the modal here */}
         <Tabs style={{ marginTop: "0px" }}>
           <TabPane tab="Video" key="1">
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/320px-YouTube_Logo_2017.svg.png"
-              alt="YouTube Logo"
-              style={{
-                margin: "0 auto",
-                marginBottom: "24px",
-              }}
-            />
-            <Row gutter={16}>
-              <Col span={16} style={{ marginBottom: "24px" }}>
+            {/* <div className={styles.logoWrapper}>
+              <LogoSvg />
+            </div> */}
+            <Row gutter={24}>
+              <Col span={24} style={{ marginBottom: "24px" }}>
                 <Form
+                  {...layout}
                   onFinish={(values) => {
                     console.log("YouTube Video URL:", values.youtubeUrl);
                     // Handle the submission here
@@ -330,6 +341,7 @@ const Library: React.FC = () => {
                   style={{ display: "inline-block", width: "100%" }}
                 >
                   <Form.Item
+                    label="Video URL"
                     name="youtubeUrl"
                     rules={[
                       {
@@ -337,7 +349,7 @@ const Library: React.FC = () => {
                         message: "Please input the YouTube video URL",
                       },
                     ]}
-                    style={{ marginBottom: 0 }}
+                    style={{ textAlign: "left" }}
                   >
                     <Input
                       placeholder="YouTube Video URL"
@@ -347,45 +359,41 @@ const Library: React.FC = () => {
                         if (e.target.value) {
                           fetchOptions(e.target.value);
                           // Clear the selected option and disable the button when the input changes
-                          setSelectedOption(null);
                           setButtonDisabled(true);
                         } else {
                           setSelectOptions([]);
                         }
                       }}
-                      style={{ width: "100%" }}
+                      size="middle"
                     />
                   </Form.Item>
+                  <Form.Item
+                    label="Select Language"
+                    name="language"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the YouTube video URL",
+                      },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select an option"
+                      value={selectedOption}
+                      onChange={(value) => {
+                        setSelectedOption(value);
+                      }}
+                      disabled={!isFetchValid}
+                    >
+                      {selectOptions &&
+                        selectOptions.map((option, index) => (
+                          <Select.Option key={index} value={option.value}>
+                            {option.label}
+                          </Select.Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
                 </Form>
-              </Col>
-              <Col span={4}>
-                <Select
-                  placeholder="Select an option"
-                  value={selectedOption?.value}
-                  onChange={(value, option) => {
-                    setSelectedOption(option as Option);
-                  }}
-                  disabled={!isFetchValid}
-                >
-                  {selectOptions &&
-                    selectOptions.map((option, index) => (
-                      <Select.Option key={index} value={option.value}>
-                        {option.label}
-                      </Select.Option>
-                    ))}
-                </Select>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  disabled={buttonDisabled}
-                  onClick={handleButtonClick}
-                >
-                  Add Video
-                </Button>
               </Col>
             </Row>
           </TabPane>

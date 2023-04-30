@@ -1,17 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
-import {
-  Col,
-  Divider,
-  Progress,
-  Row,
-  Space,
-  Statistic,
-  Tag,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Col, Row, Tooltip, Typography } from "antd";
 import {
   DislikeOutlined,
   LikeOutlined,
