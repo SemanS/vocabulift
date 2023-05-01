@@ -5,6 +5,7 @@ import styles from "./index.module.less";
 import { useRecoilState } from "recoil";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { Option } from "@/models/utils.interface";
+import ISO6391 from "iso-639-1";
 
 interface LanguageSelectorProps {
   atom?: typeof targetLanguageState | typeof sourceLanguageState;
@@ -23,7 +24,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   initialLanguage,
   options,
 }) => {
-  const [countries, setCountries] = useState(() => {
+  const [countriesList, setCountriesList] = useState(() => {
     if (options) {
       return options.map((option) => ({
         name: option.label,
@@ -37,20 +38,18 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     ];
   });
   const [visible, setVisible] = useState(false);
-  const [filteredCountries, setFilteredCountries] = useState(countries);
+  const [filteredCountries, setFilteredCountries] = useState(countriesList);
   const [selectedLanguage, setSelectedLanguage] = useRecoil
     ? useRecoilState(atom!)
     : useState(initialLanguage);
 
   useEffect(() => {
-    console.log("options" + JSON.stringify(options, null, 2));
     if (options) {
       const mappedOptions = options.map((option) => ({
-        name: option.value,
+        name: ISO6391.getName(option.value),
         code: option.value,
       }));
-      console.log("mappedOptions" + JSON.stringify(mappedOptions, null, 2));
-      setCountries(mappedOptions);
+      setFilteredCountries(mappedOptions);
     }
   }, [options]);
 
@@ -74,22 +73,29 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   const handleSearch = (event) => {
     if (options) {
-      setFilteredCountries(countries);
+      setFilteredCountries(countriesList);
     } else {
       const searchText = event.target.value.toLowerCase();
-      const filtered = countries.filter((country) =>
+      const filtered = countriesList.filter((country) =>
         country.name.toLowerCase().includes(searchText)
       );
       setFilteredCountries(filtered);
     }
   };
 
-  const selectedCountry = countries.find(
+  const selectedCountry = filteredCountries.find(
     (country) => country.code === selectedLanguage
   );
 
   return (
-    <div className={styles.languageSelectorBox}>
+    <div
+      className={styles.languageSelectorBox}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          setVisible((prevVisible) => !prevVisible);
+        }
+      }}
+    >
       <Popover
         content={
           <div className={styles.customPopover}>
