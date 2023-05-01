@@ -24,20 +24,19 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   initialLanguage,
   options,
 }) => {
-  const [countriesList, setCountriesList] = useState(() => {
-    if (options) {
-      return options.map((option) => ({
+  const initialCountriesList = options
+    ? options.map((option) => ({
         name: option.label,
         code: option.value,
-      }));
-    }
-    return [
-      { name: "English", code: "EN" },
-      { name: "Germany", code: "DE" },
-      { name: "Slovakia", code: "sk" },
-    ];
-  });
+      }))
+    : [
+        { name: "English", code: "EN" },
+        { name: "Germany", code: "DE" },
+        { name: "Slovakia", code: "sk" },
+      ];
+
   const [visible, setVisible] = useState(false);
+  const [countriesList, setCountriesList] = useState(initialCountriesList);
   const [filteredCountries, setFilteredCountries] = useState(countriesList);
   const [selectedLanguage, setSelectedLanguage] = useRecoil
     ? useRecoilState(atom!)
@@ -45,42 +44,30 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   useEffect(() => {
     if (options) {
-      const mappedOptions = options.map((option) => ({
-        name: ISO6391.getName(option.value),
-        code: option.value,
-      }));
-      setFilteredCountries(mappedOptions);
+      setCountriesList(
+        options.map((option) => ({
+          name: ISO6391.getName(option.value),
+          code: option.value,
+        }))
+      );
     }
   }, [options]);
 
-  const getFlagCode = (code: string) => {
-    if (code === "EN") {
-      return "GB";
-    }
-    return code;
-  };
+  const getFlagCode = (code: string) => (code === "EN" ? "GB" : code);
 
   const handleCountrySelection = (country: any) => {
-    if (country.code === disabledLanguage) {
-      return;
-    }
+    if (country.code === disabledLanguage) return;
     setSelectedLanguage(country.code);
-    if (!useRecoil && onLanguageChange) {
-      onLanguageChange(country.code);
-    }
+    if (!useRecoil && onLanguageChange) onLanguageChange(country.code);
     setVisible(false);
   };
 
   const handleSearch = (event) => {
-    if (options) {
-      setFilteredCountries(countriesList);
-    } else {
-      const searchText = event.target.value.toLowerCase();
-      const filtered = countriesList.filter((country) =>
-        country.name.toLowerCase().includes(searchText)
-      );
-      setFilteredCountries(filtered);
-    }
+    const searchText = event.target.value.toLowerCase();
+    const filtered = countriesList.filter((country) =>
+      country.name.toLowerCase().includes(searchText)
+    );
+    setFilteredCountries(filtered);
   };
 
   const selectedCountry = filteredCountries.find(
@@ -123,8 +110,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                   <Flag
                     className={styles.flag}
                     code={getFlagCode(country.code.toUpperCase())}
-                    height="16"
-                    width="24"
+                    height={"16"}
+                    width={"24"}
                   />
                   {country.name}
                 </div>

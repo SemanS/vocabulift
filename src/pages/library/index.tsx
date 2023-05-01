@@ -215,23 +215,17 @@ const Library: React.FC = () => {
   };
 
   const flattenedItems = Object.values(libraryItems || {}).flat();
-  //console.log("flattenedItems", flattenedItems);
 
   const filteredByLabelType = flattenedItems.filter(
     (item) => item.label === selectedLabelType
   );
-  //console.log("filteredByLabelType", filteredByLabelType);
 
   const filteredLibraryItems = filteredByLabelType.filter((item) => {
     return item.level.some((level) => {
       const levelIndex = customRange.indexOf(level.toUpperCase());
-      /*   console.log("level", level);
-      console.log("levelIndex", levelIndex);
-      console.log("sliderValue", sliderValue); */
       return levelIndex >= sliderValue[0] && levelIndex <= sliderValue[1];
     });
   });
-  //console.log("filteredLibraryItems", filteredLibraryItems);
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
 
@@ -328,17 +322,11 @@ const Library: React.FC = () => {
       >
         <Tabs style={{ marginTop: "0px" }}>
           <TabPane tab="Video" key="1">
-            {/* <div className={styles.logoWrapper}>
-              <LogoSvg />
-            </div> */}
             <Row gutter={24}>
               <Col span={24} style={{ marginBottom: "24px" }}>
                 <Form
                   {...layout}
-                  onFinish={(values) => {
-                    console.log("YouTube Video URL:", values.youtubeUrl);
-                    // Handle the submission here
-                  }}
+                  onFinish={(values) => {}}
                   style={{ display: "inline-block", width: "100%" }}
                 >
                   <Form.Item
@@ -379,21 +367,6 @@ const Library: React.FC = () => {
                         },
                       ]}
                     >
-                      {/* <Select
-                      placeholder="Select an option"
-                      value={selectedOption}
-                      onChange={(value) => {
-                        setSelectedOption(value);
-                      }}
-                      disabled={!isFetchValid}
-                    >
-                      {selectOptions &&
-                        selectOptions.map((option, index) => (
-                          <Select.Option key={index} value={option.value}>
-                            {option.label}
-                          </Select.Option>
-                        ))}
-                    </Select> */}
                       <LanguageSelector
                         useRecoil={false}
                         initialLanguage={""}
