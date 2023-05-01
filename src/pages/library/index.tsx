@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Col,
-  Row,
-  Typography,
-  Tabs,
-  Slider,
-  Modal,
-  Space,
-  Divider,
-} from "antd";
+import { Button, Col, Row, Typography, Tabs, Space, Divider } from "antd";
 
-const { TabPane } = Tabs;
-
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   getLibraryItems,
   postLibraryInputVideoLanguages,
@@ -24,23 +10,14 @@ import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
 import { BookFilled, PlusSquareFilled, YoutubeFilled } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
-import {
-  libraryIdState,
-  currentPageState,
-  pageSizeState,
-} from "@/stores/library";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
 import { Option } from "@/models/utils.interface";
 import CustomSlider from "./components/CustomSlider";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
-
-interface ApiResponse {
-  video: LibraryItem[];
-  book: LibraryItem[];
-  text: LibraryItem[];
-  article: LibraryItem[];
-}
+import { ApiResponse } from "@/models/apiResponse.interface";
+import LevelSlider from "@/pages/library/components/LevelSlider";
+import AddItemModal from "./components/AddItemModal";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -52,14 +29,10 @@ const Library: React.FC = () => {
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
   const [loading, setLoading] = useState(true);
-  const setLibraryId = useSetRecoilState(libraryIdState);
-  const setCurrentPage = useSetRecoilState(currentPageState);
-  const setPageSize = useSetRecoilState(pageSizeState);
   const [inputValue, setInputValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<Option[]>([]);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [isFetchValid, setIsFetchValid] = useState(false);
-  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
   >(null);
@@ -82,7 +55,6 @@ const Library: React.FC = () => {
       if (!response.ok) {
         // If the response is not ok, clear the options, set isFetchValid to false, and disable the button
         setIsFetchValid(false);
-        setButtonDisabled(true);
         throw new Error("Failed to fetch options");
       }
 
@@ -124,32 +96,6 @@ const Library: React.FC = () => {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    setButtonDisabled(!selectedOption || !inputValue || !isFetchValid);
-  }, [selectedOption, inputValue, isFetchValid]);
-
-  function calculateBookPercentage(
-    page: number,
-    sentencesPerPage: number,
-    totalSentences: number
-  ) {
-    const totalPages = Math.ceil(totalSentences / sentencesPerPage);
-    const percentage = (Math.min(page, totalPages) / totalPages) * 100;
-    return Math.floor(percentage) === 99 && page < totalSentences
-      ? 99
-      : Math.ceil(percentage);
-  }
-
-  const handleLibraryItemClick = (
-    libraryId: string,
-    currentPage: number,
-    pageSize: number
-  ) => {
-    setLibraryId(libraryId);
-    setCurrentPage(currentPage);
-    setPageSize(pageSize);
-  };
-
   const handleButtonClick = async () => {
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/video`,
@@ -178,21 +124,11 @@ const Library: React.FC = () => {
     setIsModalVisible(false);
   };
 
-  const convertToCustomRange = (sliderValue: number[]): string[] => {
-    return sliderValue.map((value) => customRange[value]);
-  };
-
-  const convertToSliderValue = (customRangeValue: string[]): number[] => {
-    return customRangeValue.map((value) => customRange.indexOf(value));
-  };
-
   const handleChange = (value: number | [number, number]) => {
     if (Array.isArray(value)) {
       setSliderValue(value as [number, number]);
     }
   };
-
-  const selectedRange: string[] = convertToCustomRange(sliderValue);
 
   const marks = customRange.reduce((acc, value, index) => {
     acc[index] = value;
@@ -253,15 +189,7 @@ const Library: React.FC = () => {
           </Space>
         </Col>
         <Col span={12}>
-          <Slider
-            range
-            min={0}
-            max={customRange.length - 1}
-            value={sliderValue}
-            onChange={handleChange}
-            marks={marks}
-            tooltip={{ open: false }}
-          />
+          <LevelSlider handleChange={handleChange} />
         </Col>
         <Col span={24} className={styles.centeredColumn}>
           <div className={styles.iconContainer}>
@@ -306,106 +234,17 @@ const Library: React.FC = () => {
           category={category}
         />
       ))}
-      <Modal
-        open={isModalVisible}
-        onCancel={handleModalCancel}
-        footer={[
-          <Button
-            key="submit"
-            type="primary"
-            onClick={handleButtonClick}
-            disabled={buttonDisabled}
-          >
-            Add Video
-          </Button>,
-        ]}
-      >
-        <Tabs style={{ marginTop: "0px" }}>
-          <TabPane tab="Video" key="1">
-            <Row gutter={24}>
-              <Col span={24} style={{ marginBottom: "24px" }}>
-                <Form
-                  {...layout}
-                  onFinish={(values) => {}}
-                  style={{ display: "inline-block", width: "100%" }}
-                >
-                  <Form.Item
-                    label="Video URL"
-                    name="youtubeUrl"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input the YouTube video URL",
-                      },
-                    ]}
-                    style={{ textAlign: "left" }}
-                  >
-                    <Input
-                      placeholder="YouTube Video URL"
-                      value={inputValue}
-                      onChange={(e) => {
-                        setInputValue(e.target.value);
-                        if (e.target.value) {
-                          fetchOptions(e.target.value);
-                          // Clear the selected option and disable the button when the input changes
-                          setButtonDisabled(true);
-                        } else {
-                          setSelectOptions([]);
-                        }
-                      }}
-                      size="middle"
-                    />
-                  </Form.Item>
-                  {isFetchValid && (
-                    <Form.Item
-                      label="Translate from"
-                      name="language"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please input the YouTube video URL",
-                        },
-                      ]}
-                    >
-                      <LanguageSelector
-                        useRecoil={false}
-                        initialLanguage={""}
-                        onLanguageChange={(language) => {
-                          setInputValue(language);
-                          setButtonDisabled(
-                            !selectedOption || !language || !isFetchValid
-                          );
-                        }}
-                        options={selectOptions}
-                      />
-                    </Form.Item>
-                  )}
-                  <Form.Item
-                    label="Translate to"
-                    name="language"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input the YouTube video URL",
-                      },
-                    ]}
-                  >
-                    <LanguageSelector
-                      useRecoil={false}
-                      initialLanguage="EN"
-                      disabledLanguage={targetLanguage}
-                      onLanguageChange={(language) => {
-                        console.log("Source language changed to", language);
-                      }}
-                    />
-                  </Form.Item>
-                </Form>
-              </Col>
-            </Row>
-          </TabPane>
-          <TabPane tab="Text" key="2"></TabPane>
-        </Tabs>
-      </Modal>
+      <AddItemModal
+        isModalVisible={isModalVisible}
+        handleModalCancel={handleModalCancel}
+        handleButtonClick={handleButtonClick}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        fetchOptions={fetchOptions}
+        isFetchValid={isFetchValid}
+        selectOptions={selectOptions}
+        targetLanguage={targetLanguage}
+      />
     </PageContainer>
   );
 };

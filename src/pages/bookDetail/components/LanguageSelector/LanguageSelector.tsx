@@ -62,7 +62,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     setVisible(false);
   };
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: { target: { value: string } }) => {
     const searchText = event.target.value.toLowerCase();
     const filtered = countriesList.filter((country) =>
       country.name.toLowerCase().includes(searchText)
