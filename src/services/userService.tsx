@@ -21,8 +21,6 @@ export const getSentences = async (
       },
     }
   );
-  console.log("source" + sourceLanguage);
-  console.log("target" + targetLanguage);
 
   const data = await response.json();
   return data;
@@ -92,7 +90,6 @@ export const getUserPhrases = async (options: {
   );
 
   const data = await response.json();
-  console.log("data" + JSON.stringify(data, null, 2));
   return {
     results: data.results.userPhrases,
     countOfPhrases: data.results.countOfPhrases,
