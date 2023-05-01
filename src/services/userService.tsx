@@ -21,6 +21,8 @@ export const getSentences = async (
       },
     }
   );
+  console.log("source" + sourceLanguage);
+  console.log("target" + targetLanguage);
 
   const data = await response.json();
   return data;

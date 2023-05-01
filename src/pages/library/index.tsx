@@ -92,6 +92,9 @@ const Library: React.FC = () => {
   }, []);
 
   const handleButtonClick = async () => {
+    console.log("input" + inputValue);
+    console.log("input" + sourceLanguageFromVideo);
+    console.log("input" + targetLanguage);
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/video`,
       {
@@ -154,6 +157,10 @@ const Library: React.FC = () => {
   });
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
+
+  const handleLanguageSelect = (language: string) => {
+    setSourceLanguageFromVideo(language);
+  };
 
   return (
     <PageContainer title={false}>
@@ -228,6 +235,7 @@ const Library: React.FC = () => {
         isFetchValid={isFetchValid}
         selectOptions={selectOptions}
         targetLanguage={targetLanguage}
+        onLanguageSelect={handleLanguageSelect} // add this prop
       />
     </PageContainer>
   );

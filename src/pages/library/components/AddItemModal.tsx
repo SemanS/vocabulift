@@ -14,6 +14,7 @@ interface AddItemModalProps {
   isFetchValid: boolean;
   selectOptions: any[];
   targetLanguage: string;
+  onLanguageSelect: (language: string) => void;
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({
@@ -26,6 +27,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   isFetchValid,
   selectOptions,
   targetLanguage,
+  onLanguageSelect,
 }) => {
   const layout = {
     labelCol: { span: 8 },
@@ -35,6 +37,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
+  const [selectedLanguageFrom, setSelectedLanguageFrom] = useState<string>("");
+
+  const handleLanguageSelection = (language: string) => {
+    setSelectedLanguageFrom(language);
+    onLanguageSelect(language);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -118,6 +126,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                           (option) => option.value === language
                         );
                         setSelectedOption(option || null);
+                        handleLanguageSelection(language);
                         setButtonDisabled(
                           !option || !inputValue || !isFetchValid
                         );

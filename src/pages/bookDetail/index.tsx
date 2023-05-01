@@ -155,22 +155,11 @@ const BookDetail: FC = () => {
           setShowWordDefinition(true); // Show word definition when data is available
         } else {
           setWordData(null);
-          //setShowWordDefinition(false); // Hide word definition when data is not available
         }
       })
       .catch((error) => {
         console.error(error);
-        //setShowWordDefinition(false); // Hide word definition when there is an error
       });
-    // Make POST on backend to save word under user
-    /* sourceLanguage &&
-      targetLanguage &&
-      addWordToUser(
-        word,
-        sourceLanguage,
-        targetLanguage,
-        sessionStorage.getItem("access_token")
-      ); */
   };
 
   const handleModeChange = (e: RadioChangeEvent) => {
@@ -212,6 +201,7 @@ const BookDetail: FC = () => {
       sourceLanguage,
       targetLanguage
     );
+    console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
     const userSentencesData: UserSentence[] = await getUserSentences({
       sentenceFrom,
       countOfSentences,
@@ -236,6 +226,7 @@ const BookDetail: FC = () => {
     sentencesData: SentenceResponse,
     vocabularyListUserPhrases: VocabularyListUserPhrase[]
   ) => {
+    console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
     setLibraryTitle(sentencesData.title);
     setLabel(sentencesData.label);
     setVideoId(sentencesData.videoId);

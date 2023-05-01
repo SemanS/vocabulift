@@ -30,10 +30,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         code: option.value,
       }))
     : [
-        { name: "English", code: "EN" },
-        { name: "Germany", code: "DE" },
-        { name: "Slovakia", code: "SK" },
-        { name: "French", code: "FR" },
+        { name: "English", code: "en" },
+        { name: "Germany", code: "de" },
+        { name: "Slovakia", code: "sk" },
+        { name: "French", code: "fr" },
       ];
 
   const [visible, setVisible] = useState(false);
@@ -54,7 +54,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     }
   }, [options]);
 
-  const getFlagCode = (code: string) => (code === "EN" ? "GB" : code);
+  const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
 
   const handleCountrySelection = (country: any) => {
     if (country.code === disabledLanguage) return;
@@ -110,7 +110,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 >
                   <Flag
                     className={styles.flag}
-                    code={getFlagCode(country.code.toUpperCase())}
+                    code={getFlagCode(country.code)}
                     height={"16"}
                     width={"24"}
                   />
@@ -133,7 +133,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           {selectedCountry && (
             <Flag
               className={styles.flag}
-              code={getFlagCode(selectedCountry.code.toUpperCase())}
+              code={getFlagCode(selectedCountry.code)}
               height="16"
               width="24"
             />
