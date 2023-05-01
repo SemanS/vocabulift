@@ -32,7 +32,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     : [
         { name: "English", code: "EN" },
         { name: "Germany", code: "DE" },
-        { name: "Slovakia", code: "sk" },
+        { name: "Slovakia", code: "SK" },
+        { name: "French", code: "FR" },
       ];
 
   const [visible, setVisible] = useState(false);

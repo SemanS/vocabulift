@@ -46,10 +46,21 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     }
   };
 
+  const resetFields = () => {
+    setInputValue("");
+    setSelectedOption(null);
+    setButtonDisabled(true);
+  };
+
+  const handleModalCancelAndReset = () => {
+    handleModalCancel();
+    resetFields();
+  };
+
   return (
     <Modal
       open={isModalVisible}
-      onCancel={handleModalCancel}
+      onCancel={handleModalCancelAndReset}
       footer={[
         <Button
           key="submit"

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Typography, Tabs, Space, Divider } from "antd";
+import { Button, Col, Row, Typography, Space, Divider } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -31,7 +31,6 @@ const Library: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<Option[]>([]);
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [isFetchValid, setIsFetchValid] = useState(false);
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
@@ -44,10 +43,6 @@ const Library: React.FC = () => {
   const [selectedLabelType, setSelectedLabelType] = useState<LabelType>(
     LabelType.VIDEO
   );
-
-  useEffect(() => {
-    setSourceLanguageFromVideo(selectedOption?.value || null);
-  }, [selectedOption]);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -130,11 +125,6 @@ const Library: React.FC = () => {
     }
   };
 
-  const marks = customRange.reduce((acc, value, index) => {
-    acc[index] = value;
-    return acc;
-  }, {} as { [key: number]: string });
-
   const handleLabelTypeButtonClick = (labelType: LabelType) => {
     setSelectedLabelType(labelType);
   };
@@ -164,12 +154,6 @@ const Library: React.FC = () => {
   });
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
-
-  const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-    style: { marginBottom: "16px" },
-  };
 
   return (
     <PageContainer title={false}>
