@@ -37,6 +37,7 @@ import { libraryIdState } from "@/stores/library";
 import { currentPageState } from "@/stores/library";
 import { pageSizeState } from "@/stores/library";
 import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
+import styles from "./index.module.less";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -425,7 +426,7 @@ const BookDetail: FC = () => {
   };
 
   return (
-    <PageContainer loading={loading} title={false}>
+    <PageContainer loading={loading} title={false} className={styles.container}>
       <Drawer
         style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
@@ -439,16 +440,7 @@ const BookDetail: FC = () => {
       <Row gutter={[16, 16]}>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (
-            <Card
-              title={libraryTitle}
-              extra={
-                <Radio.Group onChange={handleModeChange} value={mode}>
-                  <Radio.Button value="word">Word</Radio.Button>
-                  <Radio.Button value="sentence">Sentence</Radio.Button>
-                  <Radio.Button value="all">All</Radio.Button>
-                </Radio.Group>
-              }
-            >
+            <Card>
               <EmbeddedVideo
                 key={videoId}
                 videoId={videoId}
@@ -463,7 +455,16 @@ const BookDetail: FC = () => {
           )}
         </Col>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
-          <Card>
+          <Card
+            title={libraryTitle}
+            extra={
+              <Radio.Group onChange={handleModeChange} value={mode}>
+                <Radio.Button value="word">Word</Radio.Button>
+                <Radio.Button value="sentence">Sentence</Radio.Button>
+                <Radio.Button value="all">All</Radio.Button>
+              </Radio.Group>
+            }
+          >
             <TranslateBox
               sourceLanguage={sourceLanguage}
               targetLanguage={targetLanguage}

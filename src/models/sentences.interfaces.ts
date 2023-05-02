@@ -1,8 +1,6 @@
 export enum LabelType {
   VIDEO = "video",
   BOOK = "book",
-  TEXT = "text",
-  ARTICLE = "article",
 }
 
 export interface SentenceResponse {

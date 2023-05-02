@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Popover, Input } from "antd";
+import { Popover, Input, Typography } from "antd";
 import Flag from "react-world-flags";
 import styles from "./index.module.less";
 import { useRecoilState } from "recoil";
@@ -84,6 +84,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         }
       }}
     >
+      <Typography.Text style={{ fontSize: "16px", marginRight: "10px" }}>
+        Translate from:
+      </Typography.Text>
       <Popover
         content={
           <div className={styles.customPopover}>
@@ -134,11 +137,15 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
             <Flag
               className={styles.flag}
               code={getFlagCode(selectedCountry.code)}
-              height="16"
-              width="24"
+              height="32"
+              width="48"
             />
           )}
-          {selectedCountry ? selectedCountry.name : "Click here to search"}
+          {selectedCountry ? (
+            <span style={{ fontSize: "16px" }}>{selectedCountry.name}</span>
+          ) : (
+            "Click here to search"
+          )}
         </span>
       </Popover>
     </div>

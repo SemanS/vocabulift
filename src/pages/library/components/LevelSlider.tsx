@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Slider } from "antd";
+import styles from "./LevelSlider.module.less";
 
 interface LevelSliderProps {
   handleChange: (value: number | [number, number]) => void;
@@ -18,18 +19,21 @@ const LevelSlider: React.FC<LevelSliderProps> = ({ handleChange }) => {
   }, {} as { [key: number]: string });
 
   return (
-    <Slider
-      range
-      min={0}
-      max={customRange.length - 1}
-      value={sliderValue}
-      onChange={(value) => {
-        handleChange(value);
-        setSliderValue(value as [number, number]);
-      }}
-      marks={marks}
-      tooltip={{ open: false }}
-    />
+    <div className={styles.sliderContainer}>
+      <Slider
+        style={{ width: "100%" }}
+        range
+        min={0}
+        max={customRange.length - 1}
+        value={sliderValue}
+        onChange={(value) => {
+          handleChange(value);
+          setSliderValue(value as [number, number]);
+        }}
+        marks={marks}
+        tooltip={{ open: false }}
+      />
+    </div>
   );
 };
 

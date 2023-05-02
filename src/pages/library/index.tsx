@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Typography, Space, Divider } from "antd";
+import { Button, Col, Row, Typography, Space, Divider, Drawer } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -8,7 +8,13 @@ import {
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
-import { BookFilled, PlusSquareFilled, YoutubeFilled } from "@ant-design/icons";
+import {
+  BookFilled,
+  DownOutlined,
+  PlusSquareFilled,
+  UpOutlined,
+  YoutubeFilled,
+} from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
@@ -18,6 +24,7 @@ import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/Lan
 import { ApiResponse } from "@/models/apiResponse.interface";
 import LevelSlider from "@/pages/library/components/LevelSlider";
 import AddItemModal from "./components/AddItemModal";
+import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -43,6 +50,7 @@ const Library: React.FC = () => {
   const [selectedLabelType, setSelectedLabelType] = useState<LabelType>(
     LabelType.VIDEO
   );
+  const [drawerHeight, setDrawerHeight] = useState(0);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -76,8 +84,6 @@ const Library: React.FC = () => {
     setLibraryItems({
       video: data.video,
       book: data.book,
-      text: data.text,
-      article: data.article,
     });
   };
 
@@ -92,9 +98,6 @@ const Library: React.FC = () => {
   }, []);
 
   const handleButtonClick = async () => {
-    console.log("input" + inputValue);
-    console.log("input" + sourceLanguageFromVideo);
-    console.log("input" + targetLanguage);
     await fetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/video`,
       {
@@ -162,81 +165,191 @@ const Library: React.FC = () => {
     setSourceLanguageFromVideo(language);
   };
 
-  return (
-    <PageContainer title={false}>
-      <Row gutter={[16, 16]} justify="center">
-        <Col span={24} className={styles.centeredColumn}>
-          <Space>
-            <LanguageSelector
-              useRecoil={true}
-              atom={sourceLanguageState}
-              disabledLanguage={targetLanguage}
-            />
-            <LanguageSelector
-              useRecoil={true}
-              atom={targetLanguageState}
-              disabledLanguage={sourceLanguage}
-            />
-          </Space>
-        </Col>
-        <Col span={12}>
-          <LevelSlider handleChange={handleChange} />
-        </Col>
-        <Col span={24} className={styles.centeredColumn}>
-          <div className={styles.iconContainer}>
+  const getIconByLabelType = (labelType: LabelType) => {
+    if (labelType === LabelType.VIDEO) {
+      return (
+        <YoutubeFilled
+          className={styles.icon}
+          style={{ marginRight: "20px" }}
+        />
+      );
+    } else if (labelType === LabelType.BOOK) {
+      return <BookFilled className={styles.icon} />;
+    } else {
+      return <YoutubeFilled className={styles.icon} />;
+    }
+  };
+
+  const { toggleSettingsDrawer, settingsDrawerVisible } =
+    useSettingsDrawerContext();
+
+  const renderSettingsDrawerContent = () => {
+    return (
+      <>
+        <Row
+          gutter={[16, 16]}
+          justify="center"
+          style={{ marginBottom: "20px" }}
+        >
+          <Col
+            xs={8}
+            sm={8}
+            md={8}
+            lg={8}
+            xl={8}
+            xxl={8}
+            className={styles.centeredColumn}
+            style={{ justifyContent: "center" }}
+          >
+            <Space>
+              <LanguageSelector
+                useRecoil={true}
+                atom={sourceLanguageState}
+                disabledLanguage={targetLanguage}
+              />
+
+              <LanguageSelector
+                useRecoil={true}
+                atom={targetLanguageState}
+                disabledLanguage={sourceLanguage}
+              />
+            </Space>
+          </Col>
+        </Row>
+        <Row
+          gutter={[16, 16]}
+          justify="center"
+          style={{ marginBottom: "20px" }}
+        >
+          <Col xs={8} sm={8} md={8} lg={8} xl={8} xxl={8}>
+            <LevelSlider handleChange={handleChange} />
+          </Col>
+        </Row>
+        <Row gutter={[16, 16]} justify="start" style={{ marginBottom: "20px" }}>
+          <Col
+            xs={3}
+            sm={3}
+            md={3}
+            lg={3}
+            xl={3}
+            xxl={3}
+            className={styles.centeredColumn}
+            offset={8}
+          >
+            {/* <Typography.Text
+              className={styles.text}
+              style={{
+                color: "#171625",
+                fontSize: "20px",
+              }}
+            >
+              Add:
+            </Typography.Text> */}
             <PlusSquareFilled
               className={styles.icon}
               onClick={handleAddButtonClick}
             />
-            <Typography.Text className={styles.text}>Add</Typography.Text>
-          </div>
-          <div className={styles.iconContainer}>
-            <YoutubeFilled
-              className={styles.icon}
-              onClick={handleAddButtonClick}
-            />
-            <Typography.Text className={styles.text}>Video</Typography.Text>
-          </div>
-          <div className={styles.iconContainer}>
-            <BookFilled
-              className={styles.icon}
-              onClick={handleAddButtonClick}
-            />
-            <Typography.Text className={styles.text}>Book</Typography.Text>
-          </div>
-        </Col>
-      </Row>
-      <Row gutter={[16, 16]} justify="center">
-        {Object.values(LabelType).map((labelType) => (
-          <Col key={labelType} span={6}>
-            <Button onClick={() => handleLabelTypeButtonClick(labelType)}>
-              {labelType}
-            </Button>
           </Col>
-        ))}
-      </Row>
-      <Row gutter={[16, 16]} justify="center"></Row>
-      <Divider />
-      {Object.entries(categorizedItems).map(([category, items], index) => (
-        <CustomSlider
-          key={`slider${index + 1}`}
-          items={items as LibraryItem[]}
-          sliderId={`slider${index + 1}`}
-          category={category}
-        />
-      ))}
-      <AddItemModal
-        isModalVisible={isModalVisible}
-        handleModalCancel={handleModalCancel}
-        handleButtonClick={handleButtonClick}
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        fetchOptions={fetchOptions}
-        isFetchValid={isFetchValid}
-        selectOptions={selectOptions}
-        targetLanguage={targetLanguage}
-        onLanguageSelect={handleLanguageSelect} // add this prop
-      />
+          <Col>
+            <Row>
+              {Object.values(LabelType).map((labelType) => (
+                <div
+                  className={styles.iconContainer}
+                  onClick={() => handleLabelTypeButtonClick(labelType)}
+                >
+                  {getIconByLabelType(labelType)}
+                  {/* <Typography.Text
+                    className={styles.text}
+                    style={{ color: "#171625", fontSize: "20px" }}
+                  >
+                    Add
+                  </Typography.Text> */}
+                </div>
+              ))}
+            </Row>
+          </Col>
+        </Row>
+      </>
+    );
+  };
+
+  useEffect(() => {
+    if (settingsDrawerVisible) {
+      setDrawerHeight(320); // Set the desired height when the drawer is visible
+    } else {
+      setDrawerHeight(0); // Set the height to 0 when the drawer is hidden
+    }
+  }, [settingsDrawerVisible]);
+
+  return (
+    <PageContainer loading={loading} title={false}>
+      <div className={styles.drawerContainer}>
+        <div
+          className={styles.drawerPushContent}
+          style={{ maxHeight: drawerHeight }}
+        >
+          {renderSettingsDrawerContent()}
+        </div>
+        <div className={styles.redBackground}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
+            <span onClick={toggleSettingsDrawer} className={styles.box}>
+              {settingsDrawerVisible ? (
+                <UpOutlined
+                  style={{
+                    color: "#171625",
+                    fontSize: "20px",
+                    cursor: "pointer",
+                  }}
+                />
+              ) : (
+                <DownOutlined
+                  style={{
+                    color: "#171625",
+                    fontSize: "20px",
+                    cursor: "pointer",
+                  }}
+                />
+              )}
+              <Typography.Text
+                style={{
+                  color: "#171625", // Change this color to your header's color
+                  marginLeft: "4px",
+                  fontSize: "20px",
+                  cursor: "pointer",
+                }}
+              >
+                Settings
+              </Typography.Text>
+            </span>
+          </div>
+          {Object.entries(categorizedItems).map(([category, items], index) => (
+            <CustomSlider
+              key={`slider${index + 1}`}
+              items={items as LibraryItem[]}
+              sliderId={`slider${index + 1}`}
+              category={category}
+            />
+          ))}
+          <AddItemModal
+            isModalVisible={isModalVisible}
+            handleModalCancel={handleModalCancel}
+            handleButtonClick={handleButtonClick}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+            fetchOptions={fetchOptions}
+            isFetchValid={isFetchValid}
+            selectOptions={selectOptions}
+            targetLanguage={targetLanguage}
+            onLanguageSelect={handleLanguageSelect} // add this prop
+          />
+        </div>
+      </div>
     </PageContainer>
   );
 };
