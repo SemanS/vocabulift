@@ -48,6 +48,24 @@ const App: React.FC = () => {
         componentSize="middle"
         theme={{
           components: {
+            Tabs: {
+              colorPrimary: "#0D0C1D",
+              colorPrimaryHover: "#0D0C1D",
+              borderRadius: 0,
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+            },
+            Modal: {
+              colorPrimary: "#0D0C1D",
+              colorPrimaryHover: "#0D0C1D",
+              borderRadius: 0,
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+            },
             Button: {
               colorPrimary: "#0D0C1D",
               colorPrimaryHover: "#0D0C1D",
@@ -65,6 +83,8 @@ const App: React.FC = () => {
               borderRadiusLG: 0,
             },
             Input: {
+              colorPrimary: "#0D0C1D",
+              colorPrimaryHover: "#0D0C1D",
               borderRadiusXS: 0,
               borderRadiusOuter: 0,
               borderRadiusSM: 0,

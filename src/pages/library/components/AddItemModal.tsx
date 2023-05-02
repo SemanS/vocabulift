@@ -65,6 +65,96 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     resetFields();
   };
 
+  const items = [
+    {
+      key: "1",
+      label: "Video",
+      children: (
+        <Row gutter={24}>
+          <Col span={24} style={{ marginBottom: "24px" }}>
+            <Form
+              {...layout}
+              onFinish={(values) => {}}
+              style={{ display: "inline-block", width: "100%" }}
+            >
+              <Form.Item
+                label="Video URL"
+                name="youtubeUrl"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the YouTube video URL",
+                  },
+                ]}
+                style={{ textAlign: "left" }}
+              >
+                <Input
+                  placeholder="YouTube Video URL"
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  size="middle"
+                />
+              </Form.Item>
+              {isFetchValid && (
+                <Form.Item
+                  label="Translate from"
+                  name="language"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input the YouTube video URL",
+                    },
+                  ]}
+                >
+                  <LanguageSelector
+                    useRecoil={false}
+                    initialLanguage={""}
+                    onLanguageChange={(language) => {
+                      const option = selectOptions.find(
+                        (option) => option.value === language
+                      );
+                      setSelectedOption(option || null);
+                      handleLanguageSelection(language);
+                      setButtonDisabled(
+                        !option || !inputValue || !isFetchValid
+                      );
+                    }}
+                    options={selectOptions}
+                  />
+                </Form.Item>
+              )}
+              <Form.Item
+                label="Translate to"
+                name="language"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the YouTube video URL",
+                  },
+                ]}
+              >
+                <LanguageSelector
+                  useRecoil={false}
+                  initialLanguage="EN"
+                  disabledLanguage={targetLanguage}
+                  onLanguageChange={(language) => {
+                    console.log("Source language changed to", language);
+                  }}
+                  text={""}
+                />
+              </Form.Item>
+            </Form>
+          </Col>
+        </Row>
+      ),
+    },
+    {
+      key: "2",
+      label: "Text",
+      children: null,
+    },
+  ];
+
   return (
     <Modal
       open={isModalVisible}
@@ -80,86 +170,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
         </Button>,
       ]}
     >
-      <Tabs style={{ marginTop: "0px" }}>
-        <TabPane tab="Video" key="1">
-          <Row gutter={24}>
-            <Col span={24} style={{ marginBottom: "24px" }}>
-              <Form
-                {...layout}
-                onFinish={(values) => {}}
-                style={{ display: "inline-block", width: "100%" }}
-              >
-                <Form.Item
-                  label="Video URL"
-                  name="youtubeUrl"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input the YouTube video URL",
-                    },
-                  ]}
-                  style={{ textAlign: "left" }}
-                >
-                  <Input
-                    placeholder="YouTube Video URL"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    size="middle"
-                  />
-                </Form.Item>
-                {isFetchValid && (
-                  <Form.Item
-                    label="Translate from"
-                    name="language"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please input the YouTube video URL",
-                      },
-                    ]}
-                  >
-                    <LanguageSelector
-                      useRecoil={false}
-                      initialLanguage={""}
-                      onLanguageChange={(language) => {
-                        const option = selectOptions.find(
-                          (option) => option.value === language
-                        );
-                        setSelectedOption(option || null);
-                        handleLanguageSelection(language);
-                        setButtonDisabled(
-                          !option || !inputValue || !isFetchValid
-                        );
-                      }}
-                      options={selectOptions}
-                    />
-                  </Form.Item>
-                )}
-                <Form.Item
-                  label="Translate to"
-                  name="language"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input the YouTube video URL",
-                    },
-                  ]}
-                >
-                  <LanguageSelector
-                    useRecoil={false}
-                    initialLanguage="EN"
-                    disabledLanguage={targetLanguage}
-                    onLanguageChange={(language) => {
-                      console.log("Source language changed to", language);
-                    }}
-                  />
-                </Form.Item>
-              </Form>
-            </Col>
-          </Row>
-        </TabPane>
-        <TabPane tab="Text" key="2"></TabPane>
-      </Tabs>
+      <Tabs style={{ marginTop: "0px" }} items={items} />
     </Modal>
   );
 };

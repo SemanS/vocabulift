@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Popover, Input, Typography } from "antd";
+import { Popover, Input, Typography, Col, Row } from "antd";
 import Flag from "react-world-flags";
 import styles from "./index.module.less";
 import { useRecoilState } from "recoil";
@@ -14,7 +14,7 @@ interface LanguageSelectorProps {
   onLanguageChange?: (language: string) => void;
   initialLanguage?: string;
   options?: Option[];
-  text: string;
+  text?: string;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
@@ -86,70 +86,74 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         }
       }}
     >
-      <Typography.Text style={{ fontSize: "16px", marginRight: "10px" }}>
-        {text}
-      </Typography.Text>
-      <Popover
-        content={
-          <div className={styles.customPopover}>
-            {!options && (
-              <Input
-                size="large"
-                placeholder="Type to search"
-                onChange={handleSearch}
-              />
-            )}
-            <div className={styles.itemsList}>
-              {filteredCountries.map((country, index) => (
-                <div
-                  key={index}
-                  className={styles.item}
-                  onClick={() => handleCountrySelection(country)}
-                  style={{
-                    cursor:
-                      country.code === disabledLanguage
-                        ? "not-allowed"
-                        : "pointer",
-                    opacity: country.code === disabledLanguage ? 0.5 : 1,
-                  }}
-                >
-                  <Flag
-                    className={styles.flag}
-                    code={getFlagCode(country.code)}
-                    height={"16"}
-                    width={"24"}
+      <Row align="middle" gutter={[8, 8]}>
+        <Col>
+          <Typography.Text style={{ fontSize: "16px" }}>{text}</Typography.Text>
+        </Col>
+        <Col>
+          <Popover
+            content={
+              <div className={styles.customPopover}>
+                {!options && (
+                  <Input
+                    size="large"
+                    placeholder="Type to search"
+                    onChange={handleSearch}
                   />
-                  {country.name}
+                )}
+                <div className={styles.itemsList}>
+                  {filteredCountries.map((country, index) => (
+                    <div
+                      key={index}
+                      className={styles.item}
+                      onClick={() => handleCountrySelection(country)}
+                      style={{
+                        cursor:
+                          country.code === disabledLanguage
+                            ? "not-allowed"
+                            : "pointer",
+                        opacity: country.code === disabledLanguage ? 0.5 : 1,
+                      }}
+                    >
+                      <Flag
+                        className={styles.flag}
+                        code={getFlagCode(country.code)}
+                        height={"16"}
+                        width={"24"}
+                      />
+                      {country.name}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        }
-        trigger="click"
-        open={visible}
-        onOpenChange={(isVisible) => setVisible(isVisible)}
-      >
-        <span
-          style={{
-            cursor: "pointer",
-            opacity: selectedCountry?.code === disabledLanguage ? 0.5 : 1,
-          }}
-        >
-          {selectedCountry && (
-            <Flag
-              className={styles.flag}
-              code={getFlagCode(selectedCountry.code)}
-              height="32"
-              width="48"
-            />
-          )}
-          {selectedCountry ? (
-            <span style={{ fontSize: "16px" }}>{selectedCountry.name}</span>
-          ) : (
-            "Click here to search"
-          )}
-        </span>
-      </Popover>
+              </div>
+            }
+            trigger="click"
+            open={visible}
+            onOpenChange={(isVisible) => setVisible(isVisible)}
+          >
+            <span
+              style={{
+                cursor: "pointer",
+                opacity: selectedCountry?.code === disabledLanguage ? 0.5 : 1,
+              }}
+            >
+              {selectedCountry && (
+                <Flag
+                  className={styles.flag}
+                  code={getFlagCode(selectedCountry.code)}
+                  height="32"
+                  width="48"
+                />
+              )}
+              {selectedCountry ? (
+                <span style={{ fontSize: "16px" }}>{selectedCountry.name}</span>
+              ) : (
+                "Click here to search"
+              )}
+            </span>
+          </Popover>
+        </Col>
+      </Row>
     </div>
   );
 };

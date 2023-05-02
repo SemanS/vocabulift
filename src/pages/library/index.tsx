@@ -215,28 +215,31 @@ const Library: React.FC = () => {
           justify="center"
           style={{ marginBottom: "20px" }}
         >
-          <Col span={8} style={{ marginTop: "30px" }}>
-            <Row
-              gutter={[16, 16]}
-              justify="center"
-              style={{ marginBottom: "20px" }}
-            >
-              <Col span={20} style={{ marginTop: "30px" }}>
-                <Space size={20}>
-                  <LanguageSelector
-                    useRecoil={true}
-                    atom={sourceLanguageState}
-                    disabledLanguage={targetLanguage}
-                    text={"Translate from: "}
-                  />
-
-                  <LanguageSelector
-                    useRecoil={true}
-                    atom={targetLanguageState}
-                    disabledLanguage={sourceLanguage}
-                    text={"Translate to: "}
-                  />
-                </Space>
+          <Col
+            xs={20}
+            sm={20}
+            md={16}
+            lg={8}
+            xl={8}
+            xxl={8}
+            style={{ marginTop: "30px" }}
+          >
+            <Row gutter={[16, 16]} justify="center">
+              <Col span={12}>
+                <LanguageSelector
+                  useRecoil={true}
+                  atom={sourceLanguageState}
+                  disabledLanguage={targetLanguage}
+                  text={"Translate from: "}
+                />
+              </Col>
+              <Col span={12}>
+                <LanguageSelector
+                  useRecoil={true}
+                  atom={targetLanguageState}
+                  disabledLanguage={sourceLanguage}
+                  text={"Translate to: "}
+                />
               </Col>
             </Row>
           </Col>
@@ -246,7 +249,7 @@ const Library: React.FC = () => {
           justify="center"
           style={{ marginBottom: "20px" }}
         >
-          <Col span={8} offset={0}>
+          <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
             <LevelSlider handleChange={handleChange} />
           </Col>
         </Row>
@@ -255,7 +258,9 @@ const Library: React.FC = () => {
           justify="center"
           style={{ marginBottom: "20px" }}
         >
-          <Col span={8}>{renderLabelTypeButtonGroup()}</Col>
+          <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
+            {renderLabelTypeButtonGroup()}
+          </Col>
         </Row>
       </>
     );
