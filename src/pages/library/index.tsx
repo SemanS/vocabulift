@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Typography, Space, Divider, Drawer } from "antd";
+import {
+  Button,
+  Col,
+  Row,
+  Typography,
+  Space,
+  Divider,
+  Drawer,
+  Radio,
+} from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -165,19 +174,18 @@ const Library: React.FC = () => {
     setSourceLanguageFromVideo(language);
   };
 
-  const getIconByLabelType = (labelType: LabelType) => {
-    if (labelType === LabelType.VIDEO) {
-      return (
-        <YoutubeFilled
-          className={styles.icon}
-          style={{ marginRight: "20px" }}
-        />
-      );
-    } else if (labelType === LabelType.BOOK) {
-      return <BookFilled className={styles.icon} />;
-    } else {
-      return <YoutubeFilled className={styles.icon} />;
-    }
+  const renderLabelTypeRadioButtons = () => {
+    return (
+      <Radio.Group
+        buttonStyle="solid"
+        size="large"
+        value={selectedLabelType}
+        onChange={(e) => handleLabelTypeButtonClick(e.target.value)}
+      >
+        <Radio.Button value={LabelType.VIDEO}>VIDEO</Radio.Button>
+        <Radio.Button value={LabelType.BOOK}>Book</Radio.Button>
+      </Radio.Group>
+    );
   };
 
   const { toggleSettingsDrawer, settingsDrawerVisible } =
@@ -199,7 +207,7 @@ const Library: React.FC = () => {
             xl={8}
             xxl={8}
             className={styles.centeredColumn}
-            style={{ justifyContent: "center" }}
+            style={{ justifyContent: "center", marginTop: "30px" }}
           >
             <Space>
               <LanguageSelector
@@ -245,27 +253,14 @@ const Library: React.FC = () => {
             >
               Add:
             </Typography.Text> */}
-            <PlusSquareFilled
-              className={styles.icon}
-              onClick={handleAddButtonClick}
-            />
           </Col>
           <Col>
-            <Row>
-              {Object.values(LabelType).map((labelType) => (
-                <div
-                  className={styles.iconContainer}
-                  onClick={() => handleLabelTypeButtonClick(labelType)}
-                >
-                  {getIconByLabelType(labelType)}
-                  {/* <Typography.Text
-                    className={styles.text}
-                    style={{ color: "#171625", fontSize: "20px" }}
-                  >
-                    Add
-                  </Typography.Text> */}
-                </div>
-              ))}
+            <Row style={{ marginBottom: "20px" }}>
+              <PlusSquareFilled
+                className={styles.icon}
+                onClick={handleAddButtonClick}
+              />
+              {renderLabelTypeRadioButtons()}
             </Row>
           </Col>
         </Row>
@@ -291,51 +286,57 @@ const Library: React.FC = () => {
           {renderSettingsDrawerContent()}
         </div>
         <div className={styles.redBackground}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
+          <div className={styles.fullWidthWhiteBackground}>
             <span onClick={toggleSettingsDrawer} className={styles.box}>
-              {settingsDrawerVisible ? (
-                <UpOutlined
-                  style={{
-                    color: "#171625",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                />
-              ) : (
-                <DownOutlined
-                  style={{
-                    color: "#171625",
-                    fontSize: "20px",
-                    cursor: "pointer",
-                  }}
-                />
-              )}
-              <Typography.Text
+              <span
                 style={{
-                  color: "#171625", // Change this color to your header's color
-                  marginLeft: "4px",
-                  fontSize: "20px",
-                  cursor: "pointer",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
               >
-                Settings
-              </Typography.Text>
+                {settingsDrawerVisible ? (
+                  <UpOutlined
+                    style={{
+                      color: "#171625",
+                      fontSize: "20px",
+                      cursor: "pointer",
+                    }}
+                  />
+                ) : (
+                  <DownOutlined
+                    style={{
+                      color: "#171625",
+                      fontSize: "20px",
+                      cursor: "pointer",
+                    }}
+                  />
+                )}
+                <Typography.Text
+                  style={{
+                    color: "#171625", // Change this color to your header's color
+                    marginLeft: "4px",
+                    fontSize: "20px",
+                    cursor: "pointer",
+                  }}
+                >
+                  Settings
+                </Typography.Text>
+              </span>
             </span>
           </div>
-          {Object.entries(categorizedItems).map(([category, items], index) => (
-            <CustomSlider
-              key={`slider${index + 1}`}
-              items={items as LibraryItem[]}
-              sliderId={`slider${index + 1}`}
-              category={category}
-            />
-          ))}
+          <div style={{ paddingInline: "48px", marginTop: "30px" }}>
+            {Object.entries(categorizedItems).map(
+              ([category, items], index) => (
+                <CustomSlider
+                  key={`slider${index + 1}`}
+                  items={items as LibraryItem[]}
+                  sliderId={`slider${index + 1}`}
+                  category={category}
+                />
+              )
+            )}
+          </div>
           <AddItemModal
             isModalVisible={isModalVisible}
             handleModalCancel={handleModalCancel}

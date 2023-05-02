@@ -440,25 +440,27 @@ const BookDetail: FC = () => {
       <Row gutter={[16, 16]}>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (
-            <Card>
-              <EmbeddedVideo
-                key={videoId}
-                videoId={videoId}
-                title="Your Video Title"
-                sentencesData={memoizedSentencesData}
-                onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-                currentPage={currentPage}
-                sentencesPerPage={sentencesPerPage}
-                handlePageChange={handlePageChange}
-              />
-            </Card>
+            <EmbeddedVideo
+              key={videoId}
+              videoId={videoId}
+              title="Your Video Title"
+              sentencesData={memoizedSentencesData}
+              onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+              currentPage={currentPage}
+              sentencesPerPage={sentencesPerPage}
+              handlePageChange={handlePageChange}
+            />
           )}
         </Col>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           <Card
             title={libraryTitle}
             extra={
-              <Radio.Group onChange={handleModeChange} value={mode}>
+              <Radio.Group
+                onChange={handleModeChange}
+                value={mode}
+                buttonStyle="solid"
+              >
                 <Radio.Button value="word">Word</Radio.Button>
                 <Radio.Button value="sentence">Sentence</Radio.Button>
                 <Radio.Button value="all">All</Radio.Button>

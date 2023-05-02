@@ -43,7 +43,42 @@ const App: React.FC = () => {
 
   return (
     <CookiesProvider>
-      <ConfigProvider locale={getAntdLocale()} componentSize="middle">
+      <ConfigProvider
+        locale={getAntdLocale()}
+        componentSize="middle"
+        theme={{
+          components: {
+            Tooltip: {
+              borderRadius: 0,
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+            },
+            Input: {
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+            },
+            Popover: {
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+            },
+            Radio: {
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+              borderRadius: 0,
+              colorPrimary: "#0D0C1D",
+              colorPrimaryHover: "#0D0C1D",
+            },
+          },
+        }}
+      >
         <IntlProvider locale={locale.split("-")[0]} messages={getLocale()}>
           <BrowserRouter>
             <RenderRouter />
