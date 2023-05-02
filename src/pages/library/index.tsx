@@ -8,6 +8,7 @@ import {
   Divider,
   Drawer,
   Radio,
+  Slider,
 } from "antd";
 
 import { useRecoilState } from "recoil";
@@ -20,6 +21,7 @@ import styles from "./index.module.less";
 import {
   BookFilled,
   DownOutlined,
+  PlusOutlined,
   PlusSquareFilled,
   UpOutlined,
   YoutubeFilled,
@@ -174,17 +176,31 @@ const Library: React.FC = () => {
     setSourceLanguageFromVideo(language);
   };
 
-  const renderLabelTypeRadioButtons = () => {
+  const renderLabelTypeButtonGroup = () => {
     return (
-      <Radio.Group
-        buttonStyle="solid"
-        size="large"
-        value={selectedLabelType}
-        onChange={(e) => handleLabelTypeButtonClick(e.target.value)}
-      >
-        <Radio.Button value={LabelType.VIDEO}>VIDEO</Radio.Button>
-        <Radio.Button value={LabelType.BOOK}>Book</Radio.Button>
-      </Radio.Group>
+      <Space size={20}>
+        <PlusOutlined
+          style={{
+            fontSize: "30px",
+          }}
+          className={styles.whiteIconBox}
+          onClick={handleAddButtonClick}
+        />
+        <Button
+          size="large"
+          type={selectedLabelType === LabelType.VIDEO ? "primary" : "default"}
+          onClick={() => handleLabelTypeButtonClick(LabelType.VIDEO)}
+        >
+          Videos
+        </Button>
+        <Button
+          size="large"
+          type={selectedLabelType === LabelType.BOOK ? "primary" : "default"}
+          onClick={() => handleLabelTypeButtonClick(LabelType.BOOK)}
+        >
+          Books
+        </Button>
+      </Space>
     );
   };
 
@@ -199,29 +215,30 @@ const Library: React.FC = () => {
           justify="center"
           style={{ marginBottom: "20px" }}
         >
-          <Col
-            xs={8}
-            sm={8}
-            md={8}
-            lg={8}
-            xl={8}
-            xxl={8}
-            className={styles.centeredColumn}
-            style={{ justifyContent: "center", marginTop: "30px" }}
-          >
-            <Space>
-              <LanguageSelector
-                useRecoil={true}
-                atom={sourceLanguageState}
-                disabledLanguage={targetLanguage}
-              />
+          <Col span={8} style={{ marginTop: "30px" }}>
+            <Row
+              gutter={[16, 16]}
+              justify="center"
+              style={{ marginBottom: "20px" }}
+            >
+              <Col span={20} style={{ marginTop: "30px" }}>
+                <Space size={20}>
+                  <LanguageSelector
+                    useRecoil={true}
+                    atom={sourceLanguageState}
+                    disabledLanguage={targetLanguage}
+                    text={"Translate from: "}
+                  />
 
-              <LanguageSelector
-                useRecoil={true}
-                atom={targetLanguageState}
-                disabledLanguage={sourceLanguage}
-              />
-            </Space>
+                  <LanguageSelector
+                    useRecoil={true}
+                    atom={targetLanguageState}
+                    disabledLanguage={sourceLanguage}
+                    text={"Translate to: "}
+                  />
+                </Space>
+              </Col>
+            </Row>
           </Col>
         </Row>
         <Row
@@ -229,40 +246,16 @@ const Library: React.FC = () => {
           justify="center"
           style={{ marginBottom: "20px" }}
         >
-          <Col xs={8} sm={8} md={8} lg={8} xl={8} xxl={8}>
+          <Col span={8} offset={0}>
             <LevelSlider handleChange={handleChange} />
           </Col>
         </Row>
-        <Row gutter={[16, 16]} justify="start" style={{ marginBottom: "20px" }}>
-          <Col
-            xs={3}
-            sm={3}
-            md={3}
-            lg={3}
-            xl={3}
-            xxl={3}
-            className={styles.centeredColumn}
-            offset={8}
-          >
-            {/* <Typography.Text
-              className={styles.text}
-              style={{
-                color: "#171625",
-                fontSize: "20px",
-              }}
-            >
-              Add:
-            </Typography.Text> */}
-          </Col>
-          <Col>
-            <Row style={{ marginBottom: "20px" }}>
-              <PlusSquareFilled
-                className={styles.icon}
-                onClick={handleAddButtonClick}
-              />
-              {renderLabelTypeRadioButtons()}
-            </Row>
-          </Col>
+        <Row
+          gutter={[16, 16]}
+          justify="center"
+          style={{ marginBottom: "20px" }}
+        >
+          <Col span={8}>{renderLabelTypeButtonGroup()}</Col>
         </Row>
       </>
     );
@@ -270,7 +263,7 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     if (settingsDrawerVisible) {
-      setDrawerHeight(320); // Set the desired height when the drawer is visible
+      setDrawerHeight(420); // Set the desired height when the drawer is visible
     } else {
       setDrawerHeight(0); // Set the height to 0 when the drawer is hidden
     }

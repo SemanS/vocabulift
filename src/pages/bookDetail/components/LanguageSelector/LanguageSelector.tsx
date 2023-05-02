@@ -14,6 +14,7 @@ interface LanguageSelectorProps {
   onLanguageChange?: (language: string) => void;
   initialLanguage?: string;
   options?: Option[];
+  text: string;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({
@@ -23,6 +24,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
   onLanguageChange,
   initialLanguage,
   options,
+  text,
 }) => {
   const initialCountriesList = options
     ? options.map((option) => ({
@@ -85,7 +87,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       }}
     >
       <Typography.Text style={{ fontSize: "16px", marginRight: "10px" }}>
-        Translate from:
+        {text}
       </Typography.Text>
       <Popover
         content={

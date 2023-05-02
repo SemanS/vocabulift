@@ -21,7 +21,6 @@ const LevelSlider: React.FC<LevelSliderProps> = ({ handleChange }) => {
   return (
     <div className={styles.sliderContainer}>
       <Slider
-        style={{ width: "100%" }}
         range
         min={0}
         max={customRange.length - 1}

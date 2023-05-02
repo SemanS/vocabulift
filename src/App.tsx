@@ -48,6 +48,15 @@ const App: React.FC = () => {
         componentSize="middle"
         theme={{
           components: {
+            Button: {
+              colorPrimary: "#0D0C1D",
+              colorPrimaryHover: "#0D0C1D",
+              borderRadius: 0,
+              borderRadiusXS: 0,
+              borderRadiusOuter: 0,
+              borderRadiusSM: 0,
+              borderRadiusLG: 0,
+            },
             Tooltip: {
               borderRadius: 0,
               borderRadiusXS: 0,
