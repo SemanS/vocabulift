@@ -6,6 +6,8 @@ import { useRecoilState } from "recoil";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { Option } from "@/models/utils.interface";
 import ISO6391 from "iso-639-1";
+import { userState } from "@/stores/user";
+import { updateUser } from "@/services/userService";
 
 interface LanguageSelectorProps {
   atom?: typeof targetLanguageState | typeof sourceLanguageState;
@@ -39,6 +41,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       ];
 
   const [visible, setVisible] = useState(false);
+  const [sourceLanguage, setSourceLanguage] =
+    useRecoilState(sourceLanguageState);
+  const [targetLanguage, setTargetLanguage] =
+    useRecoilState(targetLanguageState);
+  const [user, setUser] = useRecoilState(userState);
   const [countriesList, setCountriesList] = useState(initialCountriesList);
   const [filteredCountries, setFilteredCountries] = useState(countriesList);
   const [selectedLanguage, setSelectedLanguage] = useRecoil
@@ -58,11 +65,39 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
 
-  const handleCountrySelection = (country: any) => {
+  const handleCountrySelection = async (country: any) => {
     if (country.code === disabledLanguage) return;
     setSelectedLanguage(country.code);
     if (!useRecoil && onLanguageChange) onLanguageChange(country.code);
     setVisible(false);
+
+    // Call updateUser to update the userEntity in the backend
+    try {
+      const updatedUserEntity = {
+        languageFrom: atom === sourceLanguageState ? country.code : undefined,
+        languageTo: atom === targetLanguageState ? country.code : undefined,
+      };
+      await updateUser(updatedUserEntity);
+
+      // Update the recoil user state with the updated userEntity
+      setUser((prevUser) => {
+        if (atom === sourceLanguageState) {
+          return {
+            ...prevUser,
+            languageFrom: updatedUserEntity.languageFrom,
+          };
+        } else if (atom === targetLanguageState) {
+          return {
+            ...prevUser,
+            languageTo: updatedUserEntity.languageTo,
+          };
+        } else {
+          return prevUser;
+        }
+      });
+    } catch (error) {
+      console.error("Error updating user entity:", error);
+    }
   };
 
   const handleSearch = (event: { target: { value: string } }) => {
@@ -86,74 +121,77 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         }
       }}
     >
-      <Row align="middle" gutter={[8, 8]}>
-        <Col>
-          <Typography.Text style={{ fontSize: "16px" }}>{text}</Typography.Text>
-        </Col>
-        <Col>
-          <Popover
-            content={
-              <div className={styles.customPopover}>
-                {!options && (
-                  <Input
-                    size="large"
-                    placeholder="Type to search"
-                    onChange={handleSearch}
+      <Typography.Text
+        style={{ fontSize: "16px" }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) {
+            setVisible((prevVisible) => !prevVisible);
+          }
+        }}
+      >
+        {text}
+      </Typography.Text>
+      <Popover
+        content={
+          <div className={styles.customPopover}>
+            {!options && (
+              <Input
+                size="large"
+                placeholder="Type to search"
+                onChange={handleSearch}
+              />
+            )}
+            <div className={styles.itemsList}>
+              {filteredCountries.map((country, index) => (
+                <div
+                  key={index}
+                  className={styles.item}
+                  onClick={() => handleCountrySelection(country)}
+                  style={{
+                    cursor:
+                      country.code === disabledLanguage
+                        ? "not-allowed"
+                        : "pointer",
+                    opacity: country.code === disabledLanguage ? 0.5 : 1,
+                  }}
+                >
+                  <Flag
+                    className={styles.flag}
+                    code={getFlagCode(country.code)}
+                    height={"16"}
+                    width={"24"}
                   />
-                )}
-                <div className={styles.itemsList}>
-                  {filteredCountries.map((country, index) => (
-                    <div
-                      key={index}
-                      className={styles.item}
-                      onClick={() => handleCountrySelection(country)}
-                      style={{
-                        cursor:
-                          country.code === disabledLanguage
-                            ? "not-allowed"
-                            : "pointer",
-                        opacity: country.code === disabledLanguage ? 0.5 : 1,
-                      }}
-                    >
-                      <Flag
-                        className={styles.flag}
-                        code={getFlagCode(country.code)}
-                        height={"16"}
-                        width={"24"}
-                      />
-                      {country.name}
-                    </div>
-                  ))}
+                  {country.name}
                 </div>
-              </div>
-            }
-            trigger="click"
-            open={visible}
-            onOpenChange={(isVisible) => setVisible(isVisible)}
-          >
-            <span
-              style={{
-                cursor: "pointer",
-                opacity: selectedCountry?.code === disabledLanguage ? 0.5 : 1,
-              }}
-            >
-              {selectedCountry && (
-                <Flag
-                  className={styles.flag}
-                  code={getFlagCode(selectedCountry.code)}
-                  height="32"
-                  width="48"
-                />
-              )}
-              {selectedCountry ? (
-                <span style={{ fontSize: "16px" }}>{selectedCountry.name}</span>
-              ) : (
-                "Click here to search"
-              )}
-            </span>
-          </Popover>
-        </Col>
-      </Row>
+              ))}
+            </div>
+          </div>
+        }
+        trigger="click"
+        open={visible}
+        onOpenChange={(isVisible) => setVisible(isVisible)}
+      >
+        <span
+          style={{
+            cursor: "pointer",
+            opacity: selectedCountry?.code === disabledLanguage ? 0.5 : 1,
+          }}
+        >
+          {selectedCountry && (
+            <Flag
+              className={styles.flag}
+              code={getFlagCode(selectedCountry.code)}
+              height="32"
+              width="48"
+            />
+          )}
+          {selectedCountry ? (
+            <span style={{ fontSize: "16px" }}>{selectedCountry.name}</span>
+          ) : (
+            "Click here to search"
+          )}
+        </span>
+      </Popover>
     </div>
   );
 };

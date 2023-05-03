@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { Role } from "@/models/login";
-import { Locale, User } from "@/models/user";
+import { Locale, User, UserEntity } from "@/models/user";
 import { getGlobalState } from "@/models";
 
 const initialState: User = {
@@ -17,6 +17,9 @@ const initialState: User = {
   avatar:
     "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
   library: [],
+  userEntity:
+    (JSON.parse(localStorage.getItem("userEntity") || "null") as UserEntity) ??
+    undefined,
 };
 
 export const userState = atom({

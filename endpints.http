@@ -13,6 +13,11 @@ Content-Type: application/json
 }
 
 ###
+GET {{baseUrl}}/api/sessions/oauth/google
+Content-Type: application/json
+
+
+###
 GET {{baseUrl}}/word?word=abdominous
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2M2RhZDg4Yzc5NTUwMTUyYzU0MWYzYzUiLCJpYXQiOjE2NzU4NDYzMjAsImV4cCI6MTY3NTg0NzIyMH0.F5nNa0ZyQeArjEQ9EBbxCMsjFvJhX_e1bmNW2EzfbdIhXfU1a2XY-ESnk8XK3McGqwuqn77YrRn1Zldp1gSdlD-I-Sb_NhsNtVFnmQaWLaTe34lZqE3OO4VfMosBrQejlWIFRJlHVtgNnDJaB-qaImIvPrDoaj2UPgLafO8VqTBKmfiJy_qr0NxeyOaTrThWZ907PlFUaWd0-tG5x3jWLALmQxCxvW_fbs-2ZEbtG-5-I4oT_jtIkHcrHk-cZybojMycAwLjLDUzm-i1WU9gXmPT2HT24fH16_bq2Zqytf855K5mkCjKUbEA8YRLdH8s2AgRYocf91cw87omryyt8Q

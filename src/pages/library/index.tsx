@@ -36,6 +36,7 @@ import { ApiResponse } from "@/models/apiResponse.interface";
 import LevelSlider from "@/pages/library/components/LevelSlider";
 import AddItemModal from "./components/AddItemModal";
 import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
+import { userState } from "@/stores/user";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -44,6 +45,7 @@ const Library: React.FC = () => {
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
+  const [user, setUser] = useRecoilState(userState);
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
   const [loading, setLoading] = useState(true);
@@ -253,6 +255,7 @@ const Library: React.FC = () => {
             <LevelSlider handleChange={handleChange} />
           </Col>
         </Row>
+        <>{JSON.stringify(user)}</>
         <Row
           gutter={[16, 16]}
           justify="center"

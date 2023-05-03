@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "build-local": "vite build --mode local",
+    "preview-local": "vite --mode local",
     "build-dev": "vite build --mode development",
     "preview-dev": "vite --mode development",
     "build-prod": "vite build --mode development",

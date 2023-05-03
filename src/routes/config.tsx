@@ -16,7 +16,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
   const [cookies] = useCookies(["access_token"]);
 
   useEffect(() => {
-    if (import.meta.env.MODE === "development" && cookies.access_token) {
+    if (import.meta.env.MODE === "local" && cookies.access_token) {
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
         .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`, {

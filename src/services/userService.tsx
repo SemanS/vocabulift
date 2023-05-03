@@ -1,3 +1,5 @@
+import { UserEntity } from "@/models/user";
+
 export const getSentences = async (
   libraryId: string | undefined,
   sentenceFrom: number,
@@ -95,6 +97,27 @@ export const getUserPhrases = async (options: {
     countOfPhrases: data.results.countOfPhrases,
     nextCursor: data.results.nextCursor,
   };
+};
+
+export const updateUser = async (userEntity: UserEntity): Promise<any> => {
+  const requestBody = { userEntity };
+  const response = await fetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/update`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify(requestBody),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return response.json();
 };
 
 export const addUserPhrase = async (
