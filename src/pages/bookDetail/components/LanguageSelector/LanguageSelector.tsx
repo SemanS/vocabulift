@@ -54,13 +54,17 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     }
   }, [options]);
 
+  useEffect(() => {
+    setSelectedLanguage(user[languageProp]);
+  }, [user]);
+
   const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
 
   const handleCountrySelection = async (
     country: any,
     event: React.MouseEvent
   ) => {
-    event.stopPropagation(); // Move this line outside the conditional block
+    event.stopPropagation();
     if (country.code === disabledLanguage) return;
     setSelectedLanguage(country.code);
     if (!useRecoil && onLanguageChange) onLanguageChange(country.code);

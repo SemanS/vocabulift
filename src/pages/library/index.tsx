@@ -8,7 +8,12 @@ import {
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
-import { DownOutlined, PlusOutlined, UpOutlined } from "@ant-design/icons";
+import {
+  DownOutlined,
+  PlusOutlined,
+  SwapOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
@@ -19,16 +24,18 @@ import { ApiResponse } from "@/models/apiResponse.interface";
 import LevelSlider from "@/pages/library/components/LevelSlider";
 import AddItemModal from "./components/AddItemModal";
 import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
-import { UserEntity } from "@/models/user";
+import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
+import { updateUser } from "@/services/userService";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
-  const [sourceLanguage, setSourceLanguage] =
+  /* const [sourceLanguage, setSourceLanguage] =
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
+     */
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
   const [loading, setLoading] = useState(true);
@@ -164,6 +171,23 @@ const Library: React.FC = () => {
     setSourceLanguageFromVideo(language);
   };
 
+  const handleSwapLanguages = async () => {
+    const previousSourceLanguage = user.sourceLanguage;
+
+    const updatedUserEntity: Partial<User> = {
+      sourceLanguage: user.targetLanguage,
+      targetLanguage: user.sourceLanguage,
+    };
+
+    await updateUser(updatedUserEntity as UserEntity);
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      sourceLanguage: user.targetLanguage,
+      targetLanguage: previousSourceLanguage,
+    }));
+  };
+
   const renderLabelTypeButtonGroup = () => {
     return (
       <Space size={20}>
@@ -213,7 +237,7 @@ const Library: React.FC = () => {
             style={{ marginTop: "30px" }}
           >
             <Row gutter={[16, 16]} justify="center">
-              <Col span={12}>
+              <Col span={10}>
                 <LanguageSelector
                   useRecoil={true}
                   languageProp="sourceLanguage"
@@ -221,7 +245,16 @@ const Library: React.FC = () => {
                   text={"Translate from: "}
                 />
               </Col>
-              <Col span={12}>
+              <Col
+                span={4}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <SwapOutlined
+                  style={{ fontSize: "42px" }}
+                  onClick={handleSwapLanguages}
+                />
+              </Col>
+              <Col span={10}>
                 <LanguageSelector
                   useRecoil={true}
                   languageProp="targetLanguage"
@@ -298,16 +331,16 @@ const Library: React.FC = () => {
                     }}
                   />
                 )}
-                <Typography.Text
+                <Typography.Title
                   style={{
                     color: "#171625", // Change this color to your header's color
-                    marginLeft: "4px",
+                    marginLeft: "8px",
                     fontSize: "20px",
                     cursor: "pointer",
                   }}
                 >
                   Settings
-                </Typography.Text>
+                </Typography.Title>
               </span>
             </span>
           </div>
@@ -332,7 +365,7 @@ const Library: React.FC = () => {
             fetchOptions={fetchOptions}
             isFetchValid={isFetchValid}
             selectOptions={selectOptions}
-            targetLanguage={targetLanguage}
+            targetLanguage={user.targetLanguage}
             onLanguageSelect={handleLanguageSelect} // add this prop
           />
         </div>
