@@ -47,6 +47,8 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         role: "guest",
         newUser: false,
         avatar: "",
+        sourceLanguage: "en",
+        targetLanguage: "sk",
       };
       setUser(devUser);
       setLoading(false);

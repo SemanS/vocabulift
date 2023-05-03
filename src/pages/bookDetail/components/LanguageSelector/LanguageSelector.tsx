@@ -1,38 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { Popover, Input, Typography, Col, Row } from "antd";
+import { Popover, Input, Typography } from "antd";
 import Flag from "react-world-flags";
 import styles from "./index.module.less";
 import { useRecoilState } from "recoil";
-import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { Option } from "@/models/utils.interface";
 import ISO6391 from "iso-639-1";
-import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
+import { User, UserEntity } from "@/models/user";
+import { userState } from "@/stores/user";
 
 interface LanguageSelectorProps {
-  atom?: typeof targetLanguageState | typeof sourceLanguageState;
+  languageProp: keyof User;
   disabledLanguage?: string;
   useRecoil?: boolean;
   onLanguageChange?: (language: string) => void;
-  initialLanguage?: string;
   options?: Option[];
   text?: string;
 }
 
-const LanguageSelector: React.FC<LanguageSelectorProps> = ({
-  atom,
-  disabledLanguage,
-  useRecoil = false,
-  onLanguageChange,
-  initialLanguage,
-  options,
-  text,
-}) => {
-  const initialCountriesList = options
-    ? options.map((option) => ({
-        name: option.label,
-        code: option.value,
-      }))
+const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
+  const {
+    languageProp,
+    disabledLanguage,
+    useRecoil = false,
+    onLanguageChange,
+    options,
+    text,
+  } = props;
+
+  const initCountriesList = options
+    ? options.map(({ label, value }) => ({ name: label, code: value }))
     : [
         { name: "English", code: "en" },
         { name: "Germany", code: "de" },
@@ -41,23 +38,17 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
       ];
 
   const [visible, setVisible] = useState(false);
-  const [sourceLanguage, setSourceLanguage] =
-    useRecoilState(sourceLanguageState);
-  const [targetLanguage, setTargetLanguage] =
-    useRecoilState(targetLanguageState);
   const [user, setUser] = useRecoilState(userState);
-  const [countriesList, setCountriesList] = useState(initialCountriesList);
+  const [countriesList, setCountriesList] = useState(initCountriesList);
   const [filteredCountries, setFilteredCountries] = useState(countriesList);
-  const [selectedLanguage, setSelectedLanguage] = useRecoil
-    ? useRecoilState(atom!)
-    : useState(initialLanguage);
+  const [selectedLanguage, setSelectedLanguage] = useState(user[languageProp]);
 
   useEffect(() => {
     if (options) {
       setCountriesList(
-        options.map((option) => ({
-          name: ISO6391.getName(option.value),
-          code: option.value,
+        options.map(({ value }) => ({
+          name: ISO6391.getName(value),
+          code: value,
         }))
       );
     }
@@ -65,43 +56,37 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
 
   const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
 
-  const handleCountrySelection = async (country: any) => {
+  const handleCountrySelection = async (
+    country: any,
+    event: React.MouseEvent
+  ) => {
+    event.stopPropagation(); // Move this line outside the conditional block
     if (country.code === disabledLanguage) return;
     setSelectedLanguage(country.code);
     if (!useRecoil && onLanguageChange) onLanguageChange(country.code);
     setVisible(false);
 
-    // Call updateUser to update the userEntity in the backend
     try {
-      const updatedUserEntity = {
-        languageFrom: atom === sourceLanguageState ? country.code : undefined,
-        languageTo: atom === targetLanguageState ? country.code : undefined,
+      const updatedUserEntity: Partial<User> = {
+        [languageProp]: country.code,
       };
-      await updateUser(updatedUserEntity);
+      await updateUser(updatedUserEntity as UserEntity);
 
-      // Update the recoil user state with the updated userEntity
-      setUser((prevUser) => {
-        if (atom === sourceLanguageState) {
-          return {
-            ...prevUser,
-            languageFrom: updatedUserEntity.languageFrom,
-          };
-        } else if (atom === targetLanguageState) {
-          return {
-            ...prevUser,
-            languageTo: updatedUserEntity.languageTo,
-          };
-        } else {
-          return prevUser;
-        }
-      });
+      setUser((prevUser: User) => ({
+        ...prevUser,
+        [languageProp]: country.code,
+      }));
     } catch (error) {
       console.error("Error updating user entity:", error);
     }
   };
 
-  const handleSearch = (event: { target: { value: string } }) => {
-    const searchText = event.target.value.toLowerCase();
+  const handleSearch = ({
+    target: { value },
+  }: {
+    target: { value: string };
+  }) => {
+    const searchText = value.toLowerCase();
     const filtered = countriesList.filter((country) =>
       country.name.toLowerCase().includes(searchText)
     );
@@ -112,25 +97,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     (country) => country.code === selectedLanguage
   );
 
+  const handleClick = () => setVisible((prevVisible) => !prevVisible);
+
   return (
-    <div
-      className={styles.languageSelectorBox}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) {
-          setVisible((prevVisible) => !prevVisible);
-        }
-      }}
-    >
-      <Typography.Text
-        style={{ fontSize: "16px" }}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) {
-            setVisible((prevVisible) => !prevVisible);
-          }
-        }}
-      >
-        {text}
-      </Typography.Text>
+    <div className={styles.languageSelectorBox} {...{ onClick: handleClick }}>
+      <Typography.Text style={{ fontSize: "16px" }}>{text}</Typography.Text>
       <Popover
         content={
           <div className={styles.customPopover}>
@@ -146,7 +117,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                 <div
                   key={index}
                   className={styles.item}
-                  onClick={() => handleCountrySelection(country)}
+                  onClick={(event) => {
+                    handleCountrySelection(country, event);
+                  }}
                   style={{
                     cursor:
                       country.code === disabledLanguage
@@ -160,6 +133,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
                     code={getFlagCode(country.code)}
                     height={"16"}
                     width={"24"}
+                    onClick={handleClick}
                   />
                   {country.name}
                 </div>

@@ -17,9 +17,8 @@ const initialState: User = {
   avatar:
     "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
   library: [],
-  userEntity:
-    (JSON.parse(localStorage.getItem("userEntity") || "null") as UserEntity) ??
-    undefined,
+  sourceLanguage: "en",
+  targetLanguage: "sk",
 };
 
 export const userState = atom({

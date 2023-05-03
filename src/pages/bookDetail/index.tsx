@@ -202,7 +202,6 @@ const BookDetail: FC = () => {
       sourceLanguage,
       targetLanguage
     );
-    console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
     const userSentencesData: UserSentence[] = await getUserSentences({
       sentenceFrom,
       countOfSentences,

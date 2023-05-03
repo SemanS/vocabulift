@@ -50,11 +50,11 @@ export interface User {
   settings: PureSettings;
   avatar: string;
   // For backend purposes
-  languageFrom: string;
-  languageTo: string;
+  sourceLanguage: string;
+  targetLanguage: string;
 }
 
 export interface UserEntity {
-  languageFrom: string;
-  languageTo: string;
+  sourceLanguage: string;
+  targetLanguage: string;
 }

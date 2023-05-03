@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Col,
-  Row,
-  Typography,
-  Space,
-  Divider,
-  Drawer,
-  Radio,
-  Slider,
-} from "antd";
+import { Button, Col, Row, Typography, Space } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -18,14 +8,7 @@ import {
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./index.module.less";
-import {
-  BookFilled,
-  DownOutlined,
-  PlusOutlined,
-  PlusSquareFilled,
-  UpOutlined,
-  YoutubeFilled,
-} from "@ant-design/icons";
+import { DownOutlined, PlusOutlined, UpOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
@@ -36,6 +19,7 @@ import { ApiResponse } from "@/models/apiResponse.interface";
 import LevelSlider from "@/pages/library/components/LevelSlider";
 import AddItemModal from "./components/AddItemModal";
 import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
+import { UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 
 const Library: React.FC = () => {
@@ -45,7 +29,6 @@ const Library: React.FC = () => {
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
-  const [user, setUser] = useRecoilState(userState);
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
   const [loading, setLoading] = useState(true);
@@ -64,6 +47,7 @@ const Library: React.FC = () => {
     LabelType.VIDEO
   );
   const [drawerHeight, setDrawerHeight] = useState(0);
+  const [user, setUser] = useRecoilState(userState);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -91,9 +75,11 @@ const Library: React.FC = () => {
   };
 
   const fetchData = async () => {
-    const data: ApiResponse = await getLibraryItems(
-      sessionStorage.getItem("access_token")
-    );
+    const userEntity: UserEntity = {
+      sourceLanguage: user.sourceLanguage,
+      targetLanguage: user.targetLanguage,
+    };
+    const data: ApiResponse = await getLibraryItems(userEntity);
     setLibraryItems({
       video: data.video,
       book: data.book,
@@ -108,7 +94,7 @@ const Library: React.FC = () => {
     setLoading(true);
     fetchData();
     setLoading(false);
-  }, []);
+  }, [user]);
 
   const handleButtonClick = async () => {
     await fetch(
@@ -230,16 +216,16 @@ const Library: React.FC = () => {
               <Col span={12}>
                 <LanguageSelector
                   useRecoil={true}
-                  atom={sourceLanguageState}
-                  disabledLanguage={targetLanguage}
+                  languageProp="sourceLanguage"
+                  disabledLanguage={user.targetLanguage}
                   text={"Translate from: "}
                 />
               </Col>
               <Col span={12}>
                 <LanguageSelector
                   useRecoil={true}
-                  atom={targetLanguageState}
-                  disabledLanguage={sourceLanguage}
+                  languageProp="targetLanguage"
+                  disabledLanguage={user.sourceLanguage}
                   text={"Translate to: "}
                 />
               </Col>
@@ -255,7 +241,6 @@ const Library: React.FC = () => {
             <LevelSlider handleChange={handleChange} />
           </Col>
         </Row>
-        <>{JSON.stringify(user)}</>
         <Row
           gutter={[16, 16]}
           justify="center"
