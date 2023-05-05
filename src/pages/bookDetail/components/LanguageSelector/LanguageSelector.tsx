@@ -10,7 +10,7 @@ import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 
 interface LanguageSelectorProps {
-  languageProp: keyof User;
+  languageProp?: keyof User;
   disabledLanguage?: string;
   useRecoil?: boolean;
   onLanguageChange?: (language: string) => void;
@@ -55,7 +55,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   }, [options]);
 
   useEffect(() => {
-    setSelectedLanguage(user[languageProp]);
+    if (languageProp) setSelectedLanguage(user[languageProp]);
   }, [user]);
 
   const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
@@ -70,19 +70,20 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     if (!useRecoil && onLanguageChange) onLanguageChange(country.code);
     setVisible(false);
 
-    try {
-      const updatedUserEntity: Partial<User> = {
-        [languageProp]: country.code,
-      };
-      await updateUser(updatedUserEntity as UserEntity);
+    if (languageProp && useRecoil)
+      try {
+        const updatedUserEntity: Partial<User> = {
+          [languageProp]: country.code,
+        };
+        await updateUser(updatedUserEntity as UserEntity);
 
-      setUser((prevUser: User) => ({
-        ...prevUser,
-        [languageProp]: country.code,
-      }));
-    } catch (error) {
-      console.error("Error updating user entity:", error);
-    }
+        setUser((prevUser: User) => ({
+          ...prevUser,
+          [languageProp]: country.code,
+        }));
+      } catch (error) {
+        console.error("Error updating user entity:", error);
+      }
   };
 
   const handleSearch = ({
@@ -104,8 +105,13 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   const handleClick = () => setVisible((prevVisible) => !prevVisible);
 
   return (
-    <div className={styles.languageSelectorBox} {...{ onClick: handleClick }}>
-      <Typography.Text style={{ fontSize: "16px" }}>{text}</Typography.Text>
+    <div className={styles.languageSelectorBox}>
+      <Typography.Text
+        style={{ fontSize: "16px" }}
+        {...{ onClick: handleClick }}
+      >
+        {text}
+      </Typography.Text>
       <Popover
         content={
           <div className={styles.customPopover}>
@@ -129,7 +135,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
                       country.code === disabledLanguage
                         ? "not-allowed"
                         : "pointer",
-                    opacity: country.code === disabledLanguage ? 0.5 : 1,
+                    opacity:
+                      country.code === disabledLanguage && useRecoil ? 0.5 : 1,
                   }}
                 >
                   <Flag
@@ -152,7 +159,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
         <span
           style={{
             cursor: "pointer",
-            opacity: selectedCountry?.code === disabledLanguage ? 0.5 : 1,
+            opacity:
+              selectedCountry?.code === disabledLanguage && useRecoil ? 0.5 : 1,
           }}
         >
           {selectedCountry && (

@@ -15,7 +15,6 @@ import {
   UpOutlined,
 } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
-import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { LabelType } from "@/models/sentences.interfaces";
 import { Option } from "@/models/utils.interface";
 import CustomSlider from "./components/CustomSlider";
@@ -27,15 +26,14 @@ import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
+import { socket } from "@/messaging/socket";
+import { Events } from "@/messaging/components/Events";
+import { ConnectionManager } from "@/messaging/components/ConnectionManager";
+import { ConnectionState } from "@/messaging/components/ConnectionState";
+import { MyForm } from "@/messaging/components/MyForm";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
-
-  /* const [sourceLanguage, setSourceLanguage] =
-    useRecoilState(sourceLanguageState);
-  const [targetLanguage, setTargetLanguage] =
-    useRecoilState(targetLanguageState);
-     */
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
   const [loading, setLoading] = useState(true);
@@ -115,7 +113,7 @@ const Library: React.FC = () => {
         body: JSON.stringify({
           input: inputValue,
           sourceLanguage: sourceLanguageFromVideo,
-          targetLanguage: targetLanguage,
+          targetLanguage: user.targetLanguage,
         }),
       }
     );
@@ -129,6 +127,7 @@ const Library: React.FC = () => {
   // Add this function to handle the "Cancel" button click inside the modal
   const handleModalCancel = () => {
     setIsModalVisible(false);
+    setInputValue(""); // Clear the inputValue when the modal is closed
   };
 
   const handleChange = (value: number | [number, number]) => {
@@ -295,6 +294,33 @@ const Library: React.FC = () => {
     }
   }, [settingsDrawerVisible]);
 
+  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [fooEvents, setFooEvents] = useState([]);
+
+  useEffect(() => {
+    function onConnect() {
+      setIsConnected(true);
+    }
+
+    function onDisconnect() {
+      setIsConnected(false);
+    }
+
+    function onFooEvent(value) {
+      setFooEvents((previous) => [...previous, value]);
+    }
+
+    socket.on("connect", onConnect);
+    socket.on("disconnect", onDisconnect);
+    socket.on("foo", onFooEvent);
+
+    return () => {
+      socket.off("connect", onConnect);
+      socket.off("disconnect", onDisconnect);
+      socket.off("foo", onFooEvent);
+    };
+  }, []);
+
   return (
     <PageContainer loading={loading} title={false}>
       <div className={styles.drawerContainer}>
@@ -343,6 +369,12 @@ const Library: React.FC = () => {
                 </Typography.Title>
               </span>
             </span>
+          </div>
+          <div>
+            <ConnectionState isConnected={isConnected} />
+            <Events events={fooEvents} />
+            <ConnectionManager />
+            <MyForm />
           </div>
           <div style={{ paddingInline: "48px", marginTop: "30px" }}>
             {Object.entries(categorizedItems).map(

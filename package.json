@@ -6,7 +6,7 @@
     "build-local": "vite build --mode local",
     "preview-local": "vite --mode local",
     "build-dev": "vite build --mode development",
-    "preview-dev": "vite --mode development",
+    "preview-dev": "vite --port=4000 --mode development",
     "build-prod": "vite build --mode development",
     "preview-prod": "vite preview --mode production"
   },
@@ -57,6 +57,7 @@
     "recharts": "^2.3.2",
     "recoil": "^0.7.6",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.6.1",
     "stringify": "^5.2.0",
     "styled-components": "^5.3.6",
     "swiper": "^9.2.2",

@@ -54,15 +54,19 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     }
   };
 
+  const [form] = Form.useForm(); // Add this line to get the form instance
+
   const resetFields = () => {
     setInputValue("");
     setSelectedOption(null);
     setButtonDisabled(true);
+    form.resetFields(); // Add this line to reset the form fields
   };
 
   const handleModalCancelAndReset = () => {
-    handleModalCancel();
-    resetFields();
+    form.resetFields(); // Reset the form fields
+    resetFields(); // Reset the state values
+    handleModalCancel(); // Close the modal
   };
 
   const items = [
@@ -73,6 +77,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
         <Row gutter={24}>
           <Col span={24} style={{ marginBottom: "24px" }}>
             <Form
+              preserve={false}
               {...layout}
               onFinish={(values) => {}}
               style={{ display: "inline-block", width: "100%" }}
@@ -95,7 +100,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                   size="middle"
                 />
               </Form.Item>
-              {isFetchValid && (
+              {isFetchValid && inputValue && (
                 <Form.Item
                   label="Translate from"
                   name="language"
@@ -108,7 +113,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 >
                   <LanguageSelector
                     useRecoil={false}
-                    initialLanguage={""}
                     onLanguageChange={(language) => {
                       const option = selectOptions.find(
                         (option) => option.value === language
@@ -123,26 +127,28 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                   />
                 </Form.Item>
               )}
-              <Form.Item
-                label="Translate to"
-                name="language"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the YouTube video URL",
-                  },
-                ]}
-              >
-                <LanguageSelector
-                  useRecoil={false}
-                  initialLanguage="EN"
-                  disabledLanguage={targetLanguage}
-                  onLanguageChange={(language) => {
-                    console.log("Source language changed to", language);
-                  }}
-                  text={""}
-                />
-              </Form.Item>
+              {inputValue && (
+                <Form.Item
+                  label="Translate to"
+                  name="language"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please input the YouTube video URL",
+                    },
+                  ]}
+                >
+                  <LanguageSelector
+                    useRecoil={false}
+                    disabledLanguage={targetLanguage}
+                    onLanguageChange={(language) => {
+                      console.log("Source language changed to", language);
+                    }}
+                    text={""}
+                    languageProp="targetLanguage"
+                  />
+                </Form.Item>
+              )}
             </Form>
           </Col>
         </Row>
@@ -157,6 +163,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
 
   return (
     <Modal
+      destroyOnClose
       open={isModalVisible}
       onCancel={handleModalCancelAndReset}
       footer={[
