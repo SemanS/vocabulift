@@ -1,4 +1,5 @@
 export interface LibraryItem {
+  eventId: string | null;
   id: string;
   title: string;
   label: string;

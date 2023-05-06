@@ -4,6 +4,7 @@ import { Button, Col, Row, Typography, Space } from "antd";
 import { useRecoilState } from "recoil";
 import {
   getLibraryItems,
+  pollProgressUpdates,
   postLibraryInputVideoLanguages,
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
@@ -27,10 +28,7 @@ import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
-import { Events } from "@/messaging/components/Events";
-import { ConnectionManager } from "@/messaging/components/ConnectionManager";
-import { ConnectionState } from "@/messaging/components/ConnectionState";
-import { MyForm } from "@/messaging/components/MyForm";
+import { Progress } from "antd";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -53,6 +51,9 @@ const Library: React.FC = () => {
   );
   const [drawerHeight, setDrawerHeight] = useState(0);
   const [user, setUser] = useRecoilState(userState);
+  const [progress, setProgress] = useState(0);
+  const [polling, setPolling] = useState(false);
+  const [sliderUpdated, setSliderUpdated] = useState(false);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -101,23 +102,48 @@ const Library: React.FC = () => {
     setLoading(false);
   }, [user]);
 
-  const handleButtonClick = async () => {
-    await fetch(
-      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/video`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-        },
-        body: JSON.stringify({
-          input: inputValue,
-          sourceLanguage: sourceLanguageFromVideo,
-          targetLanguage: user.targetLanguage,
-        }),
+  useEffect(() => {
+    const savedProgress = localStorage.getItem("progress");
+    console.log("savedProgress" + savedProgress);
+    if (savedProgress) {
+      setProgress(Number(savedProgress));
+    }
+
+    const ongoingEventId = localStorage.getItem("ongoingEventId");
+
+    if (ongoingEventId) {
+      // Set polling state to true if there's an ongoing event ID
+      setPolling(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (sliderUpdated) {
+      setLoading(true);
+      fetchData();
+      setLoading(false);
+      setSliderUpdated(false);
+    }
+
+    // This code will run on the initial render
+    const savedProgress = localStorage.getItem("progress");
+    if (savedProgress) {
+      setProgress(Number(savedProgress));
+    }
+
+    // Check if polling is true
+    if (polling) {
+      const ongoingEventId = localStorage.getItem("ongoingEventId");
+
+      if (ongoingEventId) {
+        // Start polling the backend for progress updates
+        pollProgressUpdates(ongoingEventId, setProgress, setSliderUpdated);
       }
-    );
-  };
+
+      // Reset the polling state
+      setPolling(false);
+    }
+  }, [polling, sliderUpdated]);
 
   // Add this function to handle the click event for the "Add" button
   const handleAddButtonClick = () => {
@@ -295,7 +321,6 @@ const Library: React.FC = () => {
   }, [settingsDrawerVisible]);
 
   const [isConnected, setIsConnected] = useState(socket.connected);
-  const [fooEvents, setFooEvents] = useState([]);
 
   useEffect(() => {
     function onConnect() {
@@ -306,18 +331,17 @@ const Library: React.FC = () => {
       setIsConnected(false);
     }
 
-    function onFooEvent(value) {
-      setFooEvents((previous) => [...previous, value]);
-    }
-
     socket.on("connect", onConnect);
     socket.on("disconnect", onDisconnect);
-    socket.on("foo", onFooEvent);
+
+    socket.on("video-finalized", (data) => {
+      console.log("Video finalized with eventId:", data.eventId);
+      socket.disconnect();
+    });
 
     return () => {
       socket.off("connect", onConnect);
       socket.off("disconnect", onDisconnect);
-      socket.off("foo", onFooEvent);
     };
   }, []);
 
@@ -370,12 +394,16 @@ const Library: React.FC = () => {
               </span>
             </span>
           </div>
-          <div>
-            <ConnectionState isConnected={isConnected} />
-            <Events events={fooEvents} />
-            <ConnectionManager />
-            <MyForm />
-          </div>
+          <Typography.Title
+            style={{
+              color: "#fff",
+              marginLeft: "8px",
+              fontSize: "20px",
+              cursor: "pointer",
+            }}
+          >
+            Settings
+          </Typography.Title>
           <div style={{ paddingInline: "48px", marginTop: "30px" }}>
             {Object.entries(categorizedItems).map(
               ([category, items], index) => (
@@ -384,6 +412,7 @@ const Library: React.FC = () => {
                   items={items as LibraryItem[]}
                   sliderId={`slider${index + 1}`}
                   category={category}
+                  progress={progress}
                 />
               )
             )}
@@ -391,7 +420,6 @@ const Library: React.FC = () => {
           <AddItemModal
             isModalVisible={isModalVisible}
             handleModalCancel={handleModalCancel}
-            handleButtonClick={handleButtonClick}
             inputValue={inputValue}
             setInputValue={setInputValue}
             fetchOptions={fetchOptions}
@@ -399,6 +427,7 @@ const Library: React.FC = () => {
             selectOptions={selectOptions}
             targetLanguage={user.targetLanguage}
             onLanguageSelect={handleLanguageSelect} // add this prop
+            onAddItemClick={() => setPolling(true)}
           />
         </div>
       </div>

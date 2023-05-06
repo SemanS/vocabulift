@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 
 import "../index.module.less";
 import Card from "./Card";
-import { DeleteOutlined } from "@ant-design/icons";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "../index.module.less";
 import Slider from "react-slick";
@@ -13,12 +12,14 @@ interface CustomSliderProps {
   items: LibraryItem[];
   sliderId: string;
   category: string;
+  progress: number;
 }
 
 export const CustomSlider: React.FC<CustomSliderProps> = ({
   items,
   sliderId,
   category,
+  progress,
 }) => {
   const [showControls, setShowControls] = useState(false);
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
@@ -103,6 +104,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
                 onCardHover={onCardHover}
                 cardIndex={index}
                 isHovered={hoveredCardIndex === index}
+                progress={progress}
               />
             );
           })}

@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Tabs } from "antd";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
+import { socket } from "@/messaging/socket";
+import { v4 as uuidv4 } from "uuid";
 
 const { TabPane } = Tabs;
 
 interface AddItemModalProps {
   isModalVisible: boolean;
   handleModalCancel: () => void;
-  handleButtonClick: () => void;
   inputValue: string;
   setInputValue: (value: string) => void;
   fetchOptions: (input: string) => void;
@@ -15,12 +16,12 @@ interface AddItemModalProps {
   selectOptions: any[];
   targetLanguage: string;
   onLanguageSelect: (language: string) => void;
+  onAddItemClick: () => void; // add this prop
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({
   isModalVisible,
   handleModalCancel,
-  handleButtonClick,
   inputValue,
   setInputValue,
   fetchOptions,
@@ -28,6 +29,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   selectOptions,
   targetLanguage,
   onLanguageSelect,
+  onAddItemClick,
 }) => {
   const layout = {
     labelCol: { span: 8 },
@@ -38,6 +40,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [selectedLanguageFrom, setSelectedLanguageFrom] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLanguageSelection = (language: string) => {
     setSelectedLanguageFrom(language);
@@ -67,6 +70,22 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     form.resetFields(); // Reset the form fields
     resetFields(); // Reset the state values
     handleModalCancel(); // Close the modal
+  };
+
+  const handleButtonClick = async () => {
+    setIsSubmitting(true);
+
+    const eventId = uuidv4();
+    socket.emit("add-video", {
+      eventId: eventId,
+      input:
+        "https://www.youtube.com/watch?v=lbjZPFBD6JU&list=RDEM0XNqlolUKJ7yqkB2OwT_oQ&start_radio=1&ab_channel=norahjonesVEVO",
+      sourceLanguage: "en",
+      targetLanguage: "sk",
+    });
+    localStorage.setItem("ongoingEventId", eventId);
+
+    onAddItemClick();
   };
 
   const items = [
@@ -171,7 +190,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
           key="submit"
           type="primary"
           onClick={handleButtonClick}
-          disabled={buttonDisabled}
+          disabled={buttonDisabled || isSubmitting}
         >
           Add Video
         </Button>,

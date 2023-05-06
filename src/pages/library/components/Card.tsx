@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
-import { Col, Row, Tooltip, Typography } from "antd";
+import { Col, Progress, Row, Tooltip, Typography } from "antd";
 import {
   DislikeOutlined,
   LikeOutlined,
@@ -15,6 +15,7 @@ interface CardProps {
   onCardHover: (hoveredIndex: number | null) => void;
   cardIndex: number;
   isHovered: boolean;
+  progress: number;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -22,10 +23,14 @@ export const Card: React.FC<CardProps> = ({
   onCardHover,
   cardIndex,
   isHovered,
+  progress,
 }) => {
   const [isImgHovered, setIsImgHovered] = useState(false);
   const [isDelayPassed, setIsDelayPassed] = useState(false);
   const [transitionState, setTransitionState] = useState("");
+
+  const isOngoingEvent =
+    localStorage.getItem("ongoingEventId") === itemData.eventId;
 
   useEffect(() => {
     let timeoutId: any;
@@ -76,13 +81,35 @@ export const Card: React.FC<CardProps> = ({
           to={itemData.id + "?currentPage=" + 1 + "&pageSize=" + 10}
           style={{ color: "inherit" }}
         >
-          <img
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            className={`${styles.cardImg} `}
-            src={itemData.videoThumbnail}
-            alt="card"
-          />
+          {isOngoingEvent ? (
+            <div className={styles.imageContainer}>
+              <img
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className={`${styles.cardImg}`}
+                src={itemData.videoThumbnail}
+                alt="card"
+              />
+              <div
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <Progress
+                  className={styles.progressCircle}
+                  type="circle"
+                  percent={progress}
+                />
+              </div>
+            </div>
+          ) : (
+            <img
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              className={`${styles.cardImg}`}
+              src={itemData.videoThumbnail}
+              alt="card"
+            />
+          )}
         </Link>
         <div
           onMouseEnter={handleMouseEnter}
