@@ -28,7 +28,6 @@ import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
-import { Progress } from "antd";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -104,7 +103,6 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     const savedProgress = localStorage.getItem("progress");
-    console.log("savedProgress" + savedProgress);
     if (savedProgress) {
       setProgress(Number(savedProgress));
     }
@@ -136,13 +134,30 @@ const Library: React.FC = () => {
       const ongoingEventId = localStorage.getItem("ongoingEventId");
 
       if (ongoingEventId) {
-        // Start polling the backend for progress updates
-        pollProgressUpdates(ongoingEventId, setProgress, setSliderUpdated);
+        // Subscribe to the progress event using the ongoingEventId
+        socket.emit("subscribe", { eventId: ongoingEventId });
       }
-
-      // Reset the polling state
-      setPolling(false);
     }
+  }, [polling, sliderUpdated]);
+
+  useEffect(() => {
+    async function onProgressUpdate(progressData: any) {
+      console.log("progressData" + JSON.stringify(progressData, null, 2));
+
+      setProgress(progressData.progressPercentage); // Update the progress using the callback
+      localStorage.setItem("progress", progressData.progressPercentage);
+      if (progressData.progressPercentage !== 0) {
+        setSliderUpdated(true);
+      }
+    }
+
+    // Listen to the progress event from the server
+    socket.on("progress", onProgressUpdate);
+
+    return () => {
+      // Unsubscribe from the progress event
+      socket.off("progress", onProgressUpdate);
+    };
   }, [polling, sliderUpdated]);
 
   // Add this function to handle the click event for the "Add" button
@@ -320,28 +335,27 @@ const Library: React.FC = () => {
     }
   }, [settingsDrawerVisible]);
 
-  const [isConnected, setIsConnected] = useState(socket.connected);
-
   useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
+    // Connect to the socket when the component mounts
+    const ongoingEventId = localStorage.getItem("ongoingEventId");
+
+    if (!ongoingEventId) {
+      // Connect to the socket when the component mounts and there is no ongoingEventId in localStorage
+      socket.connect();
     }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
     socket.on("video-finalized", (data) => {
+      if (localStorage.getItem("ongoingEventId") === data.eventId)
+        setProgress(100);
+      localStorage.removeItem("ongoingEventId");
+      localStorage.removeItem("progress");
+      // Reset the polling state
+      setPolling(false);
+      // Handle the finalized status, e.g., update the UI
       console.log("Video finalized with eventId:", data.eventId);
-      socket.disconnect();
     });
-
     return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
+      // Disconnect from the socket when the component unmounts
+      socket.disconnect();
     };
   }, []);
 
@@ -394,19 +408,18 @@ const Library: React.FC = () => {
               </span>
             </span>
           </div>
-          <Typography.Title
-            style={{
-              color: "#fff",
-              marginLeft: "8px",
-              fontSize: "20px",
-              cursor: "pointer",
-            }}
-          >
-            Settings
-          </Typography.Title>
           <div style={{ paddingInline: "48px", marginTop: "30px" }}>
-            {Object.entries(categorizedItems).map(
-              ([category, items], index) => (
+            {Object.entries(categorizedItems)
+              .sort(([categoryA], [categoryB]) => {
+                if (categoryA === "My videos") {
+                  return -1;
+                } else if (categoryB === "My videos") {
+                  return 1;
+                } else {
+                  return 0;
+                }
+              })
+              .map(([category, items], index) => (
                 <CustomSlider
                   key={`slider${index + 1}`}
                   items={items as LibraryItem[]}
@@ -414,8 +427,7 @@ const Library: React.FC = () => {
                   category={category}
                   progress={progress}
                 />
-              )
-            )}
+              ))}
           </div>
           <AddItemModal
             isModalVisible={isModalVisible}

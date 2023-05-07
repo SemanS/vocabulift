@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Input, Modal, Row, Tabs } from "antd";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 import { socket } from "@/messaging/socket";
 import { v4 as uuidv4 } from "uuid";
-
-const { TabPane } = Tabs;
+import { Option } from "@/models/utils.interface";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -40,7 +39,23 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [selectedLanguageFrom, setSelectedLanguageFrom] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const updateButtonDisabled = () => {
+      setButtonDisabled(localStorage.getItem("ongoingEventId") !== null);
+    };
+
+    // Update buttonDisabled state initially
+    updateButtonDisabled();
+
+    // Update buttonDisabled state on storage changes
+    window.addEventListener("storage", updateButtonDisabled);
+
+    // Clean up event listener on unmount
+    return () => {
+      window.removeEventListener("storage", updateButtonDisabled);
+    };
+  }, []);
 
   const handleLanguageSelection = (language: string) => {
     setSelectedLanguageFrom(language);
@@ -73,19 +88,22 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   };
 
   const handleButtonClick = async () => {
-    setIsSubmitting(true);
+    form.submit();
+  };
 
+  const handleFormSubmit = async (values: any) => {
     const eventId = uuidv4();
+    const { youtubeUrl, language } = values;
     socket.emit("add-video", {
       eventId: eventId,
-      input:
-        "https://www.youtube.com/watch?v=lbjZPFBD6JU&list=RDEM0XNqlolUKJ7yqkB2OwT_oQ&start_radio=1&ab_channel=norahjonesVEVO",
-      sourceLanguage: "en",
-      targetLanguage: "sk",
+      input: youtubeUrl,
+      sourceLanguage: selectedLanguageFrom,
+      targetLanguage: targetLanguage,
     });
     localStorage.setItem("ongoingEventId", eventId);
 
     onAddItemClick();
+    handleModalCancelAndReset();
   };
 
   const items = [
@@ -98,18 +116,13 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
             <Form
               preserve={false}
               {...layout}
-              onFinish={(values) => {}}
+              onFinish={handleFormSubmit}
+              form={form}
               style={{ display: "inline-block", width: "100%" }}
             >
               <Form.Item
                 label="Video URL"
                 name="youtubeUrl"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the YouTube video URL",
-                  },
-                ]}
                 style={{ textAlign: "left" }}
               >
                 <Input
@@ -120,16 +133,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 />
               </Form.Item>
               {isFetchValid && inputValue && (
-                <Form.Item
-                  label="Translate from"
-                  name="language"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input the YouTube video URL",
-                    },
-                  ]}
-                >
+                <Form.Item label="Translate from" name="language">
                   <LanguageSelector
                     useRecoil={false}
                     onLanguageChange={(language) => {
@@ -147,16 +151,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 </Form.Item>
               )}
               {inputValue && (
-                <Form.Item
-                  label="Translate to"
-                  name="language"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input the YouTube video URL",
-                    },
-                  ]}
-                >
+                <Form.Item label="Translate to" name="language">
                   <LanguageSelector
                     useRecoil={false}
                     disabledLanguage={targetLanguage}
@@ -190,7 +185,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
           key="submit"
           type="primary"
           onClick={handleButtonClick}
-          disabled={buttonDisabled || isSubmitting}
+          disabled={buttonDisabled}
         >
           Add Video
         </Button>,

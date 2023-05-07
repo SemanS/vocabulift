@@ -90,6 +90,7 @@ export const Card: React.FC<CardProps> = ({
                 src={itemData.videoThumbnail}
                 alt="card"
               />
+              <div className={styles.whiteOverlay}></div>
               <div
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
