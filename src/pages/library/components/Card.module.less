@@ -82,6 +82,12 @@
   position: relative;
 }
 
+.cardImg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .progressCircle {
   position: absolute;
   top: 50%;
@@ -97,4 +103,20 @@
   bottom: 0;
   background-color: white;
   opacity: 0.5; /* Adjust the opacity as needed */
+}
+
+.spinner-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+}
+
+.percentage {
+  font-size: 1.5rem;
+  font-weight: bold;
 }

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Typography, Space } from "antd";
+import { Button, Col, Row, Typography, Space, Progress, Spin } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
   getLibraryItems,
-  pollProgressUpdates,
   postLibraryInputVideoLanguages,
 } from "@/services/libraryService";
 import { LibraryItem } from "@/models/libraryItem.interface";
@@ -28,6 +27,7 @@ import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
+import "antd/dist/reset.css";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -53,6 +53,10 @@ const Library: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [polling, setPolling] = useState(false);
   const [sliderUpdated, setSliderUpdated] = useState(false);
+  const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
+    undefined
+  );
+  const [fetched, setFetched] = useState(false); // Add fetched state
 
   const fetchOptions = async (input: string) => {
     try {
@@ -79,12 +83,18 @@ const Library: React.FC = () => {
     }
   };
 
-  const fetchData = async () => {
+  const fetchData = async (newVideoThumbnail: string | null = null) => {
     const userEntity: UserEntity = {
       sourceLanguage: user.sourceLanguage,
       targetLanguage: user.targetLanguage,
     };
     const data: ApiResponse = await getLibraryItems(userEntity);
+
+    if (newVideoThumbnail) {
+      const newItem = createTempItem(newVideoThumbnail);
+      data.video.push(newItem);
+    }
+
     setLibraryItems({
       video: data.video,
       book: data.book,
@@ -115,11 +125,34 @@ const Library: React.FC = () => {
     }
   }, []);
 
+  const createTempItem = (thumbnail: string) => {
+    const newItem: LibraryItem = {
+      id: "temp-item",
+      title: "New Item",
+      label: LabelType.VIDEO,
+      image: "",
+      description: "",
+      totalSentences: 1,
+      videoThumbnail: thumbnail,
+      videoId: "",
+      category: "My videos", // You can change the category as needed
+      level: ["A1", "A2", "B1", "B2", "C1", "C2"],
+      eventId: "",
+    };
+    return newItem;
+  };
+
   useEffect(() => {
+    console.log("tak a je to tu" + sliderUpdated);
     if (sliderUpdated) {
       setLoading(true);
-      fetchData();
+      if (videoThumbnail) {
+        fetchData(videoThumbnail);
+      } else {
+        fetchData();
+      }
       setLoading(false);
+      setVideoThumbnail(undefined);
       setSliderUpdated(false);
     }
 
@@ -138,17 +171,20 @@ const Library: React.FC = () => {
         socket.emit("subscribe", { eventId: ongoingEventId });
       }
     }
-  }, [polling, sliderUpdated]);
 
-  useEffect(() => {
     async function onProgressUpdate(progressData: any) {
       console.log("progressData" + JSON.stringify(progressData, null, 2));
-
+      if (progressData.progressPercentage > 0 && !fetched) {
+        setLoading(true);
+        fetchData();
+        setLoading(false);
+        setFetched(true);
+      }
       setProgress(progressData.progressPercentage); // Update the progress using the callback
       localStorage.setItem("progress", progressData.progressPercentage);
-      if (progressData.progressPercentage !== 0) {
+      /* if (progressData.progressPercentage !== 0) {
         setSliderUpdated(true);
-      }
+      } */
     }
 
     // Listen to the progress event from the server
@@ -226,6 +262,10 @@ const Library: React.FC = () => {
       sourceLanguage: user.targetLanguage,
       targetLanguage: previousSourceLanguage,
     }));
+  };
+
+  const updateVideoThumbnail = (newThumbnail: string) => {
+    setVideoThumbnail(newThumbnail);
   };
 
   const renderLabelTypeButtonGroup = () => {
@@ -348,8 +388,10 @@ const Library: React.FC = () => {
         setProgress(100);
       localStorage.removeItem("ongoingEventId");
       localStorage.removeItem("progress");
+      setFetched(false);
       // Reset the polling state
       setPolling(false);
+      setProgress(0);
       // Handle the finalized status, e.g., update the UI
       console.log("Video finalized with eventId:", data.eventId);
     });
@@ -439,7 +481,11 @@ const Library: React.FC = () => {
             selectOptions={selectOptions}
             targetLanguage={user.targetLanguage}
             onLanguageSelect={handleLanguageSelect} // add this prop
-            onAddItemClick={() => setPolling(true)}
+            onAddItemClick={(videoThumbnail) => {
+              setPolling(true);
+              setSliderUpdated(true);
+              updateVideoThumbnail(videoThumbnail);
+            }}
           />
         </div>
       </div>

@@ -4,6 +4,7 @@ import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/Lan
 import { socket } from "@/messaging/socket";
 import { v4 as uuidv4 } from "uuid";
 import { Option } from "@/models/utils.interface";
+import { postLibraryVideo } from "@/services/libraryService";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -15,7 +16,7 @@ interface AddItemModalProps {
   selectOptions: any[];
   targetLanguage: string;
   onLanguageSelect: (language: string) => void;
-  onAddItemClick: () => void; // add this prop
+  onAddItemClick: (videoThumbnail: string) => void; // add this prop
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({
@@ -94,6 +95,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const handleFormSubmit = async (values: any) => {
     const eventId = uuidv4();
     const { youtubeUrl, language } = values;
+    const response = await postLibraryVideo(
+      selectedLanguageFrom,
+      targetLanguage,
+      youtubeUrl
+    );
     socket.emit("add-video", {
       eventId: eventId,
       input: youtubeUrl,
@@ -102,7 +108,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     });
     localStorage.setItem("ongoingEventId", eventId);
 
-    onAddItemClick();
+    onAddItemClick(response.videoThumbnail);
     handleModalCancelAndReset();
   };
 

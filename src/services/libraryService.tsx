@@ -58,7 +58,7 @@ export const postLibraryVideo = async (
       }),
     }
   );
-  return response;
+  return response.json();
 };
 
 export async function pollProgressUpdates(

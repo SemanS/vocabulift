@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
-import { Col, Progress, Row, Tooltip, Typography } from "antd";
+import { Col, Progress, Row, Spin, Tooltip, Typography } from "antd";
 import {
   DislikeOutlined,
   LikeOutlined,
@@ -81,7 +81,7 @@ export const Card: React.FC<CardProps> = ({
           to={itemData.id + "?currentPage=" + 1 + "&pageSize=" + 10}
           style={{ color: "inherit" }}
         >
-          {isOngoingEvent ? (
+          {isOngoingEvent || itemData.id === "temp-item" ? (
             <div className={styles.imageContainer}>
               <img
                 onMouseEnter={handleMouseEnter}
@@ -90,16 +90,21 @@ export const Card: React.FC<CardProps> = ({
                 src={itemData.videoThumbnail}
                 alt="card"
               />
-              <div className={styles.whiteOverlay}></div>
               <div
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
+                className={styles.whiteOverlay}
+              ></div>
+              <div
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className={styles.progressCircle}
               >
-                <Progress
-                  className={styles.progressCircle}
-                  type="circle"
-                  percent={progress}
-                />
+                <Progress type="circle" percent={progress} showInfo={false} />
+                <div className={styles.spinnerContainer}>
+                  <Spin />
+                  <div className={styles.percentage}>{progress}%</div>
+                </div>
               </div>
             </div>
           ) : (
@@ -112,70 +117,74 @@ export const Card: React.FC<CardProps> = ({
             />
           )}
         </Link>
-        <div
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          className={`${styles.details} ${
-            isImgHovered ? styles.visibleDetails : ""
-          } ${isImgHovered ? styles.zoomedDetails : ""} ${
-            isImgHovered ? styles.hoverDetailsTransition : ""
-          }`}
-          style={{ pointerEvents: isImgHovered ? undefined : "none" }}
-        >
-          <Row>
-            <Col span={4}>
-              <PlayCircleOutlined
-                className={`${styles.playIcon} ${
-                  isImgHovered ? styles.playIconHovered : ""
-                }`}
-              />
-            </Col>
-            <Col span={20}>
-              <Typography.Text strong style={{ fontSize: "11px" }}>
-                {itemData.title}
-              </Typography.Text>
-            </Col>
-          </Row>
-          <Row align="middle" className={styles.stats}>
-            <Col span={4}>
-              <Tooltip title="Likes">
-                <LikeOutlined style={{ fontSize: "10px" }} />
-              </Tooltip>
-              <Typography.Text className={styles.likeDislikeCount}>
-                <span style={{ fontSize: "10px" }}>{4}</span>
-              </Typography.Text>
-            </Col>
-            <Col span={4}>
-              <Tooltip title="Dislikes">
-                <DislikeOutlined style={{ fontSize: "10px" }} />
-              </Tooltip>
-              <Typography.Text className={styles.likeDislikeCount}>
-                <span style={{ fontSize: "10px" }}>{2}</span>
-              </Typography.Text>
-            </Col>
-          </Row>
-          <Typography.Text
-            className={styles.description}
-            style={{ fontSize: "10px" }}
+        {itemData.id !== "temp-item" ? (
+          <div
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className={`${styles.details} ${
+              isImgHovered ? styles.visibleDetails : ""
+            } ${isImgHovered ? styles.zoomedDetails : ""} ${
+              isImgHovered ? styles.hoverDetailsTransition : ""
+            }`}
+            style={{ pointerEvents: isImgHovered ? undefined : "none" }}
           >
-            {itemData.description}
-          </Typography.Text>
+            <Row>
+              <Col span={4}>
+                <PlayCircleOutlined
+                  className={`${styles.playIcon} ${
+                    isImgHovered ? styles.playIconHovered : ""
+                  }`}
+                />
+              </Col>
+              <Col span={20}>
+                <Typography.Text strong style={{ fontSize: "11px" }}>
+                  {itemData.title}
+                </Typography.Text>
+              </Col>
+            </Row>
+            <Row align="middle" className={styles.stats}>
+              <Col span={4}>
+                <Tooltip title="Likes">
+                  <LikeOutlined style={{ fontSize: "10px" }} />
+                </Tooltip>
+                <Typography.Text className={styles.likeDislikeCount}>
+                  <span style={{ fontSize: "10px" }}>{4}</span>
+                </Typography.Text>
+              </Col>
+              <Col span={4}>
+                <Tooltip title="Dislikes">
+                  <DislikeOutlined style={{ fontSize: "10px" }} />
+                </Tooltip>
+                <Typography.Text className={styles.likeDislikeCount}>
+                  <span style={{ fontSize: "10px" }}>{2}</span>
+                </Typography.Text>
+              </Col>
+            </Row>
+            <Typography.Text
+              className={styles.description}
+              style={{ fontSize: "10px" }}
+            >
+              {itemData.description}
+            </Typography.Text>
 
-          <div className={styles.customDivider} />
+            <div className={styles.customDivider} />
 
-          <Row justify="space-between">
-            <Col>
-              <Typography.Text style={{ fontSize: "10px" }}>
-                Level: {itemData.level}
-              </Typography.Text>
-            </Col>
-            <Col>
-              <Typography.Text style={{ fontSize: "10px" }}>
-                Duration: 11:22
-              </Typography.Text>
-            </Col>
-          </Row>
-        </div>
+            <Row justify="space-between">
+              <Col>
+                <Typography.Text style={{ fontSize: "10px" }}>
+                  Level: {itemData.level}
+                </Typography.Text>
+              </Col>
+              <Col>
+                <Typography.Text style={{ fontSize: "10px" }}>
+                  Duration: 11:22
+                </Typography.Text>
+              </Col>
+            </Row>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
