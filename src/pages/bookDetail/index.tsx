@@ -83,13 +83,14 @@ const BookDetail: FC = () => {
   const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
     number | null
   >(null);
-  const [label, setLabel] = useState<LabelType | undefined>(LabelType.TEXT);
+  const [label, setLabel] = useState<LabelType | undefined>(LabelType.VIDEO);
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
   const [colSpan, setColSpan] = useState(24);
 
   const handlePageChange = useCallback(
     async (page: number, pageSize: number) => {
       // Update the URL parameters
+      console.log("okejko" + page + " " + pageSize);
       const newQueryParams = new URLSearchParams(location.search);
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
@@ -226,7 +227,7 @@ const BookDetail: FC = () => {
     sentencesData: SentenceResponse,
     vocabularyListUserPhrases: VocabularyListUserPhrase[]
   ) => {
-    console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
+    //console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
     setLibraryTitle(sentencesData.title);
     setLabel(sentencesData.label);
     setVideoId(sentencesData.videoId);
@@ -328,9 +329,9 @@ const BookDetail: FC = () => {
   );
 
   const fetchAndUpdate = async (localSentenceFrom: number) => {
-    setLoading(true);
+    //setLoading(true);
     await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
-    setLoading(false);
+    //setLoading(false);
   };
 
   const onCheckboxChange = (e: any) => {
@@ -425,7 +426,7 @@ const BookDetail: FC = () => {
   };
 
   return (
-    <PageContainer loading={loading} title={false} className={styles.container}>
+    <PageContainer title={false} className={styles.container}>
       <Drawer
         style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
@@ -499,7 +500,7 @@ const BookDetail: FC = () => {
         <Row gutter={[16, 16]}>
           {showVocabularyList && (
             <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-              <FilteredVocabularyList
+              {/* <FilteredVocabularyList
                 title="Words list"
                 mode={"words"}
                 phrases={vocabularyListUserPhrases!}
@@ -513,7 +514,7 @@ const BookDetail: FC = () => {
                 phrases={vocabularyListUserPhrases!}
                 onDeleteItem={handleDeleteUserPhrase}
                 onWordClick={handleAddWordDefinition}
-              />
+              /> */}
             </Col>
           )}
           {showWordDefinition && (

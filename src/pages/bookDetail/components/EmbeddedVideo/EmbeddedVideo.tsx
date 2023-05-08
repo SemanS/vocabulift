@@ -34,6 +34,25 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const sentencesPerPageRef = useRef(sentencesPerPage);
 
   useEffect(() => {
+    const currentTime = playerRef.current?.getCurrentTime();
+    if (!currentTime) return;
+
+    const newIndex = sentencesData.findIndex(
+      (sentence) =>
+        currentTime >= sentence.start! &&
+        currentTime <= sentence.start! + sentence.duration
+    );
+
+    if (newIndex !== -1) {
+      const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current);
+
+      if (newPage !== currentPageRef.current && newPage > 0) {
+        handlePageChange(newPage, sentencesPerPageRef.current);
+      }
+    }
+  }, [sentencesData, handlePageChange]);
+
+  useEffect(() => {
     currentPageRef.current = currentPage;
   }, [currentPage]);
 
