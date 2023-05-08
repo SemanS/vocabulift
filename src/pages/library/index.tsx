@@ -92,7 +92,7 @@ const Library: React.FC = () => {
 
     if (newVideoThumbnail) {
       const newItem = createTempItem(newVideoThumbnail);
-      data.video.push(newItem);
+      data.video.unshift(newItem);
     }
 
     setLibraryItems({
@@ -143,7 +143,6 @@ const Library: React.FC = () => {
   };
 
   useEffect(() => {
-    console.log("tak a je to tu" + sliderUpdated);
     if (sliderUpdated) {
       setLoading(true);
       if (videoThumbnail) {
@@ -152,7 +151,6 @@ const Library: React.FC = () => {
         fetchData();
       }
       setLoading(false);
-      setVideoThumbnail(undefined);
       setSliderUpdated(false);
     }
 
@@ -175,6 +173,7 @@ const Library: React.FC = () => {
     async function onProgressUpdate(progressData: any) {
       console.log("progressData" + JSON.stringify(progressData, null, 2));
       if (progressData.progressPercentage > 0 && !fetched) {
+        setVideoThumbnail(undefined);
         setLoading(true);
         fetchData();
         setLoading(false);
