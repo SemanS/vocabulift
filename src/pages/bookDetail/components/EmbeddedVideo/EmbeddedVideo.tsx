@@ -34,23 +34,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const sentencesPerPageRef = useRef(sentencesPerPage);
 
   useEffect(() => {
-    const currentTime = playerRef.current?.getCurrentTime();
-    if (!currentTime) return;
-
-    const newIndex = sentencesData.findIndex(
-      (sentence) =>
-        currentTime >= sentence.start! &&
-        currentTime <= sentence.start! + sentence.duration
-    );
-
-    if (newIndex !== -1) {
-      const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current);
-
-      if (newPage !== currentPageRef.current && newPage > 0) {
-        handlePageChange(newPage, sentencesPerPageRef.current);
-      }
-    }
-  }, [sentencesData, handlePageChange]);
+    handleTimeUpdate();
+  }, [sentencesData]);
 
   useEffect(() => {
     currentPageRef.current = currentPage;
@@ -101,9 +86,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         1) /
         sentencesPerPageRef.current
     );
+    console.log("newPage" + newPage);
+    console.log("currentPageRef.current" + currentPageRef.current);
 
     if (newPage !== currentPageRef.current && newPage > 0) {
       handlePageChange(newPage, sentencesPerPageRef.current);
+    } else if (newPage === 0) {
+      handlePageChange(11, sentencesPerPageRef.current);
     }
   };
 
