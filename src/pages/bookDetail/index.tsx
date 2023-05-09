@@ -56,6 +56,8 @@ const BookDetail: FC = () => {
   const [sentenceFrom, setSentenceFrom] = useState(1);
   const [countOfSentences, setCountOfSentences] = useState(100);
   const [sentencesData, setSentencesData] = useState<SentenceData[]>([]);
+  const [sentencesDataForEmbed, setSentencesDataForEmbed] =
+    useState<SentenceResponse>();
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [sentencesPerPage, setSentencesPerPage] = useState(10);
   const [userSentences, setUserSentences] = useState<UserSentence[]>([]);
@@ -86,26 +88,35 @@ const BookDetail: FC = () => {
   const [label, setLabel] = useState<LabelType | undefined>(LabelType.VIDEO);
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
   const [colSpan, setColSpan] = useState(24);
+  const [sentenceFromEmbed, setSentenceFromEmbed] = useState<number>(0);
 
   const handlePageChange = useCallback(
-    async (page: number, pageSize: number) => {
+    async (
+      page: number,
+      pageSize: number,
+      isManual: boolean = false,
+      callback?: () => void
+    ) => {
       // Update the URL parameters
       console.log("okejko" + page + " " + pageSize);
       const newQueryParams = new URLSearchParams(location.search);
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
 
+      console.log("updateReadingProgress");
       // Navigate to the new state
       navigate({
         pathname: location.pathname,
         search: newQueryParams.toString(),
       });
 
+      console.log("updateReadingProgress");
       await updateReadingProgress(libraryId, page, pageSize);
 
       if (initState) {
         let localSentenceFrom =
           (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+        setSentenceFromEmbed(localSentenceFrom);
         setSentenceFrom(getRangeNumber(localSentenceFrom));
         await fetchAndUpdate(localSentenceFrom);
         setInitState(false);
@@ -115,12 +126,21 @@ const BookDetail: FC = () => {
         page * pageSize < sentenceFrom
       ) {
         let localSentenceFrom = (page - 1) * pageSize + 1;
+        console.log("localSentenceFrom" + localSentenceFrom);
         setSentenceFrom(getRangeNumber(localSentenceFrom));
+        setSentenceFromEmbed(getRangeNumber(localSentenceFrom));
+        console.log("sentenceFrom" + sentenceFrom);
+        console.log("fetchAndUpdate");
         await fetchAndUpdate(localSentenceFrom);
       }
-
+      console.log("sentenceFrom" + sentenceFrom);
+      console.log("sentenceFromEmbed" + sentenceFromEmbed);
+      console.log("setCurrentPage" + page);
       setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
       setCurrentPage(page);
+      if (callback) {
+        callback();
+      }
     },
     [
       initState,
@@ -136,6 +156,7 @@ const BookDetail: FC = () => {
     if (currentPageFromQuery && pageSizeFromQuery) {
       setCurrentPage(currentPageFromQuery);
       setSentencesPerPage(pageSizeFromQuery);
+      console.log("aj odtial");
       handlePageChange(currentPageFromQuery, pageSizeFromQuery);
     }
     setRecoilLibraryId(libraryId!);
@@ -203,6 +224,8 @@ const BookDetail: FC = () => {
       sourceLanguage,
       targetLanguage
     );
+    //console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
+
     const userSentencesData: UserSentence[] = await getUserSentences({
       sentenceFrom,
       countOfSentences,
@@ -224,14 +247,19 @@ const BookDetail: FC = () => {
 
   const updateSentencesState = async (
     userSentencesData: UserSentence[],
-    sentencesData: SentenceResponse,
+    sentencesData: any,
     vocabularyListUserPhrases: VocabularyListUserPhrase[]
   ) => {
     //console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
     setLibraryTitle(sentencesData.title);
     setLabel(sentencesData.label);
     setVideoId(sentencesData.videoId);
-    setSentencesData(memoizeTexts(sentencesData.sentences));
+    /* console.log(
+      "sentencesData.sentences" +
+        JSON.stringify(sentencesData.sentences, null, 2)
+    ); */
+    setSentencesData(memoizeTexts(sentencesData.sentences.sentencesData));
+    setSentencesDataForEmbed(sentencesData);
     setTotalSentences(sentencesData.totalSentences);
     setVocabularyListUserPhrases(vocabularyListUserPhrases);
     setUserSentences(userSentencesData);
@@ -323,6 +351,7 @@ const BookDetail: FC = () => {
       const newCurrentPage =
         Math.floor(((current - 1) * sentencesPerPage) / pageSize) + 1;
       setSentencesPerPage(pageSize);
+      console.log("aj odtial onShoSizeChange");
       await handlePageChange(newCurrentPage, pageSize);
     },
     [sentencesPerPage]
@@ -444,11 +473,12 @@ const BookDetail: FC = () => {
               key={videoId}
               videoId={videoId}
               title="Your Video Title"
-              sentencesData={memoizedSentencesData}
+              sentencesData={sentencesDataForEmbed!}
               onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
               currentPage={currentPage}
               sentencesPerPage={sentencesPerPage}
               handlePageChange={handlePageChange}
+              sentenceFrom={sentenceFromEmbed}
             />
           )}
         </Col>
@@ -482,7 +512,7 @@ const BookDetail: FC = () => {
               vocabularyListUserPhrases={vocabularyListUserPhrases}
               highlightedSentenceIndex={
                 highlightedSubtitleIndex !== null
-                  ? highlightedSubtitleIndex - currentTextIndex
+                  ? highlightedSubtitleIndex - (currentTextIndex % 100)
                   : null
               }
             />

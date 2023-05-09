@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
-import { SentenceData } from "@/models/sentences.interfaces";
+import React, { useEffect, useRef, useState } from "react";
+import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
 
 declare var YT: any;
 declare global {
@@ -12,11 +12,17 @@ declare global {
 interface EmbeddedVideoProps {
   videoId?: string | null;
   title: string;
-  sentencesData: SentenceData[];
+  sentencesData: SentenceResponse;
   onHighlightedSubtitleIndexChange?: (index: number | null) => void;
   currentPage: number;
   sentencesPerPage: number;
-  handlePageChange: (page: number, pageSize: number) => void;
+  handlePageChange: (
+    page: number,
+    pageSize: number,
+    isManual: boolean,
+    callback?: () => void
+  ) => void;
+  sentenceFrom: number;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -27,17 +33,34 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   currentPage,
   sentencesPerPage,
   handlePageChange,
+  sentenceFrom,
 }) => {
   const playerDivRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
   const currentPageRef = useRef(currentPage);
   const sentencesPerPageRef = useRef(sentencesPerPage);
+  const sentencesDataRef = useRef(sentencesData);
 
   useEffect(() => {
-    handleTimeUpdate();
+    //console.log("sentencesData updated", sentencesData.sentences.length);
+    //console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
+    sentencesDataRef.current = sentencesData;
+  }, []);
+
+  useEffect(() => {
+    //console.log("sentencesData updated", sentencesData.sentences.length);
+    sentencesDataRef.current = sentencesData;
   }, [sentencesData]);
 
   useEffect(() => {
+    if (currentPage && playerRef.current) {
+      setVideoTime(
+        sentencesDataRef.current.sentences.sentencesData[
+          ((currentPage % 10) - 1) * 10
+        ].start
+      );
+      console.log("tak davaj" + ((currentPage % 10) * 10 + 1));
+    }
     currentPageRef.current = currentPage;
   }, [currentPage]);
 
@@ -45,28 +68,33 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     sentencesPerPageRef.current = sentencesPerPage;
   }, [sentencesPerPage]);
 
-  const handlePlayerStateChange = () => {
-    if (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
-      handleTimeUpdate();
-      setTimeout(handlePlayerStateChange, 500);
+  const handlePlayerStateChange = async () => {
+    while (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
+      await handleTimeUpdate();
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
   };
 
-  const handleTimeUpdate = () => {
+  const handleTimeUpdate = async () => {
     if (playerRef.current?.getCurrentTime) {
       const currentTime = playerRef.current.getCurrentTime();
-      changePageOnVideoPlay();
-      const startIndex =
+      await changePageOnVideoPlay();
+      const tempStartIndex =
         (currentPageRef.current - 1) * sentencesPerPageRef.current;
+      const startIndex = tempStartIndex % 100;
+      const newHighlightedIndex =
+        sentencesDataRef.current.sentences.sentencesData
+          .slice(startIndex)
+          .findIndex(
+            (sentence) =>
+              currentTime >= sentence.start! &&
+              currentTime <= sentence.start! + sentence.duration
+          );
+      console.log("newHighlightedIndex" + newHighlightedIndex);
 
-      const newHighlightedIndex = sentencesData
-        .slice(startIndex)
-        .findIndex(
-          (sentence) =>
-            currentTime >= sentence.start! &&
-            currentTime <= sentence.start! + sentence.duration
-        );
-
+      console.log(
+        newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
+      );
       if (onHighlightedSubtitleIndexChange) {
         onHighlightedSubtitleIndexChange(
           newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
@@ -75,25 +103,54 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     }
   };
 
-  const changePageOnVideoPlay = () => {
+  const setVideoTime = (timeInSeconds) => {
+    if (playerRef.current && playerRef.current.seekTo) {
+      playerRef.current.seekTo(timeInSeconds, true);
+    }
+  };
+
+  const changePageOnVideoPlay = async () => {
     const currentTime = playerRef.current.getCurrentTime();
-    const newPage = Math.ceil(
-      (sentencesData.findIndex(
-        (sentence) =>
+    console.log("currentTime" + currentTime);
+    /* console.log(
+      "sentencesData.length" + sentencesDataRef.current.sentences.length
+    ); */
+
+    const currentIndex =
+      sentencesDataRef.current.sentences.sentencesData.findIndex((sentence) => {
+        //console.log("sentence" + JSON.stringify(sentence, null, 2));
+        return (
           currentTime >= sentence.start! &&
           currentTime <= sentence.start! + sentence.duration
-      ) +
-        1) /
-        sentencesPerPageRef.current
-    );
+        );
+      });
+
+    console.log("currentIndex" + currentIndex);
+
+    const newIndex =
+      currentIndex + sentencesDataRef.current.sentences.sentenceFrom - 1;
+
+    console.log("NEW INDEX" + newIndex);
+    const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current);
+
     console.log("newPage" + newPage);
     console.log("currentPageRef.current" + currentPageRef.current);
 
-    if (newPage !== currentPageRef.current && newPage > 0) {
-      handlePageChange(newPage, sentencesPerPageRef.current);
+    /* if (newPage !== currentPageRef.current && newPage > 0) {
+      handlePageChange(newPage, sentencesPerPageRef.current, () => {
+        console.log(
+          "currentPageRef.current after update",
+          currentPageRef.current
+        );
+      });
     } else if (newPage === 0) {
-      handlePageChange(11, sentencesPerPageRef.current);
-    }
+      handlePageChange(11, sentencesPerPageRef.current, () => {
+        console.log(
+          "currentPageRef.current after update",
+          currentPageRef.current
+        );
+      });
+    } */
   };
 
   useEffect(() => {
@@ -102,7 +159,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         playerRef.current = new YT.Player(playerDivRef.current, {
           videoId,
           events: {
-            onStateChange: handlePlayerStateChange,
+            onStateChange: () => handlePlayerStateChange(),
           },
         });
       }

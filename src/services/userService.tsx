@@ -1,4 +1,5 @@
 import { UserEntity } from "@/models/user";
+import { SentenceResponse } from "@models/sentences.interfaces";
 
 export const getSentences = async (
   libraryId: string | undefined,

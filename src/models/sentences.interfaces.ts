@@ -6,6 +6,7 @@ export enum LabelType {
 export interface SentenceResponse {
   sentences: SentenceData[];
   totalSentences: number;
+  sentenceFrom: number;
   videoId?: string | undefined;
   label?: LabelType | undefined;
   title?: string | undefined;
