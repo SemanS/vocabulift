@@ -6,8 +6,6 @@ export const getSnapshot = async (
   time?: number,
   sentenceFrom?: number
 ): Promise<Snapshot> => {
-  console.log("time" + time);
-  console.log("sentenceFrom" + sentenceFrom);
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/snapshot`,
     {

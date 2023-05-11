@@ -132,11 +132,14 @@ const BookDetail: FC = () => {
   );
 
   useEffect(() => {
-    if (currentPageFromQuery && pageSizeFromQuery) {
-      setCurrentPage(currentPageFromQuery);
+    if (pageSizeFromQuery) {
       setSentencesPerPage(pageSizeFromQuery);
-      //handlePageChange(currentPageFromQuery, pageSizeFromQuery);
     }
+    if (currentPageFromQuery) {
+      //setCurrentPage(currentPageFromQuery);
+    }
+    //handlePageChange(currentPageFromQuery, pageSizeFromQuery);
+
     setRecoilLibraryId(libraryId!);
     setRecoilCurrentPage(currentPageFromQuery);
     setRecoilPageSize(pageSizeFromQuery);

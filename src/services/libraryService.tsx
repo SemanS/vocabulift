@@ -24,7 +24,7 @@ export const getLibraryItems = async (
   userEntity: UserEntity
 ): Promise<Record<LabelType, LibraryItem[]>> => {
   const response = await fetch(
-    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library`,
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/libraries`,
     {
       method: "POST",
       headers: {
