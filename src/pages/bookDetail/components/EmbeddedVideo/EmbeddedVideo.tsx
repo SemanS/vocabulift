@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SentenceData, SentenceResponse } from "@/models/sentences.interfaces";
+import { Snapshot } from "@/models/snapshot.interfaces";
+import { getSnapshot } from "@/services/snapshotService";
+import { useParams } from "react-router-dom";
+import { getLibraryItem } from "@/services/libraryService";
 
-declare var YT: any;
+declare const YT: any;
 declare global {
   interface Window {
     YT: any;
@@ -12,170 +15,218 @@ declare global {
 interface EmbeddedVideoProps {
   videoId?: string | null;
   title: string;
-  sentencesData: SentenceResponse;
   onHighlightedSubtitleIndexChange?: (index: number | null) => void;
   currentPage: number;
   sentencesPerPage: number;
   handlePageChange: (
     page: number,
     pageSize: number,
-    isManual: boolean,
-    callback?: () => void
+    snapshot?: Snapshot
   ) => void;
-  sentenceFrom: number;
+  sourceLanguage: string;
+  targetLanguages: string[];
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   videoId,
   title,
-  sentencesData,
   onHighlightedSubtitleIndexChange,
   currentPage,
   sentencesPerPage,
   handlePageChange,
-  sentenceFrom,
+  sourceLanguage,
+  targetLanguages,
 }) => {
+  const { libraryId } = useParams();
   const playerDivRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
   const currentPageRef = useRef(currentPage);
   const sentencesPerPageRef = useRef(sentencesPerPage);
-  const sentencesDataRef = useRef(sentencesData);
+  const snapshotRef = useRef<Snapshot | null>(null);
 
-  useEffect(() => {
-    //console.log("sentencesData updated", sentencesData.sentences.length);
-    //console.log("sentencesData" + JSON.stringify(sentencesData, null, 2));
-    sentencesDataRef.current = sentencesData;
-  }, []);
-
-  useEffect(() => {
-    //console.log("sentencesData updated", sentencesData.sentences.length);
-    sentencesDataRef.current = sentencesData;
-  }, [sentencesData]);
-
-  useEffect(() => {
-    if (currentPage && playerRef.current) {
-      setVideoTime(
-        sentencesDataRef.current.sentences.sentencesData[
-          ((currentPage % 10) - 1) * 10
-        ].start
-      );
-      console.log("tak davaj" + ((currentPage % 10) * 10 + 1));
-    }
-    currentPageRef.current = currentPage;
-  }, [currentPage]);
-
-  useEffect(() => {
-    sentencesPerPageRef.current = sentencesPerPage;
-  }, [sentencesPerPage]);
+  const [isInitRender, setIsInitRender] = useState<boolean>(true);
 
   const handlePlayerStateChange = async () => {
-    while (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
-      await handleTimeUpdate();
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
-  };
-
-  const handleTimeUpdate = async () => {
-    if (playerRef.current?.getCurrentTime) {
+    //if (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
+    if (playerRef.current?.getPlayerState() && isInitRender) {
+      // Your logic to execute when the video starts playing for the first time
       const currentTime = playerRef.current.getCurrentTime();
-      await changePageOnVideoPlay();
-      const tempStartIndex =
-        (currentPageRef.current - 1) * sentencesPerPageRef.current;
-      const startIndex = tempStartIndex % 100;
-      const newHighlightedIndex =
-        sentencesDataRef.current.sentences.sentencesData
-          .slice(startIndex)
-          .findIndex(
-            (sentence) =>
-              currentTime >= sentence.start! &&
-              currentTime <= sentence.start! + sentence.duration
-          );
-      console.log("newHighlightedIndex" + newHighlightedIndex);
-
-      console.log(
-        newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
+      const snapshot = await getSnapshot(
+        sourceLanguage,
+        targetLanguages,
+        currentTime,
+        undefined
       );
-      if (onHighlightedSubtitleIndexChange) {
-        onHighlightedSubtitleIndexChange(
-          newHighlightedIndex !== -1 ? newHighlightedIndex + startIndex : null
-        );
-      }
-    }
-  };
 
-  const setVideoTime = (timeInSeconds) => {
-    if (playerRef.current && playerRef.current.seekTo) {
-      playerRef.current.seekTo(timeInSeconds, true);
-    }
-  };
+      snapshotRef.current = snapshot;
 
-  const changePageOnVideoPlay = async () => {
-    const currentTime = playerRef.current.getCurrentTime();
-    console.log("currentTime" + currentTime);
-    /* console.log(
-      "sentencesData.length" + sentencesDataRef.current.sentences.length
-    ); */
-
-    const currentIndex =
-      sentencesDataRef.current.sentences.sentencesData.findIndex((sentence) => {
-        //console.log("sentence" + JSON.stringify(sentence, null, 2));
+      const currentIndex = snapshot.sentencesData.findIndex((sentence) => {
         return (
           currentTime >= sentence.start! &&
           currentTime <= sentence.start! + sentence.duration
         );
       });
 
-    console.log("currentIndex" + currentIndex);
+      const newIndex = currentIndex + snapshot.sentenceFrom - 1;
+      const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current);
+      handlePageChange(newPage, sentencesPerPageRef.current);
+    }
 
-    const newIndex =
-      currentIndex + sentencesDataRef.current.sentences.sentenceFrom - 1;
-
-    console.log("NEW INDEX" + newIndex);
-    const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current);
-
-    console.log("newPage" + newPage);
-    console.log("currentPageRef.current" + currentPageRef.current);
-
-    /* if (newPage !== currentPageRef.current && newPage > 0) {
-      handlePageChange(newPage, sentencesPerPageRef.current, () => {
-        console.log(
-          "currentPageRef.current after update",
-          currentPageRef.current
-        );
-      });
-    } else if (newPage === 0) {
-      handlePageChange(11, sentencesPerPageRef.current, () => {
-        console.log(
-          "currentPageRef.current after update",
-          currentPageRef.current
-        );
-      });
-    } */
+    while (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
+      await handleTimeUpdate();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    }
   };
 
   useEffect(() => {
-    const onYouTubeIframeAPIReady = () => {
-      if (playerDivRef.current && !playerRef.current) {
-        playerRef.current = new YT.Player(playerDivRef.current, {
-          videoId,
-          events: {
-            onStateChange: () => handlePlayerStateChange(),
-          },
-        });
+    const fetchLibraryItemAndSetupPlayer = async () => {
+      const library = await getLibraryItem(libraryId!);
+
+      const snapshot = await getSnapshot(
+        sourceLanguage,
+        targetLanguages,
+        undefined,
+        1
+      );
+
+      snapshotRef.current = snapshot;
+      handlePageChange(1, sentencesPerPageRef.current);
+
+      const onYouTubeIframeAPIReady = () => {
+        if (playerDivRef.current && !playerRef.current) {
+          playerRef.current = new YT.Player(playerDivRef.current, {
+            videoId: library.videoId,
+            events: {
+              onStateChange: () => handlePlayerStateChange(),
+            },
+          });
+        }
+      };
+
+      if (window.YT) {
+        onYouTubeIframeAPIReady();
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://www.youtube.com/iframe_api";
+        script.async = true;
+        script.onload = () =>
+          (window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady);
+        document.body.appendChild(script);
       }
     };
 
-    if (window.YT) {
-      onYouTubeIframeAPIReady();
-    } else {
-      const script = document.createElement("script");
-      script.src = "https://www.youtube.com/iframe_api";
-      script.async = true;
-      script.onload = () =>
-        (window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady);
-      document.body.appendChild(script);
+    fetchLibraryItemAndSetupPlayer();
+  }, []);
+
+  useEffect(() => {
+    sentencesPerPageRef.current = sentencesPerPage;
+  }, [sentencesPerPage]);
+
+  function findSnapshotWindow(
+    snapshot: Snapshot,
+    sentencesPerPage: number,
+    currentTime: string,
+    pageIndex: number
+  ): boolean {
+    if (sentencesPerPage < 1 || sentencesPerPage > 100) {
+      throw new Error("sentencesPerPage must be between 1 and 100");
     }
-  }, [videoId]);
+
+    const startIndex = pageIndex * sentencesPerPage;
+    const endIndex = Math.min(
+      (pageIndex + 1) * sentencesPerPage - 1,
+      snapshot.sentencesData.length - 1
+    );
+
+    if (startIndex >= snapshot.sentencesData.length) {
+      return false;
+    }
+    const windowStartTime = snapshot.sentencesData[startIndex].start;
+    const windowEndTime = snapshot.sentencesData[endIndex].start;
+
+    if (!windowStartTime || !windowEndTime) {
+      throw new Error("Start or end time is not available for some sentences");
+    }
+
+    return currentTime >= windowStartTime && currentTime <= windowEndTime;
+  }
+
+  function findPageIndexByTime(
+    snapshot: Snapshot,
+    sentencesPerPage: number,
+    currentTime: string
+  ): number {
+    if (sentencesPerPage < 1 || sentencesPerPage > 100) {
+      throw new Error("sentencesPerPage must be between 1 and 100");
+    }
+
+    let pageIndex = -1;
+    let currentIndex = 0;
+
+    for (const sentenceData of snapshot.sentencesData) {
+      if (sentenceData.start && sentenceData.start <= currentTime) {
+        currentIndex++;
+      } else {
+        break;
+      }
+    }
+
+    if (currentIndex > 0) {
+      pageIndex = Math.floor((currentIndex - 1) / sentencesPerPage);
+    }
+
+    return pageIndex;
+  }
+
+  const handleTimeUpdate = async () => {
+    if (playerRef.current?.getCurrentTime) {
+      const currentTime = playerRef.current.getCurrentTime();
+      const tempStartIndex =
+        (currentPageRef.current - 1) * sentencesPerPageRef.current;
+      const startIndex = tempStartIndex % 100;
+
+      const newHighlightedIndex = snapshotRef.current?.sentencesData.findIndex(
+        (sentence) =>
+          currentTime >= sentence.start! &&
+          currentTime <= sentence.start! + sentence.duration
+      );
+
+      const isOutsideSnapshotWindow = findSnapshotWindow(
+        snapshotRef.current!,
+        sentencesPerPageRef.current,
+        currentTime,
+        startIndex
+      );
+
+      if (isOutsideSnapshotWindow) {
+        const newPage =
+          findPageIndexByTime(
+            snapshotRef.current!,
+            sentencesPerPageRef.current,
+            currentTime
+          ) +
+          snapshotRef.current?.sentenceFrom! -
+          1;
+        handlePageChange(
+          newPage,
+          sentencesPerPageRef.current,
+          snapshotRef.current!
+        );
+      }
+
+      if (onHighlightedSubtitleIndexChange) {
+        onHighlightedSubtitleIndexChange(
+          newHighlightedIndex !== -1 ? newHighlightedIndex! : null
+        );
+      }
+    }
+  };
+
+  const setVideoTime = (timeInSeconds: number) => {
+    if (playerRef.current && playerRef.current.seekTo) {
+      playerRef.current.seekTo(timeInSeconds, true);
+    }
+  };
 
   return (
     <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
