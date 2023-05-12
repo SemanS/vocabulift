@@ -86,9 +86,19 @@ const BookDetail: FC = () => {
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
   const [colSpan, setColSpan] = useState(24);
   const [snapshot, setSnapshot] = useState<Snapshot | null | undefined>();
+  const [shouldSetVideo, setShouldSetVideo] = useState(false);
+  const [
+    changeTriggeredByHighlightChange,
+    setChangeTriggeredByHighlightChange,
+  ] = useState(false);
+  const [playTime, setPlayTime] = useState(0);
 
   const handlePageChange = useCallback(
-    async (page: number, pageSize: number) => {
+    async (
+      page: number,
+      pageSize: number,
+      changeTriggeredByHighlightChange: boolean = false
+    ) => {
       //console.log("okejko" + page + " " + pageSize);
 
       const newQueryParams = new URLSearchParams(location.search);
@@ -120,6 +130,20 @@ const BookDetail: FC = () => {
       }
       setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
       setCurrentPage(page);
+
+      if (snapshot) {
+        const firstSentenceStartTime =
+          snapshot!.sentencesData[(page - 1) * pageSize].start;
+
+        setPlayTime(firstSentenceStartTime!);
+        console.log(
+          "changeTriggeredByHighlightChange" +
+            JSON.stringify(changeTriggeredByHighlightChange, null, 2)
+        );
+        if (changeTriggeredByHighlightChange) {
+          setShouldSetVideo(false);
+        }
+      }
     },
     [
       initState,
@@ -128,6 +152,7 @@ const BookDetail: FC = () => {
       sentenceFrom,
       countOfSentences,
       sentencesPerPage,
+      changeTriggeredByHighlightChange,
     ]
   );
 
@@ -443,6 +468,9 @@ const BookDetail: FC = () => {
               sentencesPerPage={sentencesPerPage}
               handlePageChange={handlePageChange}
               snapshot={snapshot}
+              shouldSetVideo={shouldSetVideo}
+              setShouldSetVideo={setShouldSetVideo}
+              playTime={playTime}
             />
           )}
         </Col>

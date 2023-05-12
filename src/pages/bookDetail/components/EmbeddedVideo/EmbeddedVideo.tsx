@@ -17,9 +17,12 @@ interface EmbeddedVideoProps {
   handlePageChange: (
     page: number,
     pageSize: number,
-    currentTime?: number | undefined
+    changeTriggeredByHighlightChange?: boolean
   ) => void;
   snapshot: Snapshot | null | undefined;
+  shouldSetVideo: boolean;
+  setShouldSetVideo: (shouldSetVideo: boolean) => void;
+  playTime: number;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -27,6 +30,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   sentencesPerPage,
   handlePageChange,
   snapshot,
+  shouldSetVideo,
+  setShouldSetVideo,
+  playTime,
 }) => {
   const { libraryId } = useParams();
   const playerDivRef = useRef<HTMLDivElement>(null);
@@ -41,6 +47,15 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const endIndexRef = useRef<number | null>(null);
 
   let timeoutId: NodeJS.Timeout | null = null;
+
+  useEffect(() => {
+    console.log(shouldSetVideo);
+    console.log("divne");
+    if (playerRef.current! && shouldSetVideo === false) {
+      console.log("sak som tu");
+      playerRef.current.seekTo(playTime);
+    }
+  }, [shouldSetVideo, playTime]);
 
   useEffect(() => {
     return () => {
@@ -179,25 +194,19 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         const newPage = Math.ceil(
           (newHighlightedIndex! + 1) / sentencesPerPageRef.current
         );
-        handlePageChange(newPage, sentencesPerPageRef.current);
-
+        //handlePageChange(newPage, sentencesPerPageRef.current);
         // Update startIndex and endIndex
         startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
         endIndexRef.current = Math.min(
           newPage * sentencesPerPageRef.current - 1,
           snapshotRef.current?.sentencesData.length! - 1
         );
+        handlePageChange(newPage, sentencesPerPageRef.current, true);
       }
 
       if (onHighlightedSubtitleIndexChange) {
         onHighlightedSubtitleIndexChange(newHighlightedIndex!);
       }
-    }
-  };
-
-  const setVideoTime = (timeInSeconds: number) => {
-    if (playerRef.current && playerRef.current.seekTo) {
-      playerRef.current.playVideoAt(timeInSeconds);
     }
   };
 
