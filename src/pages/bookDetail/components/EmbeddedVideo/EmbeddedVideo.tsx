@@ -37,6 +37,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const location = useLocation();
   const [isInitRender, setIsInitRender] = useState(true);
 
+  const startIndexRef = useRef<number | null>(null);
+  const endIndexRef = useRef<number | null>(null);
+
   let timeoutId: NodeJS.Timeout | null = null;
 
   useEffect(() => {
@@ -188,7 +191,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       return;
     }
 
-    if (pageNumber !== pageNumberToUse) {
+    /*  if (pageNumber !== pageNumberToUse) {
       const newVideoTime = newHighlightedSentence?.start!;
       setVideoTime(newVideoTime + 1);
       console.log("changikujem1");
@@ -202,18 +205,32 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       );
       console.log("changikujem2");
       handlePageChange(newPage, sentencesPerPageRef.current);
-    }
+    } */
 
     if (onHighlightedSubtitleIndexChange) {
       const newHighlightedIndex = snapshotRef.current?.sentencesData.indexOf(
         newHighlightedSentence!
       );
-      console.log(
-        "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
-      );
-      onHighlightedSubtitleIndexChange(
-        newHighlightedIndex !== -1 ? newHighlightedIndex! : null
-      );
+      if (
+        startIndexRef.current === null ||
+        endIndexRef.current === null ||
+        newHighlightedIndex! < startIndexRef.current ||
+        newHighlightedIndex! > endIndexRef.current
+      ) {
+        const newPage = Math.ceil(
+          (newHighlightedIndex! + 1) / sentencesPerPageRef.current
+        );
+        handlePageChange(newPage, sentencesPerPageRef.current);
+
+        // Update startIndex and endIndex
+        startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
+        endIndexRef.current = Math.min(
+          newPage * sentencesPerPageRef.current - 1,
+          snapshotRef.current?.sentencesData.length! - 1
+        );
+      } else {
+        onHighlightedSubtitleIndexChange(newHighlightedIndex!);
+      }
     }
   };
 
@@ -270,8 +287,6 @@ export function findSnapshotWindow(
     snapshot.sentencesData.length - 1
   );
 
-  console.log("startIndex" + JSON.stringify(startIndex, null, 2));
-  console.log("endIndex" + JSON.stringify(endIndex, null, 2));
   if (startIndex >= snapshot.sentencesData.length) {
     return false;
   }
