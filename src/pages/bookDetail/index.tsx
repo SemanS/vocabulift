@@ -91,7 +91,7 @@ const BookDetail: FC = () => {
     changeTriggeredByHighlightChange,
     setChangeTriggeredByHighlightChange,
   ] = useState(false);
-  const [playTime, setPlayTime] = useState(0);
+  const [firstIndexAfterReset, setFirstIndexAfterReset] = useState<number>();
 
   const handlePageChange = useCallback(
     async (
@@ -99,8 +99,6 @@ const BookDetail: FC = () => {
       pageSize: number,
       changeTriggeredByHighlightChange: boolean = false
     ) => {
-      //console.log("okejko" + page + " " + pageSize);
-
       const newQueryParams = new URLSearchParams(location.search);
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
@@ -132,14 +130,11 @@ const BookDetail: FC = () => {
       setCurrentPage(page);
 
       if (snapshot) {
-        const firstSentenceStartTime =
-          snapshot!.sentencesData[(page - 1) * pageSize].start;
-
-        setPlayTime(firstSentenceStartTime!);
         console.log(
-          "firstSentenceStartTime" +
-            JSON.stringify(firstSentenceStartTime, null, 2)
+          "page" + JSON.stringify((page - 1) * pageSize + 1, null, 2)
         );
+
+        setFirstIndexAfterReset((page - 1) * pageSize);
         if (!changeTriggeredByHighlightChange) {
           setShouldSetVideo(true);
         }
@@ -470,7 +465,7 @@ const BookDetail: FC = () => {
               snapshot={snapshot}
               shouldSetVideo={shouldSetVideo}
               setShouldSetVideo={setShouldSetVideo}
-              playTime={playTime}
+              firstIndexAfterReset={firstIndexAfterReset}
             />
           )}
         </Col>

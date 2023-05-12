@@ -22,7 +22,7 @@ interface EmbeddedVideoProps {
   snapshot: Snapshot | null | undefined;
   shouldSetVideo: boolean;
   setShouldSetVideo: (shouldSetVideo: boolean) => void;
-  playTime: number;
+  firstIndexAfterReset: number;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -32,7 +32,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   snapshot,
   shouldSetVideo,
   setShouldSetVideo,
-  playTime,
+  firstIndexAfterReset,
 }) => {
   const { libraryId } = useParams();
   const playerDivRef = useRef<HTMLDivElement>(null);
@@ -51,9 +51,21 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   useEffect(() => {
     if (playerRef.current! && shouldSetVideo === true) {
       console.log("sudik");
-      playerRef.current.seekTo(playTime);
+      console.log(
+        "currentSentenceIndex" + JSON.stringify(firstIndexAfterReset, null, 2)
+      );
+      playerRef.current.seekTo(
+        snapshot?.sentencesData[firstIndexAfterReset].start
+      );
+      /*       const currentSentenceIndex = getCurrentIndex(
+        snapshotRef.current!,
+        playTime
+      ); */
+
+      //const firstSentenceIndex = (newPage - 1) * sentencesPerPageRef.current;
+      onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
     }
-  }, [shouldSetVideo, playTime]);
+  }, [shouldSetVideo, firstIndexAfterReset]);
 
   useEffect(() => {
     return () => {
@@ -67,53 +79,63 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     snapshotRef.current = snapshot;
   }, [snapshot]);
 
-  const handlePlayerStateChange = useCallback(() => {
-    const scheduleHandleTimeUpdate = async () => {
-      if (!playerRef.current?.getCurrentTime()) {
-        return;
-      }
-      const currentTime = playerRef.current.getCurrentTime();
-      const currentSentenceIndex = getCurrentIndex(
-        snapshotRef.current!,
-        currentTime
-      );
-      const nextSentence =
-        snapshotRef.current?.sentencesData[currentSentenceIndex + 1];
-      if (!nextSentence) {
-        return;
-      }
-      const timeUntilNextSentence = (nextSentence.start! - currentTime) * 1000;
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      timeoutId = setTimeout(async () => {
-        await handleTimeUpdate();
-        // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
-        await scheduleHandleTimeUpdate();
-      }, timeUntilNextSentence);
-    };
+  const handlePlayerStateChange = useCallback(
+    (event) => {
+      const scheduleHandleTimeUpdate = async () => {
+        if (!playerRef.current?.getCurrentTime()) {
+          return;
+        }
+        const currentTime = playerRef.current.getCurrentTime();
+        const currentSentenceIndex = getCurrentIndex(
+          snapshotRef.current!,
+          currentTime
+        );
+        const nextSentence =
+          snapshotRef.current?.sentencesData[currentSentenceIndex + 1];
+        if (!nextSentence) {
+          return;
+        }
+        const timeUntilNextSentence =
+          (nextSentence.start! - currentTime) * 1000;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        timeoutId = setTimeout(async () => {
+          await handleTimeUpdate();
+          // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
+          await scheduleHandleTimeUpdate();
+        }, timeUntilNextSentence);
+      };
 
-    if (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (event.data === YT.PlayerState.PLAYING) {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        scheduleHandleTimeUpdate();
+      } else if (
+        event.data === YT.PlayerState.PAUSED ||
+        event.data === YT.PlayerState.ENDED
+      ) {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
       }
-      scheduleHandleTimeUpdate();
-    } else if (
-      playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED ||
-      playerRef.current?.getPlayerState() === YT.PlayerState.ENDED
-    ) {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-    }
 
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [handlePageChange]);
+      // If the user seeks to a new time, update the subtitles immediately
+      /* if (event.data === YT.PlayerState.BUFFERING) {
+        handleTimeUpdate();
+        scheduleHandleTimeUpdate();
+      } */
+
+      return () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      };
+    },
+    [handlePageChange]
+  );
 
   useEffect(() => {
     const fetchLibraryItemAndSetupPlayer = async () => {
