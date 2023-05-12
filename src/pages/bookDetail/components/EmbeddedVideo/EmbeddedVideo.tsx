@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { getSnapshot } from "@/services/snapshotService";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { getLibraryItem } from "@/services/libraryService";
 
 declare const YT: any;
@@ -14,62 +14,119 @@ declare global {
 
 interface EmbeddedVideoProps {
   onHighlightedSubtitleIndexChange?: (index: number | null) => void;
-  currentPage: number;
   sentencesPerPage: number;
-  handlePageChange: (page: number, pageSize: number) => void;
+  handlePageChange: (
+    page: number,
+    pageSize: number,
+    currentTime?: number | undefined
+  ) => void;
   sourceLanguage: string;
   targetLanguages: string[];
+  snapshot: Snapshot | null | undefined;
+  timeToChange: number | undefined;
+  pageToChange: number | undefined;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   onHighlightedSubtitleIndexChange,
-  currentPage,
   sentencesPerPage,
   handlePageChange,
   sourceLanguage,
   targetLanguages,
+  snapshot,
+  timeToChange,
+  pageToChange,
 }) => {
   const { libraryId } = useParams();
-  const queryParams = new URLSearchParams(location.search);
-  const currentPageFromQuery = parseInt(
-    queryParams.get("currentPage") as string
-  );
   const playerDivRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
-  const currentPageRef = useRef(currentPage);
+  const currentPageToUseRef = useRef<number | null>(null);
   const sentencesPerPageRef = useRef(sentencesPerPage);
-  const snapshotRef = useRef<Snapshot | null>(null);
+  const snapshotRef = useRef<Snapshot | null | undefined>(null);
 
   const [isInitRender, setIsInitRender] = useState<boolean>(true);
+  const [isTimeChanged, setIsTimeChanged] = useState<boolean>(false);
+  const location = useLocation();
 
-  function getCurrentIndex(snapshot: Snapshot, currentTime: number): number {
-    const currentIndex = snapshot.sentencesData.findIndex((sentence) => {
-      return (
-        currentTime >= sentence.start! &&
-        currentTime <= sentence.start! + sentence.duration!
+  /* useEffect(() => {
+    if (isTimeChanged === false) {
+      console.log("changed");
+      setVideoTimeFunction(timeToChange!);
+      handlePageChange(pageToChange!, sentencesPerPageRef.current);
+      setIsTimeChanged(true);
+    }
+  }, [timeToChange]); */
+
+  useEffect(() => {
+    console.log("SNAPSHOTKO" + snapshot?.countOfSentences);
+    snapshotRef.current = snapshot;
+  }, [snapshot]);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    //const page = parseInt(queryParams.get("currentPage") as string);
+    const currentPage = parseInt(queryParams.get("currentPage") as string);
+
+    console.log(
+      "currentPageRef.current" +
+        JSON.stringify(currentPageToUseRef.current, null, 2)
+    );
+    console.log("currentPage" + JSON.stringify(currentPage, null, 2));
+
+    if (currentPage !== currentPageToUseRef.current) {
+      console.log("CURRENTPAGE" + currentPage);
+      handlePageChange(currentPage, 10);
+      setVideoTimeFunction(
+        snapshot?.sentencesData[
+          currentPage * sentencesPerPage - sentencesPerPage + 1
+        ].start!
       );
-    });
-    return currentIndex;
-  }
+
+      //const currentTime = playerRef.current.getCurrentTime();
+
+      /* const startIndex = getCurrentIndex(snapshotRef.current!, currentTime);
+      const pageNumber = Math.ceil((startIndex + 1) / sentencesPerPage);
+      const isOutsideSnapshotWindow = findSnapshotWindow(
+        snapshotRef.current!,
+        sentencesPerPageRef.current,
+        currentTime,
+        pageNumber - 1
+      );
+      if (isOutsideSnapshotWindow) {
+        console.log("YESAAK");
+      } */
+
+      /* const newPage =
+        (snapshotRef.current?.sentenceFrom! - 1) / sentencesPerPageRef.current +
+        pageNumber; */
+    }
+
+    //console.log((page * sentencesPerPageRef.current) % 10);
+  }, [location]);
 
   const handlePlayerStateChange = async () => {
     if (playerRef.current?.getPlayerState() && isInitRender) {
       // Your logic to execute when the video starts playing for the first time
       const currentTime = playerRef.current.getCurrentTime();
-      const snapshot = await getSnapshot(
+      console.log("rozuzlenie" + currentTime);
+      if (currentTime !== 0) {
+        handlePageChange(0, 10, currentTime);
+
+        /* const snapshot = await getSnapshot(
         sourceLanguage,
         targetLanguages,
         currentTime,
         undefined
       );
+      snapshotRef.current = snapshot; */
 
-      snapshotRef.current = snapshot;
+        setIsInitRender(false);
+        /* const currentIndex = getCurrentIndex(snapshotRef.current!, currentTime);
 
-      const currentIndex = getCurrentIndex(snapshot, currentTime);
-
-      const newIndex = currentIndex + snapshot.sentenceFrom - 1;
-      const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current);
-      handlePageChange(newPage, sentencesPerPageRef.current);
+        const newIndex = currentIndex + snapshotRef.current!.sentenceFrom - 1;
+        const newPage = Math.ceil((newIndex + 1) / sentencesPerPageRef.current); */
+        //handlePageChange(newPage, sentencesPerPageRef.current);
+      }
     }
 
     while (
@@ -85,14 +142,14 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     const fetchLibraryItemAndSetupPlayer = async () => {
       const library = await getLibraryItem(libraryId!);
 
-      const snapshot = await getSnapshot(
+      /* const snapshot = await getSnapshot(
         sourceLanguage,
         targetLanguages,
         undefined,
         1
-      );
+      ); */
 
-      snapshotRef.current = snapshot;
+      //snapshotRef.current = snapshot;
       handlePageChange(1, sentencesPerPageRef.current);
 
       const onYouTubeIframeAPIReady = () => {
@@ -151,7 +208,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       throw new Error("Start or end time is not available for some sentences");
     }
 
-    //return currentTime >= windowStartTime && currentTime <= windowEndTime;
     return currentTime >= windowEndTime || currentTime <= windowStartTime;
   }
 
@@ -189,6 +245,14 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     }
 
     const currentTime = playerRef.current.getCurrentTime();
+
+    if (
+      currentTime < snapshotRef.current!.start ||
+      currentTime > snapshotRef.current!.end
+    ) {
+      //handlePageChange()
+    }
+
     const startIndex = getCurrentIndex(snapshotRef.current!, currentTime);
     const pageNumber = Math.ceil((startIndex + 1) / sentencesPerPage);
 
@@ -204,10 +268,11 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
     const pageNumberToUse =
       playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED
-        ? currentPageRef.current
+        ? currentPageToUseRef.current
         : pageNumber;
 
-    currentPageRef.current = pageNumberToUse;
+    console.log("pageNumberToUse" + pageNumberToUse);
+    currentPageToUseRef.current = pageNumberToUse;
 
     const isOutsideSnapshotWindow = findSnapshotWindow(
       snapshotRef.current!,
@@ -220,10 +285,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       (snapshotRef.current?.sentenceFrom! - 1) / sentencesPerPageRef.current +
       pageNumber;
 
-    console.log("currentPageFromQuery" + currentPageFromQuery);
-    /* if (newPage !== currentPageFromQuery) {
-      handlePageChange(currentPageFromQuery, sentencesPerPageRef.current);
-    } */
     if (pageNumber !== pageNumberToUse) {
       const newVideoTime = newHighlightedSentence?.start!;
       setVideoTimeFunction(newVideoTime + 1);
@@ -235,11 +296,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         currentTime
       );
       console.log("newPage" + newPage);
-      handlePageChange(
-        newPage,
-        sentencesPerPageRef.current,
-        snapshotRef.current!
-      );
+      handlePageChange(newPage, sentencesPerPageRef.current);
     }
 
     if (onHighlightedSubtitleIndexChange) {
@@ -275,3 +332,16 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 };
 
 export default EmbeddedVideo;
+
+export function getCurrentIndex(
+  snapshot: Snapshot,
+  currentTime: number
+): number {
+  const currentIndex = snapshot.sentencesData.findIndex((sentence) => {
+    return (
+      currentTime >= sentence.start! &&
+      currentTime <= sentence.start! + sentence.duration!
+    );
+  });
+  return currentIndex;
+}

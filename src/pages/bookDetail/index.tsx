@@ -31,7 +31,9 @@ import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { libraryIdState } from "@/stores/library";
 import { currentPageState } from "@/stores/library";
 import { pageSizeState } from "@/stores/library";
-import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
+import EmbeddedVideo, {
+  getCurrentIndex,
+} from "./components/EmbeddedVideo/EmbeddedVideo";
 import styles from "./index.module.less";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { getSnapshot } from "@/services/snapshotService";
@@ -83,43 +85,79 @@ const BookDetail: FC = () => {
   const [label, setLabel] = useState<LabelType | undefined>(LabelType.VIDEO);
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
   const [colSpan, setColSpan] = useState(24);
+  const [snapshot, setSnapshot] = useState<Snapshot | null | undefined>();
+  const [timeToChange, setTimeToChange] = useState<number | undefined>();
+  const [pageToChange, setPageToChange] = useState<number | undefined>();
 
   const handlePageChange = useCallback(
-    async (page: number, pageSize: number) => {
+    async (
+      page: number,
+      pageSize: number,
+      currentTime?: number | undefined
+    ) => {
       // Update the URL parameters
       console.log("okejko" + page + " " + pageSize);
-      const newQueryParams = new URLSearchParams(location.search);
-      newQueryParams.set("currentPage", page.toString());
-      newQueryParams.set("pageSize", pageSize.toString());
+      if (currentTime) {
+        const snapshot = await getSnapshot(
+          sourceLanguage,
+          [targetLanguage],
+          currentTime,
+          undefined
+        );
+        const currentIndex = getCurrentIndex(snapshot, currentTime);
+        const newIndex = currentIndex + snapshot.sentenceFrom - 1;
+        const newPage = Math.ceil((newIndex + 1) / sentencesPerPage);
+        const newQueryParams = new URLSearchParams(location.search);
+        newQueryParams.set("currentPage", newPage.toString());
+        handlePageChange(newPage, sentencesPerPage);
+      } else {
+        const newQueryParams = new URLSearchParams(location.search);
+        newQueryParams.set("currentPage", page.toString());
+        newQueryParams.set("pageSize", pageSize.toString());
 
-      // Navigate to the new state
-      navigate({
-        pathname: location.pathname,
-        search: newQueryParams.toString(),
-      });
+        // Navigate to the new state
+        navigate({
+          pathname: location.pathname,
+          search: newQueryParams.toString(),
+        });
 
-      await updateReadingProgress(libraryId, page, pageSize);
+        await updateReadingProgress(libraryId, page, pageSize);
 
-      if (initState) {
-        let localSentenceFrom =
-          (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-        setSentenceFrom(getRangeNumber(localSentenceFrom));
-        await fetchAndUpdate(localSentenceFrom);
-        setInitState(false);
-      } else if (
-        sentenceFrom + countOfSentences < page * pageSize ||
-        page * pageSize > sentenceFrom + countOfSentences ||
-        page * pageSize < sentenceFrom
-      ) {
-        let localSentenceFrom = (page - 1) * pageSize + 1;
+        if (initState) {
+          let localSentenceFrom =
+            (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+          setSentenceFrom(getRangeNumber(localSentenceFrom));
+          await fetchAndUpdate(localSentenceFrom);
+          setInitState(false);
+        } else if (
+          sentenceFrom + countOfSentences < page * pageSize ||
+          page * pageSize > sentenceFrom + countOfSentences ||
+          page * pageSize < sentenceFrom
+        ) {
+          let localSentenceFrom = (page - 1) * pageSize + 1;
 
-        setSentenceFrom(getRangeNumber(localSentenceFrom));
+          setSentenceFrom(getRangeNumber(localSentenceFrom));
 
-        await fetchAndUpdate(localSentenceFrom);
+          await fetchAndUpdate(localSentenceFrom);
+        }
+
+        setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
+        setCurrentPage(page);
+        console.log(
+          "page * sentencesPerPage" +
+            JSON.stringify(
+              page * sentencesPerPage - sentencesPerPage + 1,
+              null,
+              2
+            )
+        );
+        /* setTimeToChange(
+          snapshot?.sentencesData[
+            page * sentencesPerPage - sentencesPerPage + 1
+          ].start!
+        );
+        setPageToChange(page); */
       }
-
-      setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
-      setCurrentPage(page);
     },
     [
       initState,
@@ -139,7 +177,6 @@ const BookDetail: FC = () => {
       //setCurrentPage(currentPageFromQuery);
     }
     //handlePageChange(currentPageFromQuery, pageSizeFromQuery);
-
     setRecoilLibraryId(libraryId!);
     setRecoilCurrentPage(currentPageFromQuery);
     setRecoilPageSize(pageSizeFromQuery);
@@ -197,14 +234,12 @@ const BookDetail: FC = () => {
   );
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
-    console.log("okeee" + localSentenceFrom);
-    const snapshot: Snapshot = await getSnapshot(
+    const snapshot = await getSnapshot(
       sourceLanguage,
       [targetLanguage],
       undefined,
       localSentenceFrom
     );
-    console.log("from book detail" + snapshot.countOfSentences);
     const userSentencesData: UserSentence[] = await getUserSentences({
       sentenceFrom,
       countOfSentences,
@@ -218,7 +253,7 @@ const BookDetail: FC = () => {
       mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
     await updateSentencesState(
       userSentencesData,
-      snapshot,
+      snapshot!,
       vocabularyListUserPhrases
     );
     setLoading(false);
@@ -229,6 +264,7 @@ const BookDetail: FC = () => {
     snapshot: Snapshot,
     vocabularyListUserPhrases: VocabularyListUserPhrase[]
   ) => {
+    setSnapshot(snapshot);
     setLibraryTitle(snapshot.title);
     setLabel(snapshot.label);
     setVideoId(snapshot.videoId);
@@ -331,8 +367,6 @@ const BookDetail: FC = () => {
 
   const fetchAndUpdate = async (localSentenceFrom: number) => {
     setLoading(true);
-    console.log("getRangeNumber" + getRangeNumber(localSentenceFrom));
-    console.log("localSentenceFrom" + localSentenceFrom);
     await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
     setLoading(false);
   };
@@ -444,15 +478,14 @@ const BookDetail: FC = () => {
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (
             <EmbeddedVideo
-              key={videoId}
-              videoId={videoId}
-              title="Your Video Title"
               onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-              currentPage={currentPage}
               sentencesPerPage={sentencesPerPage}
               handlePageChange={handlePageChange}
               sourceLanguage={sourceLanguage}
               targetLanguages={[targetLanguage]}
+              snapshot={snapshot}
+              timeToChange={timeToChange}
+              pageToChange={pageToChange}
             />
           )}
         </Col>
