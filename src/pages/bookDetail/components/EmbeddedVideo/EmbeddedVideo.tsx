@@ -54,20 +54,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     snapshotRef.current = snapshot;
   }, [snapshot]);
 
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const currentPage = Number(queryParams.get("currentPage")) || 0;
-
-    if (currentPage !== currentPageToUseRef.current) {
-      //handlePageChange(currentPage, 10);
-      setVideoTime(
-        snapshot?.sentencesData[
-          currentPage * sentencesPerPage - sentencesPerPage + 1
-        ]?.start || 0
-      );
-    }
-  }, [location]);
-
   const handlePlayerStateChange = useCallback(() => {
     const scheduleHandleTimeUpdate = async () => {
       if (!playerRef.current?.getCurrentTime()) {
@@ -161,7 +147,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     }
     const currentTime = playerRef.current.getCurrentTime();
     const startIndex = getCurrentIndex(snapshotRef.current!, currentTime);
-    const pageNumber = Math.ceil((startIndex + 1) / sentencesPerPage);
+    const pageNumber = Math.floor(startIndex / sentencesPerPage) + 1;
 
     const pageNumberToUse =
       playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED
@@ -169,17 +155,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         : pageNumber;
 
     currentPageToUseRef.current = pageNumberToUse;
-
-    const isOutsideSnapshotWindow = findSnapshotWindow(
-      snapshotRef.current!,
-      sentencesPerPageRef.current,
-      currentTime,
-      pageNumber - 1
-    );
-
-    const newPage =
-      (snapshotRef.current?.sentenceFrom! - 1) / sentencesPerPageRef.current +
-      pageNumber;
 
     const newHighlightedSentence = snapshotRef.current?.sentencesData.find(
       (sentence) =>
@@ -190,22 +165,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (!newHighlightedSentence) {
       return;
     }
-
-    /*  if (pageNumber !== pageNumberToUse) {
-      const newVideoTime = newHighlightedSentence?.start!;
-      setVideoTime(newVideoTime + 1);
-      console.log("changikujem1");
-      console.log("newPage" + JSON.stringify(newPage, null, 2));
-      handlePageChange(newPage, sentencesPerPageRef.current);
-    } else if (isOutsideSnapshotWindow) {
-      const newPage = findPageIndexByTime(
-        snapshotRef.current!,
-        sentencesPerPageRef.current,
-        currentTime
-      );
-      console.log("changikujem2");
-      handlePageChange(newPage, sentencesPerPageRef.current);
-    } */
 
     if (onHighlightedSubtitleIndexChange) {
       const newHighlightedIndex = snapshotRef.current?.sentencesData.indexOf(
@@ -228,7 +187,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           newPage * sentencesPerPageRef.current - 1,
           snapshotRef.current?.sentencesData.length! - 1
         );
-      } else {
+      }
+
+      if (onHighlightedSubtitleIndexChange) {
         onHighlightedSubtitleIndexChange(newHighlightedIndex!);
       }
     }

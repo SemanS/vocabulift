@@ -87,66 +87,39 @@ const BookDetail: FC = () => {
   const [colSpan, setColSpan] = useState(24);
   const [snapshot, setSnapshot] = useState<Snapshot | null | undefined>();
 
-  const [isPageChanging, setIsPageChanging] = useState(false);
-
   const handlePageChange = useCallback(
-    async (
-      page: number,
-      pageSize: number,
-      currentTime?: number | undefined
-    ) => {
+    async (page: number, pageSize: number) => {
       //console.log("okejko" + page + " " + pageSize);
-      console.log("isPageChanging" + JSON.stringify(isPageChanging, null, 2));
-      if (isPageChanging) {
-        return;
+
+      const newQueryParams = new URLSearchParams(location.search);
+      newQueryParams.set("currentPage", page.toString());
+      newQueryParams.set("pageSize", pageSize.toString());
+
+      // Navigate to the new state
+      navigate({
+        pathname: location.pathname,
+        search: newQueryParams.toString(),
+      });
+
+      await updateReadingProgress(libraryId, page, pageSize);
+
+      if (initState) {
+        let localSentenceFrom =
+          (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+        setSentenceFrom(getRangeNumber(localSentenceFrom));
+        await fetchAndUpdate(localSentenceFrom);
+        setInitState(false);
+      } else if (
+        sentenceFrom + countOfSentences < page * pageSize ||
+        page * pageSize > sentenceFrom + countOfSentences ||
+        page * pageSize < sentenceFrom
+      ) {
+        let localSentenceFrom = (page - 1) * pageSize + 1;
+        setSentenceFrom(getRangeNumber(localSentenceFrom));
+        await fetchAndUpdate(localSentenceFrom);
       }
-      if (currentTime) {
-        const snapshot = await getSnapshot(
-          sourceLanguage,
-          [targetLanguage],
-          currentTime,
-          undefined
-        );
-        const currentIndex = getCurrentIndex(snapshot, currentTime);
-        const newIndex = currentIndex + snapshot.sentenceFrom - 1;
-        const newPage = Math.ceil((newIndex + 1) / sentencesPerPage);
-        const newQueryParams = new URLSearchParams(location.search);
-        newQueryParams.set("currentPage", newPage.toString());
-        handlePageChange(newPage, sentencesPerPage);
-        setIsPageChanging(true);
-      } else {
-        const newQueryParams = new URLSearchParams(location.search);
-        newQueryParams.set("currentPage", page.toString());
-        newQueryParams.set("pageSize", pageSize.toString());
-
-        // Navigate to the new state
-        navigate({
-          pathname: location.pathname,
-          search: newQueryParams.toString(),
-        });
-
-        await updateReadingProgress(libraryId, page, pageSize);
-
-        if (initState) {
-          let localSentenceFrom =
-            (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-          setSentenceFrom(getRangeNumber(localSentenceFrom));
-          await fetchAndUpdate(localSentenceFrom);
-          setInitState(false);
-        } else if (
-          sentenceFrom + countOfSentences < page * pageSize ||
-          page * pageSize > sentenceFrom + countOfSentences ||
-          page * pageSize < sentenceFrom
-        ) {
-          let localSentenceFrom = (page - 1) * pageSize + 1;
-          setSentenceFrom(getRangeNumber(localSentenceFrom));
-          await fetchAndUpdate(localSentenceFrom);
-        }
-        setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
-        setCurrentPage(page);
-        setIsPageChanging(true);
-      }
-      setIsPageChanging(false);
+      setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
+      setCurrentPage(page);
     },
     [
       initState,
