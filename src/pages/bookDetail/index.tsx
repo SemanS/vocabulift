@@ -86,8 +86,6 @@ const BookDetail: FC = () => {
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
   const [colSpan, setColSpan] = useState(24);
   const [snapshot, setSnapshot] = useState<Snapshot | null | undefined>();
-  const [timeToChange, setTimeToChange] = useState<number | undefined>();
-  const [pageToChange, setPageToChange] = useState<number | undefined>();
 
   const handlePageChange = useCallback(
     async (
@@ -95,7 +93,6 @@ const BookDetail: FC = () => {
       pageSize: number,
       currentTime?: number | undefined
     ) => {
-      // Update the URL parameters
       console.log("okejko" + page + " " + pageSize);
       if (currentTime) {
         const snapshot = await getSnapshot(
@@ -135,28 +132,11 @@ const BookDetail: FC = () => {
           page * pageSize < sentenceFrom
         ) {
           let localSentenceFrom = (page - 1) * pageSize + 1;
-
           setSentenceFrom(getRangeNumber(localSentenceFrom));
-
           await fetchAndUpdate(localSentenceFrom);
         }
-
         setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
         setCurrentPage(page);
-        console.log(
-          "page * sentencesPerPage" +
-            JSON.stringify(
-              page * sentencesPerPage - sentencesPerPage + 1,
-              null,
-              2
-            )
-        );
-        /* setTimeToChange(
-          snapshot?.sentencesData[
-            page * sentencesPerPage - sentencesPerPage + 1
-          ].start!
-        );
-        setPageToChange(page); */
       }
     },
     [
@@ -174,9 +154,8 @@ const BookDetail: FC = () => {
       setSentencesPerPage(pageSizeFromQuery);
     }
     if (currentPageFromQuery) {
-      //setCurrentPage(currentPageFromQuery);
+      setCurrentPage(currentPageFromQuery);
     }
-    //handlePageChange(currentPageFromQuery, pageSizeFromQuery);
     setRecoilLibraryId(libraryId!);
     setRecoilCurrentPage(currentPageFromQuery);
     setRecoilPageSize(pageSizeFromQuery);
@@ -481,11 +460,7 @@ const BookDetail: FC = () => {
               onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
               sentencesPerPage={sentencesPerPage}
               handlePageChange={handlePageChange}
-              sourceLanguage={sourceLanguage}
-              targetLanguages={[targetLanguage]}
               snapshot={snapshot}
-              timeToChange={timeToChange}
-              pageToChange={pageToChange}
             />
           )}
         </Col>
