@@ -49,10 +49,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   let timeoutId: NodeJS.Timeout | null = null;
 
   useEffect(() => {
-    console.log(shouldSetVideo);
-    console.log("divne");
-    if (playerRef.current! && shouldSetVideo === false) {
-      console.log("sak som tu");
+    if (playerRef.current! && shouldSetVideo === true) {
+      console.log("sudik");
       playerRef.current.seekTo(playTime);
     }
   }, [shouldSetVideo, playTime]);
@@ -84,7 +82,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       if (!nextSentence) {
         return;
       }
-
       const timeUntilNextSentence = (nextSentence.start! - currentTime) * 1000;
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -194,8 +191,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         const newPage = Math.ceil(
           (newHighlightedIndex! + 1) / sentencesPerPageRef.current
         );
-        //handlePageChange(newPage, sentencesPerPageRef.current);
-        // Update startIndex and endIndex
+
         startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
         endIndexRef.current = Math.min(
           newPage * sentencesPerPageRef.current - 1,

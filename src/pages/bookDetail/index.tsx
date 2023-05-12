@@ -137,11 +137,11 @@ const BookDetail: FC = () => {
 
         setPlayTime(firstSentenceStartTime!);
         console.log(
-          "changeTriggeredByHighlightChange" +
-            JSON.stringify(changeTriggeredByHighlightChange, null, 2)
+          "firstSentenceStartTime" +
+            JSON.stringify(firstSentenceStartTime, null, 2)
         );
-        if (changeTriggeredByHighlightChange) {
-          setShouldSetVideo(false);
+        if (!changeTriggeredByHighlightChange) {
+          setShouldSetVideo(true);
         }
       }
     },
