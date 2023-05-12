@@ -22,7 +22,7 @@ interface EmbeddedVideoProps {
   snapshot: Snapshot | null | undefined;
   shouldSetVideo: boolean;
   setShouldSetVideo: (shouldSetVideo: boolean) => void;
-  firstIndexAfterReset: number;
+  firstIndexAfterReset: number | null;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -42,7 +42,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const snapshotRef = useRef<Snapshot | null | undefined>(null);
   const location = useLocation();
   const [isInitRender, setIsInitRender] = useState(true);
-
   const startIndexRef = useRef<number | null>(null);
   const endIndexRef = useRef<number | null>(null);
 
@@ -50,20 +49,11 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
   useEffect(() => {
     if (playerRef.current! && shouldSetVideo === true) {
-      console.log("sudik");
-      console.log(
-        "currentSentenceIndex" + JSON.stringify(firstIndexAfterReset, null, 2)
-      );
       playerRef.current.seekTo(
-        snapshot?.sentencesData[firstIndexAfterReset].start
+        snapshot?.sentencesData[firstIndexAfterReset!].start! + 0.2
       );
-      /*       const currentSentenceIndex = getCurrentIndex(
-        snapshotRef.current!,
-        playTime
-      ); */
-
-      //const firstSentenceIndex = (newPage - 1) * sentencesPerPageRef.current;
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+      setShouldSetVideo(false);
     }
   }, [shouldSetVideo, firstIndexAfterReset]);
 
@@ -123,10 +113,10 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       }
 
       // If the user seeks to a new time, update the subtitles immediately
-      /* if (event.data === YT.PlayerState.BUFFERING) {
+      if (event.data === YT.PlayerState.BUFFERING) {
         handleTimeUpdate();
         scheduleHandleTimeUpdate();
-      } */
+      }
 
       return () => {
         if (timeoutId) {
@@ -134,7 +124,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
       };
     },
-    [handlePageChange]
+    [handlePageChange, shouldSetVideo]
   );
 
   useEffect(() => {
@@ -222,6 +212,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         handlePageChange(newPage, sentencesPerPageRef.current, true);
       }
 
+      console.log(
+        "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+      );
       if (onHighlightedSubtitleIndexChange) {
         onHighlightedSubtitleIndexChange(newHighlightedIndex!);
       }

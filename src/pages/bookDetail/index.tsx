@@ -129,7 +129,7 @@ const BookDetail: FC = () => {
       setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
       setCurrentPage(page);
 
-      if (snapshot) {
+      if (snapshot && !changeTriggeredByHighlightChange) {
         console.log(
           "page" + JSON.stringify((page - 1) * pageSize + 1, null, 2)
         );
