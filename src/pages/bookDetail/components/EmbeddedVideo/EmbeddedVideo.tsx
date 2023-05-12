@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { useLocation, useParams } from "react-router-dom";
 import { getLibraryItem } from "@/services/libraryService";
@@ -34,9 +34,18 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const currentPageToUseRef = useRef<number | null>(null);
   const sentencesPerPageRef = useRef(sentencesPerPage);
   const snapshotRef = useRef<Snapshot | null | undefined>(null);
-
-  const [isInitRender, setIsInitRender] = useState<boolean>(true);
   const location = useLocation();
+  const [isInitRender, setIsInitRender] = useState(true);
+
+  let timeoutId: NodeJS.Timeout | null = null;
+
+  useEffect(() => {
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     snapshotRef.current = snapshot;
@@ -44,46 +53,82 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
-    const currentPage = parseInt(queryParams.get("currentPage") as string);
+    const currentPage = Number(queryParams.get("currentPage")) || 0;
 
     if (currentPage !== currentPageToUseRef.current) {
-      handlePageChange(currentPage, 10);
-      setVideoTimeFunction(
+      //handlePageChange(currentPage, 10);
+      setVideoTime(
         snapshot?.sentencesData[
           currentPage * sentencesPerPage - sentencesPerPage + 1
-        ].start!
+        ]?.start || 0
       );
     }
   }, [location]);
 
-  const handlePlayerStateChange = async () => {
-    if (playerRef.current?.getPlayerState() && isInitRender) {
+  const handlePlayerStateChange = useCallback(() => {
+    const scheduleHandleTimeUpdate = async () => {
+      if (!playerRef.current?.getCurrentTime()) {
+        return;
+      }
       const currentTime = playerRef.current.getCurrentTime();
-      if (currentTime !== 0) {
-        handlePageChange(0, 10, currentTime);
-        setIsInitRender(false);
+      const currentSentenceIndex = getCurrentIndex(
+        snapshotRef.current!,
+        currentTime
+      );
+      const nextSentence =
+        snapshotRef.current?.sentencesData[currentSentenceIndex + 1];
+      if (!nextSentence) {
+        return;
+      }
+
+      const timeUntilNextSentence = (nextSentence.start! - currentTime) * 1000;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = setTimeout(async () => {
+        await handleTimeUpdate();
+        // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
+        await scheduleHandleTimeUpdate();
+      }, timeUntilNextSentence);
+    };
+
+    if (playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+      scheduleHandleTimeUpdate();
+    } else if (
+      playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED ||
+      playerRef.current?.getPlayerState() === YT.PlayerState.ENDED
+    ) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
       }
     }
-    while (
-      playerRef.current?.getPlayerState() === YT.PlayerState.PLAYING ||
-      playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED
-    ) {
-      await handleTimeUpdate();
-      await new Promise((resolve) => setTimeout(resolve, 4000));
-    }
-  };
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [handlePageChange]);
 
   useEffect(() => {
     const fetchLibraryItemAndSetupPlayer = async () => {
       const library = await getLibraryItem(libraryId!);
-      handlePageChange(1, sentencesPerPageRef.current);
+      if (isInitRender) {
+        handlePageChange(1, sentencesPerPageRef.current);
+        setIsInitRender(false);
+      }
 
       const onYouTubeIframeAPIReady = () => {
         if (playerDivRef.current && !playerRef.current) {
           playerRef.current = new YT.Player(playerDivRef.current, {
             videoId: library.videoId,
             events: {
-              onStateChange: () => handlePlayerStateChange(),
+              onStateChange: handlePlayerStateChange,
+              onPlaybackRateChange: handlePlayerStateChange,
             },
           });
         }
@@ -95,14 +140,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         const script = document.createElement("script");
         script.src = "https://www.youtube.com/iframe_api";
         script.async = true;
-        script.onload = () =>
-          (window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady);
+        script.onload = onYouTubeIframeAPIReady;
         document.body.appendChild(script);
       }
     };
 
     fetchLibraryItemAndSetupPlayer();
-  }, []);
+  }, [handlePageChange, handlePlayerStateChange]);
 
   useEffect(() => {
     sentencesPerPageRef.current = sentencesPerPage;
@@ -115,16 +159,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     const currentTime = playerRef.current.getCurrentTime();
     const startIndex = getCurrentIndex(snapshotRef.current!, currentTime);
     const pageNumber = Math.ceil((startIndex + 1) / sentencesPerPage);
-
-    const newHighlightedSentence = snapshotRef.current?.sentencesData.find(
-      (sentence) =>
-        currentTime >= sentence.start! &&
-        currentTime <= sentence.start! + sentence.duration!
-    );
-
-    if (!newHighlightedSentence) {
-      return;
-    }
 
     const pageNumberToUse =
       playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED
@@ -144,9 +178,21 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       (snapshotRef.current?.sentenceFrom! - 1) / sentencesPerPageRef.current +
       pageNumber;
 
+    const newHighlightedSentence = snapshotRef.current?.sentencesData.find(
+      (sentence) =>
+        currentTime >= sentence.start! &&
+        currentTime <= sentence.start! + sentence.duration!
+    );
+
+    if (!newHighlightedSentence) {
+      return;
+    }
+
     if (pageNumber !== pageNumberToUse) {
       const newVideoTime = newHighlightedSentence?.start!;
-      setVideoTimeFunction(newVideoTime + 1);
+      setVideoTime(newVideoTime + 1);
+      console.log("changikujem1");
+      console.log("newPage" + JSON.stringify(newPage, null, 2));
       handlePageChange(newPage, sentencesPerPageRef.current);
     } else if (isOutsideSnapshotWindow) {
       const newPage = findPageIndexByTime(
@@ -154,6 +200,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         sentencesPerPageRef.current,
         currentTime
       );
+      console.log("changikujem2");
       handlePageChange(newPage, sentencesPerPageRef.current);
     }
 
@@ -161,15 +208,18 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newHighlightedIndex = snapshotRef.current?.sentencesData.indexOf(
         newHighlightedSentence!
       );
+      console.log(
+        "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+      );
       onHighlightedSubtitleIndexChange(
         newHighlightedIndex !== -1 ? newHighlightedIndex! : null
       );
     }
   };
 
-  const setVideoTimeFunction = (timeInSeconds: number) => {
+  const setVideoTime = (timeInSeconds: number) => {
     if (playerRef.current && playerRef.current.seekTo) {
-      playerRef.current.seekTo(timeInSeconds, true);
+      playerRef.current.playVideoAt(timeInSeconds);
     }
   };
 
@@ -220,12 +270,16 @@ export function findSnapshotWindow(
     snapshot.sentencesData.length - 1
   );
 
+  console.log("startIndex" + JSON.stringify(startIndex, null, 2));
+  console.log("endIndex" + JSON.stringify(endIndex, null, 2));
   if (startIndex >= snapshot.sentencesData.length) {
     return false;
   }
 
   const windowStartTime = snapshot.sentencesData[startIndex].start;
-  const windowEndTime = snapshot.sentencesData[endIndex].start;
+  const windowEndTime =
+    snapshot.sentencesData[endIndex].start! +
+    snapshot.sentencesData[endIndex].duration!;
   if (!windowStartTime || !windowEndTime) {
     throw new Error("Start or end time is not available for some sentences");
   }

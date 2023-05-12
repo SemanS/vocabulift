@@ -87,13 +87,19 @@ const BookDetail: FC = () => {
   const [colSpan, setColSpan] = useState(24);
   const [snapshot, setSnapshot] = useState<Snapshot | null | undefined>();
 
+  const [isPageChanging, setIsPageChanging] = useState(false);
+
   const handlePageChange = useCallback(
     async (
       page: number,
       pageSize: number,
       currentTime?: number | undefined
     ) => {
-      console.log("okejko" + page + " " + pageSize);
+      //console.log("okejko" + page + " " + pageSize);
+      console.log("isPageChanging" + JSON.stringify(isPageChanging, null, 2));
+      if (isPageChanging) {
+        return;
+      }
       if (currentTime) {
         const snapshot = await getSnapshot(
           sourceLanguage,
@@ -107,6 +113,7 @@ const BookDetail: FC = () => {
         const newQueryParams = new URLSearchParams(location.search);
         newQueryParams.set("currentPage", newPage.toString());
         handlePageChange(newPage, sentencesPerPage);
+        setIsPageChanging(true);
       } else {
         const newQueryParams = new URLSearchParams(location.search);
         newQueryParams.set("currentPage", page.toString());
@@ -137,7 +144,9 @@ const BookDetail: FC = () => {
         }
         setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
         setCurrentPage(page);
+        setIsPageChanging(true);
       }
+      setIsPageChanging(false);
     },
     [
       initState,
