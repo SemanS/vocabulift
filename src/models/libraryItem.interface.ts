@@ -10,4 +10,13 @@ export interface LibraryItem {
   videoId: string;
   category: string;
   level: string[];
+  snapshotsInfo: SnapshotInfo[];
+}
+
+export interface SnapshotInfo {
+  snapshotId: string;
+  language: string;
+  start: number;
+  end: number;
+  sentenceFrom: number;
 }

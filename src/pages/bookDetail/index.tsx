@@ -99,6 +99,7 @@ const BookDetail: FC = () => {
       pageSize: number,
       changeTriggeredByHighlightChange: boolean = false
     ) => {
+      console.log("HANDLEPAGECHANGE1");
       const newQueryParams = new URLSearchParams(location.search);
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
@@ -110,8 +111,8 @@ const BookDetail: FC = () => {
       });
 
       await updateReadingProgress(libraryId, page, pageSize);
-
       if (initState) {
+        console.log("HANDLEPAGECHANGE2");
         let localSentenceFrom =
           (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
         setSentenceFrom(getRangeNumber(localSentenceFrom));
@@ -122,19 +123,25 @@ const BookDetail: FC = () => {
         page * pageSize > sentenceFrom + countOfSentences ||
         page * pageSize < sentenceFrom
       ) {
+        console.log("HANDLEPAGECHANGE3");
         let localSentenceFrom = (page - 1) * pageSize + 1;
         setSentenceFrom(getRangeNumber(localSentenceFrom));
+        console.log("FETCH" + localSentenceFrom);
         await fetchAndUpdate(localSentenceFrom);
       }
       setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
       setCurrentPage(page);
 
-      console.log("page" + JSON.stringify(page, null, 2));
+      if (
+        (snapshots &&
+          changeTriggeredByHighlightChange &&
+          sentenceFrom + countOfSentences < page * pageSize) ||
+        page * pageSize > sentenceFrom + countOfSentences ||
+        page * pageSize < sentenceFrom
+      ) {
+        console.log("HANDLEPAGECHANGE4");
+      }
       if (snapshots && !changeTriggeredByHighlightChange) {
-        console.log(
-          "calculateFirstIndex(page, pageSize)" +
-            JSON.stringify(calculateFirstIndex(page, pageSize), null, 2)
-        );
         setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
         if (!changeTriggeredByHighlightChange) {
           setShouldSetVideo(true);
