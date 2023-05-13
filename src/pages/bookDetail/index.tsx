@@ -119,9 +119,10 @@ const BookDetail: FC = () => {
         await fetchAndUpdate(localSentenceFrom);
         setInitState(false);
       } else if (
-        sentenceFrom + countOfSentences < page * pageSize ||
-        page * pageSize > sentenceFrom + countOfSentences ||
-        page * pageSize < sentenceFrom
+        !changeTriggeredByHighlightChange &&
+        (sentenceFrom + countOfSentences < page * pageSize ||
+          page * pageSize > sentenceFrom + countOfSentences ||
+          page * pageSize < sentenceFrom)
       ) {
         console.log("HANDLEPAGECHANGE3");
         let localSentenceFrom = (page - 1) * pageSize + 1;
@@ -132,16 +133,8 @@ const BookDetail: FC = () => {
       setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
       setCurrentPage(page);
 
-      if (
-        (snapshots &&
-          changeTriggeredByHighlightChange &&
-          sentenceFrom + countOfSentences < page * pageSize) ||
-        page * pageSize > sentenceFrom + countOfSentences ||
-        page * pageSize < sentenceFrom
-      ) {
-        console.log("HANDLEPAGECHANGE4");
-      }
       if (snapshots && !changeTriggeredByHighlightChange) {
+        console.log("HANDLEPAGECHANGE4");
         setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
         if (!changeTriggeredByHighlightChange) {
           setShouldSetVideo(true);

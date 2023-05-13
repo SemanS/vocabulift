@@ -46,7 +46,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const startIndexRef = useRef<number | null>(null);
   const endIndexRef = useRef<number | null>(null);
 
-  let timeoutId: NodeJS.Timeout | null = null;
+  let timeoutId: number | null = null;
 
   const [currentLibrary, setCurrentLibrary] = useState<LibraryItem | null>();
 
@@ -93,7 +93,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-    timeoutId = setTimeout(async () => {
+    timeoutId = window.setTimeout(async () => {
       await handleTimeUpdate();
       // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
       await scheduleHandleTimeUpdate();
@@ -101,7 +101,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   };
 
   const handlePlayerStateChange = useCallback(
-    (event) => {
+    (event: any) => {
       if (event.data === YT.PlayerState.PLAYING) {
         if (timeoutId) {
           clearTimeout(timeoutId);
@@ -138,6 +138,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       if (isInitRender) {
         const library = await getLibraryItem(libraryId!);
         setCurrentLibrary(library);
+        console.log("init handlePageChange");
         handlePageChange(1, sentencesPerPageRef.current);
         setIsInitRender(false);
       }
@@ -210,14 +211,24 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
-      startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
+      startIndexRef.current = newPage * sentencesPerPageRef.current;
       endIndexRef.current = Math.ceil(
         newPage * sentencesPerPageRef.current - 1
       );
-
-      handlePageChange(newPage, sentencesPerPageRef.current, true);
+      console.log("newHighlightedIndex === -1");
+      //handlePageChange(newPage, sentencesPerPageRef.current, true);
     } else {
       if (onHighlightedSubtitleIndexChange) {
+        console.log(
+          "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+        );
+        console.log(
+          "startIndexRef.current" +
+            JSON.stringify(startIndexRef.current, null, 2)
+        );
+        console.log(
+          "endIndexRef.current" + JSON.stringify(endIndexRef.current, null, 2)
+        );
         if (
           startIndexRef.current === null ||
           endIndexRef.current === null ||
@@ -235,6 +246,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             newPage * sentencesPerPageRef.current - 1,
             snapshotsRef.current![0].sentencesData.length! - 1
           );
+          console.log("newHighlightedIndex pokracuje");
           handlePageChange(newPage, sentencesPerPageRef.current, true);
         }
         if (onHighlightedSubtitleIndexChange) {
