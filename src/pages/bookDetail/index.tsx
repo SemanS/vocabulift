@@ -15,7 +15,7 @@ import { useRecoilState } from "recoil";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
 import { LabelType, SentenceData } from "@/models/sentences.interfaces";
-import { getRangeNumber } from "@/utils/stringUtils";
+import { calculateFirstIndex, getRangeNumber } from "@/utils/stringUtils";
 import {
   deleteUserPhrases,
   getUserSentences,
@@ -36,7 +36,7 @@ import EmbeddedVideo, {
 } from "./components/EmbeddedVideo/EmbeddedVideo";
 import styles from "./index.module.less";
 import { Snapshot } from "@/models/snapshot.interfaces";
-import { getSnapshot } from "@/services/snapshotService";
+import { getSnapshots } from "@/services/snapshotService";
 
 const BookDetail: FC = () => {
   const navigate = useNavigate();
@@ -85,7 +85,7 @@ const BookDetail: FC = () => {
   const [label, setLabel] = useState<LabelType | undefined>(LabelType.VIDEO);
   const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
   const [colSpan, setColSpan] = useState(24);
-  const [snapshot, setSnapshot] = useState<Snapshot | null | undefined>();
+  const [snapshots, setSnapshots] = useState<Snapshot[] | null | undefined>();
   const [shouldSetVideo, setShouldSetVideo] = useState(false);
   const [
     changeTriggeredByHighlightChange,
@@ -129,12 +129,13 @@ const BookDetail: FC = () => {
       setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
       setCurrentPage(page);
 
-      if (snapshot && !changeTriggeredByHighlightChange) {
+      console.log("page" + JSON.stringify(page, null, 2));
+      if (snapshots && !changeTriggeredByHighlightChange) {
         console.log(
-          "page" + JSON.stringify((page - 1) * pageSize + 1, null, 2)
+          "calculateFirstIndex(page, pageSize)" +
+            JSON.stringify(calculateFirstIndex(page, pageSize), null, 2)
         );
-
-        setFirstIndexAfterReset((page - 1) * pageSize);
+        setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
         if (!changeTriggeredByHighlightChange) {
           setShouldSetVideo(true);
         }
@@ -215,7 +216,7 @@ const BookDetail: FC = () => {
   );
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
-    const snapshot = await getSnapshot(
+    const snapshots = await getSnapshots(
       sourceLanguage,
       [targetLanguage],
       undefined,
@@ -234,7 +235,7 @@ const BookDetail: FC = () => {
       mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
     await updateSentencesState(
       userSentencesData,
-      snapshot!,
+      snapshots!,
       vocabularyListUserPhrases
     );
     setLoading(false);
@@ -242,15 +243,15 @@ const BookDetail: FC = () => {
 
   const updateSentencesState = async (
     userSentencesData: UserSentence[],
-    snapshot: Snapshot,
+    snapshots: Snapshot[],
     vocabularyListUserPhrases: VocabularyListUserPhrase[]
   ) => {
-    setSnapshot(snapshot);
-    setLibraryTitle(snapshot.title);
-    setLabel(snapshot.label);
-    setVideoId(snapshot.videoId);
-    setSentencesData(memoizeTexts(snapshot.sentencesData));
-    setTotalSentences(snapshot.totalSentences);
+    setSnapshots(snapshots);
+    setLibraryTitle(snapshots[0].title);
+    setLabel(snapshots[0].label);
+    setVideoId(snapshots[0].videoId);
+    setSentencesData(memoizeTexts(snapshots[0].sentencesData));
+    setTotalSentences(snapshots[0].totalSentences);
     setVocabularyListUserPhrases(vocabularyListUserPhrases);
     setUserSentences(userSentencesData);
   };
@@ -462,10 +463,10 @@ const BookDetail: FC = () => {
               onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
               sentencesPerPage={sentencesPerPage}
               handlePageChange={handlePageChange}
-              snapshot={snapshot}
+              snapshots={snapshots}
               shouldSetVideo={shouldSetVideo}
               setShouldSetVideo={setShouldSetVideo}
-              firstIndexAfterReset={firstIndexAfterReset}
+              firstIndexAfterReset={firstIndexAfterReset!}
             />
           )}
         </Col>

@@ -7,8 +7,7 @@ export interface Snapshot {
   countOfSentences: number;
   start: number;
   end: number;
-  sourceLanguage: string;
-  targetLanguages: string[];
+  language: string;
   videoId: string;
   title: string;
   label: LabelType;

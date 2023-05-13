@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Snapshot } from "@/models/snapshot.interfaces";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getLibraryItem } from "@/services/libraryService";
+import { calculatePage } from "@/utils/stringUtils";
+import { LibraryItem } from "@models/libraryItem.interface";
 
 declare const YT: any;
 declare global {
@@ -19,7 +21,7 @@ interface EmbeddedVideoProps {
     pageSize: number,
     changeTriggeredByHighlightChange?: boolean
   ) => void;
-  snapshot: Snapshot | null | undefined;
+  snapshots: Snapshot[] | null | undefined;
   shouldSetVideo: boolean;
   setShouldSetVideo: (shouldSetVideo: boolean) => void;
   firstIndexAfterReset: number | null;
@@ -29,7 +31,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   onHighlightedSubtitleIndexChange,
   sentencesPerPage,
   handlePageChange,
-  snapshot,
+  snapshots,
   shouldSetVideo,
   setShouldSetVideo,
   firstIndexAfterReset,
@@ -39,18 +41,19 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const playerRef = useRef<any>(null);
   const currentPageToUseRef = useRef<number | null>(null);
   const sentencesPerPageRef = useRef(sentencesPerPage);
-  const snapshotRef = useRef<Snapshot | null | undefined>(null);
-  const location = useLocation();
+  const snapshotsRef = useRef<Snapshot[] | null | undefined>(null);
   const [isInitRender, setIsInitRender] = useState(true);
   const startIndexRef = useRef<number | null>(null);
   const endIndexRef = useRef<number | null>(null);
 
   let timeoutId: NodeJS.Timeout | null = null;
 
+  const [currentLibrary, setCurrentLibrary] = useState<LibraryItem | null>();
+
   useEffect(() => {
     if (playerRef.current! && shouldSetVideo === true) {
       playerRef.current.seekTo(
-        snapshot?.sentencesData[firstIndexAfterReset!].start! + 0.2
+        snapshots![0].sentencesData[firstIndexAfterReset!].start! + 0.2
       );
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setShouldSetVideo(false);
@@ -66,8 +69,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   }, []);
 
   useEffect(() => {
-    snapshotRef.current = snapshot;
-  }, [snapshot]);
+    console.log("SLAVA");
+    snapshotsRef.current = snapshots;
+  }, [snapshots]);
 
   const handlePlayerStateChange = useCallback(
     (event) => {
@@ -77,16 +81,16 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
         const currentTime = playerRef.current.getCurrentTime();
         const currentSentenceIndex = getCurrentIndex(
-          snapshotRef.current!,
+          snapshotsRef.current!,
           currentTime
         );
         const nextSentence =
-          snapshotRef.current?.sentencesData[currentSentenceIndex + 1];
+          snapshotsRef.current![0].sentencesData[currentSentenceIndex];
         if (!nextSentence) {
           return;
         }
         const timeUntilNextSentence =
-          (nextSentence.start! - currentTime) * 1000;
+          (nextSentence.start! + nextSentence.duration! - currentTime) * 1000;
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
@@ -129,8 +133,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
   useEffect(() => {
     const fetchLibraryItemAndSetupPlayer = async () => {
-      const library = await getLibraryItem(libraryId!);
       if (isInitRender) {
+        const library = await getLibraryItem(libraryId!);
+        setCurrentLibrary(library);
         handlePageChange(1, sentencesPerPageRef.current);
         setIsInitRender(false);
       }
@@ -138,7 +143,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const onYouTubeIframeAPIReady = () => {
         if (playerDivRef.current && !playerRef.current) {
           playerRef.current = new YT.Player(playerDivRef.current, {
-            videoId: library.videoId,
+            videoId: currentLibrary!.videoId,
             events: {
               onStateChange: handlePlayerStateChange,
               onPlaybackRateChange: handlePlayerStateChange,
@@ -170,8 +175,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       return;
     }
     const currentTime = playerRef.current.getCurrentTime();
-    const startIndex = getCurrentIndex(snapshotRef.current!, currentTime);
-    const pageNumber = Math.floor(startIndex / sentencesPerPage) + 1;
+    const startIndex = getCurrentIndex(snapshotsRef.current!, currentTime);
+    //const pageNumber = Math.floor(startIndex / sentencesPerPage) + 1;
+    const pageNumber = calculatePage(
+      startIndex,
+      sentencesPerPage,
+      snapshotsRef.current![0].sentenceFrom
+    );
 
     const pageNumberToUse =
       playerRef.current?.getPlayerState() === YT.PlayerState.PAUSED
@@ -180,43 +190,84 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
     currentPageToUseRef.current = pageNumberToUse;
 
-    const newHighlightedSentence = snapshotRef.current?.sentencesData.find(
-      (sentence) =>
-        currentTime >= sentence.start! &&
-        currentTime <= sentence.start! + sentence.duration!
-    );
+    //console.log("currentTime" + JSON.stringify(currentTime, null, 2));
+    const newHighlightedIndex =
+      snapshotsRef.current![0].sentencesData.findIndex(
+        (sentence) =>
+          currentTime >= sentence.start! &&
+          currentTime <= sentence.start! + sentence.duration!
+      );
 
-    if (!newHighlightedSentence) {
+    /* if (!newHighlightedIndex) {
       return;
-    }
-
-    if (onHighlightedSubtitleIndexChange) {
-      const newHighlightedIndex = snapshotRef.current?.sentencesData.indexOf(
-        newHighlightedSentence!
+    } */
+    console.log(
+      "newHighlightedIndex asdasdasd" +
+        JSON.stringify(newHighlightedIndex, null, 2)
+    );
+    if (newHighlightedIndex === -1) {
+      const newPage = Math.ceil(
+        (snapshotsRef.current![0].sentenceFrom +
+          snapshotsRef.current![0].countOfSentences) /
+          sentencesPerPageRef.current
       );
-      if (
-        startIndexRef.current === null ||
-        endIndexRef.current === null ||
-        newHighlightedIndex! < startIndexRef.current ||
-        newHighlightedIndex! > endIndexRef.current
-      ) {
-        const newPage = Math.ceil(
-          (newHighlightedIndex! + 1) / sentencesPerPageRef.current
-        );
 
-        startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
-        endIndexRef.current = Math.min(
-          newPage * sentencesPerPageRef.current - 1,
-          snapshotRef.current?.sentencesData.length! - 1
-        );
-        handlePageChange(newPage, sentencesPerPageRef.current, true);
-      }
-
+      console.log("newPage" + JSON.stringify(newPage, null, 2));
+      startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
       console.log(
-        "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+        "sentencesPerPageRef.current" +
+          JSON.stringify(sentencesPerPageRef.current, null, 2)
       );
+      endIndexRef.current = Math.ceil(
+        newPage * sentencesPerPageRef.current - 1
+      );
+      console.log(
+        "snapshotsRef.current![0].sentencesData.length!" +
+          JSON.stringify(
+            snapshotsRef.current![0].sentencesData.length!,
+            null,
+            2
+          )
+      );
+      console.log(
+        "endIndexRef.current " + JSON.stringify(endIndexRef.current, null, 2)
+      );
+      handlePageChange(newPage, sentencesPerPageRef.current);
+    } else {
       if (onHighlightedSubtitleIndexChange) {
-        onHighlightedSubtitleIndexChange(newHighlightedIndex!);
+        console.log(
+          "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+        );
+        console.log(
+          "startIndexRef.current" +
+            JSON.stringify(startIndexRef.current, null, 2)
+        );
+        console.log(
+          "endIndexRef.current" + JSON.stringify(endIndexRef.current, null, 2)
+        );
+        if (
+          startIndexRef.current === null ||
+          endIndexRef.current === null ||
+          newHighlightedIndex! < startIndexRef.current ||
+          newHighlightedIndex! > endIndexRef.current
+        ) {
+          console.log("som tus");
+          const newPage = calculatePage(
+            newHighlightedIndex!,
+            sentencesPerPageRef.current,
+            snapshotsRef.current![0].sentenceFrom!
+          );
+
+          startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
+          endIndexRef.current = Math.min(
+            newPage * sentencesPerPageRef.current - 1,
+            snapshotsRef.current![0].sentencesData.length! - 1
+          );
+          handlePageChange(newPage, sentencesPerPageRef.current, true);
+        }
+        if (onHighlightedSubtitleIndexChange) {
+          onHighlightedSubtitleIndexChange(newHighlightedIndex!);
+        }
       }
     }
   };
@@ -240,73 +291,14 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 export default EmbeddedVideo;
 
 export function getCurrentIndex(
-  snapshot: Snapshot,
+  snapshots: Snapshot[],
   currentTime: number
 ): number {
-  const currentIndex = snapshot.sentencesData.findIndex((sentence) => {
+  const currentIndex = snapshots[0].sentencesData.findIndex((sentence) => {
     return (
       currentTime >= sentence.start! &&
       currentTime <= sentence.start! + sentence.duration!
     );
   });
   return currentIndex;
-}
-
-export function findSnapshotWindow(
-  snapshot: Snapshot,
-  sentencesPerPage: number,
-  currentTime: number,
-  pageIndex: number
-): boolean {
-  if (sentencesPerPage < 1 || sentencesPerPage > 100) {
-    throw new Error("sentencesPerPage must be between 1 and 100");
-  }
-
-  const startIndex = pageIndex * sentencesPerPage;
-  const endIndex = Math.min(
-    (pageIndex + 1) * sentencesPerPage - 1,
-    snapshot.sentencesData.length - 1
-  );
-
-  if (startIndex >= snapshot.sentencesData.length) {
-    return false;
-  }
-
-  const windowStartTime = snapshot.sentencesData[startIndex].start;
-  const windowEndTime =
-    snapshot.sentencesData[endIndex].start! +
-    snapshot.sentencesData[endIndex].duration!;
-  if (!windowStartTime || !windowEndTime) {
-    throw new Error("Start or end time is not available for some sentences");
-  }
-
-  return currentTime >= windowEndTime || currentTime <= windowStartTime;
-}
-
-export function findPageIndexByTime(
-  snapshot: Snapshot,
-  sentencesPerPage: number,
-  currentTime: number
-): number {
-  if (sentencesPerPage < 1 || sentencesPerPage > 100) {
-    throw new Error("sentencesPerPage must be between 1 and 100");
-  }
-
-  let pageIndex = -1;
-  let currentIndex = 0;
-
-  for (const sentenceData of snapshot.sentencesData) {
-    if (sentenceData.start && sentenceData.start <= currentTime) {
-      currentIndex++;
-    } else {
-      break;
-    }
-  }
-
-  const sentenceNo = snapshot.sentencesData[currentIndex].sentenceNo;
-  if (currentIndex > 0) {
-    pageIndex = Math.floor(sentenceNo / sentencesPerPage) + 1;
-  }
-
-  return pageIndex;
 }

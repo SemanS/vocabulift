@@ -1,13 +1,13 @@
 import { Snapshot } from "@models/snapshot.interfaces";
 
-export const getSnapshot = async (
+export const getSnapshots = async (
   sourceLanguage: string,
   targetLanguages: string[],
   time?: number,
   sentenceFrom?: number
-): Promise<Snapshot> => {
+): Promise<Snapshot[]> => {
   const response = await fetch(
-    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/snapshot`,
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/snapshots`,
     {
       method: "POST",
       headers: {
@@ -23,5 +23,5 @@ export const getSnapshot = async (
     }
   );
   const data = await response.json();
-  return data.snapshot;
+  return data.snapshots;
 };
