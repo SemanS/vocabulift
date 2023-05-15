@@ -1,6 +1,7 @@
 import { Snapshot } from "@models/snapshot.interfaces";
 
 export const getSnapshots = async (
+  libraryId: string,
   sourceLanguage: string,
   targetLanguages: string[],
   time?: number,
@@ -15,6 +16,7 @@ export const getSnapshots = async (
         Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
       },
       body: JSON.stringify({
+        libraryId: libraryId,
         sourceLanguage: sourceLanguage,
         targetLanguages: targetLanguages,
         time: time,

@@ -56,12 +56,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
   useEffect(() => {
     if (snapshots) {
-      console.log("MENIM");
-      console.log(
-        "snapshots![0].end" + JSON.stringify(snapshots![0].end, null, 2)
-      );
       snapshotsRef.current = snapshots;
-      //onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
     }
     if (
       playerRef.current! &&
@@ -81,18 +76,10 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         sentencesPerPageRef.current,
         snapshotsRef.current![0].sentenceFrom!
       );
-      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+      //onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
       handlePageChange(newPage, sentencesPerPageRef.current, true, true, false);
+      onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setLoadingFromFetch(false);
-
-      /* const currentTime = playerRef.current.getCurrentTime();
-      const newHighlightedIndex =
-        snapshotsRef.current![0].sentencesData.findIndex(
-          (sentence) =>
-            currentTime >= sentence.start! &&
-            currentTime <= sentence.start! + sentence.duration!
-        );
-      onHighlightedSubtitleIndexChange?.(newHighlightedIndex); */
     }
     if (
       playerRef.current! &&
@@ -108,7 +95,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   }, [snapshots, shouldSetVideo, firstIndexAfterReset]);
 
   useEffect(() => {
-    console.log("VYVOLALO");
     if (isInitRender) setIsInitRender(false);
     return () => {
       if (timeoutId) {
@@ -146,7 +132,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const handlePlayerStateChange = useCallback(
     (event: any) => {
       if (event.data === YT.PlayerState.PLAYING) {
-        console.log("isInitRender" + JSON.stringify(isInitRender, null, 2));
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
@@ -183,7 +168,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       if (isInitRender) {
         const library = await getLibraryItem(libraryId!);
         setCurrentLibrary(library);
-        console.log("init handlePageChange");
         handlePageChange(10, sentencesPerPageRef.current, false, false, false);
       }
 
@@ -265,8 +249,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
-      console.log("UPDATOS");
-      console.log("newPage" + newPage);
       handlePageChange(newPage, sentencesPerPageRef.current, false, true, true);
     }
 
@@ -287,21 +269,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         newPage * sentencesPerPageRef.current -
           snapshotsRef.current![0].sentenceFrom
       );
-      console.log("newHighlightedIndex === -1");
-      console.log("newPage" + JSON.stringify(newPage, null, 2));
       //
     } else {
       if (onHighlightedSubtitleIndexChange) {
-        console.log(
-          "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
-        );
-        console.log(
-          "startIndexRef.current" +
-            JSON.stringify(startIndexRef.current, null, 2)
-        );
-        console.log(
-          "endIndexRef.current" + JSON.stringify(endIndexRef.current, null, 2)
-        );
         if (
           startIndexRef.current === null ||
           endIndexRef.current === null ||
@@ -322,7 +292,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             newPage * sentencesPerPageRef.current -
               snapshotsRef.current![0].sentenceFrom
           );
-          console.log("newHighlightedIndex pokracuje");
           handlePageChange(
             newPage,
             sentencesPerPageRef.current,

@@ -61,8 +61,9 @@ export const postLibraryVideo = async (
   targetLanguage: string,
   input: string
 ) => {
+  console.log("input" + input);
   const response = await fetch(
-    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/video`,
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/add/video`,
     {
       method: "POST",
       headers: {

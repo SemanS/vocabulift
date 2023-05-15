@@ -138,6 +138,7 @@ const Library: React.FC = () => {
       category: "My videos", // You can change the category as needed
       level: ["A1", "A2", "B1", "B2", "C1", "C2"],
       eventId: "",
+      snapshotsInfo: [],
     };
     return newItem;
   };
