@@ -20,7 +20,8 @@ interface EmbeddedVideoProps {
     page: number,
     pageSize: number,
     changeTriggeredByHighlightChange?: boolean,
-    changeTriggeredFromVideo?: boolean
+    changeTriggeredFromVideo?: boolean,
+    changeTriggeredFromVideoFetch?: boolean
   ) => void;
   snapshots: Snapshot[] | null | undefined;
   shouldSetVideo: boolean;
@@ -66,7 +67,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       shouldSetVideo === true
     ) {
       playerRef.current.seekTo(
-        snapshots![0].sentencesData[firstIndexAfterReset!].start! + 0.2
+        snapshots![0].sentencesData[firstIndexAfterReset!].start!
       );
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setShouldSetVideo(false);
@@ -150,7 +151,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         const library = await getLibraryItem(libraryId!);
         setCurrentLibrary(library);
         console.log("init handlePageChange");
-        handlePageChange(10, sentencesPerPageRef.current, false, true);
+        handlePageChange(10, sentencesPerPageRef.current, false, false, false);
       }
 
       const onYouTubeIframeAPIReady = () => {
@@ -220,7 +221,10 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       return;
     }
 
-    if (currentTime > snapshotsRef.current![0].end) {
+    if (
+      currentTime > snapshotsRef.current![0].end ||
+      currentTime < snapshotsRef.current![0].start
+    ) {
       const snapshotInfo = findSnapshotWithCurrentTime(
         currentLibrary!,
         currentTime
@@ -228,7 +232,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
-      //handlePageChange(newPage, sentencesPerPageRef.current, true);
+      console.log("UPDATOS");
+      console.log("newPage" + newPage);
+      handlePageChange(newPage, sentencesPerPageRef.current, false, true, true);
     }
 
     if (newHighlightedIndex === -1) {
@@ -276,7 +282,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             newPage * sentencesPerPageRef.current - 1
           );
           console.log("newHighlightedIndex pokracuje");
-          //handlePageChange(newPage, sentencesPerPageRef.current, true);
+          handlePageChange(
+            newPage,
+            sentencesPerPageRef.current,
+            true,
+            true,
+            false
+          );
         }
         if (onHighlightedSubtitleIndexChange) {
           onHighlightedSubtitleIndexChange(newHighlightedIndex!);
