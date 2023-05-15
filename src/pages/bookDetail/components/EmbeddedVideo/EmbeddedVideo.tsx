@@ -27,6 +27,7 @@ interface EmbeddedVideoProps {
   shouldSetVideo: boolean;
   setShouldSetVideo: (shouldSetVideo: boolean) => void;
   firstIndexAfterReset: number | null;
+  setLoadingFromFetch: (loadingFromFetch: boolean) => void;
 }
 
 const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
@@ -37,6 +38,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   shouldSetVideo,
   setShouldSetVideo,
   firstIndexAfterReset,
+  setLoadingFromFetch,
 }) => {
   const { libraryId } = useParams();
   const playerDivRef = useRef<HTMLDivElement>(null);
@@ -81,6 +83,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       );
       onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
       handlePageChange(newPage, sentencesPerPageRef.current, true, true, false);
+      setLoadingFromFetch(false);
 
       /* const currentTime = playerRef.current.getCurrentTime();
       const newHighlightedIndex =
@@ -276,9 +279,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
-      startIndexRef.current = newPage * sentencesPerPageRef.current;
+      startIndexRef.current =
+        newPage * sentencesPerPageRef.current -
+        snapshotsRef.current![0].sentenceFrom +
+        1;
       endIndexRef.current = Math.ceil(
-        newPage * sentencesPerPageRef.current - 1
+        newPage * sentencesPerPageRef.current -
+          snapshotsRef.current![0].sentenceFrom
       );
       console.log("newHighlightedIndex === -1");
       console.log("newPage" + JSON.stringify(newPage, null, 2));
@@ -307,9 +314,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             snapshotsRef.current![0].sentenceFrom!
           );
 
-          startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
+          startIndexRef.current =
+            (newPage - 1) * sentencesPerPageRef.current -
+            snapshotsRef.current![0].sentenceFrom +
+            1;
           endIndexRef.current = Math.ceil(
-            newPage * sentencesPerPageRef.current - 1
+            newPage * sentencesPerPageRef.current -
+              snapshotsRef.current![0].sentenceFrom
           );
           console.log("newHighlightedIndex pokracuje");
           handlePageChange(

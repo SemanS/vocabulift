@@ -50,6 +50,7 @@ const BookDetail: FC = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadingFromFetch, setLoadingFromFetch] = useState(false);
   const [totalSentences, setTotalSentences] = useState(0);
   const [videoId, setVideoId] = useState<string | undefined>("");
   const [sentenceFrom, setSentenceFrom] = useState(1);
@@ -120,6 +121,7 @@ const BookDetail: FC = () => {
           await fetchAndUpdate(localSentenceFrom);
           setSentenceFrom(localSentenceFrom);
           setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
+          setLoadingFromFetch(true);
           //setShouldSetVideo(false);
         }
       } else {
@@ -515,11 +517,13 @@ const BookDetail: FC = () => {
               shouldSetVideo={shouldSetVideo}
               setShouldSetVideo={setShouldSetVideo}
               firstIndexAfterReset={firstIndexAfterReset!}
+              setLoadingFromFetch={setLoadingFromFetch}
             />
           )}
         </Col>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           <Card
+            loading={loading || loadingFromFetch}
             title={libraryTitle}
             extra={
               <Radio.Group
