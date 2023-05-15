@@ -76,9 +76,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         sentencesPerPageRef.current,
         snapshotsRef.current![0].sentenceFrom!
       );
-      //onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
       handlePageChange(newPage, sentencesPerPageRef.current, true, true, false);
-      onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+      //onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setLoadingFromFetch(false);
     }
     if (
@@ -172,7 +172,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       }
 
       const onYouTubeIframeAPIReady = () => {
-        if (playerDivRef.current && !playerRef.current) {
+        if (playerDivRef.current && !playerRef.current && currentLibrary) {
           playerRef.current = new YT.Player(playerDivRef.current, {
             videoId: currentLibrary!.videoId,
             events: {
