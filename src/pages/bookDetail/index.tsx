@@ -129,6 +129,7 @@ const BookDetail: FC = () => {
       }
 
       await updateReadingProgress(libraryId, page, pageSize);
+      console.log("sentenceFrom KOS" + JSON.stringify(sentenceFrom, null, 2));
       if (initState) {
         console.log("HANDLEPAGECHANGE2");
         let localSentenceFrom = changeTriggeredFromVideo

@@ -75,6 +75,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
   useEffect(() => {
     console.log("VYVOLALO");
+    if (isInitRender) setIsInitRender(false);
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -111,11 +112,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const handlePlayerStateChange = useCallback(
     (event: any) => {
       if (event.data === YT.PlayerState.PLAYING) {
+        console.log("isInitRender" + JSON.stringify(isInitRender, null, 2));
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
         //handleTimeUpdate();
-        scheduleHandleTimeUpdate();
+        if (!isInitRender) scheduleHandleTimeUpdate();
+        if (isInitRender) setIsInitRender(false);
       } else if (
         event.data === YT.PlayerState.PAUSED ||
         event.data === YT.PlayerState.ENDED
@@ -129,7 +132,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       // If the user seeks to a new time, update the subtitles immediately
       if (event.data === YT.PlayerState.BUFFERING) {
         handleTimeUpdate();
-        scheduleHandleTimeUpdate();
+        if (isInitRender) setIsInitRender(false);
       }
 
       return () => {
@@ -138,7 +141,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
       };
     },
-    [handlePageChange, shouldSetVideo, snapshots]
+    [handlePageChange, shouldSetVideo, snapshots, isInitRender]
   );
 
   useEffect(() => {
@@ -148,7 +151,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         setCurrentLibrary(library);
         console.log("init handlePageChange");
         handlePageChange(10, sentencesPerPageRef.current, false, true);
-        setIsInitRender(false);
       }
 
       const onYouTubeIframeAPIReady = () => {
@@ -274,7 +276,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             newPage * sentencesPerPageRef.current - 1
           );
           console.log("newHighlightedIndex pokracuje");
-          handlePageChange(newPage, sentencesPerPageRef.current, true);
+          //handlePageChange(newPage, sentencesPerPageRef.current, true);
         }
         if (onHighlightedSubtitleIndexChange) {
           onHighlightedSubtitleIndexChange(newHighlightedIndex!);
