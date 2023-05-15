@@ -59,7 +59,37 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         "snapshots![0].end" + JSON.stringify(snapshots![0].end, null, 2)
       );
       snapshotsRef.current = snapshots;
-      onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+      //onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+    }
+    if (
+      playerRef.current! &&
+      playerRef.current.seekTo &&
+      shouldSetVideo === false
+    ) {
+      const currentTime = playerRef.current.getCurrentTime();
+      const newHighlightedIndex =
+        snapshotsRef.current![0].sentencesData.findIndex(
+          (sentence) =>
+            currentTime >= sentence.start! &&
+            currentTime <= sentence.start! + sentence.duration!
+        );
+
+      const newPage = calculatePage(
+        newHighlightedIndex!,
+        sentencesPerPageRef.current,
+        snapshotsRef.current![0].sentenceFrom!
+      );
+      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+      handlePageChange(newPage, sentencesPerPageRef.current, true, true, false);
+
+      /* const currentTime = playerRef.current.getCurrentTime();
+      const newHighlightedIndex =
+        snapshotsRef.current![0].sentencesData.findIndex(
+          (sentence) =>
+            currentTime >= sentence.start! &&
+            currentTime <= sentence.start! + sentence.duration!
+        );
+      onHighlightedSubtitleIndexChange?.(newHighlightedIndex); */
     }
     if (
       playerRef.current! &&
