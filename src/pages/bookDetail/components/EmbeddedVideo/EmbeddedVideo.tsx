@@ -19,7 +19,8 @@ interface EmbeddedVideoProps {
   handlePageChange: (
     page: number,
     pageSize: number,
-    changeTriggeredByHighlightChange?: boolean
+    changeTriggeredByHighlightChange?: boolean,
+    changeTriggeredFromVideo?: boolean
   ) => void;
   snapshots: Snapshot[] | null | undefined;
   shouldSetVideo: boolean;
@@ -51,28 +52,35 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const [currentLibrary, setCurrentLibrary] = useState<LibraryItem | null>();
 
   useEffect(() => {
-    if (playerRef.current! && shouldSetVideo === true) {
+    if (snapshots) {
+      console.log("MENIM");
+      console.log(
+        "snapshots![0].end" + JSON.stringify(snapshots![0].end, null, 2)
+      );
+      snapshotsRef.current = snapshots;
+      onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+    }
+    if (
+      playerRef.current! &&
+      playerRef.current.seekTo &&
+      shouldSetVideo === true
+    ) {
       playerRef.current.seekTo(
         snapshots![0].sentencesData[firstIndexAfterReset!].start! + 0.2
       );
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setShouldSetVideo(false);
     }
-  }, [shouldSetVideo, firstIndexAfterReset]);
+  }, [snapshots, shouldSetVideo, firstIndexAfterReset]);
 
   useEffect(() => {
+    console.log("VYVOLALO");
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
     };
   }, []);
-
-  useEffect(() => {
-    snapshotsRef.current = snapshots;
-    scheduleHandleTimeUpdate();
-    handleTimeUpdate();
-  }, [snapshots]);
 
   const scheduleHandleTimeUpdate = async () => {
     if (!playerRef.current?.getCurrentTime()) {
@@ -130,7 +138,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
       };
     },
-    [handlePageChange, shouldSetVideo]
+    [handlePageChange, shouldSetVideo, snapshots]
   );
 
   useEffect(() => {
@@ -139,7 +147,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         const library = await getLibraryItem(libraryId!);
         setCurrentLibrary(library);
         console.log("init handlePageChange");
-        handlePageChange(1, sentencesPerPageRef.current);
+        handlePageChange(10, sentencesPerPageRef.current, false, true);
         setIsInitRender(false);
       }
 
@@ -150,7 +158,15 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             events: {
               onStateChange: handlePlayerStateChange,
               onPlaybackRateChange: handlePlayerStateChange,
+              onError: (event: any) => {
+                console.error("YouTube Player Error", event);
+              },
             },
+          });
+          playerRef.current.addEventListener("onReady", function () {
+            if (playerRef.current.seekTo) {
+              playerRef.current.seekTo(634);
+            }
           });
         }
       };
@@ -202,6 +218,17 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       return;
     }
 
+    if (currentTime > snapshotsRef.current![0].end) {
+      const snapshotInfo = findSnapshotWithCurrentTime(
+        currentLibrary!,
+        currentTime
+      );
+      const newPage = Math.ceil(
+        snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
+      );
+      //handlePageChange(newPage, sentencesPerPageRef.current, true);
+    }
+
     if (newHighlightedIndex === -1) {
       const snapshotInfo = findSnapshotWithCurrentTime(
         currentLibrary!,
@@ -216,7 +243,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         newPage * sentencesPerPageRef.current - 1
       );
       console.log("newHighlightedIndex === -1");
-      //handlePageChange(newPage, sentencesPerPageRef.current, true);
+      console.log("newPage" + JSON.stringify(newPage, null, 2));
+      //
     } else {
       if (onHighlightedSubtitleIndexChange) {
         console.log(
@@ -242,9 +270,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           );
 
           startIndexRef.current = (newPage - 1) * sentencesPerPageRef.current;
-          endIndexRef.current = Math.min(
-            newPage * sentencesPerPageRef.current - 1,
-            snapshotsRef.current![0].sentencesData.length! - 1
+          endIndexRef.current = Math.ceil(
+            newPage * sentencesPerPageRef.current - 1
           );
           console.log("newHighlightedIndex pokracuje");
           handlePageChange(newPage, sentencesPerPageRef.current, true);
