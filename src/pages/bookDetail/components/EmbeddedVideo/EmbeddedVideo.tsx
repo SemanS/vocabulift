@@ -58,7 +58,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (snapshots) {
       snapshotsRef.current = snapshots;
     }
-    if (
+    /* if (
       playerRef.current! &&
       playerRef.current.seekTo &&
       shouldSetVideo === false
@@ -76,11 +76,11 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         sentencesPerPageRef.current,
         snapshotsRef.current![0].sentenceFrom!
       );
-      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+      console.log("newPage" + newPage);
       handlePageChange(newPage, sentencesPerPageRef.current, true, true, false);
-      //onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
       setLoadingFromFetch(false);
-    }
+    } */
     if (
       playerRef.current! &&
       playerRef.current.seekTo &&
@@ -88,6 +88,17 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     ) {
       playerRef.current.seekTo(
         snapshots![0].sentencesData[firstIndexAfterReset!].start!
+      );
+      console.log(
+        "firstIndexAfterReset" + JSON.stringify(firstIndexAfterReset, null, 2)
+      );
+      console.log(
+        "snapshots![0].sentencesData[firstIndexAfterReset!].start!" +
+          JSON.stringify(
+            snapshots![0].sentencesData[firstIndexAfterReset!].start!,
+            null,
+            2
+          )
       );
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setShouldSetVideo(false);
@@ -168,7 +179,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       if (isInitRender) {
         const library = await getLibraryItem(libraryId!);
         setCurrentLibrary(library);
-        handlePageChange(10, sentencesPerPageRef.current, false, false, false);
+        handlePageChange(1, sentencesPerPageRef.current, false, false, false);
       }
 
       const onYouTubeIframeAPIReady = () => {
@@ -185,7 +196,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           });
           playerRef.current.addEventListener("onReady", function () {
             if (playerRef.current.seekTo) {
-              playerRef.current.seekTo(634);
+              playerRef.current.seekTo(1);
             }
           });
         }
@@ -227,13 +238,17 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         : pageNumber;
 
     currentPageToUseRef.current = pageNumberToUse;
+    console.log(
+      "currentTime from handleTimeUpdate" + JSON.stringify(currentTime, null, 2)
+    );
     const newHighlightedIndex =
-      snapshotsRef.current![0].sentencesData.findIndex(
-        (sentence) =>
+      snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
+        console.log(currentTime);
+        return (
           currentTime >= sentence.start! &&
-          currentTime <= sentence.start! + sentence.duration!
-      );
-
+          currentTime <= sentence.start! + sentence.duration! - 0.2!
+        );
+      });
     if (!newHighlightedIndex) {
       return;
     }
@@ -271,7 +286,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       );
       //
     } else {
-      if (onHighlightedSubtitleIndexChange) {
+      if (onHighlightedSubtitleIndexChange && newHighlightedIndex) {
         if (
           startIndexRef.current === null ||
           endIndexRef.current === null ||

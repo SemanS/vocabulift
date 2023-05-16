@@ -212,7 +212,7 @@ const BookDetail: FC = () => {
     setMode(e.target.value);
   };
 
-  const memoizeTexts = (sentences: SentenceData[]) => {
+  /*const memoizeTexts = (sentences: SentenceData[]) => {
     return sentences.map((sentence) => {
       const {
         sentenceNo,
@@ -232,11 +232,12 @@ const BookDetail: FC = () => {
       };
       return sentenceData;
     });
-  };
-  const memoizedSentencesData = useMemo(
+  }; */
+  /* const memoizedSentencesData = useMemo(
     () => memoizeTexts(sentencesData),
     [sentencesData]
-  );
+  ); */
+  const memoizedSnapshots = useMemo(() => snapshots, [snapshots]);
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
     const snapshots = await getSnapshots(
@@ -274,7 +275,6 @@ const BookDetail: FC = () => {
     setLibraryTitle(snapshots[0].title);
     setLabel(snapshots[0].label);
     setVideoId(snapshots[0].videoId);
-    setSentencesData(memoizeTexts(snapshots[0].sentencesData));
     setTotalSentences(snapshots[0].totalSentences);
     setVocabularyListUserPhrases(vocabularyListUserPhrases);
     setUserSentences(userSentencesData);
@@ -520,7 +520,7 @@ const BookDetail: FC = () => {
               currentPage={currentPage}
               libraryTitle={libraryTitle}
               mode={mode}
-              sentencesData={memoizedSentencesData}
+              snapshots={memoizedSnapshots!}
               userSentences={userSentences}
               onAddUserPhrase={handleAddUserPhrase}
               vocabularyListUserPhrases={vocabularyListUserPhrases}
@@ -544,7 +544,7 @@ const BookDetail: FC = () => {
         <Row gutter={[16, 16]}>
           {showVocabularyList && (
             <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-              {/* <FilteredVocabularyList
+              <FilteredVocabularyList
                 title="Words list"
                 mode={"words"}
                 phrases={vocabularyListUserPhrases!}
@@ -558,7 +558,7 @@ const BookDetail: FC = () => {
                 phrases={vocabularyListUserPhrases!}
                 onDeleteItem={handleDeleteUserPhrase}
                 onWordClick={handleAddWordDefinition}
-              /> */}
+              />
             </Col>
           )}
           {showWordDefinition && (

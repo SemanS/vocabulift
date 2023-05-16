@@ -11,12 +11,13 @@ import { addUserPhrase } from "@/services/userService";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import React from "react";
 import { SentenceData } from "@/models/sentences.interfaces";
+import { Snapshot } from "@/models/snapshot.interfaces";
 
 interface TranslateBoxProps {
   mode: string;
   sourceLanguage: "en" | "cz" | "sk";
   targetLanguage: "en" | "cz" | "sk";
-  sentencesData: SentenceData[];
+  snapshots: Snapshot[];
   currentTextIndex: number;
   sentenceFrom: number;
   sentencesPerPage: number;
@@ -32,7 +33,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   mode,
   sourceLanguage,
   targetLanguage,
-  sentencesData,
+  snapshots,
   currentTextIndex,
   sentenceFrom,
   sentencesPerPage,
@@ -253,12 +254,34 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       currentTextIndex - sentenceFrom + 1 + sentencesPerPage
     );
 
-  const visibleSourceTexts: SentenceData[] = getVisibleTexts(
+  /* const visibleSourceTexts: SentenceData[] = getVisibleTexts(
     sentencesData.filter((text) => text?.language === sourceLanguage)
   );
   const visibleTargetTexts: SentenceData[] = getVisibleTexts(
     sentencesData.filter((text) => text?.language === targetLanguage)
+  ); */
+
+  const visibleSourceTexts: SentenceData[] = getVisibleTexts(
+    getSentenceDataByLanguage(snapshots, sourceLanguage)
   );
+  const visibleTargetTexts: SentenceData[] = getVisibleTexts(
+    getSentenceDataByLanguage(snapshots, targetLanguage)
+  );
+
+  function getSentenceDataByLanguage(
+    snapshots: Snapshot[],
+    language: string
+  ): SentenceData[] {
+    let sentences: SentenceData[] = [];
+
+    for (let snapshot of snapshots) {
+      if (snapshot.language === language) {
+        sentences = sentences.concat(snapshot.sentencesData);
+      }
+    }
+
+    return sentences;
+  }
 
   if (error) {
     return <div>An error occurred: {error.message}</div>;

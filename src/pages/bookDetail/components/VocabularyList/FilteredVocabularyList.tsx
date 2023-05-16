@@ -26,7 +26,8 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
 }) => {
   // Filter phrases with more than one word
   let filteredPhrases = []; // Define filteredPhrases outside if/else blocks
-  if (mode === "phrases") {
+  console.log("mode" + mode);
+  /* if (mode === "phrases") {
     filteredPhrases = phrases.filter(
       (phrase) => phrase.phrase.endPosition - phrase.phrase.startPosition > 0
     );
@@ -34,7 +35,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
     filteredPhrases = phrases.filter(
       (phrase) => phrase.phrase.endPosition - phrase.phrase.startPosition === 0
     );
-  }
+  } */
 
   return filteredPhrases.length > 0 ? (
     <VocabularyList
