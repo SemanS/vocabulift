@@ -470,7 +470,7 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
-      <Drawer
+      {/*  <Drawer
         style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
         placement="left"
@@ -479,7 +479,7 @@ const BookDetail: FC = () => {
         width={320}
       >
         {renderSettingsDrawerContent()}
-      </Drawer>
+      </Drawer> */}
       <Row gutter={[16, 16]}>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (

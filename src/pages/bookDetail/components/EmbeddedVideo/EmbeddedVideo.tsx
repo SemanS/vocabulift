@@ -58,7 +58,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (snapshots) {
       snapshotsRef.current = snapshots;
     }
-    /* if (
+    if (
       playerRef.current! &&
       playerRef.current.seekTo &&
       shouldSetVideo === false
@@ -68,19 +68,25 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         snapshotsRef.current![0].sentencesData.findIndex(
           (sentence) =>
             currentTime >= sentence.start! &&
-            currentTime <= sentence.start! + sentence.duration!
+            currentTime <= sentence.start! + sentence.duration! - 0.2!
         );
-
-      const newPage = calculatePage(
-        newHighlightedIndex!,
-        sentencesPerPageRef.current,
-        snapshotsRef.current![0].sentenceFrom!
-      );
-      console.log("newPage" + newPage);
-      handlePageChange(newPage, sentencesPerPageRef.current, true, true, false);
-      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
-      setLoadingFromFetch(false);
-    } */
+      if (newHighlightedIndex) {
+        const newPage = calculatePage(
+          newHighlightedIndex!,
+          sentencesPerPageRef.current,
+          snapshotsRef.current![0].sentenceFrom!
+        );
+        handlePageChange(
+          newPage,
+          sentencesPerPageRef.current,
+          true,
+          true,
+          false
+        );
+        onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+        setLoadingFromFetch(false);
+      }
+    }
     if (
       playerRef.current! &&
       playerRef.current.seekTo &&
@@ -88,17 +94,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     ) {
       playerRef.current.seekTo(
         snapshots![0].sentencesData[firstIndexAfterReset!].start!
-      );
-      console.log(
-        "firstIndexAfterReset" + JSON.stringify(firstIndexAfterReset, null, 2)
-      );
-      console.log(
-        "snapshots![0].sentencesData[firstIndexAfterReset!].start!" +
-          JSON.stringify(
-            snapshots![0].sentencesData[firstIndexAfterReset!].start!,
-            null,
-            2
-          )
       );
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setShouldSetVideo(false);
@@ -238,12 +233,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         : pageNumber;
 
     currentPageToUseRef.current = pageNumberToUse;
-    console.log(
-      "currentTime from handleTimeUpdate" + JSON.stringify(currentTime, null, 2)
-    );
     const newHighlightedIndex =
       snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
-        console.log(currentTime);
         return (
           currentTime >= sentence.start! &&
           currentTime <= sentence.start! + sentence.duration! - 0.2!

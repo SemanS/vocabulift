@@ -295,6 +295,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         );
         return (
           <div key={index} style={{ whiteSpace: "pre-wrap" }}>
+            {/* {targetSentence?.sentenceText} */}
             {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
               const translation =
                 targetSentence?.sentenceWords[wordIndex]?.wordText || "";
