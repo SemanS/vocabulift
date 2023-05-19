@@ -29,14 +29,14 @@ const WebLayoutPage: FC = () => {
           content={formatMessage({ id: "web.middleBlock.text" })}
           button={"button"}
         />
-        <ContentBlock
+        {/*  <ContentBlock
           type="left"
           title={"title"}
           content={"content"}
           section={"section"}
           icon="graphs.svg"
           id="about"
-        />
+        /> */}
         <ContentBlock
           type="right"
           title={"title"}

@@ -1,8 +1,12 @@
 //@baseUrl = http://ec2-18-197-98-20.eu-central-1.compute.amazonaws.com:3000
-@baseUrl = http://localhost:3000
+@baseUrl = http://vocabulift-server.eu-central-1.elasticbeanstalk.com:3000
 //@cookie = auth="86a48dc5-04d4-4ddb-b97b-31fde0321d57"
 
+
+POST {{baseUrl}}/libraries
+Content-Type: application/json
 ###
+
 POST {{baseUrl}}/library/video
 Content-Type: application/json
 

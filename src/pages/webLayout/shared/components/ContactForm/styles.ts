@@ -2,6 +2,7 @@ import styled from "styled-components";
 
 export const ContactContainer = styled("div")`
   padding: 5rem 0;
+  background-color: rgb(253, 222, 184);
 
   @media only screen and (max-width: 1024px) {
     padding: 3rem 0;

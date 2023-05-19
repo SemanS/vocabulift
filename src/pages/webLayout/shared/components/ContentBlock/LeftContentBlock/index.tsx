@@ -27,14 +27,9 @@ const LeftContentBlock = ({
   }, []);
 
   return (
-    <LeftContentSection style={{ backgroundColor: "red" }}>
-      <Fade direction="left" triggerOnce delay={3000}>
-        <Row
-          justify="space-between"
-          align="middle"
-          id={id}
-          className={visible ? styles.visible : styles.nvisible}
-        >
+    <LeftContentSection>
+      <Fade direction="left" triggerOnce>
+        <Row justify="space-between" align="middle" id={id}>
           <Col lg={11} md={11} sm={12} xs={24}>
             <SvgIcon src={icon} width="100%" height="100%" />
           </Col>
@@ -44,7 +39,7 @@ const LeftContentBlock = ({
               <Content>{content}</Content>
               <ServiceWrapper>
                 <Row justify="space-between">
-                  {typeof section === "object" &&
+                  {/* {typeof section === "object" &&
                     section.map((item: any, id: number) => {
                       return (
                         <Col key={id} span={11}>
@@ -53,7 +48,7 @@ const LeftContentBlock = ({
                           <MinPara>{item.content}</MinPara>
                         </Col>
                       );
-                    })}
+                    })} */}
                 </Row>
               </ServiceWrapper>
             </ContentWrapper>

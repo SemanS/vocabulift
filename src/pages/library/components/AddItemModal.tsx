@@ -5,6 +5,9 @@ import { socket } from "@/messaging/socket";
 import { v4 as uuidv4 } from "uuid";
 import { Option } from "@/models/utils.interface";
 import { postLibraryVideo } from "@/services/libraryService";
+import { InboxOutlined } from "@ant-design/icons";
+import { Upload } from "antd";
+import { useCookies } from "react-cookie";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -31,32 +34,42 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   onLanguageSelect,
   onAddItemClick,
 }) => {
+  const [form] = Form.useForm();
+
   const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-    style: { marginBottom: "16px" },
+    labelCol: { span: 0 },
+    wrapperCol: { span: 24 },
   };
 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [selectedLanguageFrom, setSelectedLanguageFrom] = useState<string>("");
+  const [activeTab, setActiveTab] = useState("1");
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   useEffect(() => {
+    console.log("activeTab" + activeTab);
+    if (activeTab === "2") {
+      setInputValue("");
+      setButtonDisabled(true);
+    }
+    if (activeTab === "1") {
+      setUploadedFile(null);
+      setButtonDisabled(true);
+    }
+    form.resetFields();
+  }, [activeTab]);
+
+  /* useEffect(() => {
     const updateButtonDisabled = () => {
       setButtonDisabled(localStorage.getItem("ongoingEventId") !== null);
     };
-
-    // Update buttonDisabled state initially
     updateButtonDisabled();
-
-    // Update buttonDisabled state on storage changes
     window.addEventListener("storage", updateButtonDisabled);
-
-    // Clean up event listener on unmount
     return () => {
       window.removeEventListener("storage", updateButtonDisabled);
     };
-  }, []);
+  }, []); */
 
   const handleLanguageSelection = (language: string) => {
     setSelectedLanguageFrom(language);
@@ -73,13 +86,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     }
   };
 
-  const [form] = Form.useForm(); // Add this line to get the form instance
-
   const resetFields = () => {
     setInputValue("");
     setSelectedOption(null);
     setButtonDisabled(true);
-    form.resetFields(); // Add this line to reset the form fields
+    setUploadedFile(null);
+    form.resetFields();
   };
 
   const handleModalCancelAndReset = () => {
@@ -112,22 +124,36 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     handleModalCancelAndReset();
   };
 
+  const normFile = (e: any) => {
+    console.log("Upload event:", e);
+    if (e?.file) {
+      const data = new FormData();
+      data.append("bookFile", e.file);
+      // Now you can send 'data' to your backend
+      setUploadedFile(data);
+    }
+    if (Array.isArray(e)) {
+      return e;
+    }
+    return e?.fileList;
+  };
+
   const items = [
     {
       key: "1",
       label: "Video",
       children: (
-        <Row gutter={24}>
-          <Col span={24} style={{ marginBottom: "24px" }}>
+        <Row gutter={[16, 16]} justify="center">
+          <Col span={16} style={{ marginBottom: "24px", marginTop: "36px" }}>
             <Form
               preserve={false}
               {...layout}
               onFinish={handleFormSubmit}
               form={form}
-              style={{ display: "inline-block", width: "100%" }}
+              /* style={{ display: "inline-block" }} */
             >
               <Form.Item
-                label="Video URL"
+                //label="Video URL"
                 name="youtubeUrl"
                 style={{ textAlign: "left" }}
               >
@@ -135,7 +161,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                   placeholder="YouTube Video URL"
                   value={inputValue}
                   onChange={handleInputChange}
-                  size="middle"
+                  size="large"
                 />
               </Form.Item>
               {isFetchValid && inputValue && (
@@ -176,8 +202,73 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     },
     {
       key: "2",
-      label: "Text",
-      children: null,
+      label: "Book",
+      children: (
+        <Form
+          preserve={false}
+          {...layout}
+          onFinish={handleFormSubmit}
+          form={form}
+          /* style={{ display: "inline-block" }} */
+        >
+          <Form.Item>
+            <Form.Item
+              name="dragger"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+              noStyle
+            >
+              <Upload.Dragger
+                name="bookFile"
+                action={`${
+                  import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+                }/library/add/book`}
+                multiple={false}
+                maxCount={1}
+                withCredentials={true}
+                customRequest={async ({ action, file, onSuccess, onError }) => {
+                  const formData = new FormData();
+                  formData.append("bookFile", file);
+
+                  try {
+                    const response = await fetch(action, {
+                      method: "POST",
+                      headers: {
+                        Authorization: `Bearer ${sessionStorage.getItem(
+                          "access_token"
+                        )}`,
+                      },
+                      body: formData,
+                    });
+
+                    if (!response.ok) {
+                      onError &&
+                        onError(new Error("Error while uploading file."));
+                      return;
+                    }
+
+                    const responseData = await response.json();
+                    onSuccess && onSuccess(responseData);
+                    setButtonDisabled(false);
+                  } catch (error: any) {
+                    onError && onError(error);
+                  }
+                }}
+              >
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  Click or drag file to this area to upload
+                </p>
+                <p className="ant-upload-hint">
+                  Support for a single or bulk upload.
+                </p>
+              </Upload.Dragger>
+            </Form.Item>
+          </Form.Item>
+        </Form>
+      ),
     },
   ];
 
@@ -193,11 +284,15 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
           onClick={handleButtonClick}
           disabled={buttonDisabled}
         >
-          Add Video
+          Add
         </Button>,
       ]}
     >
-      <Tabs style={{ marginTop: "0px" }} items={items} />
+      <Tabs
+        style={{ marginTop: "0px" }}
+        items={items}
+        onChange={(activeKey) => setActiveTab(activeKey)}
+      />
     </Modal>
   );
 };
