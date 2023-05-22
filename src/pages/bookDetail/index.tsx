@@ -1,4 +1,11 @@
-import React, { FC, useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+  FC,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useReducer,
+} from "react";
 import {
   Card,
   Row,
@@ -38,6 +45,94 @@ import styles from "./index.module.less";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { getSnapshots } from "@/services/snapshotService";
 
+const initialState = {
+  currentPage: 1,
+  currentTextIndex: 0,
+  sentenceFrom: 1,
+  firstIndexAfterReset: null,
+  loadingFromFetch: false,
+  loading: true,
+  shouldSetVideo: false,
+  wordData: null,
+  showWordDefinition: false,
+  mode: "word",
+  snapshots: null,
+  userSentences: null,
+  libraryTitle: "",
+  label: "",
+  videoId: "",
+  totalSentences: 0,
+  vocabularyListUserPhrases: null,
+  selectedUserPhrase: null,
+  showVocabularyList: true,
+  selectAll: true,
+  colSpan: 24,
+  settingsDrawerVisible: false,
+  countOfSentences: 100,
+  sentencesPerPage: 10,
+  initState: true,
+};
+
+function reducer(state, action) {
+  console.log(action);
+  switch (action.type) {
+    case "setCurrentPage":
+      return { ...state, currentPage: action.payload };
+    case "setCurrentTextIndex":
+      return { ...state, currentTextIndex: action.payload };
+    case "setSentenceFrom":
+      return { ...state, sentenceFrom: action.payload };
+    case "setFirstIndexAfterReset":
+      return { ...state, firstIndexAfterReset: action.payload };
+    case "setLoadingFromFetch":
+      return { ...state, loading: action.payload };
+    case "setLoading":
+      return { ...state, loadingFromFetch: action.payload };
+    case "setShouldSetVideo":
+      return { ...state, shouldSetVideo: action.payload };
+    case "setWordData":
+      return { ...state, wordData: action.payload };
+    case "setShowWordDefinition":
+      return { ...state, showWordDefinition: action.payload };
+    case "setMode":
+      return { ...state, mode: action.payload };
+    case "setSnapshots":
+      return { ...state, snapshots: action.payload };
+    case "setUserSentences":
+      return { ...state, userSentences: action.payload };
+    case "setLibraryTitle":
+      return { ...state, libraryTitle: action.payload };
+    case "setLabel":
+      return { ...state, label: action.payload };
+    case "setVideoId":
+      return { ...state, videoId: action.payload };
+    case "setTotalSentences":
+      return { ...state, totalSentences: action.payload };
+    case "setVocabularyListUserPhrases":
+      return { ...state, vocabularyListUserPhrases: action.payload };
+    case "setSelectedUserPhrase":
+      return { ...state, selectedUserPhrase: action.payload };
+    case "setShowVocabularyList":
+      return { ...state, showVocabularyList: action.payload };
+    case "setSelectAll":
+      return { ...state, selectAll: action.payload };
+    case "setColSpan":
+      return { ...state, colSpan: action.payload };
+    case "toggleSettingsDrawer":
+      return { ...state, settingsDrawerVisible: !state.settingsDrawerVisible };
+    case "setCountOfSentences":
+      return { ...state, countOfSentences: action.payload };
+    case "setSentencesPerPage":
+      return { ...state, sentencesPerPage: action.payload };
+    case "setHighlightedSubtitleIndex":
+      return { ...state, highlightedSubtitleIndex: action.payload };
+    case "setInitState":
+      return { ...state, initState: action.payload };
+    default:
+      throw new Error();
+  }
+}
+
 const BookDetail: FC = () => {
   const navigate = useNavigate();
   const { libraryId } = useParams();
@@ -47,54 +142,38 @@ const BookDetail: FC = () => {
   const currentPageFromQuery = parseInt(
     queryParams.get("currentPage") as string
   );
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [loading, setLoading] = useState(true);
-  const [loadingFromFetch, setLoadingFromFetch] = useState(false);
-  const [totalSentences, setTotalSentences] = useState(0);
-  const [videoId, setVideoId] = useState<string | undefined>("");
-  const [sentenceFrom, setSentenceFrom] = useState(1);
-  const [countOfSentences, setCountOfSentences] = useState(100);
-  const [sentencesData, setSentencesData] = useState<SentenceData[]>([]);
-  const [currentTextIndex, setCurrentTextIndex] = useState(0);
-  const [sentencesPerPage, setSentencesPerPage] = useState(10);
-  const [userSentences, setUserSentences] = useState<UserSentence[]>([]);
-  const [vocabularyListUserPhrases, setVocabularyListUserPhrases] = useState<
-    VocabularyListUserPhrase[] | undefined
-  >(undefined);
-  const [mode, setMode] = useState<"word" | "sentence">("word");
-  const [wordData, setWordData] = useState<any>();
   const [sourceLanguage, setSourceLanguage] =
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
-  const [initState, setInitState] = useState<boolean>(true);
-  const [showVocabularyList, setShowVocabularyList] = useState(
-    vocabularyListUserPhrases && vocabularyListUserPhrases.length > 0
-  );
-  const [showWordDefinition, setShowWordDefinition] = useState(
-    vocabularyListUserPhrases && vocabularyListUserPhrases.length > 0
-  );
-  const [selectAll, setSelectAll] = useState(false);
-  const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [recoilCurrentPage, setRecoilCurrentPage] =
     useRecoilState(currentPageState); // Add this line
   const [recoilPageSize, setRecoilPageSize] = useRecoilState(pageSizeState);
-  const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
-    number | null
-  >(null);
-  const [label, setLabel] = useState<LabelType | undefined>(LabelType.VIDEO);
-  const [libraryTitle, setLibraryTitle] = useState<string | undefined>("");
-  const [colSpan, setColSpan] = useState(24);
-  const [snapshots, setSnapshots] = useState<Snapshot[] | null | undefined>();
-  const [shouldSetVideo, setShouldSetVideo] = useState(false);
-  const [
-    changeTriggeredByHighlightChange,
-    setChangeTriggeredByHighlightChange,
-  ] = useState(false);
-  const [firstIndexAfterReset, setFirstIndexAfterReset] = useState<number>();
-  const [selectedUserPhrase, setSelectedUserPhrase] =
-    useState<VocabularyListUserPhrase | null>(null);
+  const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const setCurrentPage = (page: any) =>
+    dispatch({ type: "setCurrentPage", payload: page });
+  const setCurrentTextIndex = (index: any) =>
+    dispatch({ type: "setCurrentTextIndex", payload: index });
+  const setSentenceFrom = (sentence: any) =>
+    dispatch({ type: "setSentenceFrom", payload: sentence });
+  const setFirstIndexAfterReset = (index: number) =>
+    dispatch({ type: "setFirstIndexAfterReset", payload: index });
+  const setLoading = (isLoading: boolean) =>
+    dispatch({ type: "setLoading", payload: isLoading });
+  const setLoadingFromFetch = (isLoading: boolean) =>
+    dispatch({ type: "setLoadingFromFetch", payload: isLoading });
+  const setShouldSetVideo = (shouldSetVideo: boolean) =>
+    dispatch({ type: "setShouldSetVideo", payload: shouldSetVideo });
+  const setHighlightedSubtitleIndex = (
+    highlightedSubtitleIndex: number | null
+  ) =>
+    dispatch({
+      type: "setHighlightedSubtitleIndex",
+      payload: highlightedSubtitleIndex,
+    });
 
   const handlePageChange = useCallback(
     async (
@@ -104,33 +183,46 @@ const BookDetail: FC = () => {
       changeTriggeredFromVideo: boolean = false,
       changeTriggeredFromVideoFetch: boolean = false
     ) => {
+      let localSentenceFrom;
+
       if (changeTriggeredFromVideo) {
         const newQueryParams = new URLSearchParams(location.search);
         newQueryParams.set("currentPage", page.toString());
         newQueryParams.set("pageSize", pageSize.toString());
-        setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
-        setCurrentPage(page);
+        dispatch({
+          type: "setCurrentTextIndex",
+          payload: (page - 1) * (pageSize || state.sentencesPerPage),
+        });
+        dispatch({ type: "setCurrentPage", payload: page });
+
         navigate({
           pathname: location.pathname,
           search: newQueryParams.toString(),
         });
+
         if (changeTriggeredFromVideoFetch) {
-          let localSentenceFrom = (page - 1) * pageSize + 1;
+          localSentenceFrom = (page - 1) * pageSize + 1;
           await fetchAndUpdate(localSentenceFrom);
-          setSentenceFrom(localSentenceFrom);
-          setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
-          setLoadingFromFetch(true);
-          //setShouldSetVideo(false);
+          dispatch({ type: "setSentenceFrom", payload: localSentenceFrom });
+          dispatch({
+            type: "setFirstIndexAfterReset",
+            payload: calculateFirstIndex(page, pageSize),
+          });
+          dispatch({ type: "setLoadingFromFetch", payload: true });
         }
       } else {
         if (!changeTriggeredFromVideo) {
           const newQueryParams = new URLSearchParams(location.search);
           newQueryParams.set("currentPage", page.toString());
           newQueryParams.set("pageSize", pageSize.toString());
-          setCurrentPage(page);
-          let localSentenceFrom = (page - 1) * pageSize + 1;
-          setSentenceFrom(getRangeNumber(localSentenceFrom));
-          // Navigate to the new state
+          dispatch({ type: "setCurrentPage", payload: page });
+
+          localSentenceFrom = (page - 1) * pageSize + 1;
+          dispatch({
+            type: "setSentenceFrom",
+            payload: getRangeNumber(localSentenceFrom),
+          });
+
           navigate({
             pathname: location.pathname,
             search: newQueryParams.toString(),
@@ -138,52 +230,76 @@ const BookDetail: FC = () => {
         }
 
         await updateReadingProgress(libraryId, page, pageSize);
-        if (initState) {
-          let localSentenceFrom = changeTriggeredFromVideo
-            ? (page - 1) * pageSizeFromQuery + 1
-            : (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-          setSentenceFrom(getRangeNumber(localSentenceFrom));
+        if (state.initState) {
+          localSentenceFrom = changeTriggeredFromVideo
+            ? (page - 1) * state.pageSizeFromQuery + 1
+            : (state.currentPageFromQuery - 1) * state.pageSizeFromQuery + 1;
+          dispatch({
+            type: "setSentenceFrom",
+            payload: getRangeNumber(localSentenceFrom),
+          });
           await fetchAndUpdate(localSentenceFrom);
-          setInitState(false);
+          dispatch({ type: "setInitState", payload: false });
         } else if (
-          sentenceFrom + countOfSentences < page * pageSize ||
-          page * pageSize > sentenceFrom + countOfSentences ||
-          page * pageSize < sentenceFrom
+          state.sentenceFrom + state.countOfSentences < page * pageSize ||
+          page * pageSize > state.sentenceFrom + state.countOfSentences ||
+          page * pageSize < state.sentenceFrom
         ) {
-          let localSentenceFrom = (page - 1) * pageSize + 1;
-          setSentenceFrom(getRangeNumber(localSentenceFrom));
+          localSentenceFrom = (page - 1) * pageSize + 1;
+          dispatch({
+            type: "setSentenceFrom",
+            payload: getRangeNumber(localSentenceFrom),
+          });
           await fetchAndUpdate(localSentenceFrom);
-          setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
+          dispatch({
+            type: "setFirstIndexAfterReset",
+            payload: calculateFirstIndex(page, pageSize),
+          });
         }
-        setCurrentTextIndex((page - 1) * (pageSize || sentencesPerPage));
-        setCurrentPage(page);
 
-        if (snapshots && !changeTriggeredByHighlightChange) {
-          setFirstIndexAfterReset(calculateFirstIndex(page, pageSize));
+        dispatch({
+          type: "setCurrentTextIndex",
+          payload: (page - 1) * (pageSize || state.sentencesPerPage),
+        });
+        dispatch({ type: "setCurrentPage", payload: page });
+
+        if (state.snapshots && !changeTriggeredByHighlightChange) {
+          dispatch({
+            type: "setFirstIndexAfterReset",
+            payload: calculateFirstIndex(page, pageSize),
+          });
           if (!changeTriggeredByHighlightChange) {
-            setShouldSetVideo(true);
+            dispatch({ type: "setShouldSetVideo", payload: true });
           }
         }
       }
     },
     [
-      initState,
-      currentPageFromQuery,
-      pageSizeFromQuery,
-      sentenceFrom,
-      countOfSentences,
-      sentencesPerPage,
-      changeTriggeredByHighlightChange,
+      state,
+      state.initState,
+      state.currentPageFromQuery,
+      state.pageSizeFromQuery,
+      state.sentenceFrom,
+      state.countOfSentences,
+      state.sentencesPerPage,
+      state.changeTriggeredByHighlightChange,
     ]
   );
 
   useEffect(() => {
     if (pageSizeFromQuery) {
-      setSentencesPerPage(pageSizeFromQuery);
+      dispatch({ type: "setSentencesPerPage", payload: pageSizeFromQuery });
     }
     if (currentPageFromQuery) {
-      setCurrentPage(currentPageFromQuery);
+      dispatch({ type: "setCurrentPage", payload: currentPageFromQuery });
     }
+    handlePageChange(
+      currentPageFromQuery,
+      pageSizeFromQuery,
+      false,
+      false,
+      false
+    );
     setRecoilLibraryId(libraryId!);
     setRecoilCurrentPage(currentPageFromQuery);
     setRecoilPageSize(pageSizeFromQuery);
@@ -199,10 +315,10 @@ const BookDetail: FC = () => {
       .then((response) => response.json())
       .then((data) => {
         if (data && data[0]) {
-          setWordData(data[0]);
-          setShowWordDefinition(true); // Show word definition when data is available
+          dispatch({ type: "setWordData", payload: data[0] });
+          dispatch({ type: "setShowWordDefinition", payload: true });
         } else {
-          setWordData(null);
+          dispatch({ type: "setWordData", payload: null });
         }
       })
       .catch((error) => {
@@ -211,11 +327,12 @@ const BookDetail: FC = () => {
   };
 
   const handleModeChange = (e: RadioChangeEvent) => {
-    setMode(e.target.value);
+    dispatch({ type: "setMode", payload: e.target.value });
   };
-  const memoizedSnapshots = useMemo(() => snapshots, [snapshots]);
+  const memoizedSnapshots = useMemo(() => state.snapshots, [state.snapshots]);
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
+    dispatch({ type: "setLoadingFromFetch", payload: true });
     const snapshots = await getSnapshots(
       libraryId!,
       sourceLanguage,
@@ -224,22 +341,25 @@ const BookDetail: FC = () => {
       localSentenceFrom
     );
     const userSentencesData: UserSentence[] = await getUserSentences({
-      sentenceFrom,
-      countOfSentences,
+      sentenceFrom: state.sentenceFrom,
+      countOfSentences: state.countOfSentences,
       sourceLanguage,
       targetLanguage,
       orderBy: "sentenceNo",
       libraryId,
       localSentenceFrom,
     });
+    console.log(
+      "sentenceFrom" + JSON.stringify(state.countOfSentences, null, 2)
+    );
     const vocabularyListUserPhrases =
       mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
     await updateSentencesState(
       userSentencesData,
-      snapshots!,
+      snapshots,
       vocabularyListUserPhrases
     );
-    setLoading(false);
+    dispatch({ type: "setLoadingFromFetch", payload: false });
   };
 
   const updateSentencesState = async (
@@ -247,22 +367,31 @@ const BookDetail: FC = () => {
     snapshots: Snapshot[],
     vocabularyListUserPhrases: VocabularyListUserPhrase[]
   ) => {
-    setSnapshots(snapshots);
-    setLibraryTitle(snapshots[0].title);
-    setLabel(snapshots[0].label);
-    setVideoId(snapshots[0].videoId);
-    setTotalSentences(snapshots[0].totalSentences);
-    setVocabularyListUserPhrases(vocabularyListUserPhrases);
-    setUserSentences(userSentencesData);
+    dispatch({ type: "setSnapshots", payload: snapshots });
+    dispatch({ type: "setLibraryTitle", payload: snapshots[0].title });
+    dispatch({ type: "setLabel", payload: snapshots[0].label });
+    dispatch({ type: "setVideoId", payload: snapshots[0].videoId });
+    dispatch({
+      type: "setTotalSentences",
+      payload: snapshots[0].totalSentences,
+    });
+    dispatch({
+      type: "setVocabularyListUserPhrases",
+      payload: vocabularyListUserPhrases,
+    });
+    dispatch({ type: "setUserSentences", payload: userSentencesData });
   };
 
   const handleAddUserPhrase = useCallback(
     async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
       try {
-        setSelectedUserPhrase(vocabularyListUserPhrase);
+        dispatch({
+          type: "setSelectedUserPhrase",
+          payload: vocabularyListUserPhrase,
+        });
         handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
         const updateVocabularyListUserPhrases = [
-          ...(vocabularyListUserPhrases || []),
+          ...(state.vocabularyListUserPhrases || []),
           vocabularyListUserPhrase,
         ];
 
@@ -283,15 +412,21 @@ const BookDetail: FC = () => {
           updatedAt: new Date(),
         };
 
-        const updateUserSentences = [...(userSentences || []), userSentence];
+        const updateUserSentences = [
+          ...(state.userSentences || []),
+          userSentence,
+        ];
 
-        setVocabularyListUserPhrases(updateVocabularyListUserPhrases);
-        setUserSentences(updateUserSentences);
+        dispatch({
+          type: "setVocabularyListUserPhrases",
+          payload: updateVocabularyListUserPhrases,
+        });
+        dispatch({ type: "setUserSentences", payload: updateUserSentences });
       } catch (error) {
         console.error("Error adding user phrase:", error);
       }
     },
-    [userSentences, vocabularyListUserPhrases]
+    [state.userSentences, state.vocabularyListUserPhrases]
   );
 
   const handleDeleteUserPhrase = useCallback(
@@ -302,7 +437,7 @@ const BookDetail: FC = () => {
       sentenceNo: number
     ) => {
       // Update sentences in TranslateBox by deleted sentences
-      const updatedUserSentences = userSentences.map((sentence) => {
+      const updatedUserSentences = state.userSentences.map((sentence) => {
         if (sentence.sentenceNo === sentenceNo) {
           return {
             ...sentence,
@@ -316,7 +451,7 @@ const BookDetail: FC = () => {
 
       // Update sentences in VocabularyList by deleted sentences
       const updatedVocabularyListUserPhrases =
-        vocabularyListUserPhrases!.filter(
+        state.vocabularyListUserPhrases!.filter(
           (item) =>
             !(
               item.phrase.startPosition === startPosition &&
@@ -325,8 +460,11 @@ const BookDetail: FC = () => {
         );
       try {
         await deleteUserPhrases([phraseId]).then(() => {
-          setVocabularyListUserPhrases(updatedVocabularyListUserPhrases);
-          setUserSentences(updatedUserSentences);
+          dispatch({
+            type: "setVocabularyListUserPhrases",
+            payload: updatedVocabularyListUserPhrases,
+          });
+          dispatch({ type: "setUserSentences", payload: updatedUserSentences });
         });
 
         // Filter out the element with the specified startPosition and sentenceNo
@@ -334,70 +472,77 @@ const BookDetail: FC = () => {
         console.error("Error deleting user phrase:", error);
       }
     },
-    [userSentences, vocabularyListUserPhrases]
+    [state.userSentences, state.vocabularyListUserPhrases]
   );
 
   const onShowSizeChange = useCallback(
     async (current: number, pageSize: number) => {
       // Calculate the new current page based on the new page size
       const newCurrentPage =
-        Math.floor(((current - 1) * sentencesPerPage) / pageSize) + 1;
-      setSentencesPerPage(pageSize);
+        Math.floor(((current - 1) * state.sentencesPerPage) / pageSize) + 1;
+      dispatch({ type: "setSentencesPerPage", payload: pageSize });
       await handlePageChange(newCurrentPage, pageSize);
     },
-    [sentencesPerPage]
+    [state.sentencesPerPage]
   );
 
   const fetchAndUpdate = async (localSentenceFrom: number) => {
-    setLoading(true);
+    dispatch({ type: "setLoadingFromFetch", payload: true });
     await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
-    setLoading(false);
+    dispatch({ type: "setLoadingFromFetch", payload: false });
   };
 
   const onCheckboxChange = (e: any) => {
     if (e.target.name === "vocabularyList") {
-      setShowVocabularyList(e.target.checked);
+      dispatch({ type: "setShowVocabularyList", payload: e.target.checked });
     } else if (e.target.name === "wordDefinition") {
-      setShowWordDefinition(e.target.checked);
+      dispatch({ type: "setShowWordDefinition", payload: e.target.checked });
     }
-    if (e.target.checked && showVocabularyList && showWordDefinition) {
-      setSelectAll(true);
+    if (
+      e.target.checked &&
+      state.showVocabularyList &&
+      state.showWordDefinition
+    ) {
+      dispatch({ type: "setSelectAll", payload: true });
     } else {
-      setSelectAll(false);
+      dispatch({ type: "setSelectAll", payload: false });
     }
   };
 
   const onSelectAllChange = (e: any) => {
     const isChecked = e.target.checked;
-    setShowVocabularyList(isChecked);
-    setShowWordDefinition(isChecked);
-    setSelectAll(isChecked);
+    dispatch({ type: "setShowVocabularyList", payload: isChecked });
+    dispatch({ type: "setShowWordDefinition", payload: isChecked });
+    dispatch({ type: "setSelectAll", payload: isChecked });
   };
 
   useEffect(() => {
     let newColSpan = 24;
 
-    if (showVocabularyList && showWordDefinition) {
+    if (state.showVocabularyList && state.showWordDefinition) {
       newColSpan = 12;
-    } else if (showVocabularyList || showWordDefinition) {
+    } else if (state.showVocabularyList || state.showWordDefinition) {
       newColSpan = 24;
     }
 
-    setColSpan(newColSpan);
-  }, [showVocabularyList, showWordDefinition]);
+    dispatch({ type: "setColSpan", payload: newColSpan });
+  }, [state.showVocabularyList, state.showWordDefinition]);
 
   const { toggleSettingsDrawer, settingsDrawerVisible } =
     useSettingsDrawerContext();
 
   useEffect(() => {
-    if (vocabularyListUserPhrases && vocabularyListUserPhrases.length === 0) {
-      setShowVocabularyList(false);
-      setShowWordDefinition(false);
+    if (
+      state.vocabularyListUserPhrases &&
+      state.vocabularyListUserPhrases.length === 0
+    ) {
+      dispatch({ type: "setShowVocabularyList", payload: false });
+      dispatch({ type: "setShowWordDefinition", payload: false });
     } else {
-      setShowVocabularyList(true);
-      setShowWordDefinition(true);
+      dispatch({ type: "setShowVocabularyList", payload: true });
+      dispatch({ type: "setShowWordDefinition", payload: true });
     }
-  }, [vocabularyListUserPhrases]);
+  }, [state.vocabularyListUserPhrases]);
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -413,14 +558,14 @@ const BookDetail: FC = () => {
                 <Space>
                   <Checkbox
                     name="vocabularyList"
-                    checked={showVocabularyList}
+                    checked={state.showVocabularyList}
                     onChange={onCheckboxChange}
                   >
                     Vocabulary List
                   </Checkbox>
                   <Checkbox
                     name="wordDefinition"
-                    checked={showWordDefinition}
+                    checked={state.showWordDefinition}
                     onChange={onCheckboxChange}
                   >
                     Word Definition
@@ -431,7 +576,7 @@ const BookDetail: FC = () => {
                 <Space>
                   <Checkbox
                     name="selectAll"
-                    checked={selectAll}
+                    checked={state.selectAll}
                     onChange={onSelectAllChange}
                   >
                     Select All
@@ -459,27 +604,27 @@ const BookDetail: FC = () => {
       </Drawer>
       <Row gutter={[16, 16]}>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
-          {label === LabelType.VIDEO && (
+          {state.label === LabelType.VIDEO && (
             <EmbeddedVideo
               onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-              sentencesPerPage={sentencesPerPage}
+              sentencesPerPage={state.sentencesPerPage}
               handlePageChange={handlePageChange}
-              snapshots={snapshots}
-              shouldSetVideo={shouldSetVideo}
+              snapshots={state.snapshots}
+              shouldSetVideo={state.shouldSetVideo}
               setShouldSetVideo={setShouldSetVideo}
-              firstIndexAfterReset={firstIndexAfterReset!}
+              firstIndexAfterReset={state.firstIndexAfterReset!}
               setLoadingFromFetch={setLoadingFromFetch}
             />
           )}
         </Col>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           <Card
-            loading={loading || loadingFromFetch}
-            title={libraryTitle}
+            loading={state.loading || state.loadingFromFetch}
+            title={state.libraryTitle}
             extra={
               <Radio.Group
                 onChange={handleModeChange}
-                value={mode}
+                value={state.mode}
                 buttonStyle="solid"
               >
                 <Radio.Button value="word">Word</Radio.Button>
@@ -491,62 +636,66 @@ const BookDetail: FC = () => {
             <TranslateBox
               sourceLanguage={sourceLanguage}
               targetLanguage={targetLanguage}
-              currentTextIndex={currentTextIndex}
-              sentenceFrom={sentenceFrom}
-              sentencesPerPage={sentencesPerPage}
-              currentPage={currentPage}
-              libraryTitle={libraryTitle}
-              mode={mode}
-              snapshots={memoizedSnapshots!}
-              userSentences={userSentences}
+              currentTextIndex={state.currentTextIndex}
+              sentenceFrom={state.sentenceFrom}
+              sentencesPerPage={state.sentencesPerPage}
+              currentPage={state.currentPage}
+              libraryTitle={state.libraryTitle}
+              mode={state.mode}
+              snapshots={state.snapshots}
+              userSentences={state.userSentences}
               onAddUserPhrase={handleAddUserPhrase}
-              vocabularyListUserPhrases={vocabularyListUserPhrases}
+              vocabularyListUserPhrases={state.vocabularyListUserPhrases}
               highlightedSentenceIndex={
-                highlightedSubtitleIndex !== null
-                  ? highlightedSubtitleIndex - (currentTextIndex % 100)
+                state.highlightedSubtitleIndex !== null
+                  ? state.highlightedSubtitleIndex -
+                    (state.currentTextIndex % 100)
                   : null
               }
             />
             <PaginationControls
-              currentPage={currentPage}
+              currentPage={state.currentPage}
               onShowSizeChange={onShowSizeChange}
               handlePageChange={handlePageChange}
-              totalSentences={totalSentences}
-              sentencesPerPage={sentencesPerPage}
+              totalSentences={state.totalSentences}
+              sentencesPerPage={state.sentencesPerPage}
             />
           </Card>
         </Col>
       </Row>
-      {vocabularyListUserPhrases && vocabularyListUserPhrases?.length !== 0 && (
-        <Row gutter={[16, 16]} style={{ marginTop: "18px" }}>
-          {showVocabularyList && (
-            <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-              <FilteredVocabularyList
-                title="Words list"
-                mode={"words"}
-                phrases={vocabularyListUserPhrases!}
-                onDeleteItem={handleDeleteUserPhrase}
-                onWordClick={handleAddWordDefinition}
-                selectedUserPhrase={selectedUserPhrase}
-                setSelectedUserPhrase={setSelectedUserPhrase}
-              />
-              <FilteredVocabularyList
-                title="Phrases list"
-                style={{ marginTop: "16px" }}
-                mode={"phrases"}
-                phrases={vocabularyListUserPhrases!}
-                onDeleteItem={handleDeleteUserPhrase}
-                onWordClick={handleAddWordDefinition}
-              />
-            </Col>
-          )}
-          {showWordDefinition && (
-            <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-              <WordDefinitionCard wordData={wordData}></WordDefinitionCard>
-            </Col>
-          )}
-        </Row>
-      )}
+      {state.vocabularyListUserPhrases &&
+        state.vocabularyListUserPhrases?.length !== 0 && (
+          <Row gutter={[16, 16]} style={{ marginTop: "18px" }}>
+            {state.showVocabularyList && (
+              <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+                <FilteredVocabularyList
+                  title="Words list"
+                  mode={"words"}
+                  phrases={state.vocabularyListUserPhrases!}
+                  onDeleteItem={handleDeleteUserPhrase}
+                  onWordClick={handleAddWordDefinition}
+                  selectedUserPhrase={state.selectedUserPhrase}
+                  setSelectedUserPhrase={state.setSelectedUserPhrase}
+                />
+                <FilteredVocabularyList
+                  title="Phrases list"
+                  style={{ marginTop: "16px" }}
+                  mode={"phrases"}
+                  phrases={state.vocabularyListUserPhrases!}
+                  onDeleteItem={handleDeleteUserPhrase}
+                  onWordClick={handleAddWordDefinition}
+                />
+              </Col>
+            )}
+            {state.showWordDefinition && (
+              <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+                <WordDefinitionCard
+                  wordData={state.wordData}
+                ></WordDefinitionCard>
+              </Col>
+            )}
+          </Row>
+        )}
     </PageContainer>
   );
 };

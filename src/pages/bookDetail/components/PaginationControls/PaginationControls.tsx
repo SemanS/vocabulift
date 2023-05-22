@@ -24,14 +24,14 @@ const PaginationControls: FC<PaginationControlsProps> = ({
         justifyContent: "center",
       }}
       current={currentPage}
-      onShowSizeChange={(pageNum, pageSize) => {
+      onShowSizeChange={(pageNum, pageSize = sentencesPerPage) => {
         if (pageSize * currentPage > totalSentences) {
           onShowSizeChange(currentPage, pageSize);
         } else {
           onShowSizeChange(pageNum, pageSize);
         }
       }}
-      onChange={(pageNum, pageSize) => {
+      onChange={(pageNum, pageSize = sentencesPerPage) => {
         if (
           pageNum === currentPage ||
           roundToNearestTen(pageSize * currentPage) - sentencesPerPage >=

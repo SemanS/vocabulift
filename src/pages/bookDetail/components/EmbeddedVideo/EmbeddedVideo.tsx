@@ -186,7 +186,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         handlePageChange(1, sentencesPerPageRef.current, false, false, false);
       }
 
-      const onYouTubeIframeAPIReady = () => {
+      window.onYouTubeIframeAPIReady = () => {
         if (playerDivRef.current && !playerRef.current && currentLibrary) {
           playerRef.current = new YT.Player(playerDivRef.current, {
             videoId: currentLibrary!.videoId,
@@ -206,14 +206,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
       };
 
-      if (window.YT) {
-        onYouTubeIframeAPIReady();
+      if (window.YT && window.YT.loaded) {
+        window.onYouTubeIframeAPIReady();
       } else {
-        const script = document.createElement("script");
-        script.src = "https://www.youtube.com/iframe_api";
-        script.async = true;
-        script.onload = onYouTubeIframeAPIReady;
-        document.body.appendChild(script);
+        const tag = document.createElement("script");
+        tag.src = "https://www.youtube.com/iframe_api";
+        const firstScriptTag = document.getElementsByTagName("script")[0];
+        firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag);
       }
     };
 
