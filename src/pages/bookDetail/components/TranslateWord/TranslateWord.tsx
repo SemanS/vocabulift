@@ -24,6 +24,7 @@ interface TranslateWordProps {
   onMouseUp?: (sentenceNumber: number, translation: string) => void;
   highlightPositions?: boolean;
   isHighlighted?: boolean;
+  isHighlightedFromVideo?: boolean;
   wordIndex?: number;
   isSelecting?: boolean;
   sentenceTranslation?: string;
@@ -40,6 +41,7 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
   onMouseUp,
   highlightPositions,
   isHighlighted,
+  isHighlightedFromVideo,
   isSelecting,
   sentenceTranslation,
 }) => {
@@ -145,17 +147,19 @@ const TranslateWord: React.FC<TranslateWordProps> = ({
         whiteSpace: "pre-wrap",
       }}
       className={classNames(
+        styles.textbox,
         isHovered || highlightPositions || isHighlighted
           ? styles.bubbleHovered
-          : "",
-        styles.textbox
+          : isHighlightedFromVideo
+          ? styles.bubbleVideoHovered
+          : ""
       )}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
     >
-      {word + " "}
+      {mode === "sentence" ? word + "\n" : word + " "}
     </Text>
   );
 };

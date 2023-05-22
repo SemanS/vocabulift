@@ -14,6 +14,10 @@ interface FilteredVocabularyListProps {
     sentenceNo: number
   ) => void;
   onWordClick: (word: string) => void;
+  selectedUserPhrase?: VocabularyListUserPhrase | null;
+  setSelectedUserPhrase: (
+    vocabularyListUserPhrase: VocabularyListUserPhrase
+  ) => void;
 }
 
 const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
@@ -23,11 +27,12 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
   style,
   onDeleteItem,
   onWordClick,
+  selectedUserPhrase,
+  setSelectedUserPhrase,
 }) => {
   // Filter phrases with more than one word
   let filteredPhrases = []; // Define filteredPhrases outside if/else blocks
-  console.log("mode" + mode);
-  /* if (mode === "phrases") {
+  if (mode === "phrases") {
     filteredPhrases = phrases.filter(
       (phrase) => phrase.phrase.endPosition - phrase.phrase.startPosition > 0
     );
@@ -35,7 +40,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
     filteredPhrases = phrases.filter(
       (phrase) => phrase.phrase.endPosition - phrase.phrase.startPosition === 0
     );
-  } */
+  }
 
   return filteredPhrases.length > 0 ? (
     <VocabularyList
@@ -45,6 +50,8 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       phrases={filteredPhrases}
       onDeleteItem={onDeleteItem}
       onWordClick={onWordClick}
+      selectedUserPhrase={selectedUserPhrase}
+      setSelectedUserPhrase={setSelectedUserPhrase}
     />
   ) : null;
 };

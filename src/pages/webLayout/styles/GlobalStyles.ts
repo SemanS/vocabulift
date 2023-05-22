@@ -2,24 +2,12 @@ import { createGlobalStyle } from "styled-components";
 import "antd/dist/reset.css";
 
 export const GlobalStyles = createGlobalStyle`
-
-    @font-face {
-        font-family: "Motiva Sans Light";
-        src: url("/fonts/Motiva-Sans-Light.ttf") format("truetype");
-        font-style: normal;
-    }
-
-    @font-face {
-        font-family: "Motiva Sans Bold";
-        src: url("/fonts/Motiva-Sans-Bold.ttf") format("truetype");
-        font-style: normal;
-    }
-
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
 
     body,
     html,
     a {
-        font-family: 'Motiva Sans Light', sans-serif;
+        font-family: 'Montserrat', sans-serif;
     }
 
 
@@ -58,9 +46,9 @@ export const GlobalStyles = createGlobalStyle`
     h4,
     h5,
     h6 {
-        font-family: 'Motiva Sans Bold', serif;
         color: #18216d;
-        font-size: 56px;
+        font-size: 65px;
+        font-weight: 700;
         line-height: 1.18;
 
         @media only screen and (max-width: 890px) {

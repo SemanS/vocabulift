@@ -14,7 +14,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (import.meta.env.MODE === "local") {
+    if (import.meta.env.MODE === "staging") {
       sessionStorage.setItem("access_token", "641880e55febd60caa927162");
       const devUser: User = {
         ...getGlobalState(),

@@ -44,19 +44,11 @@ const RightBlock = ({
               <h6>{title}</h6>
               <Content>{content}</Content>
               <ButtonWrapper>
-                <Button
-                  color={"red"}
-                  fixedWidth={true}
-                  onClick={() => scrollTo("about")}
-                >
-                  {"hi"}
+                <Button fixedWidth={true} onClick={() => scrollTo("about")}>
+                  {"SIGN UP WITH EMAIL"}
                 </Button>
-                <Button
-                  color={"red"}
-                  fixedWidth={true}
-                  onClick={() => scrollTo("about")}
-                >
-                  {"hi"}
+                <Button fixedWidth={true} onClick={() => scrollTo("about")}>
+                  {"SIGN UP WITH GOOGLE"}
                 </Button>
               </ButtonWrapper>
             </ContentWrapper>

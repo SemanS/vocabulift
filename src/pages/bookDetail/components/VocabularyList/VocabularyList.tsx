@@ -1,9 +1,8 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { Card, List, Space } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import "./VocabularyList.css";
-import classNames from "classnames";
 
 interface VocabularyListProps {
   mode: string;
@@ -17,6 +16,10 @@ interface VocabularyListProps {
     sentenceNo: number
   ) => void;
   onWordClick?: (word: string) => void;
+  selectedUserPhrase?: VocabularyListUserPhrase | null;
+  setSelectedUserPhrase: (
+    vocabularyListUserPhrase: VocabularyListUserPhrase
+  ) => void;
 }
 
 const VocabularyList: FC<VocabularyListProps> = ({
@@ -26,8 +29,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
   phrases,
   onDeleteItem,
   onWordClick,
+  selectedUserPhrase,
+  setSelectedUserPhrase,
 }) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
+  const itemRefs = useRef<(HTMLElement | null)[]>([]);
+  const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
+  const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
 
   const handleDeleteItem = async (
     phraseId: string,
@@ -38,6 +46,19 @@ const VocabularyList: FC<VocabularyListProps> = ({
     onDeleteItem(phraseId, sentenceId, startPosition, sentenceNo);
   };
 
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else if (phrases && phrases.length > prevPhrasesLength) {
+      const lastItemIndex = phrases.length - 1;
+      itemRefs.current[lastItemIndex]?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    if (phrases) {
+      setPrevPhrasesLength(phrases.length);
+    }
+  }, [phrases]);
+
   return (
     <Card
       style={style}
@@ -47,18 +68,20 @@ const VocabularyList: FC<VocabularyListProps> = ({
         size="small"
         dataSource={phrases}
         renderItem={(word: VocabularyListUserPhrase, index: number) => {
-          const isSelected = selectedWord === word.phrase.sourceText;
+          const isSelected =
+            selectedUserPhrase?.phrase.sourceText === word.phrase.sourceText;
 
           return (
             <List.Item
               key={word.sentenceNo + word.phrase.startPosition}
-              className={isSelected && mode === "words" ? "selected-word" : ""}
+              className={isSelected ? "selected-word" : ""}
               style={{ padding: "4px 0" }}
               onClick={() => {
                 mode === "words" &&
                   onWordClick &&
                   onWordClick(word.phrase.sourceText);
                 setSelectedWord(word.phrase.sourceText);
+                setSelectedUserPhrase(word);
               }}
             >
               <List.Item.Meta
@@ -79,6 +102,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 title={
                   <Space>
                     <span
+                      ref={(el) => (itemRefs.current[index] = el)}
                       style={{
                         fontWeight: "normal",
                         cursor: mode === "phrases" ? "default" : "pointer",

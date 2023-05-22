@@ -53,6 +53,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   let timeoutId: number | null = null;
 
   const [currentLibrary, setCurrentLibrary] = useState<LibraryItem | null>();
+  const [isVideoPaused, setIsVideoPaused] = useState(false);
 
   useEffect(() => {
     if (snapshots) {
@@ -76,6 +77,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           sentencesPerPageRef.current,
           snapshotsRef.current![0].sentenceFrom!
         );
+        console.log("VYHADZUJEM3");
         handlePageChange(
           newPage,
           sentencesPerPageRef.current,
@@ -92,6 +94,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       playerRef.current.seekTo &&
       shouldSetVideo === true
     ) {
+      console.log(
+        "firstIndexAfterReset" + JSON.stringify(firstIndexAfterReset, null, 2)
+      );
       playerRef.current.seekTo(
         snapshots![0].sentencesData[firstIndexAfterReset!].start!
       );
@@ -138,6 +143,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const handlePlayerStateChange = useCallback(
     (event: any) => {
       if (event.data === YT.PlayerState.PLAYING) {
+        setIsVideoPaused(false);
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
@@ -148,6 +154,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         event.data === YT.PlayerState.PAUSED ||
         event.data === YT.PlayerState.ENDED
       ) {
+        setIsVideoPaused(true);
+
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
@@ -255,6 +263,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
+      console.log("VYHADZUJEM2");
       handlePageChange(newPage, sentencesPerPageRef.current, false, true, true);
     }
 
@@ -277,12 +286,16 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       );
       //
     } else {
-      if (onHighlightedSubtitleIndexChange && newHighlightedIndex) {
+      if (
+        (onHighlightedSubtitleIndexChange && newHighlightedIndex) ||
+        isVideoPaused
+      ) {
         if (
           startIndexRef.current === null ||
           endIndexRef.current === null ||
           newHighlightedIndex! < startIndexRef.current ||
-          newHighlightedIndex! > endIndexRef.current
+          newHighlightedIndex! > endIndexRef.current ||
+          isVideoPaused
         ) {
           const newPage = calculatePage(
             newHighlightedIndex!,
@@ -298,6 +311,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             newPage * sentencesPerPageRef.current -
               snapshotsRef.current![0].sentenceFrom
           );
+          console.log("VYHADZUJEM4");
           handlePageChange(
             newPage,
             sentencesPerPageRef.current,

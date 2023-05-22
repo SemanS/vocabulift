@@ -1,6 +1,7 @@
 import React, { FC, lazy, Suspense } from "react";
 import Header from "./shared/components/Header";
 import { useLocale } from "@/locales";
+import PricingComponent from "./shared/components/Pricing/PricingComponent";
 
 const WebLayoutPage: FC = () => {
   const Contact = lazy(() => import("./shared/components/ContactForm"));
@@ -51,6 +52,7 @@ const WebLayoutPage: FC = () => {
           icon="waving.svg"
           id="product"
         />
+        <PricingComponent />
         <Contact title={"title"} content={"content"} id="contact" />
       </Container>
     </Suspense>

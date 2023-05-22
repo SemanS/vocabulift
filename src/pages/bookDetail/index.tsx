@@ -93,6 +93,8 @@ const BookDetail: FC = () => {
     setChangeTriggeredByHighlightChange,
   ] = useState(false);
   const [firstIndexAfterReset, setFirstIndexAfterReset] = useState<number>();
+  const [selectedUserPhrase, setSelectedUserPhrase] =
+    useState<VocabularyListUserPhrase | null>(null);
 
   const handlePageChange = useCallback(
     async (
@@ -283,6 +285,7 @@ const BookDetail: FC = () => {
   const handleAddUserPhrase = useCallback(
     async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
       try {
+        setSelectedUserPhrase(vocabularyListUserPhrase);
         handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
         const updateVocabularyListUserPhrases = [
           ...(vocabularyListUserPhrases || []),
@@ -470,16 +473,16 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
-      {/*  <Drawer
+      <Drawer
         style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
-        placement="left"
+        placement="top"
         onClose={toggleSettingsDrawer}
         open={settingsDrawerVisible}
         width={320}
       >
         {renderSettingsDrawerContent()}
-      </Drawer> */}
+      </Drawer>
       <Row gutter={[16, 16]}>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {label === LabelType.VIDEO && (
@@ -540,8 +543,8 @@ const BookDetail: FC = () => {
           </Card>
         </Col>
       </Row>
-      {vocabularyListUserPhrases?.length !== 0 && (
-        <Row gutter={[16, 16]}>
+      {vocabularyListUserPhrases && vocabularyListUserPhrases?.length !== 0 && (
+        <Row gutter={[16, 16]} style={{ marginTop: "18px" }}>
           {showVocabularyList && (
             <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
               <FilteredVocabularyList
@@ -550,6 +553,8 @@ const BookDetail: FC = () => {
                 phrases={vocabularyListUserPhrases!}
                 onDeleteItem={handleDeleteUserPhrase}
                 onWordClick={handleAddWordDefinition}
+                selectedUserPhrase={selectedUserPhrase}
+                setSelectedUserPhrase={setSelectedUserPhrase}
               />
               <FilteredVocabularyList
                 title="Phrases list"
@@ -558,6 +563,8 @@ const BookDetail: FC = () => {
                 phrases={vocabularyListUserPhrases!}
                 onDeleteItem={handleDeleteUserPhrase}
                 onWordClick={handleAddWordDefinition}
+                selectedUserPhrase={selectedUserPhrase}
+                setSelectedUserPhrase={setSelectedUserPhrase}
               />
             </Col>
           )}
