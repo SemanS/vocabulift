@@ -15,7 +15,7 @@ interface FilteredVocabularyListProps {
   ) => void;
   onWordClick: (word: string) => void;
   selectedUserPhrase?: VocabularyListUserPhrase | null;
-  setSelectedUserPhrase: (
+  setSelectedUserPhrase?: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
 }

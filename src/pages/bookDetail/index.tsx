@@ -537,8 +537,6 @@ const BookDetail: FC = () => {
                 phrases={vocabularyListUserPhrases!}
                 onDeleteItem={handleDeleteUserPhrase}
                 onWordClick={handleAddWordDefinition}
-                selectedUserPhrase={selectedUserPhrase}
-                setSelectedUserPhrase={setSelectedUserPhrase}
               />
             </Col>
           )}
