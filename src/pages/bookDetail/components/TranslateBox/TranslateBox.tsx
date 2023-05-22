@@ -15,8 +15,8 @@ import { Snapshot } from "@/models/snapshot.interfaces";
 
 interface TranslateBoxProps {
   mode: string;
-  sourceLanguage: "en" | "cz" | "sk";
-  targetLanguage: "en" | "cz" | "sk";
+  sourceLanguage: string;
+  targetLanguage: string;
   snapshots: Snapshot[];
   currentTextIndex: number;
   sentenceFrom: number;

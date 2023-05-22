@@ -305,6 +305,7 @@ const BookDetail: FC = () => {
   const fetchDataAndUpdateState = useCallback(
     async (localSentenceFrom: number) => {
       dispatch({ type: "setLoadingFromFetch", payload: true });
+
       const snapshots = await getSnapshots(
         libraryId!,
         sourceLanguage,
@@ -312,6 +313,7 @@ const BookDetail: FC = () => {
         undefined,
         localSentenceFrom
       );
+
       const userSentencesData: UserSentence[] = await getUserSentences({
         sentenceFrom: state.sentenceFrom,
         countOfSentences: state.countOfSentences,
@@ -321,16 +323,20 @@ const BookDetail: FC = () => {
         libraryId,
         localSentenceFrom,
       });
+
       console.log(
         "sentenceFrom" + JSON.stringify(state.countOfSentences, null, 2)
       );
+
       const vocabularyListUserPhrases =
         mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
+
       await updateSentencesState(
         userSentencesData,
         snapshots,
         vocabularyListUserPhrases
       );
+
       dispatch({ type: "setLoadingFromFetch", payload: false });
     },
     [getSnapshots, libraryId, sourceLanguage, targetLanguage]
