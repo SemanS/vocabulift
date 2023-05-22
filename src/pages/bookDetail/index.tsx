@@ -183,23 +183,12 @@ const BookDetail: FC = () => {
       changeTriggeredFromVideo: boolean = false,
       changeTriggeredFromVideoFetch: boolean = false
     ) => {
+      const newQueryParams = new URLSearchParams(location.search);
+      newQueryParams.set("currentPage", page.toString());
+      newQueryParams.set("pageSize", pageSize.toString());
       let localSentenceFrom;
 
       if (changeTriggeredFromVideo) {
-        const newQueryParams = new URLSearchParams(location.search);
-        newQueryParams.set("currentPage", page.toString());
-        newQueryParams.set("pageSize", pageSize.toString());
-        dispatch({
-          type: "setCurrentTextIndex",
-          payload: (page - 1) * (pageSize || state.sentencesPerPage),
-        });
-        dispatch({ type: "setCurrentPage", payload: page });
-
-        navigate({
-          pathname: location.pathname,
-          search: newQueryParams.toString(),
-        });
-
         if (changeTriggeredFromVideoFetch) {
           localSentenceFrom = (page - 1) * pageSize + 1;
           await fetchAndUpdate(localSentenceFrom);
@@ -211,33 +200,11 @@ const BookDetail: FC = () => {
           dispatch({ type: "setLoadingFromFetch", payload: true });
         }
       } else {
-        if (!changeTriggeredFromVideo) {
-          const newQueryParams = new URLSearchParams(location.search);
-          newQueryParams.set("currentPage", page.toString());
-          newQueryParams.set("pageSize", pageSize.toString());
-          dispatch({ type: "setCurrentPage", payload: page });
-
-          localSentenceFrom = (page - 1) * pageSize + 1;
-          dispatch({
-            type: "setSentenceFrom",
-            payload: getRangeNumber(localSentenceFrom),
-          });
-
-          navigate({
-            pathname: location.pathname,
-            search: newQueryParams.toString(),
-          });
-        }
-
         await updateReadingProgress(libraryId, page, pageSize);
         if (state.initState) {
           localSentenceFrom = changeTriggeredFromVideo
             ? (page - 1) * state.pageSizeFromQuery + 1
             : (state.currentPageFromQuery - 1) * state.pageSizeFromQuery + 1;
-          dispatch({
-            type: "setSentenceFrom",
-            payload: getRangeNumber(localSentenceFrom),
-          });
           await fetchAndUpdate(localSentenceFrom);
           dispatch({ type: "setInitState", payload: false });
         } else if (
@@ -246,23 +213,12 @@ const BookDetail: FC = () => {
           page * pageSize < state.sentenceFrom
         ) {
           localSentenceFrom = (page - 1) * pageSize + 1;
-          dispatch({
-            type: "setSentenceFrom",
-            payload: getRangeNumber(localSentenceFrom),
-          });
           await fetchAndUpdate(localSentenceFrom);
           dispatch({
             type: "setFirstIndexAfterReset",
             payload: calculateFirstIndex(page, pageSize),
           });
         }
-
-        dispatch({
-          type: "setCurrentTextIndex",
-          payload: (page - 1) * (pageSize || state.sentencesPerPage),
-        });
-        dispatch({ type: "setCurrentPage", payload: page });
-
         if (state.snapshots && !changeTriggeredByHighlightChange) {
           dispatch({
             type: "setFirstIndexAfterReset",
@@ -273,6 +229,20 @@ const BookDetail: FC = () => {
           }
         }
       }
+
+      dispatch({
+        type: "setCurrentTextIndex",
+        payload: (page - 1) * (pageSize || state.sentencesPerPage),
+      });
+      dispatch({ type: "setCurrentPage", payload: page });
+      dispatch({
+        type: "setSentenceFrom",
+        payload: getRangeNumber((page - 1) * pageSize + 1),
+      });
+      navigate({
+        pathname: location.pathname,
+        search: newQueryParams.toString(),
+      });
     },
     [
       state,
@@ -305,7 +275,7 @@ const BookDetail: FC = () => {
     setRecoilPageSize(pageSizeFromQuery);
   }, []);
 
-  const handleAddWordDefinition = async (word: string) => {
+  const handleAddWordDefinition = useCallback(async (word: string) => {
     // Fetch word details from public API
     fetch(
       `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(
@@ -324,63 +294,70 @@ const BookDetail: FC = () => {
       .catch((error) => {
         console.error(error);
       });
-  };
+  }, []);
 
-  const handleModeChange = (e: RadioChangeEvent) => {
+  const handleModeChange = useCallback((e: RadioChangeEvent) => {
     dispatch({ type: "setMode", payload: e.target.value });
-  };
+  }, []);
+
   const memoizedSnapshots = useMemo(() => state.snapshots, [state.snapshots]);
 
-  const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
-    dispatch({ type: "setLoadingFromFetch", payload: true });
-    const snapshots = await getSnapshots(
-      libraryId!,
-      sourceLanguage,
-      [targetLanguage],
-      undefined,
-      localSentenceFrom
-    );
-    const userSentencesData: UserSentence[] = await getUserSentences({
-      sentenceFrom: state.sentenceFrom,
-      countOfSentences: state.countOfSentences,
-      sourceLanguage,
-      targetLanguage,
-      orderBy: "sentenceNo",
-      libraryId,
-      localSentenceFrom,
-    });
-    console.log(
-      "sentenceFrom" + JSON.stringify(state.countOfSentences, null, 2)
-    );
-    const vocabularyListUserPhrases =
-      mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
-    await updateSentencesState(
-      userSentencesData,
-      snapshots,
-      vocabularyListUserPhrases
-    );
-    dispatch({ type: "setLoadingFromFetch", payload: false });
-  };
+  const fetchDataAndUpdateState = useCallback(
+    async (localSentenceFrom: number) => {
+      dispatch({ type: "setLoadingFromFetch", payload: true });
+      const snapshots = await getSnapshots(
+        libraryId!,
+        sourceLanguage,
+        [targetLanguage],
+        undefined,
+        localSentenceFrom
+      );
+      const userSentencesData: UserSentence[] = await getUserSentences({
+        sentenceFrom: state.sentenceFrom,
+        countOfSentences: state.countOfSentences,
+        sourceLanguage,
+        targetLanguage,
+        orderBy: "sentenceNo",
+        libraryId,
+        localSentenceFrom,
+      });
+      console.log(
+        "sentenceFrom" + JSON.stringify(state.countOfSentences, null, 2)
+      );
+      const vocabularyListUserPhrases =
+        mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
+      await updateSentencesState(
+        userSentencesData,
+        snapshots,
+        vocabularyListUserPhrases
+      );
+      dispatch({ type: "setLoadingFromFetch", payload: false });
+    },
+    [getSnapshots, libraryId, sourceLanguage, targetLanguage]
+  );
 
-  const updateSentencesState = async (
-    userSentencesData: UserSentence[],
-    snapshots: Snapshot[],
-    vocabularyListUserPhrases: VocabularyListUserPhrase[]
-  ) => {
-    dispatch({ type: "setSnapshots", payload: snapshots });
-    dispatch({ type: "setLibraryTitle", payload: snapshots[0].title });
-    dispatch({ type: "setLabel", payload: snapshots[0].label });
-    dispatch({ type: "setVideoId", payload: snapshots[0].videoId });
-    dispatch({
-      type: "setTotalSentences",
-      payload: snapshots[0].totalSentences,
-    });
-    dispatch({
-      type: "setVocabularyListUserPhrases",
-      payload: vocabularyListUserPhrases,
-    });
-    dispatch({ type: "setUserSentences", payload: userSentencesData });
-  };
+  const updateSentencesState = useCallback(
+    async (
+      userSentencesData: UserSentence[],
+      snapshots: Snapshot[],
+      vocabularyListUserPhrases: VocabularyListUserPhrase[]
+    ) => {
+      dispatch({ type: "setSnapshots", payload: snapshots });
+      dispatch({ type: "setLibraryTitle", payload: snapshots[0].title });
+      dispatch({ type: "setLabel", payload: snapshots[0].label });
+      dispatch({ type: "setVideoId", payload: snapshots[0].videoId });
+      dispatch({
+        type: "setTotalSentences",
+        payload: snapshots[0].totalSentences,
+      });
+      dispatch({
+        type: "setVocabularyListUserPhrases",
+        payload: vocabularyListUserPhrases,
+      });
+      dispatch({ type: "setUserSentences", payload: userSentencesData });
+    },
+    []
+  );
 
   const handleAddUserPhrase = useCallback(
     async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
@@ -486,35 +463,41 @@ const BookDetail: FC = () => {
     [state.sentencesPerPage]
   );
 
-  const fetchAndUpdate = async (localSentenceFrom: number) => {
-    dispatch({ type: "setLoadingFromFetch", payload: true });
-    await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
-    dispatch({ type: "setLoadingFromFetch", payload: false });
-  };
+  const fetchAndUpdate = useCallback(
+    async (localSentenceFrom: number) => {
+      dispatch({ type: "setLoadingFromFetch", payload: true });
+      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
+      dispatch({ type: "setLoadingFromFetch", payload: false });
+    },
+    [fetchDataAndUpdateState]
+  );
 
-  const onCheckboxChange = (e: any) => {
-    if (e.target.name === "vocabularyList") {
-      dispatch({ type: "setShowVocabularyList", payload: e.target.checked });
-    } else if (e.target.name === "wordDefinition") {
-      dispatch({ type: "setShowWordDefinition", payload: e.target.checked });
-    }
-    if (
-      e.target.checked &&
-      state.showVocabularyList &&
-      state.showWordDefinition
-    ) {
-      dispatch({ type: "setSelectAll", payload: true });
-    } else {
-      dispatch({ type: "setSelectAll", payload: false });
-    }
-  };
+  const onCheckboxChange = useCallback(
+    (e: any) => {
+      if (e.target.name === "vocabularyList") {
+        dispatch({ type: "setShowVocabularyList", payload: e.target.checked });
+      } else if (e.target.name === "wordDefinition") {
+        dispatch({ type: "setShowWordDefinition", payload: e.target.checked });
+      }
+      if (
+        e.target.checked &&
+        state.showVocabularyList &&
+        state.showWordDefinition
+      ) {
+        dispatch({ type: "setSelectAll", payload: true });
+      } else {
+        dispatch({ type: "setSelectAll", payload: false });
+      }
+    },
+    [state.showVocabularyList, state.showWordDefinition]
+  );
 
-  const onSelectAllChange = (e: any) => {
+  const onSelectAllChange = useCallback((e: any) => {
     const isChecked = e.target.checked;
     dispatch({ type: "setShowVocabularyList", payload: isChecked });
     dispatch({ type: "setShowWordDefinition", payload: isChecked });
     dispatch({ type: "setSelectAll", payload: isChecked });
-  };
+  }, []);
 
   useEffect(() => {
     let newColSpan = 24;
@@ -609,7 +592,7 @@ const BookDetail: FC = () => {
               onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
               sentencesPerPage={state.sentencesPerPage}
               handlePageChange={handlePageChange}
-              snapshots={state.snapshots}
+              snapshots={memoizedSnapshots}
               shouldSetVideo={state.shouldSetVideo}
               setShouldSetVideo={setShouldSetVideo}
               firstIndexAfterReset={state.firstIndexAfterReset!}
@@ -642,7 +625,7 @@ const BookDetail: FC = () => {
               currentPage={state.currentPage}
               libraryTitle={state.libraryTitle}
               mode={state.mode}
-              snapshots={state.snapshots}
+              snapshots={memoizedSnapshots}
               userSentences={state.userSentences}
               onAddUserPhrase={handleAddUserPhrase}
               vocabularyListUserPhrases={state.vocabularyListUserPhrases}
