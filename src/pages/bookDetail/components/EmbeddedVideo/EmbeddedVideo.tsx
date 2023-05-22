@@ -62,7 +62,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (
       playerRef.current! &&
       playerRef.current.seekTo &&
-      shouldSetVideo === false
+      shouldSetVideo === false &&
+      !isVideoPaused
     ) {
       const currentTime = playerRef.current.getCurrentTime();
       const newHighlightedIndex =
@@ -286,16 +287,12 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       );
       //
     } else {
-      if (
-        (onHighlightedSubtitleIndexChange && newHighlightedIndex) ||
-        isVideoPaused
-      ) {
+      if (onHighlightedSubtitleIndexChange && newHighlightedIndex) {
         if (
           startIndexRef.current === null ||
           endIndexRef.current === null ||
           newHighlightedIndex! < startIndexRef.current ||
-          newHighlightedIndex! > endIndexRef.current ||
-          isVideoPaused
+          newHighlightedIndex! > endIndexRef.current
         ) {
           const newPage = calculatePage(
             newHighlightedIndex!,

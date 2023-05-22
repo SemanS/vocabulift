@@ -213,32 +213,6 @@ const BookDetail: FC = () => {
   const handleModeChange = (e: RadioChangeEvent) => {
     setMode(e.target.value);
   };
-
-  /*const memoizeTexts = (sentences: SentenceData[]) => {
-    return sentences.map((sentence) => {
-      const {
-        sentenceNo,
-        language,
-        sentenceText,
-        sentenceWords,
-        start,
-        duration,
-      } = sentence;
-      const sentenceData: SentenceData = {
-        sentenceNo: sentenceNo,
-        language: language,
-        sentenceText: sentenceText,
-        sentenceWords: sentenceWords,
-        ...(start !== undefined && { start: start }),
-        ...(duration !== undefined && { duration: duration }),
-      };
-      return sentenceData;
-    });
-  }; */
-  /* const memoizedSentencesData = useMemo(
-    () => memoizeTexts(sentencesData),
-    [sentencesData]
-  ); */
   const memoizedSnapshots = useMemo(() => snapshots, [snapshots]);
 
   const fetchDataAndUpdateState = async (localSentenceFrom: number) => {
