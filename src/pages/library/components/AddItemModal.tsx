@@ -200,7 +200,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
         </Row>
       ),
     },
-    {
+    /* {
       key: "2",
       label: "Book",
       children: (
@@ -209,7 +209,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
           {...layout}
           onFinish={handleFormSubmit}
           form={form}
-          /* style={{ display: "inline-block" }} */
         >
           <Form.Item>
             <Form.Item
@@ -269,7 +268,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
           </Form.Item>
         </Form>
       ),
-    },
+    }, */
   ];
 
   return (

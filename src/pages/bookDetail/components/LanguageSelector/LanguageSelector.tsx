@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Popover, Input, Typography } from "antd";
 import Flag from "react-world-flags";
 import styles from "./index.module.less";
@@ -10,7 +10,7 @@ import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 
 interface LanguageSelectorProps {
-  languageProp: keyof User;
+  languageProp?: keyof User;
   disabledLanguage?: string;
   useRecoil?: boolean;
   onLanguageChange?: (language: string) => void;
@@ -41,7 +41,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   const [user, setUser] = useRecoilState(userState);
   const [countriesList, setCountriesList] = useState(initCountriesList);
   const [filteredCountries, setFilteredCountries] = useState(countriesList);
-  const [selectedLanguage, setSelectedLanguage] = useState(user[languageProp]);
+  const [selectedLanguage, setSelectedLanguage] = useState(user[languageProp!]);
 
   useEffect(() => {
     if (options) {
@@ -105,7 +105,10 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   const handleClick = () => setVisible((prevVisible) => !prevVisible);
 
   return (
-    <div className={styles.languageSelectorBox}>
+    <div
+      className={styles.languageSelectorBox}
+      onClick={() => setVisible(true)}
+    >
       <Typography.Text
         style={{ fontSize: "16px" }}
         {...{ onClick: handleClick }}
@@ -144,7 +147,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
                     code={getFlagCode(country.code)}
                     height={"16"}
                     width={"24"}
-                    onClick={handleClick}
                   />
                   {country.name}
                 </div>
