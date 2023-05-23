@@ -55,7 +55,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [selectedWordTranslation, setSelectedWordTranslation] = useState<
     string | null
   >(null);
-  const [selectedSentenceText, setSelectedSentenceText] = useState("");
+  const [selectedSentenceText, setSelectedSentenceText] = useState<string>("");
   const [selectedUserPhrase, setSelectedUserPhrase] =
     useState<VocabularyListUserPhrase | null>(null);
 
@@ -70,17 +70,22 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   }
 
   useEffect(() => {
+    let lastWord = selectedSentenceText.trim().split(" ").pop() as string;
+    let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
+
     if (selectedPhrase) {
       addUserPhrase(
-        isSingleWord(selectedPhrase)
+        mode === "sentence"
+          ? selectedSentenceText
+          : isSingleWord(selectedPhrase)
           ? removeSpecialChars(selectedPhrase)
           : selectedPhrase,
         selectedWordTranslation,
         libraryId,
         selectedSentence,
         selectedSentenceText,
-        startPosition,
-        endPosition,
+        mode === "sentence" ? 0 : startPosition,
+        mode === "sentence" ? lastIndex : endPosition,
         sourceLanguage,
         targetLanguage,
         sentencesPerPage,
@@ -93,7 +98,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
             phrase: response.data,
             sentenceNo: response.data.sentenceNo,
           };
-
+          console.log(
+            "vocabularyListUserPhrase" +
+              JSON.stringify(vocabularyListUserPhrase, null, 2)
+          );
           onAddUserPhrase(vocabularyListUserPhrase);
           setSelectedWordTranslation(null);
         }

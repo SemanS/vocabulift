@@ -17,7 +17,7 @@ interface VocabularyListProps {
   ) => void;
   onWordClick?: (word: string) => void;
   selectedUserPhrase?: VocabularyListUserPhrase | null;
-  setSelectedUserPhrase?: (
+  setSelectedUserPhrase: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
 }
@@ -80,8 +80,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 mode === "words" &&
                   onWordClick &&
                   onWordClick(word.phrase.sourceText);
-                setSelectedWord(word.phrase.sourceText);
-                setSelectedUserPhrase(word);
+                mode === "words" && setSelectedWord(word.phrase.sourceText);
+                mode === "words" && setSelectedUserPhrase(word);
               }}
             >
               <List.Item.Meta

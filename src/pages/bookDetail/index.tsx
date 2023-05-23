@@ -153,6 +153,9 @@ const BookDetail: FC = () => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const setSelectedUserPhrase = (
+    selectedUserPhrase: VocabularyListUserPhrase
+  ) => dispatch({ type: "setSelectedUserPhrase", payload: selectedUserPhrase });
   const setCurrentPage = (page: any) =>
     dispatch({ type: "setCurrentPage", payload: page });
   const setCurrentTextIndex = (index: any) =>
@@ -664,7 +667,7 @@ const BookDetail: FC = () => {
                   onDeleteItem={handleDeleteUserPhrase}
                   onWordClick={handleAddWordDefinition}
                   selectedUserPhrase={state.selectedUserPhrase}
-                  setSelectedUserPhrase={state.setSelectedUserPhrase}
+                  setSelectedUserPhrase={setSelectedUserPhrase}
                 />
                 <FilteredVocabularyList
                   title="Phrases list"
