@@ -21,7 +21,11 @@ interface TranslateWordProps {
     sentenceNumber: number,
     sentenceText: string
   ) => void;
-  onMouseUp?: (sentenceNumber: number, translation: string) => void;
+  onMouseUp?: (
+    sentenceTranslation: string,
+    sentenceNumber: number,
+    translation: string
+  ) => void;
   highlightPositions?: boolean;
   isHighlighted?: boolean;
   isHighlightedFromVideo?: boolean;
@@ -55,7 +59,11 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleMouseUp = () => {
-    props.onMouseUp?.(props.sentenceNumber!, props.translation!);
+    props.onMouseUp?.(
+      props.sentenceTranslation!,
+      props.sentenceNumber!,
+      props.translation!
+    );
   };
 
   const commonTooltipProps = {

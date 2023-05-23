@@ -78,7 +78,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           sentencesPerPageRef.current,
           snapshotsRef.current![0].sentenceFrom!
         );
-        console.log("VYHADZUJEM3");
         handlePageChange(
           newPage,
           sentencesPerPageRef.current,
@@ -95,9 +94,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       playerRef.current.seekTo &&
       shouldSetVideo === true
     ) {
-      console.log(
-        "firstIndexAfterReset" + JSON.stringify(firstIndexAfterReset, null, 2)
-      );
       playerRef.current.seekTo(
         snapshots![0].sentencesData[firstIndexAfterReset!].start!
       );
@@ -263,7 +259,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
-      console.log("VYHADZUJEM2");
       handlePageChange(newPage, sentencesPerPageRef.current, false, true, true);
     }
 
@@ -307,7 +302,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
             newPage * sentencesPerPageRef.current -
               snapshotsRef.current![0].sentenceFrom
           );
-          console.log("VYHADZUJEM4");
           handlePageChange(
             newPage,
             sentencesPerPageRef.current,

@@ -24,6 +24,7 @@ export interface UserPhrase {
   sourceLanguage: string;
   targetLanguage: string;
   sentenceText: string;
+  sentenceTextTranslation: string;
   sourceText: string;
   targetText: string;
   startPosition: number;

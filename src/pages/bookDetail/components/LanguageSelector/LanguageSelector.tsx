@@ -10,7 +10,7 @@ import { User, UserEntity } from "@/models/user";
 import { userState } from "@/stores/user";
 
 interface LanguageSelectorProps {
-  languageProp?: keyof User;
+  languageProp: keyof User;
   disabledLanguage?: string;
   useRecoil?: boolean;
   onLanguageChange?: (language: string) => void;

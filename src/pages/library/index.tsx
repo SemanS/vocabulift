@@ -369,9 +369,9 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     if (settingsDrawerVisible) {
-      setDrawerHeight(420); // Set the desired height when the drawer is visible
+      setDrawerHeight(420);
     } else {
-      setDrawerHeight(0); // Set the height to 0 when the drawer is hidden
+      setDrawerHeight(0);
     }
   }, [settingsDrawerVisible]);
 

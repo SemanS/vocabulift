@@ -19,6 +19,24 @@ export const getLibraryItem = async (
   return data.library;
 };
 
+export const getVocabularyLibraryItems = async (
+  userEntity: UserEntity
+): Promise<LibraryItem[]> => {
+  const response = await fetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/vocabulary/libraries`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify({ userEntity }),
+    }
+  );
+  const data = await response.json();
+  return data.libraryItems;
+};
+
 export const getLibraryItems = async (
   userEntity: UserEntity
 ): Promise<Record<LabelType, LibraryItem[]>> => {

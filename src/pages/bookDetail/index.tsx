@@ -44,6 +44,7 @@ import EmbeddedVideo, {
 import styles from "./index.module.less";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { getSnapshots } from "@/services/snapshotService";
+import { userState } from "@/stores/user";
 
 const initialState = {
   currentPage: 1,
@@ -73,7 +74,7 @@ const initialState = {
   initState: true,
 };
 
-function reducer(state, action) {
+function reducer(state: any, action: any) {
   console.log(action);
   switch (action.type) {
     case "setCurrentPage":
@@ -150,6 +151,7 @@ const BookDetail: FC = () => {
     useRecoilState(currentPageState); // Add this line
   const [recoilPageSize, setRecoilPageSize] = useRecoilState(pageSizeState);
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
+  const [user, setUser] = useRecoilState(userState);
 
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -311,8 +313,8 @@ const BookDetail: FC = () => {
 
       const snapshots = await getSnapshots(
         libraryId!,
-        sourceLanguage,
-        [targetLanguage],
+        user.sourceLanguage,
+        [user.targetLanguage],
         undefined,
         localSentenceFrom
       );
@@ -320,16 +322,12 @@ const BookDetail: FC = () => {
       const userSentencesData: UserSentence[] = await getUserSentences({
         sentenceFrom: state.sentenceFrom,
         countOfSentences: state.countOfSentences,
-        sourceLanguage,
-        targetLanguage,
+        sourceLanguage: user.sourceLanguage,
+        targetLanguage: user.targetLanguage,
         orderBy: "sentenceNo",
         libraryId,
         localSentenceFrom,
       });
-
-      console.log(
-        "sentenceFrom" + JSON.stringify(state.countOfSentences, null, 2)
-      );
 
       const vocabularyListUserPhrases =
         mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
@@ -584,7 +582,7 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
-      <Drawer
+      {/* <Drawer
         style={{ backgroundColor: "#D7DFEA" }}
         title="Settings"
         placement="top"
@@ -593,7 +591,7 @@ const BookDetail: FC = () => {
         width={320}
       >
         {renderSettingsDrawerContent()}
-      </Drawer>
+      </Drawer> */}
       <Row gutter={[16, 16]}>
         <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
           {state.label === LabelType.VIDEO && (
@@ -626,8 +624,8 @@ const BookDetail: FC = () => {
             }
           >
             <TranslateBox
-              sourceLanguage={sourceLanguage}
-              targetLanguage={targetLanguage}
+              sourceLanguage={user.sourceLanguage}
+              targetLanguage={user.targetLanguage}
               currentTextIndex={state.currentTextIndex}
               sentenceFrom={state.sentenceFrom}
               sentencesPerPage={state.sentencesPerPage}

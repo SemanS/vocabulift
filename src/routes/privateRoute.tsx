@@ -53,7 +53,6 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
       setUser(devUser);
       setLoading(false);
     } else if (cookies.access_token && !user.isLogged) {
-      console.log("setujem");
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
         .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`, {

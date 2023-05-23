@@ -49,7 +49,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [selectedWords, setSelectedWords] = useState<any[]>([]);
   const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
   const [mouseDown, setMouseDown] = useState(false);
-  const [selectedPhrase, setSelectedPhrase] = useState<string | null>(null);
+  const [sentenceText, setSentenceText] = useState<string | null>(null);
+  const [sentenceTextTranslated, setSentenceTextTranslated] = useState<
+    string | null
+  >(null);
   const [startPosition, setStartPosition] = useState<number | null>(null);
   const [endPosition, setEndPosition] = useState<number | null>(null);
   const [selectedWordTranslation, setSelectedWordTranslation] = useState<
@@ -73,17 +76,18 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     let lastWord = selectedSentenceText.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
 
-    if (selectedPhrase) {
+    if (sentenceText) {
       addUserPhrase(
         mode === "sentence"
           ? selectedSentenceText
-          : isSingleWord(selectedPhrase)
-          ? removeSpecialChars(selectedPhrase)
-          : selectedPhrase,
+          : isSingleWord(sentenceText)
+          ? removeSpecialChars(sentenceText)
+          : sentenceText,
         selectedWordTranslation,
         libraryId,
         selectedSentence,
         selectedSentenceText,
+        sentenceTextTranslated,
         mode === "sentence" ? 0 : startPosition,
         mode === "sentence" ? lastIndex : endPosition,
         sourceLanguage,
@@ -98,16 +102,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
             phrase: response.data,
             sentenceNo: response.data.sentenceNo,
           };
-          console.log(
-            "vocabularyListUserPhrase" +
-              JSON.stringify(vocabularyListUserPhrase, null, 2)
-          );
           onAddUserPhrase(vocabularyListUserPhrase);
           setSelectedWordTranslation(null);
         }
       });
     }
-  }, [selectedPhrase]);
+  }, [sentenceText]);
 
   useEffect(() => {
     // This effect will run whenever vocabularyListUserPhrases changes
@@ -224,7 +224,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           )
           .join(" ");
 
-        handleMouseUp(sentenceNumber, translation);
+        handleMouseUp(
+          targetSentence?.sentenceText!,
+          sentenceNumber,
+          translation
+        );
       }
     };
 
@@ -234,7 +238,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     };
   }, [selectedWords]);
 
-  const handleMouseUp = (sentenceNumber: number, translation?: string) => {
+  const handleMouseUp = (
+    sentenceTranslation: string,
+    sentenceNumber: number,
+    translation?: string
+  ) => {
     setMouseDown(false);
     const sortedSelectedWords = selectedWords.sort(
       (a, b) => a.wordIndexInSentence - b.wordIndexInSentence
@@ -249,7 +257,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       )
       .filter((word) => word !== null)
       .join(" ");
-    setSelectedPhrase(phrase);
+    setSentenceText(phrase);
+    setSentenceTextTranslated(sentenceTranslation);
     if (sortedSelectedWords.length > 0) {
       setStartPosition(sortedSelectedWords[0].wordIndexInSentence);
       setEndPosition(

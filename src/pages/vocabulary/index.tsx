@@ -14,6 +14,7 @@ import {
   Space,
   Table,
   Tooltip,
+  Typography,
   theme,
 } from "antd";
 import classNames from "classnames";
@@ -22,20 +23,24 @@ import { VariableSizeGrid as Grid } from "react-window";
 import ResizeObserver from "rc-resize-observer";
 import { UserPhrase } from "@/models/userSentence.interface";
 import { PageContainer } from "@ant-design/pro-layout";
-import { getLibraryItems } from "@/services/libraryService";
-import { DownOutlined } from "@ant-design/icons";
+import { getVocabularyLibraryItems } from "@/services/libraryService";
+import { SwapOutlined } from "@ant-design/icons";
+import TruncatedText from "./components/TruncatedText/TruncatedText";
+import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
+import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
+import { userState } from "@/stores/user";
+import { UserEntity } from "@/models/user";
 
 type DateFilter = "today" | "last week" | "last month" | "all";
 
 const Vocabulary: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [sourceLanguage] = useRecoilState(sourceLanguageState);
-  const [targetLanguage] = useRecoilState(targetLanguageState);
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [tableWidth, setTableWidth] = useState(0);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [options, setOptions] = useState<any[]>([]);
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
+  const [user, setUser] = useRecoilState(userState);
 
   const fetchSize = 50;
   const scroll = { y: 800, x: "100vw" };
@@ -48,8 +53,8 @@ const Vocabulary: React.FC = () => {
     } = await getUserPhrases({
       nextCursor: pageParam,
       countOfPhrases: fetchSize,
-      sourceLanguage,
-      targetLanguage,
+      sourceLanguage: user.sourceLanguage,
+      targetLanguage: user.targetLanguage,
       dateFilter,
       orderBy: "createdAt",
       filterBy: {
@@ -69,23 +74,23 @@ const Vocabulary: React.FC = () => {
   }
 
   useEffect(() => {
+    refetch();
+  }, [user]);
+
+  useEffect(() => {
+    const userEntity: UserEntity = {
+      sourceLanguage: user.sourceLanguage,
+      targetLanguage: user.targetLanguage,
+    };
     const fetchOptions = async () => {
-      const data = await getLibraryItems(
-        sessionStorage.getItem("access_token")
-      );
+      const data = await getVocabularyLibraryItems(userEntity);
 
       const renderTitle = (title: any) => title;
 
       const renderItem = (title: string, totalSentences: number) => ({
         value: title, // This is required for the AutoComplete component
-        label: (
-          <div>
-            {title}
-            {/* <span style={{ float: "right" }}>{totalSentences}</span> */}
-          </div>
-        ),
+        label: <div>{title}</div>,
       });
-
       const groupByLabel = (data: DataItem[]) => {
         return data.reduce((acc: any, item: any) => {
           if (!acc[item.label]) {
@@ -126,8 +131,8 @@ const Vocabulary: React.FC = () => {
   } = useInfiniteQuery({
     queryKey: [
       "phrases",
-      sourceLanguage,
-      targetLanguage,
+      user.sourceLanguage,
+      user.targetLanguage,
       dateFilter,
       selectedTitle,
       tableWidth,
@@ -142,39 +147,6 @@ const Vocabulary: React.FC = () => {
     () => data?.pages.flatMap((page) => page.phrasesData) || [],
     [data, selectedTitle, tableWidth]
   );
-  const maxTextLength = 30; // Set the maximum length for text truncation
-
-  const truncateText = (content: JSX.Element, text: string) => {
-    if (text.length > maxTextLength) {
-      const truncatedText = text.slice(0, maxTextLength - 1) + "...";
-      const truncatedContent = (
-        <div style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-          {truncatedText.split(" ").map((word, index) => (
-            <span key={index}>
-              {word}
-              &nbsp;
-            </span>
-          ))}
-        </div>
-      );
-
-      return (
-        <Tooltip
-          title={text}
-          overlayInnerStyle={{
-            backgroundColor: "white",
-            color: "black",
-            borderRadius: "10px",
-            fontSize: "16px",
-          }}
-        >
-          <span className={styles.truncate}>{truncatedContent}</span>
-        </Tooltip>
-      );
-    } else {
-      return <span className={styles.truncate}>{content}</span>;
-    }
-  };
 
   const onCheckboxChange = (record: UserPhrase, checked: boolean) => {
     const newSelectedRowKeys = new Set(selectedRowKeys);
@@ -222,6 +194,38 @@ const Vocabulary: React.FC = () => {
         width: 60,
       },
       {
+        title: "Sentence",
+        dataIndex: "sentenceText",
+        key: "sentenceText",
+        render: (text: string, row: any) => (
+          <TruncatedText text={text} maxTextLength={30} />
+        ),
+      },
+      {
+        title: "Sentence Translation",
+        dataIndex: "sentenceTextTranslation",
+        key: "sentenceTextTranslation",
+        render: (text: string, row: any) => (
+          <TruncatedText text={text} maxTextLength={30} />
+        ),
+      },
+      {
+        title: "Phrase",
+        dataIndex: "sourceText",
+        key: "sourceText",
+        render: (text: string, row: any) => (
+          <TruncatedText text={text} maxTextLength={30} />
+        ),
+      },
+      {
+        title: "Translation",
+        dataIndex: "targetText",
+        key: "targetText",
+        render: (text: string, row: any) => (
+          <TruncatedText text={text} maxTextLength={30} />
+        ),
+      },
+      {
         title: (
           <div style={{ display: "flex", alignItems: "center" }}>
             <span>Title</span>
@@ -238,56 +242,9 @@ const Vocabulary: React.FC = () => {
         ),
         dataIndex: "libraryTitle",
         key: "libraryTitle",
-        render: (text: string) => {
-          const content = (
-            <div style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-              {text.split(" ").map((word, index) => (
-                <span key={index}>
-                  {word}
-                  &nbsp;
-                </span>
-              ))}
-            </div>
-          );
-
-          return truncateText(content, text);
-        },
-      },
-      {
-        title: "Text",
-        dataIndex: "sentenceText",
-        key: "sentenceText",
-        render: (text: string, row: any) => {
-          const content = (
-            <div style={{ wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-              {text.split(" ").map((word, index) => (
-                <span
-                  key={index}
-                  className={
-                    isWordInSentenceText(word, row.sourceText)
-                      ? styles.bubbleHovered
-                      : ""
-                  }
-                >
-                  {word}
-                  &nbsp;
-                </span>
-              ))}
-            </div>
-          );
-
-          return truncateText(content, text);
-        },
-      },
-      {
-        title: "Phrase",
-        dataIndex: "sourceText",
-        key: "sourceText",
-      },
-      {
-        title: "TargetText",
-        dataIndex: "targetText",
-        key: "targetText",
+        render: (text: string) => (
+          <TruncatedText text={text} maxTextLength={30} />
+        ),
       },
       {
         title: "Date added",
@@ -456,26 +413,93 @@ const Vocabulary: React.FC = () => {
     [mergedColumns, tableWidth, scroll]
   );
 
+  const handleSwapLanguages = async () => {
+    const previousSourceLanguage = user.sourceLanguage;
+
+    setUser((prevUser) => ({
+      ...prevUser,
+      sourceLanguage: user.targetLanguage,
+      targetLanguage: previousSourceLanguage,
+    }));
+  };
+
+  const { toggleSettingsDrawer, settingsDrawerVisible } =
+    useSettingsDrawerContext();
+
+  const renderSettingsDrawerContent = () => {
+    return (
+      <>
+        <Row
+          gutter={[16, 16]}
+          justify="center"
+          style={{ marginBottom: "20px" }}
+        >
+          <Col
+            xs={20}
+            sm={20}
+            md={16}
+            lg={8}
+            xl={8}
+            xxl={8}
+            style={{ marginTop: "30px" }}
+          >
+            <Row gutter={[16, 16]} justify="center">
+              <Col span={10}>
+                <LanguageSelector
+                  useRecoil={true}
+                  languageProp="sourceLanguage"
+                  disabledLanguage={user.targetLanguage}
+                  text={"Translate from: "}
+                />
+              </Col>
+              <Col
+                span={4}
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <SwapOutlined
+                  style={{ fontSize: "42px" }}
+                  onClick={handleSwapLanguages}
+                />
+              </Col>
+              <Col span={10}>
+                <LanguageSelector
+                  useRecoil={true}
+                  languageProp="targetLanguage"
+                  disabledLanguage={user.sourceLanguage}
+                  text={"Translate to: "}
+                />
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </>
+    );
+  };
+
   return (
     <PageContainer loading={loading} title={false}>
-      <Row gutter={[24, 24]} justify="center" align="bottom">
+      {renderSettingsDrawerContent()}
+
+      <Row
+        gutter={[24, 24]}
+        justify="center"
+        align="bottom"
+        style={{ marginBottom: "26px", marginTop: "26px" }}
+      >
         <Col span={20}>
-          <Row justify="start">
+          <Row justify="space-between">
             <Space>
               <Select
                 value="Actions"
                 placeholder="Actions"
                 onSelect={async (value: string) => {
                   if (value === "delete") {
-                    // Convert selectedRowKeys to string[]
                     const selectedIds = selectedRowKeys.map((key) =>
                       key.toString()
                     );
                     await deleteUserPhrases(selectedIds);
-                    // Clear selected row keys and refresh table data
                     setSelectedRowKeys([]);
-                    // Call the method to fetch data again and update the table
-                    refetch(); // Add this line
+                    refetch();
                   }
                 }}
                 style={{ width: 120 }}
@@ -484,8 +508,6 @@ const Vocabulary: React.FC = () => {
                 <Select.Option value="delete">Delete</Select.Option>
               </Select>
             </Space>
-          </Row>
-          <Row justify="end">
             <Space>
               <Radio.Group onChange={handleDateChange} value={dateFilter}>
                 <Radio.Button value="today">Today</Radio.Button>

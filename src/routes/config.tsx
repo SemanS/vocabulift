@@ -16,7 +16,6 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
   const [cookies] = useCookies(["access_token"]);
 
   useEffect(() => {
-    console.log(import.meta.env.MODE);
     if (import.meta.env.MODE === "development" && cookies.access_token) {
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
