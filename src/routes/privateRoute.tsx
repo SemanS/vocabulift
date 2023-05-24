@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Navigate, RouteProps, useLocation } from "react-router";
+import { Navigate, RouteProps, useLocation, useNavigate } from "react-router";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { useCookies } from "react-cookie";
@@ -12,6 +12,8 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const [user, setUser] = useRecoilState(userState);
   const [cookies] = useCookies(["access_token"]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (import.meta.env.MODE === "staging") {
@@ -66,8 +68,12 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
             username: "Slavo",
             noticeCount: 0,
             isLogged: true,
+            locale: "en-us",
             ...response.data.body,
           });
+          if (response.data.status === "not-activated") {
+            navigate("/verification");
+          }
         })
         .catch((error) => {
           console.error(error);

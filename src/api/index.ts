@@ -16,6 +16,11 @@ export const useLogin = () => {
   return useCreate<LoginParams, LoginResult>(`${baseUrl}/login`);
 };
 
+export const useRegistration = () => {
+  const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
+  return useCreate<LoginParams, LoginResult>(`${baseUrl}/registration`);
+};
+
 export const useGetCurrentUser = () => {
   const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
   return useGetOne<CurrentUserResult>("CurrentUser", `${baseUrl}/user/current`);

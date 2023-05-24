@@ -36,7 +36,7 @@ const Library: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<Option[]>([]);
-  const [isFetchValid, setIsFetchValid] = useState(false);
+  const [isFetchValid, setIsFetchValid] = useState(true);
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
   >(null);
@@ -61,15 +61,18 @@ const Library: React.FC = () => {
   const fetchOptions = async (input: string) => {
     try {
       const response = await postLibraryInputVideoLanguages(input);
+      console.log("response" + JSON.stringify(response, null, 2));
       if (!response.ok) {
-        // If the response is not ok, clear the options, set isFetchValid to false, and disable the button
         setIsFetchValid(false);
         throw new Error("Failed to fetch options");
       }
 
-      const data = await response.json(); // Add this line to parse the JSON data from the response
+      const data = await response.json();
+      if (!data.languageCodes || data.languageCodes.length === 0) {
+        setIsFetchValid(false);
+        throw new Error("Empty data received from server");
+      }
 
-      // Update the options using the languageCodes from the response
       const options = data.languageCodes.map((code: any) => ({
         value: code,
         label: code,
@@ -271,27 +274,48 @@ const Library: React.FC = () => {
   const renderLabelTypeButtonGroup = () => {
     return (
       <Space size={20}>
-        <PlusOutlined
-          style={{
-            fontSize: "30px",
-          }}
+        <div
           className={styles.whiteIconBox}
           onClick={handleAddButtonClick}
-        />
-        <Button
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <PlusOutlined
+            style={{
+              fontSize: "30px",
+            }}
+          />
+          <Typography.Text
+            style={{
+              marginLeft: "10px",
+              paddingRight: "10px",
+              color: "white",
+              fontWeight: "500",
+            }}
+          >
+            {" "}
+            Add Video
+          </Typography.Text>
+        </div>
+        {/*  <Button
           size="large"
           type={selectedLabelType === LabelType.VIDEO ? "primary" : "default"}
           onClick={() => handleLabelTypeButtonClick(LabelType.VIDEO)}
         >
           Videos
-        </Button>
-        <Button
+        </Button> */}
+        {/* <Button
           size="large"
           type={selectedLabelType === LabelType.BOOK ? "primary" : "default"}
           onClick={() => handleLabelTypeButtonClick(LabelType.BOOK)}
         >
           Books
-        </Button>
+        </Button> */}
       </Space>
     );
   };

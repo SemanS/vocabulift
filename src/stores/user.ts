@@ -19,6 +19,8 @@ const initialState: User = {
   library: [],
   sourceLanguage: "en",
   targetLanguage: "sk",
+  verified: false,
+  activated: false,
 };
 
 export const userState = atom({

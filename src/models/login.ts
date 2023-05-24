@@ -2,7 +2,8 @@
 export type Role = "guest" | "admin";
 
 export interface LoginParams {
-  username: string;
+  nickname: string;
+  email: string;
   password: string;
 }
 

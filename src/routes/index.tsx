@@ -3,19 +3,20 @@ import Dashboard from "@/pages/dashboard";
 import { useRoutes, RouteObject } from "react-router-dom";
 import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
 const LoginPage = lazy(() => import("@/pages/login"));
+const VerificationPage = lazy(() => import("@/pages/verification"));
+const RegistrationPage = lazy(() => import("@/pages/registration"));
 const WrapperRouteComponent = lazy(() => import("./config"));
 const LayoutPage = lazy(() => import("@/pages/layout"));
 const BookDetail = lazy(() => import("@/pages/bookDetail"));
 const NotFound = lazy(() => import("@/pages/404"));
 const Library = lazy(() => import("@/pages/library"));
 const Vocabulary = lazy(() => import("@/pages/vocabulary"));
-//import Library from "@/pages/library";
 
 const WebLayoutPage = lazy(() => import("@/pages/webLayout"));
 const routeList: RouteObject[] = [
   {
     element: (
-      <WrapperRouteComponent>
+      <WrapperRouteComponent auth={true}>
         <LayoutPage />
       </WrapperRouteComponent>
     ),
@@ -74,6 +75,22 @@ const routeList: RouteObject[] = [
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/registration",
+    element: <RegistrationPage />,
+  },
+  /* {
+    path: "/verification",
+    element: <VerificationPage />,
+  }, */
+  {
+    path: "/verification",
+    element: (
+      <WrapperRouteComponent auth={true}>
+        <VerificationPage />
+      </WrapperRouteComponent>
+    ),
   },
 ];
 

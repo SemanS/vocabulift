@@ -52,6 +52,8 @@ export interface User {
   // For backend purposes
   sourceLanguage: string;
   targetLanguage: string;
+  verified: boolean;
+  activated: boolean;
 }
 
 export interface UserEntity {

@@ -51,7 +51,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       onDeleteItem={onDeleteItem}
       onWordClick={onWordClick}
       selectedUserPhrase={selectedUserPhrase}
-      setSelectedUserPhrase={setSelectedUserPhrase}
+      setSelectedUserPhrase={setSelectedUserPhrase!}
     />
   ) : null;
 };

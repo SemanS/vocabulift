@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Tabs } from "antd";
+import { Button, Col, Form, Input, Modal, Row, Tabs, Typography } from "antd";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 import { socket } from "@/messaging/socket";
 import { v4 as uuidv4 } from "uuid";
 import { Option } from "@/models/utils.interface";
 import { postLibraryVideo } from "@/services/libraryService";
-import { InboxOutlined } from "@ant-design/icons";
-import { Upload } from "antd";
-import { useCookies } from "react-cookie";
+import { PageContainer } from "@ant-design/pro-layout";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -46,9 +44,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [selectedLanguageFrom, setSelectedLanguageFrom] = useState<string>("");
   const [activeTab, setActiveTab] = useState("1");
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("activeTab" + activeTab);
     if (activeTab === "2") {
       setInputValue("");
       setButtonDisabled(true);
@@ -59,17 +57,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     }
     form.resetFields();
   }, [activeTab]);
-
-  /* useEffect(() => {
-    const updateButtonDisabled = () => {
-      setButtonDisabled(localStorage.getItem("ongoingEventId") !== null);
-    };
-    updateButtonDisabled();
-    window.addEventListener("storage", updateButtonDisabled);
-    return () => {
-      window.removeEventListener("storage", updateButtonDisabled);
-    };
-  }, []); */
 
   const handleLanguageSelection = (language: string) => {
     setSelectedLanguageFrom(language);
@@ -82,7 +69,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       fetchOptions(e.target.value);
       setButtonDisabled(true);
     } else {
-      setButtonDisabled(false);
+      setButtonDisabled(true);
     }
   };
 
@@ -143,61 +130,74 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       key: "1",
       label: "Video",
       children: (
-        <Row gutter={[16, 16]} justify="center">
-          <Col span={16} style={{ marginBottom: "24px", marginTop: "36px" }}>
-            <Form
-              preserve={false}
-              {...layout}
-              onFinish={handleFormSubmit}
-              form={form}
-              /* style={{ display: "inline-block" }} */
-            >
-              <Form.Item
-                //label="Video URL"
-                name="youtubeUrl"
-                style={{ textAlign: "left" }}
+        <PageContainer loading={loading} title={false}>
+          <Row gutter={[16, 16]} justify="center">
+            <Col span={16} style={{ marginBottom: "24px", marginTop: "36px" }}>
+              <Form
+                preserve={false}
+                {...layout}
+                onFinish={handleFormSubmit}
+                form={form}
               >
-                <Input
-                  placeholder="YouTube Video URL"
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  size="large"
-                />
-              </Form.Item>
-              {isFetchValid && inputValue && (
-                <Form.Item label="Translate from" name="language">
-                  <LanguageSelector
-                    useRecoil={false}
-                    onLanguageChange={(language) => {
-                      const option = selectOptions.find(
-                        (option) => option.value === language
-                      );
-                      setSelectedOption(option || null);
-                      handleLanguageSelection(language);
-                      setButtonDisabled(
-                        !option || !inputValue || !isFetchValid
-                      );
-                    }}
-                    options={selectOptions}
+                {!isFetchValid && inputValue.length > 0 && (
+                  <Typography.Text>
+                    Unfortunately, this video does not contain any subtitles.
+                    Try adding another video.
+                  </Typography.Text>
+                )}
+                <Form.Item style={{ textAlign: "left", marginTop: "10px" }}>
+                  <Input
+                    placeholder="YouTube Video URL"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    size="large"
                   />
                 </Form.Item>
-              )}
-              {inputValue && (
-                <Form.Item label="Translate to" name="language">
-                  <LanguageSelector
-                    useRecoil={false}
-                    disabledLanguage={targetLanguage}
-                    onLanguageChange={(language) => {
-                      console.log("Source language changed to", language);
-                    }}
-                    text={""}
-                    languageProp="targetLanguage"
-                  />
-                </Form.Item>
-              )}
-            </Form>
-          </Col>
-        </Row>
+                {isFetchValid && inputValue && (
+                  <Form.Item
+                    style={{ textAlign: "left" }}
+                    label="Translate from"
+                    name="language"
+                  >
+                    <LanguageSelector
+                      useRecoil={false}
+                      onLanguageChange={(language) => {
+                        const option = selectOptions.find(
+                          (option) => option.value === language
+                        );
+                        setSelectedOption(option || null);
+                        handleLanguageSelection(language);
+                        setButtonDisabled(
+                          !option || !inputValue || !isFetchValid
+                        );
+                      }}
+                      options={selectOptions}
+                      style={{ marginTop: "-5px" }}
+                    />
+                  </Form.Item>
+                )}
+                {inputValue && (
+                  <Form.Item
+                    style={{ textAlign: "left" }}
+                    label="Translate to"
+                    name="language"
+                  >
+                    <LanguageSelector
+                      useRecoil={false}
+                      disabledLanguage={targetLanguage}
+                      onLanguageChange={(language) => {
+                        console.log("Source language changed to", language);
+                      }}
+                      text={""}
+                      languageProp="targetLanguage"
+                      style={{ marginTop: "-10px" }}
+                    />
+                  </Form.Item>
+                )}
+              </Form>
+            </Col>
+          </Row>
+        </PageContainer>
       ),
     },
     /* {

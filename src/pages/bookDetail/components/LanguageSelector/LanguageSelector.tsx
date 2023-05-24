@@ -16,6 +16,7 @@ interface LanguageSelectorProps {
   onLanguageChange?: (language: string) => void;
   options?: Option[];
   text?: string;
+  style?: React.CSSProperties;
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
@@ -26,6 +27,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     onLanguageChange,
     options,
     text,
+    style,
   } = props;
 
   const initCountriesList = options
@@ -108,6 +110,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     <div
       className={styles.languageSelectorBox}
       onClick={() => setVisible(true)}
+      style={style}
     >
       <Typography.Text
         style={{ fontSize: "16px" }}
