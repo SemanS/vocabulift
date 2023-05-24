@@ -145,7 +145,10 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                     Try adding another video.
                   </Typography.Text>
                 )}
-                <Form.Item style={{ textAlign: "left", marginTop: "10px" }}>
+                <Form.Item
+                  name="youtubeUrl"
+                  style={{ textAlign: "left", marginTop: "10px" }}
+                >
                   <Input
                     placeholder="YouTube Video URL"
                     value={inputValue}

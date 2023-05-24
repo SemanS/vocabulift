@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Button, Form, Input, Tooltip, Typography } from "antd";
+import { Button, Divider, Form, Input, Tooltip, Typography } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LoginParams } from "@/models/login";
@@ -7,6 +7,8 @@ import { useRegistration } from "@/api";
 import styles from "./index.module.less";
 import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
+import { getGoogleUrl } from "@/utils/getGoogleUrl";
+import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
 
 const RegistrationForm: FC = () => {
   const loginMutation = useRegistration();
@@ -253,6 +255,18 @@ const RegistrationForm: FC = () => {
         <Typography.Text className={styles.signInLink}>
           Already have an account? <Link to="/login">Sign in</Link>
         </Typography.Text>
+        <Divider plain>OR</Divider>
+        <Button
+          size="large"
+          href={getGoogleUrl(from)}
+          style={{ textDecoration: "none" }}
+          className={`${styles.mainLoginBtn} ${styles.flexContainer}`}
+        >
+          <GoogleIcon className={styles.googleIcon} />
+          <Typography.Text className={styles.flexItem}>
+            Continue with Google
+          </Typography.Text>
+        </Button>
       </div>
     </div>
   );

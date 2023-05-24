@@ -60,8 +60,8 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         verified: true,
       };
       setUser(devUser);
-    }
-    if (
+      setLoading(false);
+    } else if (
       (import.meta.env.MODE === "development" && cookies.access_token) ||
       (import.meta.env.MODE === "testing" && cookies.access_token)
     ) {
@@ -86,7 +86,8 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
           if (response.data.status === "not-verified") {
             navigate("/verification");
           }
-          if (userResponse?.verified && !userResponse.activated) {
+          if (response.data.status === "not-activated") {
+            console.log("ASDASDASD");
             navigate("/activation");
           } else if (!userResponse?.verified) {
             navigate("/verification");

@@ -4,6 +4,7 @@ import { useRoutes, RouteObject } from "react-router-dom";
 import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
 const LoginPage = lazy(() => import("@/pages/login"));
 const VerificationPage = lazy(() => import("@/pages/verification"));
+const ActivationPage = lazy(() => import("@/pages/activation"));
 const RegistrationPage = lazy(() => import("@/pages/registration"));
 const WrapperRouteComponent = lazy(() => import("./config"));
 const LayoutPage = lazy(() => import("@/pages/layout"));
@@ -80,10 +81,14 @@ const routeList: RouteObject[] = [
     path: "/registration",
     element: <RegistrationPage />,
   },
-  /* {
-    path: "/verification",
-    element: <VerificationPage />,
-  }, */
+  {
+    path: "/activation",
+    element: (
+      <WrapperRouteComponent auth={true}>
+        <ActivationPage />
+      </WrapperRouteComponent>
+    ),
+  },
   {
     path: "/verification",
     element: (

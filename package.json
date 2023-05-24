@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "build-staging": "vite build --mode staging",
+    "preview-staging": "vite --mode staging --port=4000",
     "build-testing": "vite build --mode testing",
     "preview-testing": "vite --mode testing --port=4000",
     "build-local": "vite build --mode staging",
