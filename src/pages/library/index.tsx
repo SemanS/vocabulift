@@ -28,6 +28,7 @@ import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
 import "antd/dist/reset.css";
+import { useCookies } from "react-cookie";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -57,6 +58,7 @@ const Library: React.FC = () => {
     localStorage.getItem("videoThumbnail") || undefined
   );
   const [fetched, setFetched] = useState(false); // Add fetched state
+  const [cookies] = useCookies(["access_token"]);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -407,13 +409,45 @@ const Library: React.FC = () => {
   }, [settingsDrawerVisible]);
 
   useEffect(() => {
-    // Connect to the socket when the component mounts
-    const ongoingEventId = localStorage.getItem("ongoingEventId");
+    // Async function inside the useEffect
+    const fetchData = async () => {
+      const ongoingEventId = localStorage.getItem("ongoingEventId");
+      if (ongoingEventId) {
+        try {
+          const response = await fetch(
+            `${
+              import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+            }/progress/${ongoingEventId}`,
+            {
+              headers: {
+                "Content-Type": "text/plain;charset=UTF-8",
+                Authorization: `Bearer ${sessionStorage.getItem(
+                  "access_token"
+                )}`,
+              },
+            }
+          );
 
-    if (!ongoingEventId) {
-      // Connect to the socket when the component mounts and there is no ongoingEventId in localStorage
-      socket.connect();
-    }
+          const progressData = await response.json();
+
+          if (progressData.progressStatus === "Complete") {
+            localStorage.removeItem("ongoingEventId");
+            localStorage.removeItem("progress");
+            // Handle the finalized status, e.g., update the UI
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+
+      if (!ongoingEventId) {
+        // Connect to the socket when the component mounts and there is no ongoingEventId in localStorage
+        socket.connect();
+      }
+    };
+
+    fetchData(); // Call the async function
+
     socket.on("video-finalized", (data) => {
       if (localStorage.getItem("ongoingEventId") === data.eventId)
         setProgress(100);
@@ -426,12 +460,12 @@ const Library: React.FC = () => {
       // Handle the finalized status, e.g., update the UI
       console.log("Video finalized with eventId:", data.eventId);
     });
+
     return () => {
       // Disconnect from the socket when the component unmounts
       socket.disconnect();
     };
   }, []);
-
   return (
     <PageContainer loading={loading} title={false}>
       <div className={styles.drawerContainer}>

@@ -95,37 +95,3 @@ export const postLibraryVideo = async (
   );
   return response.json();
 };
-
-export async function pollProgressUpdates(
-  eventId: string,
-  onProgressUpdate: (progress: number) => void,
-  onSliderUpdate: (updateSlider: true) => void
-) {
-  const intervalId = setInterval(async () => {
-    const response = await fetch(
-      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/progress/${eventId}`,
-      {
-        headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-        },
-      }
-    );
-
-    const progressData = await response.json();
-
-    if (progressData.progressStatus === "Complete") {
-      onProgressUpdate(100);
-      clearInterval(intervalId);
-      localStorage.removeItem("ongoingEventId");
-      localStorage.removeItem("progress");
-      // Handle the finalized status, e.g., update the UI
-    } else {
-      onProgressUpdate(progressData.progressPercentage); // Update the progress using the callback
-      localStorage.setItem("progress", progressData.progressPercentage);
-      if (progressData.progressPercentage !== 0) {
-        onSliderUpdate(true);
-      }
-    }
-  });
-}
