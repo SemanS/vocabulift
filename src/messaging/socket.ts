@@ -2,12 +2,9 @@ import { io } from "socket.io-client";
 
 const token = sessionStorage.getItem("access_token");
 
-const URL =
-  process.env.NODE_ENV === "production"
-    ? undefined // production URL goes here
-    : "http://localhost:3000";
+const baseUrl = import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT;
 
-export const socket = io(URL, {
+export const socket = io(baseUrl, {
   auth: {
     token: token,
   },

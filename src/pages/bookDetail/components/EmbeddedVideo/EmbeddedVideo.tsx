@@ -241,7 +241,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
         return (
           currentTime >= sentence.start! &&
-          currentTime <= sentence.start! + sentence.duration! - 0.2!
+          currentTime <= sentence.start! + sentence.duration!
         );
       });
     if (!newHighlightedIndex) {

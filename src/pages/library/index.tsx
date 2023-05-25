@@ -36,7 +36,7 @@ const Library: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
   const [selectOptions, setSelectOptions] = useState<Option[]>([]);
-  const [isFetchValid, setIsFetchValid] = useState(true);
+  const [isFetchValid, setIsFetchValid] = useState(false);
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
   >(null);
@@ -54,7 +54,7 @@ const Library: React.FC = () => {
   const [polling, setPolling] = useState(false);
   const [sliderUpdated, setSliderUpdated] = useState(false);
   const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
-    undefined
+    localStorage.getItem("videoThumbnail") || undefined
   );
   const [fetched, setFetched] = useState(false); // Add fetched state
 
@@ -110,7 +110,12 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchData();
+    //fetchData();
+    if (localStorage.getItem("videoThumbnail")) {
+      fetchData(videoThumbnail);
+    } else {
+      fetchData();
+    }
     setLoading(false);
   }, [user]);
 
@@ -177,6 +182,7 @@ const Library: React.FC = () => {
     async function onProgressUpdate(progressData: any) {
       console.log("progressData" + JSON.stringify(progressData, null, 2));
       if (progressData.progressPercentage > 0 && !fetched) {
+        localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
         setLoading(true);
         fetchData();
@@ -268,6 +274,7 @@ const Library: React.FC = () => {
   };
 
   const updateVideoThumbnail = (newThumbnail: string) => {
+    localStorage.setItem("videoThumbnail", newThumbnail);
     setVideoThumbnail(newThumbnail);
   };
 
