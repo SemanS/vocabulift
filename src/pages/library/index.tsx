@@ -63,7 +63,6 @@ const Library: React.FC = () => {
   const fetchOptions = async (input: string) => {
     try {
       const response = await postLibraryInputVideoLanguages(input);
-      console.log("response" + JSON.stringify(response, null, 2));
       if (!response.ok) {
         setIsFetchValid(false);
         throw new Error("Failed to fetch options");

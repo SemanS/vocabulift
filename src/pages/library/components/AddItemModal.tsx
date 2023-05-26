@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, Input, Modal, Row, Tabs, Typography } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Spin,
+  Tabs,
+  Typography,
+} from "antd";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 import { socket } from "@/messaging/socket";
 import { v4 as uuidv4 } from "uuid";
@@ -12,7 +22,7 @@ interface AddItemModalProps {
   handleModalCancel: () => void;
   inputValue: string;
   setInputValue: (value: string) => void;
-  fetchOptions: (input: string) => void;
+  fetchOptions: (input: string) => Promise<void>;
   isFetchValid: boolean;
   selectOptions: any[];
   targetLanguage: string;
@@ -63,11 +73,19 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     onLanguageSelect(language);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    if (e.target.value) {
-      fetchOptions(e.target.value);
-      setButtonDisabled(true);
+  useEffect(() => {
+    console.log("inputValue prop", inputValue);
+  }, [inputValue]);
+
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+    if (value) {
+      setLoading(true);
+      await fetchOptions(value).then(() => {
+        setLoading(false);
+        setButtonDisabled(!value);
+      });
     } else {
       setButtonDisabled(true);
     }
@@ -82,9 +100,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   };
 
   const handleModalCancelAndReset = () => {
-    form.resetFields(); // Reset the form fields
-    resetFields(); // Reset the state values
-    handleModalCancel(); // Close the modal
+    form.resetFields();
+    resetFields();
+    handleModalCancel();
   };
 
   const handleButtonClick = async () => {
@@ -130,7 +148,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       key: "1",
       label: "Video",
       children: (
-        <PageContainer loading={loading} title={false}>
+        <PageContainer title={false}>
           <Row gutter={[16, 16]} justify="center">
             <Col span={16} style={{ marginBottom: "24px", marginTop: "36px" }}>
               <Form
@@ -139,7 +157,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 onFinish={handleFormSubmit}
                 form={form}
               >
-                {!isFetchValid && inputValue.length > 0 && (
+                {!loading && !isFetchValid && inputValue.length > 0 && (
                   <Typography.Text>
                     Unfortunately, this video does not contain any subtitles.
                     Try adding another video.
@@ -156,47 +174,49 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                     size="large"
                   />
                 </Form.Item>
-                {isFetchValid && inputValue && (
-                  <Form.Item
-                    style={{ textAlign: "left" }}
-                    label="Translate from"
-                    name="language"
-                  >
-                    <LanguageSelector
-                      useRecoil={false}
-                      onLanguageChange={(language) => {
-                        const option = selectOptions.find(
-                          (option) => option.value === language
-                        );
-                        setSelectedOption(option || null);
-                        handleLanguageSelection(language);
-                        setButtonDisabled(
-                          !option || !inputValue || !isFetchValid
-                        );
-                      }}
-                      options={selectOptions}
-                      style={{ marginTop: "-5px" }}
-                    />
-                  </Form.Item>
-                )}
-                {inputValue && (
-                  <Form.Item
-                    style={{ textAlign: "left" }}
-                    label="Translate to"
-                    name="language"
-                  >
-                    <LanguageSelector
-                      useRecoil={false}
-                      disabledLanguage={targetLanguage}
-                      onLanguageChange={(language) => {
-                        console.log("Source language changed to", language);
-                      }}
-                      text={""}
-                      languageProp="targetLanguage"
-                      style={{ marginTop: "-10px" }}
-                    />
-                  </Form.Item>
-                )}
+                <Spin spinning={loading} size="large">
+                  {isFetchValid && inputValue && (
+                    <Form.Item
+                      style={{ textAlign: "left" }}
+                      label="Translate from"
+                      name="language"
+                    >
+                      <LanguageSelector
+                        useRecoil={false}
+                        onLanguageChange={(language) => {
+                          const option = selectOptions.find(
+                            (option) => option.value === language
+                          );
+                          setSelectedOption(option || null);
+                          handleLanguageSelection(language);
+                          setButtonDisabled(
+                            !option || !inputValue || !isFetchValid
+                          );
+                        }}
+                        options={selectOptions}
+                        style={{ marginTop: "-5px" }}
+                      />
+                    </Form.Item>
+                  )}
+                  {inputValue && (
+                    <Form.Item
+                      style={{ textAlign: "left" }}
+                      label="Translate to"
+                      name="language"
+                    >
+                      <LanguageSelector
+                        useRecoil={false}
+                        disabledLanguage={targetLanguage}
+                        onLanguageChange={(language) => {
+                          console.log("Source language changed to", language);
+                        }}
+                        text={""}
+                        languageProp="targetLanguage"
+                        style={{ marginTop: "-10px" }}
+                      />
+                    </Form.Item>
+                  )}
+                </Spin>
               </Form>
             </Col>
           </Row>
