@@ -110,22 +110,24 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   };
 
   const handleFormSubmit = async (values: any) => {
-    const eventId = uuidv4();
     const { youtubeUrl, language } = values;
     const response = await postLibraryVideo(
       selectedLanguageFrom,
       targetLanguage,
       youtubeUrl
     );
+
+    const { videoThumbnail, eventId } = response;
+
     socket.emit("add-video", {
-      eventId: eventId,
       input: youtubeUrl,
+      eventId: eventId,
       sourceLanguage: selectedLanguageFrom,
       targetLanguage: targetLanguage,
     });
     localStorage.setItem("ongoingEventId", eventId);
 
-    onAddItemClick(response.videoThumbnail);
+    onAddItemClick(videoThumbnail);
     handleModalCancelAndReset();
   };
 
