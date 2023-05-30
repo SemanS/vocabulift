@@ -57,8 +57,6 @@ const Library: React.FC = () => {
   const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
     localStorage.getItem("videoThumbnail") || undefined
   );
-  const [fetched, setFetched] = useState(false);
-  const [cookies] = useCookies(["access_token"]);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -165,19 +163,16 @@ const Library: React.FC = () => {
       setSliderUpdated(false);
     }
 
-    const savedProgress = localStorage.getItem("progress");
-    if (savedProgress) {
-      setProgress(Number(savedProgress));
-    }
-
     async function onProgressUpdate(progressData: any) {
-      if (progressData.progressPercentage > 0 && !fetched) {
+      if (
+        progressData.progressPercentage > 0 &&
+        progressData.progressStatus === "InProgress"
+      ) {
         localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
         setLoading(true);
         fetchData();
         setLoading(false);
-        setFetched(true);
       }
       console.log("progressData" + JSON.stringify(progressData, null, 2));
       setProgress(Number(progressData.progressPercentage.toString()));
@@ -185,16 +180,13 @@ const Library: React.FC = () => {
         localStorage.removeItem("ongoingEventId");
         localStorage.removeItem("progress");
         localStorage.removeItem("videoThumbnail");
-        setFetched(false);
         setPolling(false);
         setProgress(0);
+        setLoading(true);
+        fetchData();
+        setLoading(false);
         socket.off("progress", onProgressUpdate);
       }
-
-      /* localStorage.setItem(
-        "progress",
-        progressData.progressPercentage.toString()
-      ); */
     }
 
     socket.on("progress", onProgressUpdate);
