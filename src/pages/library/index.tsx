@@ -57,7 +57,7 @@ const Library: React.FC = () => {
   const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
     localStorage.getItem("videoThumbnail") || undefined
   );
-  const [fetched, setFetched] = useState(false); // Add fetched state
+  const [fetched, setFetched] = useState(false);
   const [cookies] = useCookies(["access_token"]);
 
   const fetchOptions = async (input: string) => {
@@ -179,16 +179,22 @@ const Library: React.FC = () => {
         setLoading(false);
         setFetched(true);
       }
+      console.log("progressData" + JSON.stringify(progressData, null, 2));
       setProgress(Number(progressData.progressPercentage.toString()));
-      if (Number(progressData.progressPercentage === 100)) {
+      if (progressData.progressStatus === "Complete") {
         localStorage.removeItem("ongoingEventId");
         localStorage.removeItem("progress");
+        localStorage.removeItem("videoThumbnail");
+        setFetched(false);
+        setPolling(false);
+        setProgress(0);
+        socket.off("progress", onProgressUpdate);
       }
 
-      localStorage.setItem(
+      /* localStorage.setItem(
         "progress",
         progressData.progressPercentage.toString()
-      );
+      ); */
     }
 
     socket.on("progress", onProgressUpdate);
@@ -433,23 +439,9 @@ const Library: React.FC = () => {
       }
     };
 
-    fetchData(); // Call the async function
-
-    socket.on("video-finalize", (data) => {
-      if (localStorage.getItem("ongoingEventId") === data.eventId)
-        setProgress(100);
-      localStorage.removeItem("ongoingEventId");
-      localStorage.removeItem("progress");
-      setFetched(false);
-      // Reset the polling state
-      setPolling(false);
-      setProgress(0);
-      // Handle the finalized status, e.g., update the UI
-      console.log("Video finalized with eventId:", data.eventId);
-    });
+    fetchData();
 
     return () => {
-      // Disconnect from the socket when the component unmounts
       socket.disconnect();
     };
   }, []);
