@@ -180,7 +180,7 @@ const Library: React.FC = () => {
         setFetched(true);
       }
       setProgress(Number(progressData.progressPercentage.toString()));
-      if (Number(progressData.progressPercentage.toString() === 100)) {
+      if (Number(progressData.progressPercentage === 100)) {
         localStorage.removeItem("ongoingEventId");
         localStorage.removeItem("progress");
       }
