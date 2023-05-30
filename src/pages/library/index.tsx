@@ -124,12 +124,13 @@ const Library: React.FC = () => {
     const savedProgress = localStorage.getItem("progress");
     if (savedProgress) {
       setProgress(Number(savedProgress));
+    } else {
+      setProgress(0);
     }
 
     const ongoingEventId = localStorage.getItem("ongoingEventId");
 
     if (ongoingEventId) {
-      // Set polling state to true if there's an ongoing event ID
       setPolling(true);
     }
   }, []);
@@ -144,7 +145,7 @@ const Library: React.FC = () => {
       totalSentences: 1,
       videoThumbnail: thumbnail,
       videoId: "",
-      category: "My videos", // You can change the category as needed
+      category: "My videos",
       level: ["A1", "A2", "B1", "B2", "C1", "C2"],
       eventId: "",
       snapshotsInfo: [],
@@ -164,24 +165,12 @@ const Library: React.FC = () => {
       setSliderUpdated(false);
     }
 
-    // This code will run on the initial render
     const savedProgress = localStorage.getItem("progress");
     if (savedProgress) {
       setProgress(Number(savedProgress));
     }
 
-    // Check if polling is true
-    if (polling) {
-      const ongoingEventId = localStorage.getItem("ongoingEventId");
-
-      if (ongoingEventId) {
-        // Subscribe to the progress event using the ongoingEventId
-        socket.emit("subscribe", { eventId: ongoingEventId });
-      }
-    }
-
     async function onProgressUpdate(progressData: any) {
-      console.log("progressData" + JSON.stringify(progressData, null, 2));
       if (progressData.progressPercentage > 0 && !fetched) {
         localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
@@ -190,23 +179,25 @@ const Library: React.FC = () => {
         setLoading(false);
         setFetched(true);
       }
-      setProgress(progressData.progressPercentage); // Update the progress using the callback
-      localStorage.setItem("progress", progressData.progressPercentage);
-      /* if (progressData.progressPercentage !== 0) {
-        setSliderUpdated(true);
-      } */
+      setProgress(Number(progressData.progressPercentage.toString()));
+      if (Number(progressData.progressPercentage.toString() === 100)) {
+        localStorage.removeItem("ongoingEventId");
+        localStorage.removeItem("progress");
+      }
+
+      localStorage.setItem(
+        "progress",
+        progressData.progressPercentage.toString()
+      );
     }
 
-    // Listen to the progress event from the server
     socket.on("progress", onProgressUpdate);
 
     return () => {
-      // Unsubscribe from the progress event
       socket.off("progress", onProgressUpdate);
     };
   }, [polling, sliderUpdated]);
 
-  // Add this function to handle the click event for the "Add" button
   const handleAddButtonClick = () => {
     setIsModalVisible(true);
   };
@@ -408,7 +399,6 @@ const Library: React.FC = () => {
   }, [settingsDrawerVisible]);
 
   useEffect(() => {
-    // Async function inside the useEffect
     const fetchData = async () => {
       const ongoingEventId = localStorage.getItem("ongoingEventId");
       if (ongoingEventId) {
@@ -432,7 +422,6 @@ const Library: React.FC = () => {
           if (progressData.progressStatus === "Complete") {
             localStorage.removeItem("ongoingEventId");
             localStorage.removeItem("progress");
-            // Handle the finalized status, e.g., update the UI
           }
         } catch (error) {
           console.error("Error:", error);
@@ -440,14 +429,13 @@ const Library: React.FC = () => {
       }
 
       if (!ongoingEventId) {
-        // Connect to the socket when the component mounts and there is no ongoingEventId in localStorage
         socket.connect();
       }
     };
 
     fetchData(); // Call the async function
 
-    socket.on("video-finalized", (data) => {
+    socket.on("video-finalize", (data) => {
       if (localStorage.getItem("ongoingEventId") === data.eventId)
         setProgress(100);
       localStorage.removeItem("ongoingEventId");
@@ -465,6 +453,7 @@ const Library: React.FC = () => {
       socket.disconnect();
     };
   }, []);
+
   return (
     <PageContainer loading={loading} title={false}>
       <div className={styles.drawerContainer}>
