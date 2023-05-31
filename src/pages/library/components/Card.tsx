@@ -1,8 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
-import { Col, Progress, Row, Spin, Tooltip, Typography } from "antd";
 import {
+  Alert,
+  Col,
+  Progress,
+  Row,
+  Space,
+  Spin,
+  Tooltip,
+  Typography,
+} from "antd";
+import {
+  CheckCircleOutlined,
   DislikeOutlined,
   LikeOutlined,
   PlayCircleOutlined,
@@ -28,6 +38,21 @@ export const Card: React.FC<CardProps> = ({
   const [isImgHovered, setIsImgHovered] = useState(false);
   const [isDelayPassed, setIsDelayPassed] = useState(false);
   const [transitionState, setTransitionState] = useState("");
+  const [alertOneDone, setAlertOneDone] = useState(false);
+  const [alertTwoDone, setAlertTwoDone] = useState(false);
+  const [alertThreeDone, setAlertThreeDone] = useState(false);
+
+  useEffect(() => {
+    if (progress >= 33) {
+      setAlertOneDone(true);
+    }
+    if (progress >= 66) {
+      setAlertTwoDone(true);
+    }
+    if (progress >= 99) {
+      setAlertThreeDone(true);
+    }
+  }, [progress]);
 
   const isOngoingEvent =
     localStorage.getItem("ongoingEventId") === itemData.eventId;
@@ -100,11 +125,80 @@ export const Card: React.FC<CardProps> = ({
                 onMouseLeave={handleMouseLeave}
                 className={styles.progressCircle}
               >
-                <Progress type="circle" percent={progress} showInfo={false} />
+                <Progress
+                  type="circle"
+                  percent={progress}
+                  showInfo={false}
+                  width={90}
+                />
                 <div className={styles.spinnerContainer}>
-                  <Spin />
+                  <Spin size="default" />
                   <div className={styles.percentage}>{progress}%</div>
                 </div>
+              </div>
+              <div className={styles.alertsContainer}>
+                <Alert
+                  style={{ padding: "2px 10px" }}
+                  message={
+                    alertOneDone ? (
+                      <span>
+                        <CheckCircleOutlined style={{ marginRight: "5px" }} />
+                        <Typography.Text>
+                          Text is processed by AI
+                        </Typography.Text>
+                      </span>
+                    ) : (
+                      <span>
+                        <Spin size="small" style={{ marginRight: "5px" }} />
+                        <Typography.Text>
+                          Text is processing by AI
+                        </Typography.Text>
+                      </span>
+                    )
+                  }
+                  showIcon={false}
+                  banner
+                />
+                <Alert
+                  style={{ padding: "2px 10px" }}
+                  message={
+                    alertTwoDone ? (
+                      <span>
+                        <CheckCircleOutlined style={{ marginRight: "5px" }} />
+                        <Typography.Text>
+                          Sentences are translated
+                        </Typography.Text>
+                      </span>
+                    ) : (
+                      <span>
+                        <Spin size="small" style={{ marginRight: "5px" }} />
+                        <Typography.Text>
+                          Sentences are translating
+                        </Typography.Text>
+                      </span>
+                    )
+                  }
+                  showIcon={false}
+                  banner
+                />
+                <Alert
+                  style={{ padding: "2px 10px" }}
+                  message={
+                    alertThreeDone ? (
+                      <span>
+                        <CheckCircleOutlined style={{ marginRight: "5px" }} />
+                        <Typography.Text>Words are translated</Typography.Text>
+                      </span>
+                    ) : (
+                      <span>
+                        <Spin size="small" style={{ marginRight: "5px" }} />
+                        <Typography.Text>Words are translating</Typography.Text>
+                      </span>
+                    )
+                  }
+                  showIcon={false}
+                  banner
+                />
               </div>
             </div>
           ) : (

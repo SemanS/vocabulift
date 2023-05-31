@@ -163,21 +163,19 @@ const Library: React.FC = () => {
     }
 
     async function onProgressUpdate(progressData: any) {
+      console.log("progressData" + JSON.stringify(progressData, null, 2));
       if (
         progressData.progressPercentage > 0 &&
         progressData.progressStatus === "InProgress"
       ) {
         localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
-        setLoading(true);
-        fetchData();
-        setLoading(false);
       }
       console.log("progressData" + JSON.stringify(progressData, null, 2));
       setProgress(Number(progressData.progressPercentage.toString()));
     }
 
-    async function onFinalizeEvent(progressData: any) {
+    async function onFinalizeEvent() {
       localStorage.removeItem("ongoingEventId");
       localStorage.removeItem("progress");
       localStorage.removeItem("videoThumbnail");
@@ -194,10 +192,6 @@ const Library: React.FC = () => {
 
     socket.on("progress", onProgressUpdate);
     socket.on("finalizeEvent", onFinalizeEvent);
-
-    /* return () => {
-      socket.off("progress", onProgressUpdate);
-    }; */
   }, [polling, sliderUpdated]);
 
   const handleAddButtonClick = () => {
