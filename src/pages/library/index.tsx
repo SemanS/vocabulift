@@ -109,7 +109,6 @@ const Library: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    //fetchData();
     if (localStorage.getItem("videoThumbnail")) {
       fetchData(videoThumbnail);
     } else {
@@ -176,34 +175,38 @@ const Library: React.FC = () => {
       }
       console.log("progressData" + JSON.stringify(progressData, null, 2));
       setProgress(Number(progressData.progressPercentage.toString()));
-      if (progressData.progressStatus === "Complete") {
-        localStorage.removeItem("ongoingEventId");
-        localStorage.removeItem("progress");
-        localStorage.removeItem("videoThumbnail");
-        setPolling(false);
-        setProgress(0);
-        setLoading(true);
-        fetchData();
-        setLoading(false);
-        socket.off("progress", onProgressUpdate);
-      }
+    }
+
+    async function onFinalizeEvent(progressData: any) {
+      localStorage.removeItem("ongoingEventId");
+      localStorage.removeItem("progress");
+      localStorage.removeItem("videoThumbnail");
+      setProgress(0);
+      setLoading(true);
+      fetchData();
+      setLoading(false);
+      console.log("sfinalizovane");
+      socket.off("progress", onProgressUpdate);
+      socket.off("finalizeEvent", onFinalizeEvent);
+      socket.disconnect();
+      setPolling(false);
     }
 
     socket.on("progress", onProgressUpdate);
+    socket.on("finalizeEvent", onFinalizeEvent);
 
-    return () => {
+    /* return () => {
       socket.off("progress", onProgressUpdate);
-    };
+    }; */
   }, [polling, sliderUpdated]);
 
   const handleAddButtonClick = () => {
     setIsModalVisible(true);
   };
 
-  // Add this function to handle the "Cancel" button click inside the modal
   const handleModalCancel = () => {
     setIsModalVisible(false);
-    setInputValue(""); // Clear the inputValue when the modal is closed
+    setInputValue("");
   };
 
   const handleChange = (value: number | [number, number]) => {
