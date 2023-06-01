@@ -1,7 +1,6 @@
 import { Snapshot } from "@/models/snapshot.interfaces";
 
 export function getRangeNumber(num: number) {
-  console.log("num from getRangeNumber" + num);
   if (num <= 100) {
     return 1;
   } else {

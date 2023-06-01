@@ -70,8 +70,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         snapshotsRef.current![0].sentencesData.findIndex(
           (sentence) =>
             currentTime >= sentence.start! &&
-            currentTime <= sentence.start! + sentence.duration! - 0.2!
+            currentTime < sentence.start! + sentence.duration! - 0.1!
         );
+      onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+      console.log(
+        "newHighlightedIndex from effect" +
+          JSON.stringify(newHighlightedIndex, null, 2)
+      );
       if (newHighlightedIndex) {
         const newPage = calculatePage(
           newHighlightedIndex!,
@@ -100,6 +105,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
       setShouldSetVideo(false);
     }
+    setLoadingFromFetch(false);
   }, [snapshots, shouldSetVideo, firstIndexAfterReset]);
 
   useEffect(() => {
@@ -244,6 +250,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           currentTime <= sentence.start! + sentence.duration!
         );
       });
+    console.log(
+      "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+    );
     if (!newHighlightedIndex) {
       return;
     }
@@ -271,6 +280,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
+      console.log("newPage" + JSON.stringify(newPage, null, 2));
       startIndexRef.current =
         newPage * sentencesPerPageRef.current -
         snapshotsRef.current![0].sentenceFrom +
