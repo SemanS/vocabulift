@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { getLibraryItem } from "@/services/libraryService";
 import { calculatePage } from "@/utils/stringUtils";
 import { LibraryItem, SnapshotInfo } from "@/models/libraryItem.interface";
+import { socket } from "@/messaging/socket";
 
 declare const YT: any;
 declare global {
@@ -49,6 +50,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const [isInitRender, setIsInitRender] = useState(true);
   const startIndexRef = useRef<number | null>(null);
   const endIndexRef = useRef<number | null>(null);
+  const intervalId = React.useRef<NodeJS.Timeout>();
+  const [hasVideoPaused, setHasVideoPaused] = useState(true);
 
   let timeoutId: number | null = null;
 
@@ -109,11 +112,21 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   }, [snapshots, shouldSetVideo, firstIndexAfterReset]);
 
   useEffect(() => {
+    async () => {
+      socket.connect();
+    };
     if (isInitRender) setIsInitRender(false);
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
+      if (intervalId.current) {
+        clearInterval(intervalId.current);
+        intervalId.current = undefined;
+      }
+      async () => {
+        socket.disconnect();
+      };
     };
   }, []);
 
@@ -145,12 +158,23 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
   const handlePlayerStateChange = useCallback(
     (event: any) => {
-      if (event.data === YT.PlayerState.PLAYING) {
+      if (event.data === YT.PlayerState.PLAYING && hasVideoPaused) {
         setIsVideoPaused(false);
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
-        //handleTimeUpdate();
+        intervalId.current = setInterval(() => {
+          if (
+            playerRef.current?.getPlayerState() !== YT.PlayerState.PAUSED &&
+            playerRef.current?.getPlayerState() !== YT.PlayerState.ENDED
+          ) {
+            console.log("Sending data...");
+            socket.emit("video-playing", {
+              libraryId: libraryId,
+              currentTime: playerRef.current?.getCurrentTime(),
+            });
+          }
+        }, 10000);
         if (!isInitRender) scheduleHandleTimeUpdate();
         if (isInitRender) setIsInitRender(false);
       } else if (
@@ -158,10 +182,14 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         event.data === YT.PlayerState.ENDED
       ) {
         setIsVideoPaused(true);
-
+        setHasVideoPaused(true);
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
+        }
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+          intervalId.current = undefined;
         }
       }
 
@@ -177,7 +205,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
       };
     },
-    [handlePageChange, shouldSetVideo, snapshots, isInitRender]
+    [handlePageChange, shouldSetVideo, snapshots, isInitRender, hasVideoPaused]
   );
 
   useEffect(() => {
@@ -217,7 +245,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         firstScriptTag.parentNode!.insertBefore(tag, firstScriptTag);
       }
     };
-
     fetchLibraryItemAndSetupPlayer();
   }, [handlePageChange, handlePlayerStateChange]);
 
@@ -229,6 +256,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     if (!playerRef.current?.getCurrentTime()) {
       return;
     }
+
     const currentTime = playerRef.current.getCurrentTime();
     const startIndex = getCurrentIndex(snapshotsRef.current!, currentTime);
     const pageNumber = calculatePage(

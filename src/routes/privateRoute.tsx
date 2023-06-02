@@ -51,6 +51,9 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         avatar: "",
         sourceLanguage: "en",
         targetLanguage: "sk",
+        isLimitExceeded: false,
+        activated: true,
+        verified: true,
       };
       setUser(devUser);
       setLoading(false);

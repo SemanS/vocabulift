@@ -54,6 +54,8 @@ export interface User {
   targetLanguage: string;
   verified: boolean;
   activated: boolean;
+  isLimitExceeded: boolean;
+  exceededAt: Date;
 }
 
 export interface UserEntity {

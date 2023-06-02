@@ -21,6 +21,8 @@ const initialState: User = {
   targetLanguage: "sk",
   verified: false,
   activated: false,
+  isLimitExceeded: false,
+  exceededAt: new Date(2023, 5, 2),
 };
 
 export const userState = atom({

@@ -1,20 +1,14 @@
-import React, {
-  FC,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useReducer,
-} from "react";
+import React, { FC, useEffect, useCallback, useMemo, useReducer } from "react";
 import {
   Card,
   Row,
   Col,
   Space,
   Checkbox,
-  Drawer,
   RadioChangeEvent,
   Radio,
+  Modal,
+  Typography,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -38,13 +32,12 @@ import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { libraryIdState } from "@/stores/library";
 import { currentPageState } from "@/stores/library";
 import { pageSizeState } from "@/stores/library";
-import EmbeddedVideo, {
-  getCurrentIndex,
-} from "./components/EmbeddedVideo/EmbeddedVideo";
 import styles from "./index.module.less";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { getSnapshots } from "@/services/snapshotService";
 import { userState } from "@/stores/user";
+import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
+import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 
 const initialState = {
   currentPage: 1,
@@ -72,6 +65,7 @@ const initialState = {
   countOfSentences: 100,
   sentencesPerPage: 10,
   initState: true,
+  isLimitExceeded: false,
 };
 
 function reducer(state: any, action: any) {
@@ -128,6 +122,8 @@ function reducer(state: any, action: any) {
       return { ...state, highlightedSubtitleIndex: action.payload };
     case "setInitState":
       return { ...state, initState: action.payload };
+    case "setIsLimitExceeded":
+      return { ...state, isLimitExceeded: action.payload };
     default:
       throw new Error();
   }
@@ -261,22 +257,29 @@ const BookDetail: FC = () => {
   );
 
   useEffect(() => {
-    if (pageSizeFromQuery) {
-      dispatch({ type: "setSentencesPerPage", payload: pageSizeFromQuery });
-    }
-    if (currentPageFromQuery) {
-      dispatch({ type: "setCurrentPage", payload: currentPageFromQuery });
-    }
-    handlePageChange(
-      currentPageFromQuery,
-      pageSizeFromQuery,
-      false,
-      false,
-      false
+    console.log(
+      "user.isLimitExceeded" + JSON.stringify(user.isLimitExceeded, null, 2)
     );
-    setRecoilLibraryId(libraryId!);
-    setRecoilCurrentPage(currentPageFromQuery);
-    setRecoilPageSize(pageSizeFromQuery);
+    if (user.isLimitExceeded === true) {
+      dispatch({ type: "setIsLimitExceeded", payload: true });
+    } else {
+      if (pageSizeFromQuery) {
+        dispatch({ type: "setSentencesPerPage", payload: pageSizeFromQuery });
+      }
+      if (currentPageFromQuery) {
+        dispatch({ type: "setCurrentPage", payload: currentPageFromQuery });
+      }
+      handlePageChange(
+        currentPageFromQuery,
+        pageSizeFromQuery,
+        false,
+        false,
+        false
+      );
+      setRecoilLibraryId(libraryId!);
+      setRecoilCurrentPage(currentPageFromQuery);
+      setRecoilPageSize(pageSizeFromQuery);
+    }
   }, []);
 
   const handleAddWordDefinition = useCallback(async (word: string) => {
@@ -581,110 +584,121 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
-      {/* <Drawer
-        style={{ backgroundColor: "#D7DFEA" }}
-        title="Settings"
-        placement="top"
-        onClose={toggleSettingsDrawer}
-        open={settingsDrawerVisible}
-        width={320}
-      >
-        {renderSettingsDrawerContent()}
-      </Drawer> */}
-      <Row gutter={[16, 16]}>
-        <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
-          {state.label === LabelType.VIDEO && (
-            <EmbeddedVideo
-              onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-              sentencesPerPage={state.sentencesPerPage}
-              handlePageChange={handlePageChange}
-              snapshots={memoizedSnapshots}
-              shouldSetVideo={state.shouldSetVideo}
-              setShouldSetVideo={setShouldSetVideo}
-              firstIndexAfterReset={state.firstIndexAfterReset!}
-              setLoadingFromFetch={setLoadingFromFetch}
-            />
-          )}
-        </Col>
-        <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
-          <Card
-            loading={state.loading || state.loadingFromFetch}
-            title={state.libraryTitle}
-            extra={
-              <Radio.Group
-                onChange={handleModeChange}
-                value={state.mode}
-                buttonStyle="solid"
+      {state.isLimitExceeded ? (
+        <Modal
+          open={true}
+          closable={true}
+          //maskClosable={false}
+          footer={false}
+          width="80%"
+          centered
+        >
+          <center>
+            <Typography.Title style={{ marginTop: "30px" }}>
+              You exceed your daily limit of 3 min, for continuing please
+              subscribe:
+            </Typography.Title>
+          </center>
+          <PricingComponent />
+        </Modal>
+      ) : (
+        <>
+          <Row gutter={[16, 16]}>
+            <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
+              {state.label === LabelType.VIDEO && (
+                <EmbeddedVideo
+                  onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+                  sentencesPerPage={state.sentencesPerPage}
+                  handlePageChange={handlePageChange}
+                  snapshots={memoizedSnapshots}
+                  shouldSetVideo={state.shouldSetVideo}
+                  setShouldSetVideo={setShouldSetVideo}
+                  firstIndexAfterReset={state.firstIndexAfterReset!}
+                  setLoadingFromFetch={setLoadingFromFetch}
+                />
+              )}
+            </Col>
+            <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
+              <Card
+                loading={state.loading || state.loadingFromFetch}
+                title={state.libraryTitle}
+                extra={
+                  <Radio.Group
+                    onChange={handleModeChange}
+                    value={state.mode}
+                    buttonStyle="solid"
+                  >
+                    <Radio.Button value="word">Word</Radio.Button>
+                    <Radio.Button value="sentence">Sentence</Radio.Button>
+                    <Radio.Button value="all">All</Radio.Button>
+                  </Radio.Group>
+                }
               >
-                <Radio.Button value="word">Word</Radio.Button>
-                <Radio.Button value="sentence">Sentence</Radio.Button>
-                <Radio.Button value="all">All</Radio.Button>
-              </Radio.Group>
-            }
-          >
-            <TranslateBox
-              sourceLanguage={user.sourceLanguage}
-              targetLanguage={user.targetLanguage}
-              currentTextIndex={state.currentTextIndex}
-              sentenceFrom={state.sentenceFrom}
-              sentencesPerPage={state.sentencesPerPage}
-              currentPage={state.currentPage}
-              libraryTitle={state.libraryTitle}
-              mode={state.mode}
-              snapshots={memoizedSnapshots}
-              userSentences={state.userSentences}
-              onAddUserPhrase={handleAddUserPhrase}
-              vocabularyListUserPhrases={state.vocabularyListUserPhrases}
-              highlightedSentenceIndex={
-                state.highlightedSubtitleIndex !== null
-                  ? state.highlightedSubtitleIndex -
-                    (state.currentTextIndex % 100)
-                  : null
-              }
-            />
-            <PaginationControls
-              currentPage={state.currentPage}
-              onShowSizeChange={onShowSizeChange}
-              handlePageChange={handlePageChange}
-              totalSentences={state.totalSentences}
-              sentencesPerPage={state.sentencesPerPage}
-            />
-          </Card>
-        </Col>
-      </Row>
-      {state.vocabularyListUserPhrases &&
-        state.vocabularyListUserPhrases?.length !== 0 && (
-          <Row gutter={[16, 16]} style={{ marginTop: "18px" }}>
-            {state.showVocabularyList && (
-              <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-                <FilteredVocabularyList
-                  title="Words list"
-                  mode={"words"}
-                  phrases={state.vocabularyListUserPhrases!}
-                  onDeleteItem={handleDeleteUserPhrase}
-                  onWordClick={handleAddWordDefinition}
-                  selectedUserPhrase={state.selectedUserPhrase}
-                  setSelectedUserPhrase={setSelectedUserPhrase}
+                <TranslateBox
+                  sourceLanguage={user.sourceLanguage}
+                  targetLanguage={user.targetLanguage}
+                  currentTextIndex={state.currentTextIndex}
+                  sentenceFrom={state.sentenceFrom}
+                  sentencesPerPage={state.sentencesPerPage}
+                  currentPage={state.currentPage}
+                  libraryTitle={state.libraryTitle}
+                  mode={state.mode}
+                  snapshots={memoizedSnapshots}
+                  userSentences={state.userSentences}
+                  onAddUserPhrase={handleAddUserPhrase}
+                  vocabularyListUserPhrases={state.vocabularyListUserPhrases}
+                  highlightedSentenceIndex={
+                    state.highlightedSubtitleIndex !== null
+                      ? state.highlightedSubtitleIndex -
+                        (state.currentTextIndex % 100)
+                      : null
+                  }
                 />
-                <FilteredVocabularyList
-                  title="Phrases list"
-                  style={{ marginTop: "16px" }}
-                  mode={"phrases"}
-                  phrases={state.vocabularyListUserPhrases!}
-                  onDeleteItem={handleDeleteUserPhrase}
-                  onWordClick={handleAddWordDefinition}
+                <PaginationControls
+                  currentPage={state.currentPage}
+                  onShowSizeChange={onShowSizeChange}
+                  handlePageChange={handlePageChange}
+                  totalSentences={state.totalSentences}
+                  sentencesPerPage={state.sentencesPerPage}
                 />
-              </Col>
-            )}
-            {state.showWordDefinition && (
-              <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-                <WordDefinitionCard
-                  wordData={state.wordData}
-                ></WordDefinitionCard>
-              </Col>
-            )}
+              </Card>
+            </Col>
           </Row>
-        )}
+          {state.vocabularyListUserPhrases &&
+            state.vocabularyListUserPhrases?.length !== 0 && (
+              <Row gutter={[16, 16]} style={{ marginTop: "18px" }}>
+                {state.showVocabularyList && (
+                  <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+                    <FilteredVocabularyList
+                      title="Words list"
+                      mode={"words"}
+                      phrases={state.vocabularyListUserPhrases!}
+                      onDeleteItem={handleDeleteUserPhrase}
+                      onWordClick={handleAddWordDefinition}
+                      selectedUserPhrase={state.selectedUserPhrase}
+                      setSelectedUserPhrase={setSelectedUserPhrase}
+                    />
+                    <FilteredVocabularyList
+                      title="Phrases list"
+                      style={{ marginTop: "16px" }}
+                      mode={"phrases"}
+                      phrases={state.vocabularyListUserPhrases!}
+                      onDeleteItem={handleDeleteUserPhrase}
+                      onWordClick={handleAddWordDefinition}
+                    />
+                  </Col>
+                )}
+                {state.showWordDefinition && (
+                  <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+                    <WordDefinitionCard
+                      wordData={state.wordData}
+                    ></WordDefinitionCard>
+                  </Col>
+                )}
+              </Row>
+            )}
+        </>
+      )}
     </PageContainer>
   );
 };

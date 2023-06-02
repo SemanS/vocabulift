@@ -58,6 +58,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         targetLanguage: "sk",
         activated: true,
         verified: true,
+        isLimitExceeded: false,
       };
       setUser(devUser);
       setLoading(false);
@@ -87,7 +88,6 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             navigate("/verification");
           }
           if (response.data.status === "not-activated") {
-            console.log("ASDASDASD");
             navigate("/activation");
           } else if (!userResponse?.verified) {
             navigate("/verification");

@@ -423,15 +423,15 @@ const Library: React.FC = () => {
         }
       }
 
-      if (!ongoingEventId) {
-        socket.connect();
-      }
+      socket.connect();
     };
 
     fetchData();
 
     return () => {
-      socket.disconnect();
+      async () => {
+        socket.disconnect();
+      };
     };
   }, []);
 

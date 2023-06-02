@@ -12,7 +12,6 @@ import {
 } from "antd";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 import { socket } from "@/messaging/socket";
-import { v4 as uuidv4 } from "uuid";
 import { Option } from "@/models/utils.interface";
 import { postLibraryVideo } from "@/services/libraryService";
 import { PageContainer } from "@ant-design/pro-layout";
