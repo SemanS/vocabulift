@@ -28,7 +28,6 @@ import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
 import "antd/dist/reset.css";
-import { useCookies } from "react-cookie";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -251,7 +250,7 @@ const Library: React.FC = () => {
       targetLanguage: user.sourceLanguage,
     };
 
-    await updateUser(updatedUserEntity as UserEntity);
+    await updateUser(updatedUserEntity);
 
     setUser((prevUser) => ({
       ...prevUser,

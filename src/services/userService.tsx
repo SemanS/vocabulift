@@ -1,5 +1,5 @@
-import { UserEntity } from "@/models/user";
-import { SentenceResponse } from "@models/sentences.interfaces";
+import { User, UserEntity } from "@/models/user";
+import axios from "axios";
 
 export const getSentences = async (
   libraryId: string | undefined,
@@ -100,7 +100,7 @@ export const getUserPhrases = async (options: {
   };
 };
 
-export const updateUser = async (userEntity: UserEntity): Promise<any> => {
+export const updateUser = async (userEntity: Partial<User>): Promise<any> => {
   const requestBody = { userEntity };
   const response = await fetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/update`,
@@ -212,4 +212,22 @@ export const updateReadingProgress = async (
       }),
     }
   ); */
+};
+
+export const getUser = async (
+  accessToken: string
+): Promise<User | undefined> => {
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    return response.data.body;
+  } catch (error) {
+    console.error(error);
+  }
 };

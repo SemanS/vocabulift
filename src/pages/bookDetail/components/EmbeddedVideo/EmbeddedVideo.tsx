@@ -5,6 +5,9 @@ import { getLibraryItem } from "@/services/libraryService";
 import { calculatePage } from "@/utils/stringUtils";
 import { LibraryItem, SnapshotInfo } from "@/models/libraryItem.interface";
 import { socket } from "@/messaging/socket";
+import { useCookies } from "react-cookie";
+import { getUser } from "@/services/userService";
+import { User } from "@/models/user";
 
 declare const YT: any;
 declare global {
@@ -52,10 +55,14 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const endIndexRef = useRef<number | null>(null);
   const intervalId = React.useRef<NodeJS.Timeout>();
   const [hasVideoPaused, setHasVideoPaused] = useState(true);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const hasSeekHappenedRef = useRef(false);
 
+  const [cookies] = useCookies(["access_token"]);
   let timeoutId: number | null = null;
 
   const [currentLibrary, setCurrentLibrary] = useState<LibraryItem | null>();
+  const [currentUser, setCurrentUser] = useState<User | null>();
   const [isVideoPaused, setIsVideoPaused] = useState(false);
 
   useEffect(() => {
@@ -70,16 +77,15 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
     ) {
       const currentTime = playerRef.current.getCurrentTime();
       const newHighlightedIndex =
-        snapshotsRef.current![0].sentencesData.findIndex(
-          (sentence) =>
-            currentTime >= sentence.start! &&
-            currentTime < sentence.start! + sentence.duration! - 0.1!
-        );
+        currentTime < snapshotsRef.current![0].sentencesData[0].start!
+          ? 0
+          : snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
+              return (
+                currentTime >= sentence.start! &&
+                currentTime < sentence.start! + sentence.duration! - 0.1
+              );
+            });
       onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
-      console.log(
-        "newHighlightedIndex from effect" +
-          JSON.stringify(newHighlightedIndex, null, 2)
-      );
       if (newHighlightedIndex) {
         const newPage = calculatePage(
           newHighlightedIndex!,
@@ -112,6 +118,11 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   }, [snapshots, shouldSetVideo, firstIndexAfterReset]);
 
   useEffect(() => {
+    const fetchCurrentUser = async () => {
+      const user = await getUser(cookies.access_token);
+      setCurrentUser(user);
+    };
+    fetchCurrentUser();
     async () => {
       socket.connect();
     };
@@ -163,6 +174,9 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         if (timeoutId) {
           clearTimeout(timeoutId);
         }
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+        }
         intervalId.current = setInterval(() => {
           if (
             playerRef.current?.getPlayerState() !== YT.PlayerState.PAUSED &&
@@ -193,12 +207,21 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         }
       }
 
-      // If the user seeks to a new time, update the subtitles immediately
       if (event.data === YT.PlayerState.BUFFERING) {
+        console.log("logujem");
+        if (hasSeekHappenedRef.current === false) {
+          const userLibraryWatched = currentUser?.userLibraryWatched;
+          if (
+            userLibraryWatched &&
+            userLibraryWatched.libraryId.toString() === libraryId
+          ) {
+            playerRef.current?.seekTo(userLibraryWatched.timeStamp);
+          }
+        }
+        hasSeekHappenedRef.current = true;
+        setIsInitRender(false);
         handleTimeUpdate();
-        if (isInitRender) setIsInitRender(false);
       }
-
       return () => {
         if (timeoutId) {
           clearTimeout(timeoutId);
@@ -230,7 +253,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
           });
           playerRef.current.addEventListener("onReady", function () {
             if (playerRef.current.seekTo) {
-              playerRef.current.seekTo(1);
+              //playerRef.current.seekTo(1);
             }
           });
         }
@@ -238,6 +261,8 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
       if (window.YT && window.YT.loaded) {
         window.onYouTubeIframeAPIReady();
+
+        /*  */
       } else {
         const tag = document.createElement("script");
         tag.src = "https://www.youtube.com/iframe_api";
@@ -259,6 +284,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
     const currentTime = playerRef.current.getCurrentTime();
     const startIndex = getCurrentIndex(snapshotsRef.current!, currentTime);
+
     const pageNumber = calculatePage(
       startIndex,
       sentencesPerPage,
@@ -272,16 +298,19 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
 
     currentPageToUseRef.current = pageNumberToUse;
     const newHighlightedIndex =
-      snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
-        return (
-          currentTime >= sentence.start! &&
-          currentTime <= sentence.start! + sentence.duration!
-        );
-      });
-    console.log(
-      "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
-    );
-    if (!newHighlightedIndex) {
+      currentTime < snapshotsRef.current![0].sentencesData[0].start!
+        ? 0
+        : snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
+            return (
+              currentTime >= sentence.start! &&
+              currentTime < sentence.start! + sentence.duration! - 0.1
+            );
+          });
+    if (
+      newHighlightedIndex === null ||
+      newHighlightedIndex === undefined ||
+      isNaN(newHighlightedIndex)
+    ) {
       return;
     }
 
@@ -308,7 +337,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       const newPage = Math.ceil(
         snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
       );
-      console.log("newPage" + JSON.stringify(newPage, null, 2));
       startIndexRef.current =
         newPage * sentencesPerPageRef.current -
         snapshotsRef.current![0].sentenceFrom +
@@ -317,9 +345,13 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
         newPage * sentencesPerPageRef.current -
           snapshotsRef.current![0].sentenceFrom
       );
-      //
     } else {
-      if (onHighlightedSubtitleIndexChange && newHighlightedIndex) {
+      if (
+        onHighlightedSubtitleIndexChange &&
+        newHighlightedIndex !== null &&
+        newHighlightedIndex !== undefined &&
+        !isNaN(newHighlightedIndex)
+      ) {
         if (
           startIndexRef.current === null ||
           endIndexRef.current === null ||

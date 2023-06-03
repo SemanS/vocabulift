@@ -77,7 +77,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
         const updatedUserEntity: Partial<User> = {
           [languageProp]: country.code,
         };
-        await updateUser(updatedUserEntity as UserEntity);
+        await updateUser(updatedUserEntity);
 
         setUser((prevUser: User) => ({
           ...prevUser,

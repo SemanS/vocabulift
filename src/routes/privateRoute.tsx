@@ -54,18 +54,28 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         isLimitExceeded: false,
         activated: true,
         verified: true,
+        exceededAt: new Date(2023, 5, 2),
+        userLibraryWatched: {
+          libraryId: "",
+          timeStamp: new Date(2023, 5, 2),
+        },
       };
       setUser(devUser);
       setLoading(false);
     } else if (cookies.access_token && !user.isLogged) {
-      sessionStorage.setItem("access_token", cookies.access_token);
-      axios
-        .get(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`, {
-          headers: {
-            Authorization: `Bearer ${cookies.access_token}`,
-          },
-        })
-        .then((response) => {
+      async () => {
+        try {
+          sessionStorage.setItem("access_token", cookies.access_token);
+
+          const response = await axios.get(
+            `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/current`,
+            {
+              headers: {
+                Authorization: `Bearer ${cookies.access_token}`,
+              },
+            }
+          );
+
           setUser({
             ...getGlobalState(),
             username: "Slavo",
@@ -74,16 +84,16 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
             locale: "en-us",
             ...response.data.body,
           });
+
           if (response.data.status === "not-activated") {
             navigate("/verification");
           }
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error(error);
-        })
-        .finally(() => {
+        } finally {
           setLoading(false); // Set loading state to false when user information is obtained
-        });
+        }
+      };
     } else {
       setLoading(false); // Set loading state to false if there is no access token
     }

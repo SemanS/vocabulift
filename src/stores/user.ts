@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { Role } from "@/models/login";
-import { Locale, User, UserEntity } from "@/models/user";
+import { Locale, User } from "@/models/user";
 import { getGlobalState } from "@/models";
 
 const initialState: User = {
@@ -23,6 +23,10 @@ const initialState: User = {
   activated: false,
   isLimitExceeded: false,
   exceededAt: new Date(2023, 5, 2),
+  userLibraryWatched: {
+    libraryId: "",
+    timeStamp: 5,
+  },
 };
 
 export const userState = atom({

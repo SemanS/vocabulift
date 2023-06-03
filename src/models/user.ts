@@ -22,6 +22,11 @@ export interface LibraryUser {
   totalSentences: number;
 }
 
+export interface UserLibraryWatched {
+  libraryId: string;
+  timeStamp: number;
+}
+
 export interface User {
   library: LibraryUser[];
   username: string;
@@ -56,9 +61,10 @@ export interface User {
   activated: boolean;
   isLimitExceeded: boolean;
   exceededAt: Date;
+  userLibraryWatched: UserLibraryWatched;
 }
 
 export interface UserEntity {
-  sourceLanguage: string;
-  targetLanguage: string;
+  sourceLanguage?: string | undefined;
+  targetLanguage?: string | undefined;
 }
