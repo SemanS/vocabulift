@@ -37,6 +37,16 @@ interface TranslateWordProps {
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+
+  useEffect(() => {
+    // If the word is highlighted from video on mobile, show the tooltip
+    if (isMobileDevice && props.isHighlightedFromVideo) {
+      setIsTooltipVisible(true);
+    } else {
+      setIsTooltipVisible(false);
+    }
+  }, [isMobileDevice, props.isHighlightedFromVideo]);
 
   useEffect(() => {
     // Check if the user is on a mobile device
@@ -75,6 +85,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const commonTooltipProps = {
+    visible: isTooltipVisible,
     arrow: false,
     mouseEnterDelay: 0.15,
     mouseLeaveDelay: 0,
@@ -92,7 +103,11 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       return children as React.ReactElement;
     }
 
-    const shouldShowTooltip = isMobileDevice ? props.isHighlighted : isHovered;
+    const shouldShowTooltip = isMobileDevice
+      ? props.highlightPositions ||
+        props.isHighlighted ||
+        props.isHighlightedFromVideo
+      : isHovered;
 
     if (!shouldShowTooltip) {
       return children as React.ReactElement;
