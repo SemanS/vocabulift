@@ -28,6 +28,8 @@ import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
 import "antd/dist/reset.css";
+import { vocabuFetch } from "@/utils/vocabuFetch";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -56,6 +58,8 @@ const Library: React.FC = () => {
   const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
     localStorage.getItem("videoThumbnail") || undefined
   );
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const fetchOptions = async (input: string) => {
     try {
@@ -397,7 +401,7 @@ const Library: React.FC = () => {
       const ongoingEventId = localStorage.getItem("ongoingEventId");
       if (ongoingEventId) {
         try {
-          const response = await fetch(
+          const response = await vocabuFetch(
             `${
               import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
             }/progress/${ongoingEventId}`,

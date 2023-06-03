@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Snapshot } from "@/models/snapshot.interfaces";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getLibraryItem } from "@/services/libraryService";
 import { calculatePage } from "@/utils/stringUtils";
 import { LibraryItem, SnapshotInfo } from "@/models/libraryItem.interface";
@@ -64,6 +64,26 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   const [currentLibrary, setCurrentLibrary] = useState<LibraryItem | null>();
   const [currentUser, setCurrentUser] = useState<User | null>();
   const [isVideoPaused, setIsVideoPaused] = useState(false);
+  const navigate = useNavigate();
+  function closeView() {
+    navigate("/library");
+  }
+
+  useEffect(() => {
+    // Replace the current history event with a new one that has the same URL as the current page
+    window.history.replaceState(
+      "fake-route",
+      document.title,
+      window.location.href
+    );
+
+    addEventListener("popstate", closeView);
+
+    // Cleanup when this component unmounts
+    return () => {
+      removeEventListener("popstate", closeView);
+    };
+  }, []);
 
   useEffect(() => {
     if (snapshots) {
@@ -208,9 +228,11 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
       }
 
       if (event.data === YT.PlayerState.BUFFERING) {
-        console.log("logujem");
         if (hasSeekHappenedRef.current === false) {
           const userLibraryWatched = currentUser?.userLibraryWatched;
+          console.log(
+            "userLibraryWatched" + JSON.stringify(userLibraryWatched, null, 2)
+          );
           if (
             userLibraryWatched &&
             userLibraryWatched.libraryId.toString() === libraryId

@@ -1,4 +1,5 @@
 import { Snapshot } from "@models/snapshot.interfaces";
+import { vocabuFetch } from "@/utils/vocabuFetch";
 
 export const getSnapshots = async (
   libraryId: string,
@@ -7,7 +8,7 @@ export const getSnapshots = async (
   time?: number,
   sentenceFrom?: number
 ): Promise<Snapshot[]> => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/snapshots`,
     {
       method: "POST",

@@ -57,7 +57,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         exceededAt: new Date(2023, 5, 2),
         userLibraryWatched: {
           libraryId: "",
-          timeStamp: new Date(2023, 5, 2),
+          timeStamp: 10,
         },
       };
       setUser(devUser);

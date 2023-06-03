@@ -1,4 +1,5 @@
 import { User, UserEntity } from "@/models/user";
+import { vocabuFetch } from "@/utils/vocabuFetch";
 import axios from "axios";
 
 export const getSentences = async (
@@ -9,7 +10,7 @@ export const getSentences = async (
   sourceLanguage: string,
   targetLanguage: string
 ) => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${
       import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
     }/sentence/${libraryId}?sentenceFrom=${
@@ -43,7 +44,7 @@ export const getUserSentences = async (options: {
     ...options,
   };
   // one method for vocabulary and for bookDetail
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/sentences`,
     {
       method: "POST",
@@ -80,7 +81,7 @@ export const getUserPhrases = async (options: {
     ...options,
   };
   // one method for vocabulary and for bookDetail
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/phrases`,
     {
       method: "POST",
@@ -102,7 +103,7 @@ export const getUserPhrases = async (options: {
 
 export const updateUser = async (userEntity: Partial<User>): Promise<any> => {
   const requestBody = { userEntity };
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/update`,
     {
       method: "POST",
@@ -152,7 +153,7 @@ export const addUserPhrase = async (
     currentPage: currentPage,
     libraryTitle: libraryTitle,
   };
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
     {
       method: "POST",
@@ -176,7 +177,7 @@ export const deleteUserPhrases = async (phraseIds: string[]): Promise<void> => {
     phraseIds: phraseIds,
   };
 
-  await fetch(
+  await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/delete-phrases`,
     {
       method: "POST",

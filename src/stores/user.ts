@@ -24,7 +24,7 @@ const initialState: User = {
   isLimitExceeded: false,
   exceededAt: new Date(2023, 5, 2),
   userLibraryWatched: {
-    libraryId: "",
+    libraryId: "6478fdc0d220b2b50883b874",
     timeStamp: 5,
   },
 };

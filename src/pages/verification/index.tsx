@@ -3,6 +3,7 @@ import { Card, Col, Form, Input, Row, Typography } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./index.module.less";
 import { useCookies } from "react-cookie";
+import { vocabuFetch } from "@/utils/vocabuFetch";
 
 const VerificationPage: FC = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const VerificationPage: FC = () => {
     const verificationCode = Object.values(form).join("");
 
     try {
-      const response = await fetch(
+      const response = await vocabuFetch(
         `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/api/sessions/verify`,
         {
           method: "POST",

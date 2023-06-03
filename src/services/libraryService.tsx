@@ -1,11 +1,12 @@
 import { LibraryItem } from "@/models/libraryItem.interface";
 import { LabelType } from "@/models/sentences.interfaces";
 import { UserEntity } from "@/models/user";
+import { vocabuFetch } from "@/utils/vocabuFetch";
 
 export const getLibraryItem = async (
   libraryId: string
 ): Promise<LibraryItem> => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/${libraryId}`,
     {
       method: "POST",
@@ -22,7 +23,7 @@ export const getLibraryItem = async (
 export const getVocabularyLibraryItems = async (
   userEntity: UserEntity
 ): Promise<LibraryItem[]> => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/vocabulary/libraries`,
     {
       method: "POST",
@@ -40,7 +41,7 @@ export const getVocabularyLibraryItems = async (
 export const getLibraryItems = async (
   userEntity: UserEntity
 ): Promise<Record<LabelType, LibraryItem[]>> => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/libraries`,
     {
       method: "POST",
@@ -56,7 +57,7 @@ export const getLibraryItems = async (
 };
 
 export const postLibraryInputVideoLanguages = async (input: string) => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${
       import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
     }/library/input/video/languages`,
@@ -78,7 +79,7 @@ export const postLibraryVideo = async (
   targetLanguage: string,
   input: string
 ) => {
-  const response = await fetch(
+  const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/library/add/video`,
     {
       method: "POST",

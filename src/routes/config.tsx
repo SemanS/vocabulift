@@ -59,6 +59,11 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         activated: true,
         verified: true,
         isLimitExceeded: false,
+        exceededAt: new Date(),
+        userLibraryWatched: {
+          libraryId: "6478fdc0d220b2b50883b874",
+          timeStamp: 10,
+        },
       };
       setUser(devUser);
       setLoading(false);

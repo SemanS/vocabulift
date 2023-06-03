@@ -1,3 +1,4 @@
+import { vocabuFetch } from "@/utils/vocabuFetch";
 import { debounce } from "lodash";
 
 export const addWordToUser = debounce(
@@ -7,7 +8,7 @@ export const addWordToUser = debounce(
     targetLanguage: string,
     accessToken: string | null
   ): Promise<void> => {
-    await fetch(
+    await vocabuFetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-word`,
       {
         method: "POST",

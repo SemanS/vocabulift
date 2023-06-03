@@ -37,16 +37,16 @@ interface TranslateWordProps {
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
-  const [isTooltipVisible, setIsTooltipVisible] = useState(false);
+  const [isTooltipVisible, setIsTooltipVisible] = useState(true);
 
-  useEffect(() => {
+  /* useEffect(() => {
     // If the word is highlighted from video on mobile, show the tooltip
     if (isMobileDevice && props.isHighlightedFromVideo) {
       setIsTooltipVisible(true);
     } else {
-      setIsTooltipVisible(false);
+      setIsTooltipVisible(true);
     }
-  }, [isMobileDevice, props.isHighlightedFromVideo]);
+  }, [isMobileDevice, props.isHighlightedFromVideo]); */
 
   useEffect(() => {
     // Check if the user is on a mobile device
@@ -85,9 +85,9 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const commonTooltipProps = {
-    visible: isTooltipVisible,
+    open: isTooltipVisible,
     arrow: false,
-    mouseEnterDelay: 0.15,
+    mouseEnterDelay: 0,
     mouseLeaveDelay: 0,
     placement: "top" as const,
     overlayInnerStyle: {
@@ -103,11 +103,11 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       return children as React.ReactElement;
     }
 
-    const shouldShowTooltip = isMobileDevice
-      ? props.highlightPositions ||
-        props.isHighlighted ||
-        props.isHighlightedFromVideo
-      : isHovered;
+    const shouldShowTooltip =
+      props.highlightPositions ||
+      props.isHighlighted ||
+      props.isHighlightedFromVideo ||
+      isHovered;
 
     if (!shouldShowTooltip) {
       return children as React.ReactElement;
@@ -115,11 +115,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     if (props.mode === "all") {
       return (
-        <Tooltip {...commonTooltipProps} title={props.translation}>
+        <Tooltip
+          {...commonTooltipProps}
+          title={props.translation}
+          open={isHovered}
+        >
           <Tooltip
             {...commonTooltipProps}
             align={{ offset: [0, -50] }}
             title={props.sentenceTranslation}
+            visible={isHovered}
           >
             {children}
           </Tooltip>
@@ -131,7 +136,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.mode === "word" ? props.translation : props.sentenceTranslation;
 
     return (
-      <Tooltip {...commonTooltipProps} title={title}>
+      <Tooltip {...commonTooltipProps} title={title} visible={isHovered}>
         {children}
       </Tooltip>
     );
