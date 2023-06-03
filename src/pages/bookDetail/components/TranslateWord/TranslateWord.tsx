@@ -1,6 +1,6 @@
 import { Tooltip, Typography } from "antd";
 import classNames from "classnames";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./TranslateWord.module.less";
 
 const { Text } = Typography;
@@ -36,6 +36,14 @@ interface TranslateWordProps {
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+
+  useEffect(() => {
+    // Check if the user is on a mobile device
+    const userAgent = window.navigator.userAgent;
+    const isMobile = !!userAgent.match(/Android|iPhone/i);
+    setIsMobileDevice(isMobile);
+  }, []);
 
   const handleMouseDown = () => {
     props.onMouseDown?.(
@@ -70,7 +78,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     arrow: false,
     mouseEnterDelay: 0.15,
     mouseLeaveDelay: 0,
-    placement: "top",
+    placement: "top" as const,
     overlayInnerStyle: {
       backgroundColor: "white",
       color: "black",
@@ -81,6 +89,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   const renderTooltip = (children: React.ReactNode) => {
     if (props.isSelecting) {
+      return children as React.ReactElement;
+    }
+
+    const shouldShowTooltip = isMobileDevice ? props.isHighlighted : isHovered;
+
+    if (!shouldShowTooltip) {
       return children as React.ReactElement;
     }
 
