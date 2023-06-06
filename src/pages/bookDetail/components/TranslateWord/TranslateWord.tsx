@@ -38,15 +38,25 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(true);
+  const [hoverTimeout, setHoverTimeout] = useState<number | null>(null);
 
-  /* useEffect(() => {
+  useEffect(() => {
     // If the word is highlighted from video on mobile, show the tooltip
-    if (isMobileDevice && props.isHighlightedFromVideo) {
+    if (
+      isMobileDevice ||
+      (props.isHighlightedFromVideo && props.mode === "sentence")
+    ) {
       setIsTooltipVisible(true);
     } else {
-      setIsTooltipVisible(true);
+      setIsTooltipVisible(false);
     }
-  }, [isMobileDevice, props.isHighlightedFromVideo]); */
+  }, [isMobileDevice, props.isHighlightedFromVideo]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeout) window.clearTimeout(hoverTimeout);
+    };
+  }, []);
 
   useEffect(() => {
     // Check if the user is on a mobile device
@@ -69,11 +79,22 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
-    setIsHovered(true);
+
+    // Clear any existing timeouts to prevent rapid firing
+    if (hoverTimeout) window.clearTimeout(hoverTimeout);
+
+    // Set a timeout before setting isHovered to true
+    const timeoutId = window.setTimeout(() => setIsHovered(true), 150);
+    setHoverTimeout(timeoutId);
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    // Clear any existing timeouts to prevent rapid firing
+    if (hoverTimeout) window.clearTimeout(hoverTimeout);
+
+    // Set a timeout before setting isHovered to false
+    const timeoutId = window.setTimeout(() => setIsHovered(false), 0);
+    setHoverTimeout(timeoutId);
   };
 
   const handleMouseUp = () => {
@@ -85,10 +106,10 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const commonTooltipProps = {
-    open: isTooltipVisible,
+    open: isTooltipVisible || !props.isHighlightedFromVideo || isHovered,
     arrow: false,
-    mouseEnterDelay: 0,
-    mouseLeaveDelay: 0,
+    mouseEnterDelay: 100,
+    mouseLeaveDelay: 100,
     placement: "top" as const,
     overlayInnerStyle: {
       backgroundColor: "white",
@@ -124,7 +145,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
             {...commonTooltipProps}
             align={{ offset: [0, -50] }}
             title={props.sentenceTranslation}
-            visible={isHovered}
+            open={isHovered}
           >
             {children}
           </Tooltip>
@@ -136,7 +157,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.mode === "word" ? props.translation : props.sentenceTranslation;
 
     return (
-      <Tooltip {...commonTooltipProps} title={title} visible={isHovered}>
+      <Tooltip {...commonTooltipProps} title={title} /* open={isHovered} */>
         {children}
       </Tooltip>
     );

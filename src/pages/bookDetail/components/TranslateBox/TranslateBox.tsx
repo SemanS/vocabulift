@@ -59,8 +59,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     string | null
   >(null);
   const [selectedSentenceText, setSelectedSentenceText] = useState<string>("");
-  const [selectedUserPhrase, setSelectedUserPhrase] =
-    useState<VocabularyListUserPhrase | null>(null);
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
