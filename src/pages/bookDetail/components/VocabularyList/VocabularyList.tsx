@@ -91,7 +91,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   <DeleteOutlined
                     onClick={() =>
                       handleDeleteItem(
-                        word.phrase.id,
+                        word.phrase._id,
                         word.phrase.sentenceId,
                         word.phrase.startPosition,
                         word.sentenceNo

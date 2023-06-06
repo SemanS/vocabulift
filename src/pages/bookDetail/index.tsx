@@ -9,13 +9,14 @@ import {
   Radio,
   Modal,
   Typography,
+  Select,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import TranslateBox from "./components/TranslateBox/TranslateBox";
 import PaginationControls from "./components/PaginationControls/PaginationControls";
-import { LabelType, SentenceData } from "@/models/sentences.interfaces";
+import { LabelType } from "@/models/sentences.interfaces";
 import { calculateFirstIndex, getRangeNumber } from "@/utils/stringUtils";
 import {
   deleteUserPhrases,
@@ -38,8 +39,9 @@ import { getSnapshots } from "@/services/snapshotService";
 import { userState } from "@/stores/user";
 import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
+import Flag from "react-world-flags";
 
-const initialState = {
+const initialReducerState = (targetLanguage: string) => ({
   currentPage: 1,
   currentTextIndex: 0,
   sentenceFrom: 1,
@@ -66,7 +68,8 @@ const initialState = {
   sentencesPerPage: 10,
   initState: true,
   isLimitExceeded: false,
-};
+  selectedLanguageTo: targetLanguage,
+});
 
 function reducer(state: any, action: any) {
   switch (action.type) {
@@ -124,6 +127,8 @@ function reducer(state: any, action: any) {
       return { ...state, initState: action.payload };
     case "setIsLimitExceeded":
       return { ...state, isLimitExceeded: action.payload };
+    case "setSelectedLanguageTo":
+      return { ...state, selectedLanguageTo: action.payload };
     default:
       throw new Error();
   }
@@ -148,7 +153,10 @@ const BookDetail: FC = () => {
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [user, setUser] = useRecoilState(userState);
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(
+    reducer,
+    initialReducerState(user.targetLanguage)
+  );
 
   const setSelectedUserPhrase = (
     selectedUserPhrase: VocabularyListUserPhrase
@@ -174,6 +182,8 @@ const BookDetail: FC = () => {
       type: "setHighlightedSubtitleIndex",
       payload: highlightedSubtitleIndex,
     });
+  const setSelectedLanguageTo = (language: string) =>
+    dispatch({ type: "setSelectedLanguageTo", payload: language });
 
   const handlePageChange = useCallback(
     async (
@@ -325,7 +335,7 @@ const BookDetail: FC = () => {
         sentenceFrom: state.sentenceFrom,
         countOfSentences: state.countOfSentences,
         sourceLanguage: user.sourceLanguage,
-        targetLanguage: user.targetLanguage,
+        targetLanguage: state.selectedLanguageTo,
         orderBy: "sentenceNo",
         libraryId,
         localSentenceFrom,
@@ -342,7 +352,13 @@ const BookDetail: FC = () => {
 
       dispatch({ type: "setLoadingFromFetch", payload: false });
     },
-    [getSnapshots, libraryId, sourceLanguage, targetLanguage]
+    [
+      getSnapshots,
+      libraryId,
+      sourceLanguage,
+      targetLanguage,
+      state.selectedLanguageTo,
+    ]
   );
 
   const updateSentencesState = useCallback(
@@ -385,7 +401,7 @@ const BookDetail: FC = () => {
           libraryId: libraryId!,
           sentenceNo: vocabularyListUserPhrase.sentenceNo,
           sourceLanguage: sourceLanguage,
-          targetLanguage: targetLanguage,
+          targetLanguage: state.selectedLanguageTo,
           phrases: [vocabularyListUserPhrase.phrase],
           _id: "",
           userId: "",
@@ -470,6 +486,32 @@ const BookDetail: FC = () => {
       await handlePageChange(newCurrentPage, pageSize);
     },
     [state.sentencesPerPage]
+  );
+
+  const fetchVocabularyAndSetState = useCallback(
+    async (localSentenceFrom: number, value: string) => {
+      const userSentencesData: UserSentence[] = await getUserSentences({
+        sentenceFrom: state.sentenceFrom,
+        countOfSentences: state.countOfSentences,
+        sourceLanguage: user.sourceLanguage,
+        targetLanguage: value,
+        orderBy: "sentenceNo",
+        libraryId,
+        localSentenceFrom,
+      });
+      console.log(
+        "userSentencesData" + JSON.stringify(userSentencesData, null, 2)
+      );
+
+      const vocabularyListUserPhrases =
+        mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
+
+      dispatch({
+        type: "setVocabularyListUserPhrases",
+        payload: vocabularyListUserPhrases,
+      });
+    },
+    [state.selectedLanguageTo]
   );
 
   const fetchAndUpdate = useCallback(
@@ -623,20 +665,48 @@ const BookDetail: FC = () => {
                 loading={state.loading || state.loadingFromFetch}
                 title={state.libraryTitle}
                 extra={
-                  <Radio.Group
-                    onChange={handleModeChange}
-                    value={state.mode}
-                    buttonStyle="solid"
-                  >
-                    <Radio.Button value="word">Word</Radio.Button>
-                    <Radio.Button value="sentence">Sentence</Radio.Button>
-                    <Radio.Button value="all">All</Radio.Button>
-                  </Radio.Group>
+                  <>
+                    <Select
+                      value={state.selectedLanguageTo}
+                      onChange={(value) => {
+                        dispatch({
+                          type: "setSelectedLanguageTo",
+                          payload: value,
+                        });
+                        fetchVocabularyAndSetState(state.sentenceFrom, value);
+                      }}
+                      style={{ marginRight: 16 }}
+                    >
+                      {memoizedSnapshots &&
+                        memoizedSnapshots
+                          .filter(
+                            (snapshot) =>
+                              snapshot.language !== user.sourceLanguage
+                          )
+                          .map((snapshot, index) => (
+                            <Select.Option
+                              key={index}
+                              value={snapshot.language}
+                            >
+                              <Flag code={snapshot.language} height="16" />{" "}
+                            </Select.Option>
+                          ))}
+                    </Select>
+
+                    <Radio.Group
+                      onChange={handleModeChange}
+                      value={state.mode}
+                      buttonStyle="solid"
+                    >
+                      <Radio.Button value="word">Word</Radio.Button>
+                      <Radio.Button value="sentence">Sentence</Radio.Button>
+                      <Radio.Button value="all">All</Radio.Button>
+                    </Radio.Group>
+                  </>
                 }
               >
                 <TranslateBox
                   sourceLanguage={user.sourceLanguage}
-                  targetLanguage={user.targetLanguage}
                   currentTextIndex={state.currentTextIndex}
                   sentenceFrom={state.sentenceFrom}
                   sentencesPerPage={state.sentencesPerPage}
@@ -653,6 +723,7 @@ const BookDetail: FC = () => {
                         (state.currentTextIndex % 100)
                       : null
                   }
+                  selectedLanguageTo={state.selectedLanguageTo}
                 />
                 <PaginationControls
                   currentPage={state.currentPage}

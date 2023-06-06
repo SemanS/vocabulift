@@ -26,7 +26,7 @@ interface AddItemModalProps {
   selectOptions: any[];
   targetLanguage: string;
   onLanguageSelect: (language: string) => void;
-  onAddItemClick: (videoThumbnail: string) => void; // add this prop
+  onAddItemClick: (videoThumbnail: string) => void;
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({
@@ -54,6 +54,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [activeTab, setActiveTab] = useState("1");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [selectedLanguageTo, setSelectedLanguageTo] =
+    useState<string>(targetLanguage);
 
   useEffect(() => {
     if (activeTab === "2") {
@@ -112,7 +114,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     const { youtubeUrl, language } = values;
     const response = await postLibraryVideo(
       selectedLanguageFrom,
-      targetLanguage,
+      selectedLanguageTo,
       youtubeUrl
     );
 
@@ -122,7 +124,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       input: youtubeUrl,
       eventId: eventId,
       sourceLanguage: selectedLanguageFrom,
-      targetLanguage: targetLanguage,
+      targetLanguage: selectedLanguageTo,
     });
     localStorage.setItem("ongoingEventId", eventId);
 
@@ -205,11 +207,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                       label="Translate to"
                       name="language"
                     >
+                      {selectedLanguageTo}
                       <LanguageSelector
                         useRecoil={false}
-                        disabledLanguage={targetLanguage}
+                        disabledLanguage={selectedLanguageFrom}
                         onLanguageChange={(language) => {
-                          console.log("Source language changed to", language);
+                          setSelectedLanguageTo(language);
                         }}
                         text={""}
                         languageProp="targetLanguage"

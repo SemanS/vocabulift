@@ -508,6 +508,7 @@ const Library: React.FC = () => {
                 />
               ))}
           </div>
+          {"asd" + user.targetLanguage + " " + sourceLanguageFromVideo}
           <AddItemModal
             isModalVisible={isModalVisible}
             handleModalCancel={handleModalCancel}
@@ -517,7 +518,7 @@ const Library: React.FC = () => {
             isFetchValid={isFetchValid}
             selectOptions={selectOptions}
             targetLanguage={user.targetLanguage}
-            onLanguageSelect={handleLanguageSelect} // add this prop
+            onLanguageSelect={handleLanguageSelect}
             onAddItemClick={(videoThumbnail) => {
               setPolling(true);
               setSliderUpdated(true);

@@ -16,7 +16,6 @@ import { Snapshot } from "@/models/snapshot.interfaces";
 interface TranslateBoxProps {
   mode: string;
   sourceLanguage: string;
-  targetLanguage: string;
   snapshots: Snapshot[];
   currentTextIndex: number;
   sentenceFrom: number;
@@ -27,12 +26,12 @@ interface TranslateBoxProps {
   vocabularyListUserPhrases?: VocabularyListUserPhrase[] | null;
   highlightedSentenceIndex?: number | null;
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
+  selectedLanguageTo: string;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
   mode,
   sourceLanguage,
-  targetLanguage,
   snapshots,
   currentTextIndex,
   sentenceFrom,
@@ -43,6 +42,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   vocabularyListUserPhrases,
   highlightedSentenceIndex,
   onAddUserPhrase,
+  selectedLanguageTo,
 }) => {
   const { libraryId } = useParams();
   const [error, setError] = useState<Error | null>(null);
@@ -89,7 +89,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         mode === "sentence" ? 0 : startPosition,
         mode === "sentence" ? lastIndex : endPosition,
         sourceLanguage,
-        targetLanguage,
+        selectedLanguageTo,
         sentencesPerPage,
         currentPage,
         libraryTitle,
@@ -108,7 +108,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   }, [sentenceText]);
 
   useEffect(() => {
-    // This effect will run whenever vocabularyListUserPhrases changes
     setSelectedWords([]);
   }, [vocabularyListUserPhrases]);
 
@@ -275,7 +274,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     getSentenceDataByLanguage(snapshots, sourceLanguage)
   );
   const visibleTargetTexts: SentenceData[] = getVisibleTexts(
-    getSentenceDataByLanguage(snapshots, targetLanguage)
+    getSentenceDataByLanguage(snapshots, selectedLanguageTo)
   );
 
   function getSentenceDataByLanguage(
@@ -329,6 +328,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               }
               onMouseUp={handleMouseUp}
               highlightPositions={getHighlightPositions(
+                selectedLanguageTo,
                 userSentences,
                 vocabularyListUserPhrases!,
                 sourceSentence.sentenceNo,
@@ -388,6 +388,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     }
                     onMouseUp={handleMouseUp}
                     highlightPositions={getHighlightPositions(
+                      selectedLanguageTo,
                       userSentences,
                       vocabularyListUserPhrases!,
                       sourceSentence.sentenceNo,
