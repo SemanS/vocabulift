@@ -71,9 +71,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   }
 
   useEffect(() => {
+    console.log("sentenceText" + JSON.stringify(sentenceText, null, 2));
     let lastWord = selectedSentenceText.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
-    console.log("sentenceText" + JSON.stringify(sentenceText, null, 2));
     if (sentenceText) {
       addUserPhrase(
         mode === "sentence"
@@ -105,7 +105,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         }
       });
     }
-  }, [sentenceText]);
+  }, [sentenceText, selectedSentenceText]);
 
   useEffect(() => {
     setSelectedWords([]);
@@ -248,9 +248,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     if (sortedSelectedWords.length === 1) {
       setSelectedWordTranslation(translation!);
     }
-    const highlightedWords = getHighlightedWords(userSentences, sentenceNumber);
-    console.log(
-      "sortedSelectedWords" + JSON.stringify(sortedSelectedWords, null, 2)
+    const highlightedWords = getHighlightedWords(
+      userSentences,
+      sentenceNumber,
+      selectedLanguageTo
     );
     const phrase = sortedSelectedWords
       .map(({ word, wordIndexInSentence }) =>
