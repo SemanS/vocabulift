@@ -84,7 +84,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 mode === "words" && setSelectedUserPhrase(word);
               }}
             >
-              {JSON.stringify(word)}
               <List.Item.Meta
                 className={mode === "words" ? "list-item-content" : ""}
                 style={{ display: "flex", alignItems: "center" }}
