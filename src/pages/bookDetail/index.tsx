@@ -267,9 +267,6 @@ const BookDetail: FC = () => {
   );
 
   useEffect(() => {
-    console.log(
-      "user.isLimitExceeded" + JSON.stringify(user.isLimitExceeded, null, 2)
-    );
     if (user.isLimitExceeded === true) {
       dispatch({ type: "setIsLimitExceeded", payload: true });
     } else {
@@ -499,9 +496,6 @@ const BookDetail: FC = () => {
         libraryId,
         localSentenceFrom,
       });
-      console.log(
-        "userSentencesData" + JSON.stringify(userSentencesData, null, 2)
-      );
 
       const vocabularyListUserPhrases =
         mapUserSentencesToVocabularyListUserPhrases(userSentencesData);

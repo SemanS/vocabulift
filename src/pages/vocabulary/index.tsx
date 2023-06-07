@@ -33,6 +33,11 @@ import { UserEntity } from "@/models/user";
 
 type DateFilter = "today" | "last week" | "last month" | "all";
 
+const isMobile = () =>
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+
 const Vocabulary: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
@@ -41,6 +46,7 @@ const Vocabulary: React.FC = () => {
   const [options, setOptions] = useState<any[]>([]);
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
   const [user, setUser] = useRecoilState(userState);
+  const [onMobile, setOnMobile] = useState(isMobile());
 
   const fetchSize = 50;
   const scroll = { y: 800, x: "100vw" };
@@ -158,132 +164,152 @@ const Vocabulary: React.FC = () => {
     setSelectedRowKeys([...newSelectedRowKeys]);
   };
 
-  const columns = useMemo(
-    () => [
-      {
-        title: (
-          <Checkbox
-            // Add this condition to check if selectedRowKeys is not empty
-            checked={
-              !isFetching &&
-              selectedRowKeys.length > 0 &&
-              selectedRowKeys.length === dataSource.length
-            }
-            indeterminate={
-              selectedRowKeys.length > 0 &&
-              selectedRowKeys.length < dataSource.length
-            }
-            onChange={(e) => {
-              const checked = e.target.checked;
-              if (checked) {
-                setSelectedRowKeys(dataSource.map((record) => record._id));
-              } else {
-                setSelectedRowKeys([]);
-              }
-            }}
-          />
-        ),
-        dataIndex: "selection",
-        key: "selection",
-        render: (_: any, record: UserPhrase) => (
-          <Checkbox
-            checked={selectedRowKeys.includes(record._id)}
-            onChange={(e) => onCheckboxChange(record, e.target.checked)}
-          />
-        ),
-        width: 60,
-      },
-      {
-        title: "Sentence",
-        dataIndex: "sentenceText",
-        key: "sentenceText",
-        render: (text: string, row: any) => (
-          <TruncatedText text={text} maxTextLength={30} />
-        ),
-      },
-      {
-        title: "Sentence Translation",
-        dataIndex: "sentenceTextTranslation",
-        key: "sentenceTextTranslation",
-        render: (text: string, row: any) => (
-          <TruncatedText text={text} maxTextLength={30} />
-        ),
-      },
-      {
-        title: "Phrase",
-        dataIndex: "sourceText",
-        key: "sourceText",
-        render: (text: string, row: any) => (
-          <TruncatedText text={text} maxTextLength={30} />
-        ),
-      },
-      {
-        title: "Translation",
-        dataIndex: "targetText",
-        key: "targetText",
-        render: (text: string, row: any) => (
-          <TruncatedText text={text} maxTextLength={30} />
-        ),
-      },
-      {
-        title: (
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <span>Title</span>
-            <AutoComplete
-              className={styles.customAutocomplete}
-              style={{ width: "200px", marginLeft: "8px" }}
-              options={options}
-              placeholder="Search title"
-              dropdownStyle={{ minWidth: "300px" }} // Add this line to set a fixed width
-              value={selectedTitle}
-              onChange={(value) => setSelectedTitle(value)}
-            />
-          </div>
-        ),
-        dataIndex: "libraryTitle",
-        key: "libraryTitle",
-        render: (text: string) => (
-          <TruncatedText text={text} maxTextLength={30} />
-        ),
-      },
-      {
-        title: "Date added",
-        dataIndex: "createdAt",
-        key: "createdAt",
-        render: (date: string) => {
-          const now = new Date();
-          const today = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate()
-          );
-          const lastWeek = new Date(today);
-          lastWeek.setDate(today.getDate() - 7);
-          const lastMonth = new Date(today);
-          lastMonth.setMonth(today.getMonth() - 1);
-
-          const createdAt = new Date(date);
-          const createdAtDate = new Date(
-            createdAt.getFullYear(),
-            createdAt.getMonth(),
-            createdAt.getDate()
-          );
-
-          if (createdAtDate.getTime() === today.getTime()) {
-            return <span>Today</span>;
-          } else if (createdAtDate > lastWeek) {
-            return <span>Last week</span>;
-          } else if (createdAtDate > lastMonth) {
-            return <span>Last month</span>;
-          } else {
-            const formattedDate = createdAt.toLocaleDateString();
-            return <span>{formattedDate}</span>;
-          }
+  const columns = useMemo(() => {
+    if (onMobile) {
+      return [
+        {
+          title: "Phrase",
+          dataIndex: "sourceText",
+          key: "sourceText",
+          render: (text: string, row: any) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
         },
-      },
-    ],
-    [selectedRowKeys, isFetching, options]
-  );
+        {
+          title: "Translation",
+          dataIndex: "targetText",
+          key: "targetText",
+          render: (text: string, row: any) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
+        },
+      ];
+    } else {
+      return [
+        {
+          title: (
+            <Checkbox
+              // Add this condition to check if selectedRowKeys is not empty
+              checked={
+                !isFetching &&
+                selectedRowKeys.length > 0 &&
+                selectedRowKeys.length === dataSource.length
+              }
+              indeterminate={
+                selectedRowKeys.length > 0 &&
+                selectedRowKeys.length < dataSource.length
+              }
+              onChange={(e) => {
+                const checked = e.target.checked;
+                if (checked) {
+                  setSelectedRowKeys(dataSource.map((record) => record._id));
+                } else {
+                  setSelectedRowKeys([]);
+                }
+              }}
+            />
+          ),
+          dataIndex: "selection",
+          key: "selection",
+          render: (_: any, record: UserPhrase) => (
+            <Checkbox
+              checked={selectedRowKeys.includes(record._id)}
+              onChange={(e) => onCheckboxChange(record, e.target.checked)}
+            />
+          ),
+          width: 60,
+        },
+        {
+          title: "Sentence",
+          dataIndex: "sentenceText",
+          key: "sentenceText",
+          render: (text: string, row: any) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
+        },
+        {
+          title: "Sentence Translation",
+          dataIndex: "sentenceTextTranslation",
+          key: "sentenceTextTranslation",
+          render: (text: string, row: any) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
+        },
+        {
+          title: "Phrase",
+          dataIndex: "sourceText",
+          key: "sourceText",
+          render: (text: string, row: any) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
+        },
+        {
+          title: "Translation",
+          dataIndex: "targetText",
+          key: "targetText",
+          render: (text: string, row: any) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
+        },
+        {
+          title: (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <span>Title</span>
+              <AutoComplete
+                className={styles.customAutocomplete}
+                style={{ width: "200px", marginLeft: "8px" }}
+                options={options}
+                placeholder="Search title"
+                dropdownStyle={{ minWidth: "300px" }} // Add this line to set a fixed width
+                value={selectedTitle}
+                onChange={(value) => setSelectedTitle(value)}
+              />
+            </div>
+          ),
+          dataIndex: "libraryTitle",
+          key: "libraryTitle",
+          render: (text: string) => (
+            <TruncatedText text={text} maxTextLength={30} />
+          ),
+        },
+        {
+          title: "Date added",
+          dataIndex: "createdAt",
+          key: "createdAt",
+          render: (date: string) => {
+            const now = new Date();
+            const today = new Date(
+              now.getFullYear(),
+              now.getMonth(),
+              now.getDate()
+            );
+            const lastWeek = new Date(today);
+            lastWeek.setDate(today.getDate() - 7);
+            const lastMonth = new Date(today);
+            lastMonth.setMonth(today.getMonth() - 1);
+
+            const createdAt = new Date(date);
+            const createdAtDate = new Date(
+              createdAt.getFullYear(),
+              createdAt.getMonth(),
+              createdAt.getDate()
+            );
+
+            if (createdAtDate.getTime() === today.getTime()) {
+              return <span>Today</span>;
+            } else if (createdAtDate > lastWeek) {
+              return <span>Last week</span>;
+            } else if (createdAtDate > lastMonth) {
+              return <span>Last month</span>;
+            } else {
+              const formattedDate = createdAt.toLocaleDateString();
+              return <span>{formattedDate}</span>;
+            }
+          },
+        },
+      ];
+    }
+  }, [selectedRowKeys, isFetching, options, onMobile]);
 
   const handleDateChange = (e: RadioChangeEvent) => {
     setDateFilter(e.target.value);

@@ -153,6 +153,7 @@ export const addUserPhrase = async (
     currentPage: currentPage,
     libraryTitle: libraryTitle,
   };
+  console.log("word" + JSON.stringify(word, null, 2));
   const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/add-phrase`,
     {
