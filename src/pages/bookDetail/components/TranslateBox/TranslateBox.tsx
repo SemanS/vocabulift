@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
 import { useParams } from "react-router-dom";
 import {
@@ -27,6 +27,7 @@ interface TranslateBoxProps {
   highlightedSentenceIndex?: number | null;
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
   selectedLanguageTo: string;
+  onChangeMode: (mode: string) => void;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -43,6 +44,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   highlightedSentenceIndex,
   onAddUserPhrase,
   selectedLanguageTo,
+  onChangeMode,
 }) => {
   const { libraryId } = useParams();
   const [error, setError] = useState<Error | null>(null);
@@ -59,6 +61,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     string | null
   >(null);
   const [selectedSentenceText, setSelectedSentenceText] = useState<string>("");
+  const [selectedLanguage, setSelectedLanguage] = useState("");
+  const prevLanguageRef = useRef(selectedLanguage);
+  const sentenceTextRef = useRef(sentenceText);
+  const [trigger, setTrigger] = useState(false);
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
@@ -71,11 +77,19 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   }
 
   useEffect(() => {
+    setSelectedLanguage(selectedLanguageTo);
+  }, [selectedLanguageTo]);
+
+  useEffect(() => {
+    prevLanguageRef.current = selectedLanguage;
+  }, [selectedLanguageTo]);
+
+  useEffect(() => {
     let lastWord = selectedSentenceText.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
     if (sentenceText) {
       addUserPhrase(
-        mode === "sentence"
+        mode === "sentences"
           ? selectedSentenceText
           : isSingleWord(sentenceText)
           ? removeSpecialChars(sentenceText)
@@ -85,10 +99,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         selectedSentence,
         selectedSentenceText,
         sentenceTextTranslated,
-        mode === "sentence" ? 0 : startPosition,
-        mode === "sentence" ? lastIndex : endPosition,
+        mode === "sentences" ? 0 : startPosition,
+        mode === "sentences" ? lastIndex : endPosition,
         sourceLanguage,
-        selectedLanguageTo,
+        selectedLanguage,
         sentencesPerPage,
         currentPage,
         libraryTitle,
@@ -104,7 +118,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         }
       });
     }
-  }, [sentenceText, selectedSentenceText]);
+    setTrigger(false);
+  }, [sentenceText]);
 
   useEffect(() => {
     setSelectedWords([]);
@@ -147,7 +162,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         const highlightedWords = getHighlightedWords(
           userSentences,
           sentenceNumber,
-          selectedLanguageTo
+          selectedLanguage
         );
 
         const newSelectedWords = [];
@@ -198,14 +213,22 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         } else {
           newSelectedWords.push(...prevWords);
         }
-
         return newSelectedWords;
       });
     }
+    /* if (selectedLanguage !== prevLanguageRef.current) {
+      setTrigger((prevTrigger) => !prevTrigger);
+    } */
   };
 
   useEffect(() => {
     const handleDocumentMouseUp = () => {
+      if (selectedWords.length > 1) {
+        onChangeMode("phrases");
+      }
+      if (selectedWords.length === 1) {
+        onChangeMode("words");
+      }
       if (selectedWords.length > 0) {
         const { sentenceNumber, wordIndexInSentence } =
           selectedWords[selectedWords.length - 1];
@@ -250,7 +273,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     const highlightedWords = getHighlightedWords(
       userSentences,
       sentenceNumber,
-      selectedLanguageTo
+      selectedLanguage
     );
     const phrase = sortedSelectedWords
       .map(({ word, wordIndexInSentence }) =>
@@ -278,7 +301,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     getSentenceDataByLanguage(snapshots, sourceLanguage)
   );
   const visibleTargetTexts: SentenceData[] = getVisibleTexts(
-    getSentenceDataByLanguage(snapshots, selectedLanguageTo)
+    getSentenceDataByLanguage(snapshots, selectedLanguage)
   );
 
   function getSentenceDataByLanguage(
@@ -306,7 +329,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         const targetSentence = visibleTargetTexts.find(
           (target) => target.sentenceNo === sourceSentence.sentenceNo
         );
-        if (mode === "sentence") {
+        console.log("mode" + JSON.stringify(mode, null, 2));
+        if (mode === "sentences") {
           // Just return one TranslateWord for the entire sentence
           return (
             <TranslateWord
@@ -331,8 +355,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 handleMouseEvent("enter", word, sentenceNumber, sentenceText, 0)
               }
               onMouseUp={handleMouseUp}
-              highlightPositions={getHighlightPositions(
-                selectedLanguageTo,
+              highlightPositionsForPhrases={getHighlightPositions(
+                selectedLanguage,
                 userSentences,
                 vocabularyListUserPhrases!,
                 sourceSentence.sentenceNo,
@@ -392,11 +416,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     }
                     onMouseUp={handleMouseUp}
                     highlightPositions={getHighlightPositions(
-                      selectedLanguageTo,
+                      selectedLanguage,
                       userSentences,
                       vocabularyListUserPhrases!,
                       sourceSentence.sentenceNo,
-                      sourceWord.position
+                      sourceWord.position,
+                      mode
                     )}
                     isHighlighted={isWordInHighlightedPhrase(
                       userSentences,

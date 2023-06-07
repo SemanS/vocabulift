@@ -10,10 +10,7 @@ export const getHighlightedWords = (
       userSentence.sentenceNo === sentenceNo &&
       userSentence.targetLanguage === selectedLanguageTo
   );
-  console.log("sentence" + JSON.stringify(sentence, null, 2));
-  console.log(
-    "selectedLanguageTo" + JSON.stringify(selectedLanguageTo, null, 2)
-  );
+
   if (!sentence) return [];
 
   const highlightedWordPositions: number[] = [];

@@ -44,7 +44,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     // If the word is highlighted from video on mobile, show the tooltip
     if (
       isMobileDevice ||
-      (props.isHighlightedFromVideo && props.mode === "sentence")
+      (props.isHighlightedFromVideo && props.mode === "sentences")
     ) {
       setIsTooltipVisible(true);
     } else {
@@ -154,7 +154,9 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     }
 
     const title =
-      props.mode === "word" ? props.translation : props.sentenceTranslation;
+      props.mode === "words" || props.mode === "phrases"
+        ? props.translation
+        : props.sentenceTranslation;
 
     return (
       <Tooltip {...commonTooltipProps} title={title} /* open={isHovered} */>
@@ -171,18 +173,19 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       }}
       className={classNames(
         styles.textbox,
-        isHovered || props.highlightPositions || props.isHighlighted
+        isHovered || props.isHighlighted
           ? styles.bubbleHovered
           : props.isHighlightedFromVideo
           ? styles.bubbleVideoHovered
-          : ""
+          : "",
+        props.highlightPositions ? styles.bubbleHovered : ""
       )}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
     >
-      {props.mode === "sentence" ? props.word + "\n" : props.word + " "}
+      {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
     </Text>
   );
 };

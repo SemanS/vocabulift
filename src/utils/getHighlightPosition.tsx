@@ -6,14 +6,11 @@ export const getHighlightPositions = (
   userSentences: UserSentence[],
   vocabularyListUserPhrases: VocabularyListUserPhrase[],
   sentenceNo: number,
-  wordPosition: number
+  wordPosition: number,
+  mode: string
 ): boolean => {
   const sortedSentences = userSentences.sort(
     (a, b) => a.sentenceNo - b.sentenceNo
-  );
-  console.log(
-    "vocabularyListUserPhrases" +
-      JSON.stringify(vocabularyListUserPhrases, null, 2)
   );
 
   const sentence = sortedSentences.find((userSentence: UserSentence) => {
@@ -40,11 +37,13 @@ export const getHighlightPositions = (
       }
       const startPosition = phraseObj.phrase.startPosition;
       const endPosition = phraseObj.phrase.endPosition;
-      return (
-        wordPosition >= startPosition &&
-        wordPosition <= endPosition &&
-        phraseObj.phrase.targetLanguage === selectedLanguageTo
-      );
+      return mode === "phrases"
+        ? wordPosition >= startPosition &&
+            wordPosition <= endPosition &&
+            phraseObj.phrase.targetLanguage === selectedLanguageTo
+        : mode === "words"
+        ? wordPosition === startPosition && startPosition === endPosition
+        : false;
     }
   );
 

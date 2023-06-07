@@ -51,7 +51,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   shouldSetVideo: false,
   wordData: null,
   showWordDefinition: false,
-  mode: "word",
+  mode: "words",
   snapshots: null,
   userSentences: null,
   libraryTitle: "",
@@ -176,6 +176,8 @@ const BookDetail: FC = () => {
     dispatch({ type: "setLoadingFromFetch", payload: isLoading });
   const setShouldSetVideo = (shouldSetVideo: boolean) =>
     dispatch({ type: "setShouldSetVideo", payload: shouldSetVideo });
+  const setMode = (mode: string) =>
+    dispatch({ type: "setMode", payload: mode });
   const setHighlightedSubtitleIndex = (
     highlightedSubtitleIndex: number | null
   ) =>
@@ -426,7 +428,11 @@ const BookDetail: FC = () => {
         console.error("Error adding user phrase:", error);
       }
     },
-    [state.vocabularyListUserPhrases]
+    [
+      state.userSentences,
+      state.vocabularyListUserPhrases,
+      state.vocabularyListUserPhrases,
+    ]
   );
 
   const handleDeleteUserPhrase = useCallback(
@@ -693,8 +699,9 @@ const BookDetail: FC = () => {
                       value={state.mode}
                       buttonStyle="solid"
                     >
-                      <Radio.Button value="word">Word</Radio.Button>
-                      <Radio.Button value="sentence">Sentence</Radio.Button>
+                      <Radio.Button value="words">Words</Radio.Button>
+                      <Radio.Button value="phrases">Phrases</Radio.Button>
+                      <Radio.Button value="sentences">Sentences</Radio.Button>
                       <Radio.Button value="all">All</Radio.Button>
                     </Radio.Group>
                   </>
@@ -719,6 +726,7 @@ const BookDetail: FC = () => {
                       : null
                   }
                   selectedLanguageTo={state.selectedLanguageTo}
+                  onChangeMode={setMode}
                 />
                 <PaginationControls
                   currentPage={state.currentPage}
