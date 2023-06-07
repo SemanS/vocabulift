@@ -41,7 +41,7 @@ import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 import Flag from "react-world-flags";
 
-const initialReducerState = (targetLanguage: string) => ({
+const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
   currentTextIndex: 0,
   sentenceFrom: 1,
@@ -68,7 +68,7 @@ const initialReducerState = (targetLanguage: string) => ({
   sentencesPerPage: 10,
   initState: true,
   isLimitExceeded: false,
-  selectedLanguageTo: targetLanguage,
+  selectedLanguageTo: targetLanguageFromQuery,
 });
 
 function reducer(state: any, action: any) {
@@ -143,19 +143,20 @@ const BookDetail: FC = () => {
   const currentPageFromQuery = parseInt(
     queryParams.get("currentPage") as string
   );
+  const targetLanguageFromQuery = queryParams.get("targetLanguage") as string;
   const [sourceLanguage, setSourceLanguage] =
     useRecoilState(sourceLanguageState);
   const [targetLanguage, setTargetLanguage] =
     useRecoilState(targetLanguageState);
   const [recoilCurrentPage, setRecoilCurrentPage] =
-    useRecoilState(currentPageState); // Add this line
+    useRecoilState(currentPageState);
   const [recoilPageSize, setRecoilPageSize] = useRecoilState(pageSizeState);
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [user, setUser] = useRecoilState(userState);
 
   const [state, dispatch] = useReducer(
     reducer,
-    initialReducerState(user.targetLanguage)
+    initialReducerState(targetLanguageFromQuery)
   );
 
   const setSelectedUserPhrase = (

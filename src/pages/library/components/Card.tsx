@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
-import {
-  Alert,
-  Col,
-  Progress,
-  Row,
-  Space,
-  Spin,
-  Tooltip,
-  Typography,
-} from "antd";
+import { Alert, Col, Progress, Row, Spin, Tooltip, Typography } from "antd";
 import {
   CheckCircleOutlined,
   DislikeOutlined,
@@ -26,6 +17,7 @@ interface CardProps {
   cardIndex: number;
   isHovered: boolean;
   progress: number;
+  selectedLanguageTo: string;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -34,6 +26,7 @@ export const Card: React.FC<CardProps> = ({
   cardIndex,
   isHovered,
   progress,
+  selectedLanguageTo,
 }) => {
   const [isImgHovered, setIsImgHovered] = useState(false);
   const [isDelayPassed, setIsDelayPassed] = useState(false);
@@ -103,7 +96,15 @@ export const Card: React.FC<CardProps> = ({
         } ${styles[transitionState]}`}
       >
         <Link
-          to={itemData.id + "?currentPage=" + 1 + "&pageSize=" + 10}
+          to={
+            itemData.id +
+            "?currentPage=" +
+            1 +
+            "&pageSize=" +
+            10 +
+            "&targetLanguage=" +
+            selectedLanguageTo
+          }
           style={{ color: "inherit" }}
         >
           {isOngoingEvent || itemData.id === "temp-item" ? (

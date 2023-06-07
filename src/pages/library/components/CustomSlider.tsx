@@ -13,6 +13,7 @@ interface CustomSliderProps {
   sliderId: string;
   category: string;
   progress: number;
+  selectedLanguageTo: string;
 }
 
 export const CustomSlider: React.FC<CustomSliderProps> = ({
@@ -20,6 +21,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   sliderId,
   category,
   progress,
+  selectedLanguageTo,
 }) => {
   const [showControls, setShowControls] = useState(false);
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
@@ -105,6 +107,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
                 cardIndex={index}
                 isHovered={hoveredCardIndex === index}
                 progress={progress}
+                selectedLanguageTo={selectedLanguageTo}
               />
             );
           })}

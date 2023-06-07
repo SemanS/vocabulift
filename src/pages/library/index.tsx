@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Typography, Space, Progress, Spin } from "antd";
+import { Button, Col, Row, Typography, Space } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -29,7 +29,6 @@ import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
 import "antd/dist/reset.css";
 import { vocabuFetch } from "@/utils/vocabuFetch";
-import { useLocation, useNavigate } from "react-router-dom";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -58,8 +57,6 @@ const Library: React.FC = () => {
   const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
     localStorage.getItem("videoThumbnail") || undefined
   );
-  const navigate = useNavigate();
-  const location = useLocation();
 
   const fetchOptions = async (input: string) => {
     try {
@@ -505,6 +502,7 @@ const Library: React.FC = () => {
                   sliderId={`slider${index + 1}`}
                   category={category}
                   progress={progress}
+                  selectedLanguageTo={user.targetLanguage}
                 />
               ))}
           </div>

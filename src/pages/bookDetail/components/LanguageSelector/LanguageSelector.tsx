@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Popover, Input, Typography } from "antd";
 import Flag from "react-world-flags";
 import styles from "./index.module.less";
@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import { Option } from "@/models/utils.interface";
 import ISO6391 from "iso-639-1";
 import { updateUser } from "@/services/userService";
-import { User, UserEntity } from "@/models/user";
+import { User } from "@/models/user";
 import { userState } from "@/stores/user";
 
 interface LanguageSelectorProps {

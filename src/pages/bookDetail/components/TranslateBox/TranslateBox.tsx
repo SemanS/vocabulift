@@ -71,7 +71,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   }
 
   useEffect(() => {
-    console.log("sentenceText" + JSON.stringify(sentenceText, null, 2));
     let lastWord = selectedSentenceText.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
     if (sentenceText) {
