@@ -3,7 +3,8 @@ import { UserSentence } from "@/models/userSentence.interface";
 export const getHighlightedWords = (
   userSentences: UserSentence[],
   sentenceNo: number,
-  selectedLanguageTo: string
+  selectedLanguageTo: string,
+  mode: string
 ): number[] => {
   const sentence = userSentences.find(
     (userSentence) =>
@@ -15,12 +16,13 @@ export const getHighlightedWords = (
 
   const highlightedWordPositions: number[] = [];
 
-  sentence.phrases.forEach((userPhrase) => {
-    for (let i = userPhrase.startPosition; i <= userPhrase.endPosition; i++) {
-      if (userPhrase.targetLanguage === selectedLanguageTo) {
-        highlightedWordPositions.push(i);
+  if (mode === "phrases")
+    sentence.phrases.forEach((userPhrase) => {
+      for (let i = userPhrase.startPosition; i <= userPhrase.endPosition; i++) {
+        if (userPhrase.targetLanguage === selectedLanguageTo) {
+          highlightedWordPositions.push(i);
+        }
       }
-    }
-  });
+    });
   return highlightedWordPositions;
 };

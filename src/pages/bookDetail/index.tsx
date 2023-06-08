@@ -428,11 +428,7 @@ const BookDetail: FC = () => {
         console.error("Error adding user phrase:", error);
       }
     },
-    [
-      state.userSentences,
-      state.vocabularyListUserPhrases,
-      state.vocabularyListUserPhrases,
-    ]
+    [state.userSentences, state.vocabularyListUserPhrases]
   );
 
   const handleDeleteUserPhrase = useCallback(

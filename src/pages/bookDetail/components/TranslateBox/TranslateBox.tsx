@@ -6,12 +6,17 @@ import {
   isWordInHighlightedPhrase,
 } from "@/utils/getHighlightPosition";
 import { UserSentence } from "@/models/userSentence.interface";
-import { getHighlightedWords } from "@/utils/getHighlightedWords";
 import { addUserPhrase } from "@/services/userService";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import React from "react";
 import { SentenceData } from "@/models/sentences.interfaces";
 import { Snapshot } from "@/models/snapshot.interfaces";
+import { SelectedWord } from "@/models/utils.interface";
+import {
+  getPhraseIfNotInHighlighted,
+  isWordInVocabularyList,
+} from "@/utils/utilMethods";
+import { notification } from "antd";
 
 interface TranslateBoxProps {
   mode: string;
@@ -48,23 +53,25 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 }) => {
   const { libraryId } = useParams();
   const [error, setError] = useState<Error | null>(null);
-  const [selectedWords, setSelectedWords] = useState<any[]>([]);
+  const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
   const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
   const [mouseDown, setMouseDown] = useState(false);
-  const [sentenceText, setSentenceText] = useState<string | null>(null);
-  const [sentenceTextTranslated, setSentenceTextTranslated] = useState<
-    string | null
-  >(null);
-  const [startPosition, setStartPosition] = useState<number | null>(null);
-  const [endPosition, setEndPosition] = useState<number | null>(null);
   const [selectedWordTranslation, setSelectedWordTranslation] = useState<
     string | null
   >(null);
   const [selectedSentenceText, setSelectedSentenceText] = useState<string>("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const prevLanguageRef = useRef(selectedLanguage);
-  const sentenceTextRef = useRef(sentenceText);
-  const [trigger, setTrigger] = useState(false);
+  const [saveWordComplete, setSaveWordComplete] = useState(false);
+  const [
+    highlightPositionsPerSentenceForWords,
+    setHighlightPositionsPerSentenceForWords,
+  ] = useState<Record<number, number[]>>({});
+  const [
+    highlightPositionsPerSentenceForPhrases,
+    setHighlightPositionsPerSentenceForPhrases,
+  ] = useState<Record<number, number[]>>({});
+  const [sentenceNo, setSentenceNo] = useState<number>();
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
@@ -84,21 +91,29 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     prevLanguageRef.current = selectedLanguage;
   }, [selectedLanguageTo]);
 
-  useEffect(() => {
-    let lastWord = selectedSentenceText.trim().split(" ").pop() as string;
+  async function saveWord(
+    phrase: string,
+    startPosition: number,
+    endPosition: number,
+    sentenceTranslation: string,
+    translation: string
+  ): Promise<string | undefined> {
+    let savedPhrase: string | undefined;
+    let lastWord = sentenceTranslation.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
-    if (sentenceText) {
-      addUserPhrase(
+    console.log("startPosition" + JSON.stringify(startPosition, null, 2));
+    if (phrase) {
+      const response = await addUserPhrase(
         mode === "sentences"
           ? selectedSentenceText
-          : isSingleWord(sentenceText)
-          ? removeSpecialChars(sentenceText)
-          : sentenceText,
-        selectedWordTranslation,
+          : isSingleWord(phrase)
+          ? removeSpecialChars(phrase)
+          : phrase,
+        translation,
         libraryId,
         selectedSentence,
         selectedSentenceText,
-        sentenceTextTranslated,
+        sentenceTranslation,
         mode === "sentences" ? 0 : startPosition,
         mode === "sentences" ? lastIndex : endPosition,
         sourceLanguage,
@@ -107,19 +122,19 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         currentPage,
         libraryTitle,
         sessionStorage.getItem("access_token")
-      ).then((response) => {
-        if (response.status === "success") {
-          const vocabularyListUserPhrase: VocabularyListUserPhrase = {
-            phrase: response.data,
-            sentenceNo: response.data.sentenceNo,
-          };
-          onAddUserPhrase(vocabularyListUserPhrase);
-          setSelectedWordTranslation(null);
-        }
-      });
+      );
+      if (response.status === "success") {
+        const vocabularyListUserPhrase: VocabularyListUserPhrase = {
+          phrase: response.data,
+          sentenceNo: response.data.sentenceNo,
+        };
+        onAddUserPhrase(vocabularyListUserPhrase);
+        setSelectedWordTranslation(null);
+        savedPhrase = response.data;
+      }
     }
-    setTrigger(false);
-  }, [sentenceText]);
+    return savedPhrase;
+  }
 
   useEffect(() => {
     setSelectedWords([]);
@@ -148,7 +163,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         }
         const initialSelected = prevWords[0];
         const sentenceObj: SentenceData | undefined = visibleSourceTexts.find(
-          (s) => s.sentenceNo == sentenceNumber
+          (s) => s.sentenceNo === sentenceNumber
         );
         const sentenceFromText = sentenceObj!.sentenceText;
         const sentenceLines = sentenceFromText.split("\n");
@@ -159,10 +174,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
             .filter((word: string) => word !== "")
         );
 
-        const highlightedWords = getHighlightedWords(
+        const highlightedWords = getHighlightPositions(
+          selectedLanguage,
           userSentences,
-          sentenceNumber,
-          selectedLanguage
+          vocabularyListUserPhrases!,
+          sentenceNo ? sentenceNo : sentenceNumber,
+          mode
         );
 
         const newSelectedWords = [];
@@ -216,78 +233,72 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         return newSelectedWords;
       });
     }
-    /* if (selectedLanguage !== prevLanguageRef.current) {
-      setTrigger((prevTrigger) => !prevTrigger);
-    } */
   };
 
-  useEffect(() => {
-    const handleDocumentMouseUp = () => {
-      if (selectedWords.length > 1) {
-        onChangeMode("phrases");
-      }
-      if (selectedWords.length === 1) {
-        onChangeMode("words");
-      }
-      if (selectedWords.length > 0) {
-        const { sentenceNumber, wordIndexInSentence } =
-          selectedWords[selectedWords.length - 1];
-
-        const targetSentence = visibleTargetTexts.find(
-          (target) => target.sentenceNo === sentenceNumber
-        );
-
-        const translation = selectedWords
-          .map(
-            ({ wordIndexInSentence }) =>
-              targetSentence?.sentenceWords[wordIndexInSentence]?.wordText || ""
-          )
-          .join(" ");
-
-        handleMouseUp(
-          targetSentence?.sentenceText!,
-          sentenceNumber,
-          translation
-        );
-      }
-    };
-
-    document.addEventListener("mouseup", handleDocumentMouseUp);
-    return () => {
-      document.removeEventListener("mouseup", handleDocumentMouseUp);
-    };
-  }, [selectedWords]);
-
-  const handleMouseUp = (
+  const handleMouseUp = async (
     sentenceTranslation: string,
     sentenceNumber: number,
     translation?: string
   ) => {
+    if (selectedWords.length > 1) {
+      onChangeMode("phrases");
+    }
+    if (selectedWords.length === 1) {
+      onChangeMode("words");
+    }
+    if (isWordInVocabularyList(selectedWords, vocabularyListUserPhrases)) {
+      notification.open({
+        message: "Word Found",
+        description: "The first selected word is in the vocabulary list.",
+        type: "info",
+      });
+    }
     setMouseDown(false);
+    setSentenceNo(sentenceNumber);
     const sortedSelectedWords = selectedWords.sort(
       (a, b) => a.wordIndexInSentence - b.wordIndexInSentence
     );
     if (sortedSelectedWords.length === 1) {
       setSelectedWordTranslation(translation!);
     }
-    const highlightedWords = getHighlightedWords(
-      userSentences,
-      sentenceNumber,
-      selectedLanguage
+
+    const phrase = getPhraseIfNotInHighlighted(
+      highlightPositionsPerSentenceForWords,
+      sortedSelectedWords,
+      sentenceNumber
     );
-    const phrase = sortedSelectedWords
-      .map(({ word, wordIndexInSentence }) =>
-        !highlightedWords.includes(wordIndexInSentence) ? word : null
-      )
-      .filter((word) => word !== null)
-      .join(" ");
-    setSentenceText(phrase);
-    setSentenceTextTranslated(sentenceTranslation);
-    if (sortedSelectedWords.length > 0) {
-      setStartPosition(sortedSelectedWords[0].wordIndexInSentence);
-      setEndPosition(
-        sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence
+
+    const startPosition = sortedSelectedWords[0].wordIndexInSentence;
+    const endPosition =
+      sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence;
+
+    const isPhraseInVocabulary = vocabularyListUserPhrases!.some(
+      (item) =>
+        item.phrase.startPosition === startPosition &&
+        item.phrase.endPosition === endPosition &&
+        item.phrase.sentenceNo === sentenceNumber
+    );
+
+    console.log("phrase" + JSON.stringify(phrase, null, 2));
+    console.log(
+      "sentenceTranslation" + JSON.stringify(sentenceTranslation, null, 2)
+    );
+
+    let savedPhrase;
+    if (!isPhraseInVocabulary) {
+      savedPhrase = await saveWord(
+        phrase,
+        startPosition,
+        endPosition,
+        sentenceTranslation,
+        translation!
       );
+    } else {
+      console.log("This phrase already exists in the vocabulary list");
+    }
+
+    if (savedPhrase !== undefined) {
+      setSaveWordComplete(true);
     }
   };
 
@@ -303,6 +314,45 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const visibleTargetTexts: SentenceData[] = getVisibleTexts(
     getSentenceDataByLanguage(snapshots, selectedLanguage)
   );
+
+  useEffect(() => {
+    if (saveWordComplete) {
+      const newHighlightedPositionsPerSentenceForWords: Record<
+        number,
+        number[]
+      > = {};
+      const newHighlightedPositionsPerSentenceForPhrases: Record<
+        number,
+        number[]
+      > = {};
+      visibleSourceTexts.forEach((sourceSentence) => {
+        const highlightPositions = getHighlightPositions(
+          selectedLanguage,
+          userSentences,
+          vocabularyListUserPhrases!,
+          sourceSentence.sentenceNo,
+          mode
+        );
+        if (highlightPositions.length === 1) {
+          newHighlightedPositionsPerSentenceForWords[
+            sourceSentence.sentenceNo
+          ] = highlightPositions;
+        } else {
+          newHighlightedPositionsPerSentenceForPhrases[
+            sourceSentence.sentenceNo
+          ] = highlightPositions;
+        }
+      });
+
+      setHighlightPositionsPerSentenceForWords(
+        newHighlightedPositionsPerSentenceForWords
+      );
+      setHighlightPositionsPerSentenceForPhrases(
+        newHighlightedPositionsPerSentenceForPhrases
+      );
+      setSaveWordComplete(false);
+    }
+  }, [saveWordComplete]);
 
   function getSentenceDataByLanguage(
     snapshots: Snapshot[],
@@ -326,10 +376,20 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   return (
     <>
       {visibleSourceTexts.map((sourceSentence, index) => {
+        const highlightPositions =
+          mode === "words"
+            ? highlightPositionsPerSentenceForWords[
+                sourceSentence.sentenceNo
+              ] || []
+            : mode === "phrases"
+            ? highlightPositionsPerSentenceForPhrases[
+                sourceSentence.sentenceNo
+              ] || []
+            : [];
+
         const targetSentence = visibleTargetTexts.find(
           (target) => target.sentenceNo === sourceSentence.sentenceNo
         );
-        console.log("mode" + JSON.stringify(mode, null, 2));
         if (mode === "sentences") {
           // Just return one TranslateWord for the entire sentence
           return (
@@ -355,13 +415,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 handleMouseEvent("enter", word, sentenceNumber, sentenceText, 0)
               }
               onMouseUp={handleMouseUp}
-              highlightPositionsForPhrases={getHighlightPositions(
-                selectedLanguage,
-                userSentences,
-                vocabularyListUserPhrases!,
-                sourceSentence.sentenceNo,
-                0
-              )}
+              highlightPositions={highlightPositions}
               isHighlighted={isWordInHighlightedPhrase(
                 userSentences,
                 selectedWords,
@@ -372,6 +426,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               isHighlightedFromVideo={index === highlightedSentenceIndex}
               isSelecting={mouseDown}
               sentenceTranslation={targetSentence?.sentenceText || ""}
+              highlightPositionsPerSentenceForWords={
+                highlightPositionsPerSentenceForWords
+              }
             />
           );
         } else {
@@ -415,14 +472,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                       )
                     }
                     onMouseUp={handleMouseUp}
-                    highlightPositions={getHighlightPositions(
-                      selectedLanguage,
-                      userSentences,
-                      vocabularyListUserPhrases!,
-                      sourceSentence.sentenceNo,
-                      sourceWord.position,
-                      mode
-                    )}
+                    highlightPositions={highlightPositions}
                     isHighlighted={isWordInHighlightedPhrase(
                       userSentences,
                       selectedWords,
@@ -431,9 +481,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                       sourceSentence.sentenceNo
                     )}
                     isHighlightedFromVideo={index === highlightedSentenceIndex}
-                    wordIndex={sourceWord.position}
+                    wordIndex={wordIndex}
                     isSelecting={mouseDown}
                     sentenceTranslation={targetSentence?.sentenceText || ""}
+                    highlightPositionsPerSentenceForWords={
+                      highlightPositionsPerSentenceForWords
+                    }
                   />
                 );
               })}

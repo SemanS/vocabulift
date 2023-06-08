@@ -6,48 +6,29 @@ export const getHighlightPositions = (
   userSentences: UserSentence[],
   vocabularyListUserPhrases: VocabularyListUserPhrase[],
   sentenceNo: number,
-  wordPosition: number,
   mode: string
-): boolean => {
-  const sortedSentences = userSentences.sort(
-    (a, b) => a.sentenceNo - b.sentenceNo
-  );
+): number[] => {
+  const highlightPositions: number[] = [];
 
-  const sentence = sortedSentences.find((userSentence: UserSentence) => {
-    return userSentence.sentenceNo === sentenceNo;
-  });
-
-  let isPhraseHighlighted = false;
-
-  if (sentence) {
-    isPhraseHighlighted =
-      sentence.phrases &&
-      sentence.phrases.some(
-        (userPhrase) =>
-          userPhrase.startPosition <= wordPosition &&
-          userPhrase.endPosition >= wordPosition &&
-          userPhrase.targetLanguage === selectedLanguageTo
-      );
-  }
-
-  const isInVocabularyListUserPhrases = vocabularyListUserPhrases.some(
-    (phraseObj) => {
-      if (phraseObj.sentenceNo !== sentenceNo) {
-        return false;
-      }
-      const startPosition = phraseObj.phrase.startPosition;
-      const endPosition = phraseObj.phrase.endPosition;
-      return mode === "phrases"
-        ? wordPosition >= startPosition &&
-            wordPosition <= endPosition &&
-            phraseObj.phrase.targetLanguage === selectedLanguageTo
-        : mode === "words"
-        ? wordPosition === startPosition && startPosition === endPosition
-        : false;
+  vocabularyListUserPhrases.forEach((phraseObj) => {
+    if (phraseObj.sentenceNo !== sentenceNo) {
+      return;
     }
-  );
+    const startPosition = phraseObj.phrase.startPosition;
+    const endPosition = phraseObj.phrase.endPosition;
 
-  return isPhraseHighlighted || isInVocabularyListUserPhrases;
+    if (
+      (mode === "phrases" &&
+        phraseObj.phrase.targetLanguage === selectedLanguageTo &&
+        startPosition !== endPosition) ||
+      mode === "words"
+    ) {
+      for (let position = startPosition; position <= endPosition; position++) {
+        highlightPositions.push(position);
+      }
+    }
+  });
+  return highlightPositions;
 };
 
 export const isWordInHighlightedPhrase = (

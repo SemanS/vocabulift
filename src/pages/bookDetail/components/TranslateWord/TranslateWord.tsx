@@ -26,12 +26,13 @@ interface TranslateWordProps {
     sentenceNumber: number,
     translation: string
   ) => void;
-  highlightPositions?: boolean;
+  highlightPositions?: number[];
   isHighlighted?: boolean;
   isHighlightedFromVideo?: boolean;
   wordIndex?: number;
   isSelecting?: boolean;
   sentenceTranslation?: string;
+  highlightPositionsPerSentenceForWords?: Record<number, number[]>;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
@@ -39,6 +40,26 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(true);
   const [hoverTimeout, setHoverTimeout] = useState<number | null>(null);
+
+  const isWordHighlighted =
+    props.highlightPositionsPerSentenceForWords?.[
+      props.sentenceNumber!
+    ]?.includes(props.wordIndex!) ?? false;
+
+  const shouldShowTooltip =
+    isWordHighlighted ||
+    props.isHighlighted ||
+    props.isHighlightedFromVideo ||
+    isHovered;
+
+  const getClassName = () => {
+    let result = styles.textbox;
+    if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
+    else if (props.isHighlightedFromVideo)
+      result += ` ${styles.bubbleVideoHovered}`;
+    if (isWordHighlighted) result += ` ${styles.bubbleHovered}`;
+    return result;
+  };
 
   useEffect(() => {
     // If the word is highlighted from video on mobile, show the tooltip
@@ -106,7 +127,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const commonTooltipProps = {
-    open: isTooltipVisible || !props.isHighlightedFromVideo || isHovered,
+    //open: isTooltipVisible || !props.isHighlightedFromVideo || isHovered,
+    open: isTooltipVisible || isHovered,
     arrow: false,
     mouseEnterDelay: 100,
     mouseLeaveDelay: 100,
@@ -125,10 +147,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     }
 
     const shouldShowTooltip =
-      props.highlightPositions ||
-      props.isHighlighted ||
-      props.isHighlightedFromVideo ||
-      isHovered;
+      //props.highlightPositions?.includes(props.wordIndex!) ||
+      props.isHighlighted || props.isHighlightedFromVideo || isHovered;
 
     if (!shouldShowTooltip) {
       return children as React.ReactElement;
@@ -171,20 +191,14 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
         cursor: "pointer",
         whiteSpace: "pre-wrap",
       }}
-      className={classNames(
-        styles.textbox,
-        isHovered || props.isHighlighted
-          ? styles.bubbleHovered
-          : props.isHighlightedFromVideo
-          ? styles.bubbleVideoHovered
-          : "",
-        props.highlightPositions ? styles.bubbleHovered : ""
-      )}
+      className={getClassName()}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
     >
+      {/* {props.highlightPositions} */}
+      {props.wordIndex}
       {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
     </Text>
   );
