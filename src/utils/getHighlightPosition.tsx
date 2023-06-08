@@ -1,34 +1,28 @@
 import { UserSentence } from "@/models/userSentence.interface";
-import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 
 export const getHighlightPositions = (
-  selectedLanguageTo: string,
   userSentences: UserSentence[],
-  vocabularyListUserPhrases: VocabularyListUserPhrase[],
   sentenceNo: number,
-  mode: string
+  selectedLanguageTo: string
 ): number[] => {
-  const highlightPositions: number[] = [];
+  const sentence = userSentences.find(
+    (userSentence) =>
+      userSentence.sentenceNo === sentenceNo &&
+      userSentence.targetLanguage === selectedLanguageTo
+  );
 
-  vocabularyListUserPhrases.forEach((phraseObj) => {
-    if (phraseObj.sentenceNo !== sentenceNo) {
-      return;
-    }
-    const startPosition = phraseObj.phrase.startPosition;
-    const endPosition = phraseObj.phrase.endPosition;
+  if (!sentence) return [];
 
-    if (
-      (mode === "phrases" &&
-        phraseObj.phrase.targetLanguage === selectedLanguageTo &&
-        startPosition !== endPosition) ||
-      mode === "words"
-    ) {
-      for (let position = startPosition; position <= endPosition; position++) {
-        highlightPositions.push(position);
+  const highlightedWordPositions: number[] = [];
+
+  sentence.phrases.forEach((userPhrase) => {
+    for (let i = userPhrase.startPosition; i <= userPhrase.endPosition; i++) {
+      if (userPhrase.targetLanguage === selectedLanguageTo) {
+        highlightedWordPositions.push(i);
       }
     }
   });
-  return highlightPositions;
+  return highlightedWordPositions;
 };
 
 export const isWordInHighlightedPhrase = (
@@ -42,10 +36,14 @@ export const isWordInHighlightedPhrase = (
   wordIndexInSentence: number,
   sentenceNumber: number
 ): boolean => {
+  console.log("selectedWord" + JSON.stringify(selectedWords, null, 2));
+  console.log(
+    "wordIndexInSentence" + JSON.stringify(wordIndexInSentence, null, 2)
+  );
   return selectedWords.some(
     (selectedWord) =>
-      selectedWord.word == word &&
-      selectedWord.wordIndexInSentence == wordIndexInSentence &&
-      selectedWord.sentenceNumber == sentenceNumber
+      selectedWord.word === word &&
+      selectedWord.wordIndexInSentence === wordIndexInSentence &&
+      selectedWord.sentenceNumber === sentenceNumber
   );
 };

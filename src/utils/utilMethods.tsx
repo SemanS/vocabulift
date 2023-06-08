@@ -14,14 +14,23 @@ function calculateBookPercentage(
 }
 
 export const getPhraseIfNotInHighlighted = (
-  highlightPositionsPerSentenceForWords: Record<number, number[]>,
+  vocabularyListUserPhrases: Array<{
+    phrase: {
+      sentenceNo: number;
+      startPosition: number;
+      endPosition: number;
+    };
+  }>,
   sortedSelectedWords: { word: string; wordIndexInSentence: number }[],
   sentenceNo: number
 ) => {
   const phrase = sortedSelectedWords
     .map(({ word, wordIndexInSentence }) =>
-      !highlightPositionsPerSentenceForWords[sentenceNo]?.includes(
-        wordIndexInSentence
+      !vocabularyListUserPhrases.some(
+        ({ phrase }) =>
+          phrase.sentenceNo === sentenceNo &&
+          phrase.startPosition <= wordIndexInSentence &&
+          phrase.endPosition >= wordIndexInSentence
       )
         ? word
         : null

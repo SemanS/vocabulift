@@ -1,7 +1,7 @@
 import { Tooltip, Typography } from "antd";
-import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import styles from "./TranslateWord.module.less";
+import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 
 const { Text } = Typography;
 
@@ -26,13 +26,12 @@ interface TranslateWordProps {
     sentenceNumber: number,
     translation: string
   ) => void;
-  highlightPositions?: number[];
   isHighlighted?: boolean;
   isHighlightedFromVideo?: boolean;
   wordIndex?: number;
   isSelecting?: boolean;
   sentenceTranslation?: string;
-  highlightPositionsPerSentenceForWords?: Record<number, number[]>;
+  vocabularyListUserPhrases?: VocabularyListUserPhrase[];
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
@@ -42,9 +41,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [hoverTimeout, setHoverTimeout] = useState<number | null>(null);
 
   const isWordHighlighted =
-    props.highlightPositionsPerSentenceForWords?.[
-      props.sentenceNumber!
-    ]?.includes(props.wordIndex!) ?? false;
+    props.vocabularyListUserPhrases?.some(
+      ({ phrase }) =>
+        phrase.sentenceNo === props.sentenceNumber &&
+        phrase.startPosition <= props.wordIndex! &&
+        phrase.endPosition >= props.wordIndex!
+    ) ?? false;
 
   const shouldShowTooltip =
     isWordHighlighted ||
@@ -100,20 +102,13 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
-
-    // Clear any existing timeouts to prevent rapid firing
     if (hoverTimeout) window.clearTimeout(hoverTimeout);
-
-    // Set a timeout before setting isHovered to true
     const timeoutId = window.setTimeout(() => setIsHovered(true), 150);
     setHoverTimeout(timeoutId);
   };
 
   const handleMouseLeave = () => {
-    // Clear any existing timeouts to prevent rapid firing
     if (hoverTimeout) window.clearTimeout(hoverTimeout);
-
-    // Set a timeout before setting isHovered to false
     const timeoutId = window.setTimeout(() => setIsHovered(false), 0);
     setHoverTimeout(timeoutId);
   };
@@ -148,7 +143,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     const shouldShowTooltip =
       //props.highlightPositions?.includes(props.wordIndex!) ||
-      props.isHighlighted || props.isHighlightedFromVideo || isHovered;
+      //props.isHighlighted ||
+      props.isHighlightedFromVideo || isHovered;
 
     if (!shouldShowTooltip) {
       return children as React.ReactElement;
@@ -197,8 +193,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
     >
-      {/* {props.highlightPositions} */}
-      {props.wordIndex}
+      {isWordHighlighted}
       {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
     </Text>
   );
