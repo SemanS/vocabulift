@@ -90,7 +90,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     let savedPhrase: string | undefined;
     let lastWord = sentenceTranslation.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
-    console.log("startPosition" + JSON.stringify(startPosition, null, 2));
     if (phrase) {
       const response = await addUserPhrase(
         mode === "sentences"
@@ -232,10 +231,16 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     if (selectedWords.length === 1) {
       onChangeMode("words");
     }
-    if (isWordInVocabularyList(selectedWords, vocabularyListUserPhrases)) {
+    if (
+      isWordInVocabularyList(
+        selectedWords.length > 1 ? "phrases" : "words",
+        selectedWords,
+        vocabularyListUserPhrases
+      )
+    ) {
       notification.open({
         message: "Word Found",
-        description: "The first selected word is in the vocabulary list.",
+        description: "The selected word is in the vocabulary list.",
         type: "info",
       });
     }
@@ -261,12 +266,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         item.phrase.endPosition === endPosition &&
         item.phrase.sentenceNo === sentenceNumber
     );
-
-    console.log("phrase" + JSON.stringify(phrase, null, 2));
-    console.log(
-      "sentenceTranslation" + JSON.stringify(sentenceTranslation, null, 2)
-    );
-
     let savedPhrase;
     if (!isPhraseInVocabulary) {
       savedPhrase = await saveWord(

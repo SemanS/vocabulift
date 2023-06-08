@@ -1,5 +1,5 @@
 import { Tooltip, Typography } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./TranslateWord.module.less";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 
@@ -38,7 +38,23 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(true);
-  const [hoverTimeout, setHoverTimeout] = useState<number | null>(null);
+
+  const mouseLeaveDelay = 0.1;
+
+  useEffect(() => {
+    return () => {
+      clearHoverTimeout();
+    };
+  }, []);
+
+  const hoverTimeout = useRef<number | null>(null);
+
+  const clearHoverTimeout = () => {
+    if (hoverTimeout.current) {
+      window.clearTimeout(hoverTimeout.current);
+      hoverTimeout.current = null;
+    }
+  };
 
   const isWordHighlighted =
     props.vocabularyListUserPhrases?.some(
@@ -77,7 +93,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   useEffect(() => {
     return () => {
-      if (hoverTimeout) window.clearTimeout(hoverTimeout);
+      if (hoverTimeout.current) window.clearTimeout(hoverTimeout.current);
     };
   }, []);
 
@@ -94,6 +110,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
+    setIsTooltipVisible(false);
   };
 
   const handleMouseEnter = () => {
@@ -102,15 +119,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
-    if (hoverTimeout) window.clearTimeout(hoverTimeout);
-    const timeoutId = window.setTimeout(() => setIsHovered(true), 150);
-    setHoverTimeout(timeoutId);
+    clearHoverTimeout();
+    hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 300);
   };
 
   const handleMouseLeave = () => {
-    if (hoverTimeout) window.clearTimeout(hoverTimeout);
-    const timeoutId = window.setTimeout(() => setIsHovered(false), 0);
-    setHoverTimeout(timeoutId);
+    clearHoverTimeout();
+    hoverTimeout.current = window.setTimeout(
+      () => setIsHovered(false),
+      mouseLeaveDelay * 1500
+    );
   };
 
   const handleMouseUp = () => {
@@ -156,12 +174,14 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
           {...commonTooltipProps}
           title={props.translation}
           open={isHovered}
+          mouseLeaveDelay={mouseLeaveDelay}
         >
           <Tooltip
             {...commonTooltipProps}
             align={{ offset: [0, -50] }}
             title={props.sentenceTranslation}
             open={isHovered}
+            mouseLeaveDelay={mouseLeaveDelay}
           >
             {children}
           </Tooltip>

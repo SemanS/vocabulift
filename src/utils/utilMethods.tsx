@@ -42,6 +42,7 @@ export const getPhraseIfNotInHighlighted = (
 };
 
 export function isWordInVocabularyList(
+  mode: string,
   selectedWords: SelectedWord[],
   vocabularyListUserPhrases: VocabularyListUserPhrase[] | null | undefined
 ): boolean {
@@ -49,10 +50,27 @@ export function isWordInVocabularyList(
 
   const firstSelectedWord = selectedWords[0].word;
 
+  console.log(
+    "vocabularyListUserPhrases" +
+      JSON.stringify(vocabularyListUserPhrases, null, 2)
+  );
   if (vocabularyListUserPhrases)
     for (let i = 0; i < vocabularyListUserPhrases.length; i++) {
       const userPhrase = vocabularyListUserPhrases[i].phrase;
-      if (userPhrase.sourceText.includes(firstSelectedWord)) {
+
+      if (
+        mode === "words" &&
+        userPhrase.startPosition === userPhrase.endPosition &&
+        userPhrase.sourceText.includes(firstSelectedWord)
+      ) {
+        return true;
+      }
+
+      if (
+        mode === "phrases" &&
+        userPhrase.startPosition !== userPhrase.endPosition &&
+        userPhrase.sourceText.includes(firstSelectedWord)
+      ) {
         return true;
       }
     }
