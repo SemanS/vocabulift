@@ -38,6 +38,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(true);
+  const [isWord, setIsWord] = useState(false);
+  const [isPhrase, setIsPhrase] = useState(false);
 
   const mouseLeaveDelay = 0.1;
 
@@ -56,13 +58,53 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     }
   };
 
-  const isWordHighlighted =
-    props.vocabularyListUserPhrases?.some(
-      ({ phrase }) =>
-        phrase.sentenceNo === props.sentenceNumber &&
+  useEffect(() => {
+    const userPhrase = props.vocabularyListUserPhrases?.find(({ phrase }) => {
+      const inSentence = phrase.sentenceNo === props.sentenceNumber;
+      const inPosition =
         phrase.startPosition <= props.wordIndex! &&
-        phrase.endPosition >= props.wordIndex!
-    ) ?? false;
+        phrase.endPosition >= props.wordIndex!;
+      return inSentence && inPosition;
+    });
+
+    if (userPhrase) {
+      setIsWord(
+        userPhrase.phrase.startPosition === userPhrase.phrase.endPosition
+      );
+      setIsPhrase(
+        userPhrase.phrase.startPosition !== userPhrase.phrase.endPosition
+      );
+    } else {
+      setIsWord(false);
+      setIsPhrase(false);
+    }
+  }, [props.vocabularyListUserPhrases, props.sentenceNumber, props.wordIndex]);
+
+  const isWordHighlighted =
+    props.vocabularyListUserPhrases?.some(({ phrase }) => {
+      const inSentence = phrase.sentenceNo === props.sentenceNumber;
+      const inPosition =
+        phrase.startPosition <= props.wordIndex! &&
+        phrase.endPosition >= props.wordIndex!;
+
+      if (props.mode === "all") {
+        return inSentence && inPosition;
+      } else if (props.mode === "words") {
+        return (
+          inSentence &&
+          inPosition &&
+          phrase.startPosition === phrase.endPosition
+        );
+      } else if (props.mode === "phrases") {
+        return (
+          inSentence &&
+          inPosition &&
+          phrase.startPosition !== phrase.endPosition
+        );
+      }
+
+      return false;
+    }) ?? false;
 
   const shouldShowTooltip =
     isWordHighlighted ||
@@ -75,7 +117,9 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
     else if (props.isHighlightedFromVideo)
       result += ` ${styles.bubbleVideoHovered}`;
-    if (isWordHighlighted) result += ` ${styles.bubbleHovered}`;
+    if (isWordHighlighted && isWord && props.mode !== "phrases")
+      result += ` ${styles.bubbleWord}`; // New class for word
+    if (isWordHighlighted && isPhrase) result += ` ${styles.bubblePhrase}`; // New class for phrase
     return result;
   };
 
@@ -213,7 +257,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
     >
-      {isWordHighlighted}
       {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
     </Text>
   );

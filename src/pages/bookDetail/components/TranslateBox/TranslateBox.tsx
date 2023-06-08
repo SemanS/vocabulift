@@ -164,7 +164,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         const highlightedWords = getHighlightPositions(
           userSentences,
           sentenceNumber,
-          selectedLanguageTo
+          selectedLanguageTo,
+          mode
         );
 
         const newSelectedWords = [];
