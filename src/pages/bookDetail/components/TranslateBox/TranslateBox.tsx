@@ -14,6 +14,7 @@ import { Snapshot } from "@/models/snapshot.interfaces";
 import { SelectedWord } from "@/models/utils.interface";
 import {
   getPhraseIfNotInHighlighted,
+  isSingleWord,
   isWordInVocabularyList,
 } from "@/utils/utilMethods";
 import { notification } from "antd";
@@ -67,11 +68,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     return input.replace(regex, "");
   };
 
-  function isSingleWord(text: string) {
-    // Check if the text contains any whitespace characters
-    return !/\s/.test(text);
-  }
-
   useEffect(() => {
     setSelectedLanguage(selectedLanguageTo);
   }, [selectedLanguageTo]);
@@ -90,6 +86,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     let savedPhrase: string | undefined;
     let lastWord = sentenceTranslation.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
+    console.log("phrase" + JSON.stringify(phrase, null, 2));
     if (phrase) {
       const response = await addUserPhrase(
         mode === "sentences"
@@ -254,7 +251,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     const phrase = getPhraseIfNotInHighlighted(
       vocabularyListUserPhrases!,
       sortedSelectedWords,
-      sentenceNumber
+      sentenceNumber,
+      mode
     );
 
     const startPosition = sortedSelectedWords[0].wordIndexInSentence;

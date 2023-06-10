@@ -2,6 +2,7 @@ import { Tooltip, Typography } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./TranslateWord.module.less";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
+import { isSingleWord } from "@/utils/utilMethods";
 
 const { Text } = Typography;
 
@@ -40,6 +41,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isTooltipVisible, setIsTooltipVisible] = useState(true);
   const [isWord, setIsWord] = useState(false);
   const [isPhrase, setIsPhrase] = useState(false);
+  const [isWordPhrase, setIsWordPhrase] = useState(false);
 
   const mouseLeaveDelay = 0.1;
 
@@ -59,72 +61,134 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   useEffect(() => {
-    const userPhrase = props.vocabularyListUserPhrases?.find(({ phrase }) => {
-      const inSentence = phrase.sentenceNo === props.sentenceNumber;
-      const inPosition =
-        phrase.startPosition <= props.wordIndex! &&
-        phrase.endPosition >= props.wordIndex!;
-      return inSentence && inPosition;
-    });
-
-    if (userPhrase) {
-      setIsWord(
-        userPhrase.phrase.startPosition === userPhrase.phrase.endPosition
+    if (props.mode === "words") {
+      const userWords = props.vocabularyListUserPhrases?.filter(
+        ({ phrase }) => {
+          const inSentence = phrase.sentenceNo === props.sentenceNumber;
+          const inPosition =
+            phrase.startPosition <= props.wordIndex! &&
+            phrase.endPosition >= props.wordIndex! &&
+            isSingleWord(phrase.sourceText);
+          return inSentence && inPosition;
+        }
       );
-      setIsPhrase(
-        userPhrase.phrase.startPosition !== userPhrase.phrase.endPosition
-      );
-    } else {
-      setIsWord(false);
-      setIsPhrase(false);
+      if (userWords)
+        userWords.forEach((userWord) => {
+          setIsWord(true);
+        });
     }
-  }, [props.vocabularyListUserPhrases, props.sentenceNumber, props.wordIndex]);
 
-  const isWordHighlighted =
-    props.vocabularyListUserPhrases?.some(({ phrase }) => {
-      const inSentence = phrase.sentenceNo === props.sentenceNumber;
-      const inPosition =
-        phrase.startPosition <= props.wordIndex! &&
-        phrase.endPosition >= props.wordIndex!;
+    if (props.mode === "phrases") {
+      const userPhrases = props.vocabularyListUserPhrases?.filter(
+        ({ phrase }) => {
+          const inSentence = phrase.sentenceNo === props.sentenceNumber;
+          const inPosition =
+            phrase.startPosition <= props.wordIndex! &&
+            phrase.endPosition >= props.wordIndex! &&
+            !isSingleWord(phrase.sourceText);
+          return inSentence && inPosition;
+        }
+      );
+      if (userPhrases)
+        userPhrases.forEach((userPhrase) => {
+          const isPhrase =
+            userPhrase.phrase.startPosition !== userPhrase.phrase.endPosition;
 
-      if (props.mode === "all") {
-        return inSentence && inPosition;
-      } else if (props.mode === "words") {
-        return (
-          inSentence &&
-          inPosition &&
-          phrase.startPosition === phrase.endPosition
-        );
-      } else if (props.mode === "phrases") {
-        return (
-          inSentence &&
-          inPosition &&
-          phrase.startPosition !== phrase.endPosition
-        );
+          setIsPhrase(true);
+        });
+    }
+    if (props.mode === "all") {
+      const userWords = props.vocabularyListUserPhrases?.filter(
+        ({ phrase }) => {
+          const inSentence = phrase.sentenceNo === props.sentenceNumber;
+          const inPosition =
+            phrase.startPosition <= props.wordIndex! &&
+            phrase.endPosition >= props.wordIndex! &&
+            isSingleWord(phrase.sourceText);
+          return inSentence && inPosition;
+        }
+      );
+
+      const userPhrases = props.vocabularyListUserPhrases?.filter(
+        ({ phrase }) => {
+          const inSentence = phrase.sentenceNo === props.sentenceNumber;
+          const inPosition =
+            phrase.startPosition <= props.wordIndex! &&
+            phrase.endPosition >= props.wordIndex! &&
+            !isSingleWord(phrase.sourceText);
+          return inSentence && inPosition;
+        }
+      );
+
+      if (userWords && userPhrases) {
+        userWords.forEach((userWord) => {
+          userPhrases.forEach((userPhrase) => {
+            if (
+              userWord.phrase.startPosition >=
+                userPhrase.phrase.startPosition &&
+              userWord.phrase.endPosition <= userPhrase.phrase.endPosition
+            ) {
+              setIsWordPhrase(true);
+            }
+          });
+        });
       }
-
-      return false;
-    }) ?? false;
+    }
+  }, [
+    props.vocabularyListUserPhrases,
+    /* props.sentenceNumber,
+    props.wordIndex, */
+    isWord,
+    isPhrase,
+    props.mode,
+  ]);
 
   const shouldShowTooltip =
-    isWordHighlighted ||
-    props.isHighlighted ||
-    props.isHighlightedFromVideo ||
-    isHovered;
+    //isWordHighlighted ||
+    props.isHighlighted || props.isHighlightedFromVideo || isHovered;
 
   const getClassName = () => {
+    /* console.log(
+      `isWord: ${isWord}, isPhrase: ${isPhrase}, isWordPhrase: ${isWordPhrase}, props.mode: ${props.mode}, props.word: ${props.word}`
+    ); */
+
     let result = styles.textbox;
     if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
     else if (props.isHighlightedFromVideo)
       result += ` ${styles.bubbleVideoHovered}`;
-    if (isWordHighlighted && isWord && props.mode !== "phrases")
-      result += ` ${styles.bubbleWord}`; // New class for word
-    if (isWordHighlighted && isPhrase) result += ` ${styles.bubblePhrase}`; // New class for phrase
+    if ((isWord && props.mode === "words") || (isWord && props.mode === "all"))
+      result += ` ${styles.bubbleWord}`;
+    if (
+      (isPhrase && props.mode === "phrases") ||
+      (isPhrase && props.mode === "all")
+    )
+      result += ` ${styles.bubblePhrase}`;
+    if (isWordPhrase && props.mode === "all")
+      result += ` ${styles.bubbleWordPhrase}`;
     return result;
   };
 
+  /* const getClassName = () => {
+    //console.log(`isWord: ${isWord}, isPhrase: ${isPhrase}, isWordPhrase: ${isWordPhrase}, props.mode: ${props.mode}, props.word: ${props.word}`);
+
+    let result = styles.textbox;
+    if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
+    else if (props.isHighlightedFromVideo)
+      result += ` ${styles.bubbleVideoHovered}`;
+    if ((isWord && props.mode === "words") || (isWord && props.mode === "all"))
+      result += ` ${styles.bubbleWord}`;
+    if (
+      (isPhrase && props.mode === "phrases") ||
+      (isWordPhrase && props.mode === "phrases") ||
+      (isPhrase && props.mode === "all")
+    )
+      result += ` ${styles.bubblePhrase}`;
+    if (isWordPhrase && props.mode === "all")
+      result += ` ${styles.bubbleWordPhrase}`;
+    return result;
+  }; */
+
   useEffect(() => {
-    // If the word is highlighted from video on mobile, show the tooltip
     if (
       isMobileDevice ||
       (props.isHighlightedFromVideo && props.mode === "sentences")

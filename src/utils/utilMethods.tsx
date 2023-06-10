@@ -22,19 +22,35 @@ export const getPhraseIfNotInHighlighted = (
     };
   }>,
   sortedSelectedWords: { word: string; wordIndexInSentence: number }[],
-  sentenceNo: number
+  sentenceNo: number,
+  mode: string
 ) => {
   const phrase = sortedSelectedWords
-    .map(({ word, wordIndexInSentence }) =>
-      !vocabularyListUserPhrases.some(
-        ({ phrase }) =>
-          phrase.sentenceNo === sentenceNo &&
-          phrase.startPosition <= wordIndexInSentence &&
-          phrase.endPosition >= wordIndexInSentence
-      )
-        ? word
-        : null
-    )
+    .map(({ word, wordIndexInSentence }) => {
+      if (mode === "words") {
+        // In words mode, don't take into account highlighted phrases
+        return !vocabularyListUserPhrases.some(
+          ({ phrase }) =>
+            phrase.sentenceNo === sentenceNo &&
+            phrase.startPosition <= wordIndexInSentence &&
+            phrase.endPosition >= wordIndexInSentence &&
+            phrase.startPosition === phrase.endPosition // ignore multi-word phrases
+        )
+          ? word
+          : null;
+      } else if (mode === "phrases") {
+        // In phrases mode, don't take into account highlighted words
+        return !vocabularyListUserPhrases.some(
+          ({ phrase }) =>
+            phrase.sentenceNo === sentenceNo &&
+            phrase.startPosition <= wordIndexInSentence &&
+            phrase.endPosition >= wordIndexInSentence &&
+            phrase.startPosition !== phrase.endPosition // ignore single-word phrases
+        )
+          ? word
+          : null;
+      }
+    })
     .filter((word) => word !== null)
     .join(" ");
 
@@ -76,4 +92,9 @@ export function isWordInVocabularyList(
     }
 
   return false;
+}
+
+export function isSingleWord(text: string) {
+  // Check if the text contains any whitespace characters
+  return !/\s/.test(text);
 }
