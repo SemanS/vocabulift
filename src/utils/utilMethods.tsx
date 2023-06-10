@@ -27,7 +27,7 @@ export const getPhraseIfNotInHighlighted = (
 ) => {
   const phrase = sortedSelectedWords
     .map(({ word, wordIndexInSentence }) => {
-      if (mode === "words") {
+      if (mode === "words" || mode === "all") {
         // In words mode, don't take into account highlighted phrases
         return !vocabularyListUserPhrases.some(
           ({ phrase }) =>

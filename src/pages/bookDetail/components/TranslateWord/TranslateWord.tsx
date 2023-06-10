@@ -91,9 +91,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       );
       if (userPhrases)
         userPhrases.forEach((userPhrase) => {
-          const isPhrase =
-            userPhrase.phrase.startPosition !== userPhrase.phrase.endPosition;
-
           setIsPhrase(true);
         });
     }
@@ -119,6 +116,10 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
           return inSentence && inPosition;
         }
       );
+      if (userPhrases)
+        userPhrases.forEach((userPhrase) => {
+          setIsPhrase(true);
+        });
 
       if (userWords && userPhrases) {
         userWords.forEach((userWord) => {

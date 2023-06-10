@@ -86,7 +86,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     let savedPhrase: string | undefined;
     let lastWord = sentenceTranslation.trim().split(" ").pop() as string;
     let lastIndex = selectedSentenceText.lastIndexOf(lastWord);
-    console.log("phrase" + JSON.stringify(phrase, null, 2));
     if (phrase) {
       const response = await addUserPhrase(
         mode === "sentences"
@@ -226,7 +225,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     if (selectedWords.length > 1) {
       onChangeMode("phrases");
     }
-    if (selectedWords.length === 1) {
+    if (selectedWords.length === 1 && mode !== "all") {
       onChangeMode("words");
     }
     if (
