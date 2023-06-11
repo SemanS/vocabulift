@@ -362,6 +362,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               isSelecting={mouseDown}
               sentenceTranslation={targetSentence?.sentenceText || ""}
               vocabularyListUserPhrases={vocabularyListUserPhrases!}
+              currentPage={currentPage}
+              sentencesPerPage={sentencesPerPage}
+              selectedLanguageTo={selectedLanguageTo}
             />
           );
         } else {
@@ -417,6 +420,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     isSelecting={mouseDown}
                     sentenceTranslation={targetSentence?.sentenceText || ""}
                     vocabularyListUserPhrases={vocabularyListUserPhrases!}
+                    currentPage={currentPage}
+                    sentencesPerPage={sentencesPerPage}
+                    selectedLanguageTo={selectedLanguageTo}
                   />
                 );
               })}

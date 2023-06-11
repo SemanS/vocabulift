@@ -232,3 +232,43 @@ export const getUser = async (
     console.error(error);
   }
 };
+
+export const textToSpeech = async (
+  text: string,
+  language: string
+): Promise<string | undefined> => {
+  const requestBody = {
+    text,
+    language,
+  };
+
+  try {
+    const response = await vocabuFetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/textToSpeech`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Server responded with status ${response.status}`);
+    }
+
+    const audioBlob = await response.blob();
+    console.log("Response Content-Type:", response.headers.get("Content-Type"));
+    console.log("Audio Blob size:", audioBlob.size);
+
+    const audioUrl = URL.createObjectURL(audioBlob);
+    return audioUrl;
+
+    /* const audio = new Audio(audioUrl);
+    await audio.play(); */
+  } catch (error) {
+    console.error("Error with text to speech request:", error);
+  }
+};

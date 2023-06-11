@@ -1,8 +1,9 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { Card, List, Space } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { CaretRightOutlined, DeleteOutlined } from "@ant-design/icons";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import "./VocabularyList.css";
+import { textToSpeech } from "@/services/userService";
 
 interface VocabularyListProps {
   mode: string;
@@ -36,6 +37,36 @@ const VocabularyList: FC<VocabularyListProps> = ({
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
+  const [currentAudioUrl, setCurrentAudioUrl] = useState<string | undefined>(
+    undefined
+  );
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  };
+
+  const handleWordClick = async (word: VocabularyListUserPhrase) => {
+    mode === "words" && onWordClick && onWordClick(word.phrase.sourceText);
+    mode === "words" && setSelectedWord(word.phrase.sourceText);
+    mode === "words" && setSelectedUserPhrase(word);
+
+    const audioUrl = await textToSpeech(word.phrase.targetText, "sk-SK");
+
+    const audio = audioRef.current;
+    if (audio) {
+      audio.src = audioUrl!;
+      audio.play();
+    }
+  };
 
   const handleDeleteItem = async (
     phraseId: string,
@@ -82,6 +113,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   onWordClick(word.phrase.sourceText);
                 mode === "words" && setSelectedWord(word.phrase.sourceText);
                 mode === "words" && setSelectedUserPhrase(word);
+                handleWordClick(word);
               }}
             >
               <List.Item.Meta
@@ -110,6 +142,15 @@ const VocabularyList: FC<VocabularyListProps> = ({
                     >
                       {word.phrase.sourceText} - {word.phrase.targetText}
                     </span>
+                    <audio key="audio" ref={audioRef} />
+                    <CaretRightOutlined key="icon" onClick={togglePlay} />
+                    {/* <button
+                      onClick={async () =>
+                        await textToSpeech(word.phrase.sourceText, "en-US")
+                      }
+                    >
+                      Text to Speech
+                    </button> */}
                   </Space>
                 }
               />
