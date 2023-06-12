@@ -130,6 +130,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     sentenceText: string,
     wordIndexInSentence: number
   ) => {
+    console.log(eventType);
     if (eventType === "down") {
       setMouseDown(true);
       setSelectedSentence(sentenceNumber);
@@ -140,6 +141,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       mouseDown &&
       selectedSentence === sentenceNumber
     ) {
+      console.log("okej");
       setSelectedWords((prevWords: any) => {
         if (!prevWords || prevWords.length == 0) {
           return [];
@@ -172,6 +174,14 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         };
 
         let hasCollision = false;
+
+        console.log(
+          "wordIndexInSentence" + JSON.stringify(wordIndexInSentence, null, 2)
+        );
+        console.log(
+          "initialSelected.wordIndexInSentence" +
+            JSON.stringify(initialSelected.wordIndexInSentence, null, 2)
+        );
 
         if (wordIndexInSentence >= initialSelected.wordIndexInSentence) {
           for (
@@ -320,6 +330,64 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     return <div>An error occurred: {error.message}</div>;
   }
 
+  const handleTouchEvent = (
+    type: "start" | "move" | "end",
+    word: string,
+    sentenceNumber: number,
+    sentenceText: string,
+    wordIndex: number,
+    event: React.TouchEvent
+  ) => {
+    switch (type) {
+      case "start":
+        handleMouseEvent("down", word, sentenceNumber, sentenceText, wordIndex);
+        break;
+      case "move":
+        if (event.cancelable) {
+          event.preventDefault();
+        } else {
+          document.body.style.overflow = "hidden";
+        }
+
+        // Manually calculate which word element is under the finger
+        const touch = event.touches[0];
+        const elementUnderFinger = document.elementFromPoint(
+          touch.clientX,
+          touch.clientY
+        );
+        const newWordElement = elementUnderFinger!.closest(".translate-word"); // Assuming each word is a '.translate-word' element
+        if (newWordElement) {
+          const newWordIndexStr =
+            newWordElement.getAttribute("data-word-index");
+          console.log(
+            "newWordIndexStr" + JSON.stringify(newWordIndexStr, null, 2)
+          );
+          if (newWordIndexStr === null) {
+            console.error(
+              `Could not find "data-word-index" attribute in element`
+            );
+            return;
+          }
+          const newWordIndex = parseInt(newWordIndexStr, 10);
+          if (newWordIndex !== wordIndex) {
+            handleMouseEvent(
+              "enter",
+              word,
+              sentenceNumber,
+              sentenceText,
+              newWordIndex
+            );
+          }
+        }
+
+        break;
+      case "end":
+        document.body.style.overflow = "auto";
+        handleMouseUp(sentenceText, sentenceNumber, "asd");
+        break;
+    }
+  };
+
   return (
     <>
       {visibleSourceTexts.map((sourceSentence, index) => {
@@ -327,7 +395,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           (target) => target.sentenceNo === sourceSentence.sentenceNo
         );
         if (mode === "sentences") {
-          // Just return one TranslateWord for the entire sentence
           return (
             <TranslateWord
               key={index}
@@ -365,6 +432,51 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               currentPage={currentPage}
               sentencesPerPage={sentencesPerPage}
               selectedLanguageTo={selectedLanguageTo}
+              onTouchStart={(
+                word: string,
+                sentenceNumber: number,
+                sentenceText: string,
+                event: React.TouchEvent
+              ) =>
+                handleTouchEvent(
+                  "start",
+                  word,
+                  sentenceNumber,
+                  sentenceText,
+                  0,
+                  event
+                )
+              }
+              onTouchMove={(
+                word: string,
+                sentenceNumber: number,
+                sentenceText: string,
+                event: React.TouchEvent
+              ) =>
+                handleTouchEvent(
+                  "move",
+                  word,
+                  sentenceNumber,
+                  sentenceText,
+                  0,
+                  event
+                )
+              }
+              onTouchEnd={(
+                word: string,
+                sentenceNumber: number,
+                sentenceText: string,
+                event: React.TouchEvent
+              ) =>
+                handleTouchEvent(
+                  "end",
+                  word,
+                  sentenceNumber,
+                  sentenceText,
+                  0,
+                  event
+                )
+              }
             />
           );
         } else {
@@ -423,6 +535,51 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     currentPage={currentPage}
                     sentencesPerPage={sentencesPerPage}
                     selectedLanguageTo={selectedLanguageTo}
+                    onTouchStart={(
+                      word: string,
+                      sentenceNumber: number,
+                      sentenceText: string,
+                      event: React.TouchEvent
+                    ) =>
+                      handleTouchEvent(
+                        "start",
+                        word,
+                        sentenceNumber,
+                        sentenceText,
+                        sourceWord.position,
+                        event
+                      )
+                    }
+                    onTouchMove={(
+                      word: string,
+                      sentenceNumber: number,
+                      sentenceText: string,
+                      event: React.TouchEvent
+                    ) =>
+                      handleTouchEvent(
+                        "move",
+                        word,
+                        sentenceNumber,
+                        sentenceText,
+                        sourceWord.position,
+                        event
+                      )
+                    }
+                    onTouchEnd={(
+                      word: string,
+                      sentenceNumber: number,
+                      sentenceText: string,
+                      event: React.TouchEvent
+                    ) =>
+                      handleTouchEvent(
+                        "end",
+                        word,
+                        sentenceNumber,
+                        sentenceText,
+                        sourceWord.position,
+                        event
+                      )
+                    }
                   />
                 );
               })}

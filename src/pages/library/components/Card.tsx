@@ -97,7 +97,7 @@ export const Card: React.FC<CardProps> = ({
       >
         <Link
           to={
-            itemData.id +
+            itemData._id +
             "?currentPage=" +
             1 +
             "&pageSize=" +

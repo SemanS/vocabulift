@@ -1,6 +1,6 @@
 export interface LibraryItem {
   eventId: string | null;
-  id: string;
+  _id: string;
   title: string;
   label: string;
   image: string;

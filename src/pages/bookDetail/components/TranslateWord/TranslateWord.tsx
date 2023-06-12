@@ -36,6 +36,24 @@ interface TranslateWordProps {
   currentPage: number;
   sentencesPerPage: number;
   selectedLanguageTo: string;
+  onTouchStart?: (
+    word: string,
+    sentenceNumber: number,
+    sentenceText: string,
+    event: React.TouchEvent
+  ) => void;
+  onTouchMove?: (
+    word: string,
+    sentenceNumber: number,
+    sentenceText: string,
+    event: React.TouchEvent
+  ) => void;
+  onTouchEnd?: (
+    sentenceTranslation: string,
+    sentenceNumber: number,
+    translation: string,
+    event: React.TouchEvent
+  ) => void;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
@@ -46,6 +64,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isPhrase, setIsPhrase] = useState(false);
   const [isWordPhrase, setIsWordPhrase] = useState(false);
 
+  const textRef = useRef<HTMLDivElement | null>(null);
+
   const mouseLeaveDelay = 0.1;
 
   useEffect(() => {
@@ -54,7 +74,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     setIsWord(false);
     setIsPhrase(false);
     setIsWordPhrase(false);
-  }, [props.currentPage, props.sentencesPerPage, props.selectedLanguageTo]);
+  }, [
+    props.currentPage,
+    props.sentencesPerPage,
+    props.selectedLanguageTo,
+    props.vocabularyListUserPhrases,
+  ]);
 
   useEffect(() => {
     return () => {
@@ -175,6 +200,27 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   useEffect(() => {
+    // Check if the user is on a mobile device
+    const userAgent = window.navigator.userAgent;
+    const isMobile = !!userAgent.match(/Android|iPhone/i);
+    setIsMobileDevice(isMobile);
+
+    const handleContextMenu = (event: Event) => {
+      //event.preventDefault();
+    };
+
+    if (isMobile) {
+      window.addEventListener("contextmenu", handleContextMenu);
+    }
+
+    return () => {
+      if (isMobile) {
+        window.removeEventListener("contextmenu", handleContextMenu);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (
       isMobileDevice ||
       (props.isHighlightedFromVideo && props.mode === "sentences")
@@ -204,6 +250,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
+
     setIsTooltipVisible(false);
   };
 
@@ -213,12 +260,14 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
+
     clearHoverTimeout();
     hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 300);
   };
 
   const handleMouseLeave = () => {
     clearHoverTimeout();
+    //handleTouchEnd();
     hoverTimeout.current = window.setTimeout(
       () => setIsHovered(false),
       mouseLeaveDelay * 1500
@@ -295,17 +344,64 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     );
   };
 
+  const handleTouchStart = (event: React.TouchEvent) => {
+    //event.preventDefault();
+    props.onTouchStart?.(
+      props.word!,
+      props.sentenceNumber!,
+      props.sentenceText!,
+      event
+    );
+
+    setIsTooltipVisible(false);
+  };
+
+  const handleTouchMove = (event: React.TouchEvent) => {
+    //event.preventDefault();
+    props.onTouchMove?.(
+      props.word!,
+      props.sentenceNumber!,
+      props.sentenceText!,
+      event
+    );
+
+    clearHoverTimeout();
+    hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 300);
+  };
+
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    //event.preventDefault();
+    props.onTouchEnd?.(
+      props.sentenceTranslation!,
+      props.sentenceNumber!,
+      props.translation!,
+      event
+    );
+
+    clearHoverTimeout();
+    hoverTimeout.current = window.setTimeout(
+      () => setIsHovered(false),
+      mouseLeaveDelay * 1500
+    );
+  };
+
   return renderTooltip(
     <Text
       style={{
         cursor: "pointer",
         whiteSpace: "pre-wrap",
+        touchAction: "none",
       }}
-      className={getClassName()}
+      ref={textRef}
+      className={`${getClassName()} ${styles.disableSelection} translate-word`}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      data-word-index={props.wordIndex}
     >
       {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
     </Text>

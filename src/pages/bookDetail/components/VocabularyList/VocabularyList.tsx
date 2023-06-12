@@ -113,7 +113,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   onWordClick(word.phrase.sourceText);
                 mode === "words" && setSelectedWord(word.phrase.sourceText);
                 mode === "words" && setSelectedUserPhrase(word);
-                handleWordClick(word);
               }}
             >
               <List.Item.Meta
@@ -143,7 +142,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
                       {word.phrase.sourceText} - {word.phrase.targetText}
                     </span>
                     <audio key="audio" ref={audioRef} />
-                    <CaretRightOutlined key="icon" onClick={togglePlay} />
+                    <CaretRightOutlined
+                      key="icon"
+                      onClick={() => {
+                        togglePlay;
+                        handleWordClick(word);
+                      }}
+                    />
                     {/* <button
                       onClick={async () =>
                         await textToSpeech(word.phrase.sourceText, "en-US")
