@@ -18,6 +18,8 @@ interface FilteredVocabularyListProps {
   setSelectedUserPhrase?: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
+  onQuestionClick?: (phrase: string) => void;
+  onAlternativesClick?: (phrase: string) => void;
 }
 
 const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
@@ -29,6 +31,8 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
   onWordClick,
   selectedUserPhrase,
   setSelectedUserPhrase,
+  onQuestionClick,
+  onAlternativesClick,
 }) => {
   // Filter phrases with more than one word
   let filteredPhrases = []; // Define filteredPhrases outside if/else blocks
@@ -52,6 +56,8 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       onWordClick={onWordClick}
       selectedUserPhrase={selectedUserPhrase}
       setSelectedUserPhrase={setSelectedUserPhrase!}
+      onQuestionClick={(phrase) => onQuestionClick!(phrase)}
+      onAlternativesClick={(phrase) => onAlternativesClick!(phrase)}
     />
   ) : null;
 };

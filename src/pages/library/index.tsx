@@ -134,7 +134,7 @@ const Library: React.FC = () => {
 
   const createTempItem = (thumbnail: string) => {
     const newItem: LibraryItem = {
-      id: "temp-item",
+      _id: "temp-item",
       title: "New Item",
       label: LabelType.VIDEO,
       image: "",
@@ -171,7 +171,6 @@ const Library: React.FC = () => {
         localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
       }
-      console.log("progressData" + JSON.stringify(progressData, null, 2));
       setProgress(Number(progressData.progressPercentage.toString()));
     }
 
@@ -183,7 +182,6 @@ const Library: React.FC = () => {
       setLoading(true);
       fetchData();
       setLoading(false);
-      console.log("sfinalizovane");
       socket.off("progress", onProgressUpdate);
       socket.off("finalizeEvent", onFinalizeEvent);
       socket.disconnect();
@@ -506,7 +504,6 @@ const Library: React.FC = () => {
                 />
               ))}
           </div>
-          {"asd" + user.targetLanguage + " " + sourceLanguageFromVideo}
           <AddItemModal
             isModalVisible={isModalVisible}
             handleModalCancel={handleModalCancel}

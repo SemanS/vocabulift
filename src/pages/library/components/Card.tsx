@@ -107,7 +107,7 @@ export const Card: React.FC<CardProps> = ({
           }
           style={{ color: "inherit" }}
         >
-          {isOngoingEvent || itemData.id === "temp-item" ? (
+          {isOngoingEvent || itemData._id === "temp-item" ? (
             <div className={styles.imageContainer}>
               <img
                 onMouseEnter={handleMouseEnter}
@@ -212,7 +212,7 @@ export const Card: React.FC<CardProps> = ({
             />
           )}
         </Link>
-        {itemData.id !== "temp-item" ? (
+        {itemData._id !== "temp-item" ? (
           <div
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}

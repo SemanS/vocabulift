@@ -93,7 +93,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           : isSingleWord(phrase)
           ? removeSpecialChars(phrase)
           : phrase,
-        mode === "words" ? translation : null,
+        isSingleWord(phrase) ? translation : null,
         libraryId,
         selectedSentence,
         selectedSentenceText,
@@ -383,7 +383,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         break;
       case "end":
         document.body.style.overflow = "auto";
-        handleMouseUp(sentenceText, sentenceNumber, "asd");
+        handleMouseUp(sentenceText, sentenceNumber, sentenceText);
         break;
     }
   };
@@ -568,14 +568,14 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     onTouchEnd={(
                       word: string,
                       sentenceNumber: number,
-                      sentenceText: string,
+                      translation: string,
                       event: React.TouchEvent
                     ) =>
                       handleTouchEvent(
                         "end",
                         word,
                         sentenceNumber,
-                        sentenceText,
+                        translation,
                         sourceWord.position,
                         event
                       )

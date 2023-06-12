@@ -20,6 +20,8 @@ import { LabelType } from "@/models/sentences.interfaces";
 import { calculateFirstIndex, getRangeNumber } from "@/utils/stringUtils";
 import {
   deleteUserPhrases,
+  getPhraseAlternatives,
+  getPhraseMeaning,
   getUserSentences,
   updateReadingProgress,
 } from "@/services/userService";
@@ -69,6 +71,8 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   initState: true,
   isLimitExceeded: false,
   selectedLanguageTo: targetLanguageFromQuery,
+  wordMeaningData: null,
+  loadingFromWordMeaning: false,
 });
 
 function reducer(state: any, action: any) {
@@ -85,6 +89,8 @@ function reducer(state: any, action: any) {
       return { ...state, loading: action.payload };
     case "setLoading":
       return { ...state, loadingFromFetch: action.payload };
+    case "setLoadingFromWordMeaning":
+      return { ...state, loadingFromWordMeaning: action.payload };
     case "setShouldSetVideo":
       return { ...state, shouldSetVideo: action.payload };
     case "setWordData":
@@ -129,6 +135,8 @@ function reducer(state: any, action: any) {
       return { ...state, isLimitExceeded: action.payload };
     case "setSelectedLanguageTo":
       return { ...state, selectedLanguageTo: action.payload };
+    case "setWordMeaningData":
+      return { ...state, wordMeaningData: action.payload };
     default:
       throw new Error();
   }
@@ -174,6 +182,8 @@ const BookDetail: FC = () => {
     dispatch({ type: "setLoading", payload: isLoading });
   const setLoadingFromFetch = (isLoading: boolean) =>
     dispatch({ type: "setLoadingFromFetch", payload: isLoading });
+  const setLoadingFromWordMeaning = (isLoading: boolean) =>
+    dispatch({ type: "setLoadingFromWordMeaning", payload: isLoading });
   const setShouldSetVideo = (shouldSetVideo: boolean) =>
     dispatch({ type: "setShouldSetVideo", payload: shouldSetVideo });
   const setMode = (mode: string) =>
@@ -431,6 +441,31 @@ const BookDetail: FC = () => {
     [state.userSentences, state.vocabularyListUserPhrases]
   );
 
+  const handleQuestionClick = async (phrase: string) => {
+    try {
+      dispatch({ type: "setLoadingFromWordMeaning", payload: true });
+      const meaning = await getPhraseMeaning(phrase);
+      dispatch({ type: "setWordMeaningData", payload: meaning });
+      dispatch({ type: "setLoadingFromWordMeaning", payload: false });
+    } catch (error) {
+      console.error("Error occurred:", error);
+      dispatch({ type: "setWordMeaningData", payload: "An error occured." });
+    }
+  };
+
+  const handleAlternativesClick = async (phrase: string) => {
+    try {
+      console.log("okej");
+      dispatch({ type: "setLoadingFromWordMeaning", payload: true });
+      const meaning = await getPhraseAlternatives(phrase);
+      dispatch({ type: "setWordMeaningData", payload: meaning });
+      dispatch({ type: "setLoadingFromWordMeaning", payload: false });
+    } catch (error) {
+      console.error("Error occurred:", error);
+      dispatch({ type: "setWordMeaningData", payload: "An error occured." });
+    }
+  };
+
   const handleDeleteUserPhrase = useCallback(
     async (
       phraseId: string,
@@ -559,10 +594,10 @@ const BookDetail: FC = () => {
     dispatch({ type: "setColSpan", payload: newColSpan });
   }, [state.showVocabularyList, state.showWordDefinition]);
 
-  const { toggleSettingsDrawer, settingsDrawerVisible } =
-    useSettingsDrawerContext();
+  /* const { toggleSettingsDrawer, settingsDrawerVisible } =
+    useSettingsDrawerContext(); */
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (
       state.vocabularyListUserPhrases &&
       state.vocabularyListUserPhrases.length === 0
@@ -573,7 +608,7 @@ const BookDetail: FC = () => {
       dispatch({ type: "setShowVocabularyList", payload: true });
       dispatch({ type: "setShowWordDefinition", payload: true });
     }
-  }, [state.vocabularyListUserPhrases]);
+  }, [state.vocabularyListUserPhrases]); */
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -755,16 +790,28 @@ const BookDetail: FC = () => {
                       phrases={state.vocabularyListUserPhrases!}
                       onDeleteItem={handleDeleteUserPhrase}
                       onWordClick={handleAddWordDefinition}
+                      onQuestionClick={handleQuestionClick}
+                      onAlternativesClick={handleAlternativesClick}
                     />
                   </Col>
                 )}
-                {state.showWordDefinition && (
+                {(state.loadingFromWordMeaning || state.wordMeaningData) && (
+                  <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+                    <Card
+                      title={"Word meaning"}
+                      loading={state.loadingFromWordMeaning}
+                    >
+                      {state.wordMeaningData.data && state.wordMeaningData.data}
+                    </Card>
+                  </Col>
+                )}
+                {/* {state.showWordDefinition && (
                   <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
                     <WordDefinitionCard
                       wordData={state.wordData}
                     ></WordDefinitionCard>
                   </Col>
-                )}
+                )} */}
               </Row>
             )}
         </>

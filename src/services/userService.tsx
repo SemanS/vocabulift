@@ -1,4 +1,4 @@
-import { User, UserEntity } from "@/models/user";
+import { User } from "@/models/user";
 import { vocabuFetch } from "@/utils/vocabuFetch";
 import axios from "axios";
 
@@ -188,6 +188,68 @@ export const deleteUserPhrases = async (phraseIds: string[]): Promise<void> => {
       body: JSON.stringify(requestBody),
     }
   );
+};
+
+export const getPhraseMeaning = async (phrase: string): Promise<string> => {
+  const requestBody = {
+    phrase: phrase,
+  };
+
+  try {
+    const response = await vocabuFetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/ai/wordMeaning`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error occurred:", error);
+    throw error;
+  }
+};
+
+export const getPhraseAlternatives = async (
+  phrase: string
+): Promise<string> => {
+  const requestBody = {
+    phrase: phrase,
+  };
+
+  try {
+    const response = await vocabuFetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/ai/phraseAlternatives`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error occurred:", error);
+    throw error;
+  }
 };
 
 export const updateReadingProgress = async (

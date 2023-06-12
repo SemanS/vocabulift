@@ -1,9 +1,16 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { Card, List, Space } from "antd";
-import { CaretRightOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  CaretRightOutlined,
+  CommentOutlined,
+  DeleteOutlined,
+  QuestionCircleOutlined,
+} from "@ant-design/icons";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import "./VocabularyList.css";
 import { textToSpeech } from "@/services/userService";
+import { useLongPress } from "react-use";
+import { notification } from "antd";
 
 interface VocabularyListProps {
   mode: string;
@@ -21,6 +28,8 @@ interface VocabularyListProps {
   setSelectedUserPhrase: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
+  onQuestionClick: (phrase: string) => void;
+  onAlternativesClick: (phrase: string) => void;
 }
 
 const VocabularyList: FC<VocabularyListProps> = ({
@@ -32,16 +41,34 @@ const VocabularyList: FC<VocabularyListProps> = ({
   onWordClick,
   selectedUserPhrase,
   setSelectedUserPhrase,
+  onQuestionClick,
+  onAlternativesClick,
 }) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
-  const [currentAudioUrl, setCurrentAudioUrl] = useState<string | undefined>(
-    undefined
-  );
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const longPressOptions = {
+    isPreventDefault: true,
+    delay: 500, // duration of long press in ms
+  };
+
+  const onLongPressComment = useLongPress(() => {
+    notification.info({
+      message: "Information",
+      description: "This is a comment icon.",
+    });
+  }, longPressOptions);
+
+  const onLongPressQuestion = useLongPress(() => {
+    notification.info({
+      message: "Information",
+      description: "This is a question icon.",
+    });
+  }, longPressOptions);
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -115,50 +142,109 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 mode === "words" && setSelectedUserPhrase(word);
               }}
             >
-              <List.Item.Meta
-                className={mode === "words" ? "list-item-content" : ""}
-                style={{ display: "flex", alignItems: "center" }}
-                avatar={
-                  <DeleteOutlined
-                    onClick={() =>
-                      handleDeleteItem(
-                        word.phrase._id,
-                        word.phrase.sentenceId,
-                        word.phrase.startPosition,
-                        word.sentenceNo
-                      )
-                    }
-                  />
-                }
-                title={
-                  <Space>
-                    <span
-                      ref={(el) => (itemRefs.current[index] = el)}
-                      style={{
-                        fontWeight: "normal",
-                        cursor: mode === "phrases" ? "default" : "pointer",
-                      }}
-                    >
-                      {word.phrase.sourceText} - {word.phrase.targetText}
-                    </span>
-                    <audio key="audio" ref={audioRef} />
-                    <CaretRightOutlined
-                      key="icon"
-                      onClick={() => {
-                        togglePlay;
-                        handleWordClick(word);
-                      }}
-                    />
-                    {/* <button
-                      onClick={async () =>
-                        await textToSpeech(word.phrase.sourceText, "en-US")
+              {mode === "words" && (
+                <List.Item.Meta
+                  className={mode === "words" ? "list-item-content" : ""}
+                  style={{ display: "flex", alignItems: "center" }}
+                  avatar={
+                    <DeleteOutlined
+                      onClick={() =>
+                        handleDeleteItem(
+                          word.phrase._id,
+                          word.phrase.sentenceId,
+                          word.phrase.startPosition,
+                          word.sentenceNo
+                        )
                       }
+                    />
+                  }
+                  title={
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%",
+                      }}
                     >
-                      Text to Speech
-                    </button> */}
-                  </Space>
-                }
-              />
+                      <span
+                        ref={(el) => (itemRefs.current[index] = el)}
+                        style={{
+                          fontWeight: "normal",
+                          cursor: "default",
+                        }}
+                      >
+                        {word.phrase.sourceText} - {word.phrase.targetText}
+                      </span>
+                      <audio key="audio" ref={audioRef} />
+                      <CaretRightOutlined
+                        key="icon"
+                        onClick={() => {
+                          togglePlay;
+                          handleWordClick(word);
+                        }}
+                      />
+                    </div>
+                  }
+                />
+              )}
+              {mode === "phrases" && (
+                <List.Item.Meta
+                  style={{ display: "flex", alignItems: "center" }}
+                  title={
+                    <div>
+                      <div
+                        ref={(el) => (itemRefs.current[index] = el)}
+                        style={{
+                          fontWeight: "normal",
+                          cursor: mode === "phrases" ? "default" : "pointer",
+                        }}
+                      >
+                        {word.phrase.sourceText} - {word.phrase.targetText}
+                      </div>
+                      <audio key="audio" ref={audioRef} />
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          width: "100%",
+                        }}
+                      >
+                        <DeleteOutlined
+                          onClick={() =>
+                            handleDeleteItem(
+                              word.phrase._id,
+                              word.phrase.sentenceId,
+                              word.phrase.startPosition,
+                              word.sentenceNo
+                            )
+                          }
+                        />
+                        <Space>
+                          <QuestionCircleOutlined
+                            onClick={() =>
+                              onQuestionClick(word.phrase.sourceText)
+                            }
+                            {...onLongPressQuestion}
+                          />
+                          <CommentOutlined
+                            onClick={() =>
+                              onAlternativesClick(word.phrase.sourceText)
+                            }
+                            {...onLongPressComment}
+                          />
+                          <CaretRightOutlined
+                            key="icon"
+                            onClick={() => {
+                              togglePlay;
+                              handleWordClick(word);
+                            }}
+                          />
+                        </Space>
+                      </div>
+                    </div>
+                  }
+                />
+              )}
             </List.Item>
           );
         }}
