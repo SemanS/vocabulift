@@ -11,7 +11,34 @@
   padding-block: 24px;
     padding-inline: 48px;
 }
-.flexColumn {
+
+.my-masonry-grid {
   display: flex;
-  flex-direction: column;
+  margin-left: -30px; /* gutter size offset */
+  width: auto;
+}
+.my-masonry-grid_column {
+  padding-left: 30px; /* gutter size */
+  background-clip: padding-box;
+}
+
+.my-video-container {
+  position: sticky;
+  top: 0;
+}
+
+.my-vocabulary-container {
+  position: sticky;
+  top: 0;
+}
+
+.fixedVideoAndVocabulary {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  top: 0; /* adjust this to change the position */
+}
+
+.translateBoxScroll {
+  overflow-y: auto;
+  height: calc(100vh - 100px); /* adjust this value */
 }

@@ -42,6 +42,7 @@ import { userState } from "@/stores/user";
 import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 import Flag from "react-world-flags";
+import Masonry from "react-masonry-css";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -656,6 +657,13 @@ const BookDetail: FC = () => {
     );
   };
 
+  const breakpointColumnsObj = {
+    default: 2,
+    1100: 2,
+    700: 2,
+    600: 1,
+  };
+
   return (
     <PageContainer title={false} className={styles.container}>
       {state.isLimitExceeded ? (
@@ -677,8 +685,14 @@ const BookDetail: FC = () => {
         </Modal>
       ) : (
         <>
-          <Row gutter={[16, 16]}>
-            <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
+          <Masonry
+            breakpointCols={breakpointColumnsObj}
+            className={styles.myMasonryGrid}
+            columnClassName={styles.myMasonryGridColumn}
+          >
+            <div
+              className={`${styles.myVideoContainer} ${styles.fixedVideoAndVocabulary}`}
+            >
               {state.label === LabelType.VIDEO && (
                 <EmbeddedVideo
                   onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
@@ -691,8 +705,8 @@ const BookDetail: FC = () => {
                   setLoadingFromFetch={setLoadingFromFetch}
                 />
               )}
-            </Col>
-            <Col xxl={12} xl={12} lg={12} md={24} sm={24} xs={24}>
+            </div>
+            <div className={styles.translateBoxScroll}>
               <Card
                 loading={state.loading || state.loadingFromFetch}
                 title={state.libraryTitle}
@@ -767,13 +781,15 @@ const BookDetail: FC = () => {
                   sentencesPerPage={state.sentencesPerPage}
                 />
               </Card>
-            </Col>
-          </Row>
-          {state.vocabularyListUserPhrases &&
-            state.vocabularyListUserPhrases?.length !== 0 && (
-              <Row gutter={[16, 16]} style={{ marginTop: "18px" }}>
-                {state.showVocabularyList && (
-                  <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
+            </div>
+            <div
+              className={styles.myVocabularyContainer}
+              style={{ marginTop: "16px" }}
+            >
+              {state.showVocabularyList &&
+                state.vocabularyListUserPhrases?.length !== 0 &&
+                state.vocabularyListUserPhrases && (
+                  <>
                     <FilteredVocabularyList
                       title="Words list"
                       mode={"words"}
@@ -785,7 +801,6 @@ const BookDetail: FC = () => {
                     />
                     <FilteredVocabularyList
                       title="Phrases list"
-                      style={{ marginTop: "16px" }}
                       mode={"phrases"}
                       phrases={state.vocabularyListUserPhrases!}
                       onDeleteItem={handleDeleteUserPhrase}
@@ -793,27 +808,29 @@ const BookDetail: FC = () => {
                       onQuestionClick={handleQuestionClick}
                       onAlternativesClick={handleAlternativesClick}
                     />
-                  </Col>
+                  </>
                 )}
-                {(state.loadingFromWordMeaning || state.wordMeaningData) && (
-                  <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-                    <Card
-                      title={"Word meaning"}
-                      loading={state.loadingFromWordMeaning}
-                    >
-                      {state.wordMeaningData.data && state.wordMeaningData.data}
-                    </Card>
-                  </Col>
-                )}
-                {/* {state.showWordDefinition && (
+
+              {(state.loadingFromWordMeaning || state.wordMeaningData) && (
+                <>
+                  <Card
+                    title={"Word meaning"}
+                    loading={state.loadingFromWordMeaning}
+                  >
+                    {state.wordMeaningData && state.wordMeaningData.data}
+                  </Card>
+                </>
+              )}
+
+              {/* {state.showWordDefinition && (
                   <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
                     <WordDefinitionCard
                       wordData={state.wordData}
                     ></WordDefinitionCard>
                   </Col>
                 )} */}
-              </Row>
-            )}
+            </div>
+          </Masonry>
         </>
       )}
     </PageContainer>

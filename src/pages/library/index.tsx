@@ -164,13 +164,13 @@ const Library: React.FC = () => {
 
     async function onProgressUpdate(progressData: any) {
       console.log("progressData" + JSON.stringify(progressData, null, 2));
-      if (
+      /* if (
         progressData.progressPercentage > 0 &&
         progressData.progressStatus === "InProgress"
       ) {
         localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
-      }
+      } */
       setProgress(Number(progressData.progressPercentage.toString()));
     }
 
@@ -426,11 +426,13 @@ const Library: React.FC = () => {
 
     fetchData();
 
-    return () => {
-      async () => {
-        socket.disconnect();
+    if (!localStorage.getItem("ongoingEventId")) {
+      return () => {
+        async () => {
+          socket.disconnect();
+        };
       };
-    };
+    }
   }, []);
 
   return (

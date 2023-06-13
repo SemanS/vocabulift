@@ -2,7 +2,6 @@ import React, { useState, useRef, useMemo, useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { deleteUserPhrases, getUserPhrases } from "@/services/userService";
 import { useRecoilState } from "recoil";
-import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import {
   AutoComplete,
   Checkbox,
@@ -13,8 +12,6 @@ import {
   Select,
   Space,
   Table,
-  Tooltip,
-  Typography,
   theme,
 } from "antd";
 import classNames from "classnames";

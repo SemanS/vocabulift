@@ -123,6 +123,36 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     setSelectedWords([]);
   }, [vocabularyListUserPhrases]);
 
+  const checkCollision = (
+    highlightedWords: any[],
+    fromIndex: number,
+    toIndex: number
+  ) => {
+    for (let i = fromIndex; i <= toIndex; i++) {
+      if (highlightedWords.includes(i)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const buildWordObjects = (
+    wordsArray: string[],
+    fromIndex: number,
+    toIndex: number,
+    sentenceNumber: number
+  ) => {
+    let tempSelectedWords = [];
+    for (let i = fromIndex; i <= toIndex; i++) {
+      tempSelectedWords.push({
+        word: wordsArray[i],
+        wordIndexInSentence: i,
+        sentenceNumber: sentenceNumber,
+      });
+    }
+    return tempSelectedWords;
+  };
+
   const handleMouseEvent = (
     eventType: "down" | "enter",
     word: string,
@@ -130,7 +160,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     sentenceText: string,
     wordIndexInSentence: number
   ) => {
-    console.log(eventType);
     if (eventType === "down") {
       setMouseDown(true);
       setSelectedSentence(sentenceNumber);
@@ -141,7 +170,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       mouseDown &&
       selectedSentence === sentenceNumber
     ) {
-      console.log("okej");
       setSelectedWords((prevWords: any) => {
         if (!prevWords || prevWords.length == 0) {
           return [];
@@ -150,8 +178,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         const sentenceObj: SentenceData | undefined = visibleSourceTexts.find(
           (s) => s.sentenceNo === sentenceNumber
         );
-        const sentenceFromText = sentenceObj!.sentenceText;
-        const sentenceLines = sentenceFromText.split("\n");
+        const sentenceLines = sentenceObj!.sentenceText.split("\n");
         const wordsArray = sentenceLines.flatMap((line: any) =>
           line
             .split(" ")
@@ -166,63 +193,37 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           mode
         );
 
-        const newSelectedWords = [];
-        const tempSelectedWords = [];
-
-        const checkCollision = (index: number) => {
-          return highlightedWords.includes(index);
-        };
-
         let hasCollision = false;
-
-        console.log(
-          "wordIndexInSentence" + JSON.stringify(wordIndexInSentence, null, 2)
-        );
-        console.log(
-          "initialSelected.wordIndexInSentence" +
-            JSON.stringify(initialSelected.wordIndexInSentence, null, 2)
-        );
+        let tempSelectedWords;
 
         if (wordIndexInSentence >= initialSelected.wordIndexInSentence) {
-          for (
-            let i = initialSelected.wordIndexInSentence;
-            i <= wordIndexInSentence;
-            i++
-          ) {
-            if (checkCollision(i)) {
-              hasCollision = true;
-              break;
-            }
-            tempSelectedWords.push({
-              word: wordsArray[i],
-              wordIndexInSentence: i,
-              sentenceNumber: sentenceNumber,
-            });
-          }
+          hasCollision = checkCollision(
+            highlightedWords,
+            initialSelected.wordIndexInSentence,
+            wordIndexInSentence
+          );
+          tempSelectedWords = buildWordObjects(
+            wordsArray,
+            initialSelected.wordIndexInSentence,
+            wordIndexInSentence,
+            sentenceNumber
+          );
         } else {
-          for (
-            let i = wordIndexInSentence;
-            i <= initialSelected.wordIndexInSentence;
-            i++
-          ) {
-            if (checkCollision(i)) {
-              hasCollision = true;
-              break;
-            }
-            tempSelectedWords.unshift({
-              word: wordsArray[i],
-              wordIndexInSentence: i,
-              sentenceNumber: sentenceNumber,
-            });
-          }
+          hasCollision = checkCollision(
+            highlightedWords,
+            wordIndexInSentence,
+            initialSelected.wordIndexInSentence
+          );
+          tempSelectedWords = buildWordObjects(
+            wordsArray,
+            wordIndexInSentence,
+            initialSelected.wordIndexInSentence,
+            sentenceNumber
+          );
+          tempSelectedWords.reverse();
         }
 
-        if (!hasCollision) {
-          newSelectedWords.push(...tempSelectedWords);
-        } else {
-          newSelectedWords.push(...prevWords);
-        }
-        return newSelectedWords;
+        return hasCollision ? prevWords : tempSelectedWords;
       });
     }
   };
@@ -235,15 +236,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     if (selectedWords.length > 1) {
       onChangeMode("phrases");
     }
+
     if (selectedWords.length === 1 && mode !== "all") {
       onChangeMode("words");
     }
+
     if (
-      isWordInVocabularyList(
-        selectedWords.length > 1 ? "phrases" : "words",
-        selectedWords,
-        vocabularyListUserPhrases
-      )
+      isWordInVocabularyList(mode, selectedWords, vocabularyListUserPhrases)
     ) {
       notification.open({
         message: "Word Found",
@@ -251,22 +250,23 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         type: "info",
       });
     }
+
     setMouseDown(false);
     setSentenceNo(sentenceNumber);
+
     const sortedSelectedWords = selectedWords.sort(
       (a, b) => a.wordIndexInSentence - b.wordIndexInSentence
     );
+    const startPosition = sortedSelectedWords[0].wordIndexInSentence;
+    const endPosition =
+      sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence;
 
     const phrase = getPhraseIfNotInHighlighted(
-      vocabularyListUserPhrases!,
+      vocabularyListUserPhrases,
       sortedSelectedWords,
       sentenceNumber,
       mode
     );
-
-    const startPosition = sortedSelectedWords[0].wordIndexInSentence;
-    const endPosition =
-      sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence;
 
     const isPhraseInVocabulary = vocabularyListUserPhrases!.some(
       (item) =>
@@ -274,18 +274,19 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         item.phrase.endPosition === endPosition &&
         item.phrase.sentenceNo === sentenceNumber
     );
-    let savedPhrase;
-    if (!isPhraseInVocabulary) {
-      savedPhrase = await saveWord(
-        phrase,
-        startPosition,
-        endPosition,
-        sentenceTranslation,
-        translation
-      );
-    } else {
+
+    if (isPhraseInVocabulary) {
       console.log("This phrase already exists in the vocabulary list");
+      return;
     }
+
+    const savedPhrase = await saveWord(
+      phrase,
+      startPosition,
+      endPosition,
+      sentenceTranslation,
+      translation
+    );
 
     if (savedPhrase !== undefined) {
       setSaveWordComplete(true);
@@ -355,13 +356,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           touch.clientX,
           touch.clientY
         );
-        const newWordElement = elementUnderFinger!.closest(".translate-word"); // Assuming each word is a '.translate-word' element
+        const newWordElement = elementUnderFinger!.closest(".translate-word");
         if (newWordElement) {
           const newWordIndexStr =
             newWordElement.getAttribute("data-word-index");
-          console.log(
-            "newWordIndexStr" + JSON.stringify(newWordIndexStr, null, 2)
-          );
           if (newWordIndexStr === null) {
             console.error(
               `Could not find "data-word-index" attribute in element`

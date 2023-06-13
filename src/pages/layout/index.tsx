@@ -71,13 +71,13 @@ const LayoutPage: FC = () => {
         items: undefined,
       });
 
-      m.push({
+      /* m.push({
         path: "/",
         name: "settings",
         locale: "menu.settings",
         icon: IconMap["settings" as string],
         items: undefined,
-      });
+      }); */
     }
 
     return m;

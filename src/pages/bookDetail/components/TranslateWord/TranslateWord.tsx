@@ -1,10 +1,8 @@
-import { Tooltip, Typography } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import { Tooltip } from "antd";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./TranslateWord.module.less";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 import { isSingleWord } from "@/utils/utilMethods";
-
-const { Text } = Typography;
 
 interface TranslateWordProps {
   word?: string;
@@ -96,6 +94,40 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     }
   };
 
+  const userWords = useMemo(() => {
+    return props.vocabularyListUserPhrases?.filter(({ phrase }) => {
+      const inSentence = phrase.sentenceNo === props.sentenceNumber;
+      const inPosition =
+        phrase.startPosition <= props.wordIndex! &&
+        phrase.endPosition >= props.wordIndex! &&
+        phrase.targetLanguage === props.selectedLanguageTo &&
+        isSingleWord(phrase.sourceText);
+      return inSentence && inPosition;
+    });
+  }, [
+    props.vocabularyListUserPhrases,
+    props.sentenceNumber,
+    props.wordIndex,
+    props.selectedLanguageTo,
+  ]);
+
+  const userPhrases = useMemo(() => {
+    return props.vocabularyListUserPhrases?.filter(({ phrase }) => {
+      const inSentence = phrase.sentenceNo === props.sentenceNumber;
+      const inPosition =
+        phrase.startPosition <= props.wordIndex! &&
+        phrase.endPosition >= props.wordIndex! &&
+        phrase.targetLanguage === props.selectedLanguageTo &&
+        !isSingleWord(phrase.sourceText);
+      return inSentence && inPosition;
+    });
+  }, [
+    props.vocabularyListUserPhrases,
+    props.sentenceNumber,
+    props.wordIndex,
+    props.selectedLanguageTo,
+  ]);
+
   useEffect(() => {
     if (props.mode === "words") {
       props.vocabularyListUserPhrases?.filter(({ phrase, sentenceNo }) => {
@@ -121,29 +153,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       });
     }
     if (props.mode === "all") {
-      const userWords = props.vocabularyListUserPhrases?.filter(
-        ({ phrase }) => {
-          const inSentence = phrase.sentenceNo === props.sentenceNumber;
-          const inPosition =
-            phrase.startPosition <= props.wordIndex! &&
-            phrase.endPosition >= props.wordIndex! &&
-            phrase.targetLanguage === props.selectedLanguageTo &&
-            isSingleWord(phrase.sourceText);
-          return inSentence && inPosition;
-        }
-      );
-
-      const userPhrases = props.vocabularyListUserPhrases?.filter(
-        ({ phrase }) => {
-          const inSentence = phrase.sentenceNo === props.sentenceNumber;
-          const inPosition =
-            phrase.startPosition <= props.wordIndex! &&
-            phrase.endPosition >= props.wordIndex! &&
-            phrase.targetLanguage === props.selectedLanguageTo &&
-            !isSingleWord(phrase.sourceText);
-          return inSentence && inPosition;
-        }
-      );
       if (userPhrases)
         userPhrases.forEach((userPhrase) => {
           setIsPhrase(true);
@@ -242,7 +251,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     const userAgent = window.navigator.userAgent;
     const isMobile = !!userAgent.match(/Android|iPhone/i);
     setIsMobileDevice(isMobile);
-  }, []);
+  }, [isHovered]);
 
   const handleMouseDown = () => {
     props.onMouseDown?.(
@@ -262,7 +271,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     );
 
     clearHoverTimeout();
-    hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 300);
+    hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 200);
   };
 
   const handleMouseLeave = () => {
@@ -296,6 +305,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       fontSize: "16px",
     },
   };
+
+  const className = useMemo(getClassName, [
+    isHovered,
+    props.isHighlighted,
+    props.isHighlightedFromVideo,
+    isWord,
+    isPhrase,
+    isWordPhrase,
+    props.mode,
+  ]);
 
   const renderTooltip = (children: React.ReactNode) => {
     if (props.isSelecting) {
@@ -386,14 +405,14 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   return renderTooltip(
-    <Text
+    <span
       style={{
         cursor: "pointer",
         whiteSpace: "pre-wrap",
         touchAction: "none",
       }}
       ref={textRef}
-      className={`${getClassName()} ${styles.disableSelection} translate-word`}
+      className={`${className} ${styles.disableSelection} translate-word`}
       onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
       onMouseEnter={handleMouseEnter}
@@ -404,7 +423,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       data-word-index={props.wordIndex}
     >
       {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
-    </Text>
+    </span>
   );
 };
 
