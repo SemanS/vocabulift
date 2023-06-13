@@ -410,7 +410,7 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   };
 
   return (
-    <div style={{ position: "relative", paddingBottom: "56.25%" }}>
+    <div style={{ paddingBottom: "56.25%", height: 0 }}>
       <div
         ref={playerDivRef}
         style={{

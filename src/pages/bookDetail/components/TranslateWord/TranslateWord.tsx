@@ -1,8 +1,9 @@
-import { Tooltip } from "antd";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./TranslateWord.module.less";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 import { isSingleWord } from "@/utils/utilMethods";
+import Tippy from "@tippyjs/react";
+import "tippy.js/dist/tippy.css"; // Optional for styling
 
 interface TranslateWordProps {
   word?: string;
@@ -63,8 +64,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isWordPhrase, setIsWordPhrase] = useState(false);
 
   const textRef = useRef<HTMLDivElement | null>(null);
-
-  const mouseLeaveDelay = 0.1;
 
   useEffect(() => {
     // Reset all the highlight-related states whenever currentPage changes.
@@ -270,17 +269,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceText!
     );
 
-    clearHoverTimeout();
-    hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 200);
-  };
-
-  const handleMouseLeave = () => {
-    clearHoverTimeout();
-    //handleTouchEnd();
-    hoverTimeout.current = window.setTimeout(
-      () => setIsHovered(false),
-      mouseLeaveDelay * 1500
-    );
+    setIsHovered(true); // Show the tooltip immediately
   };
 
   const handleMouseUp = () => {
@@ -289,21 +278,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.translation!
     );
-  };
-
-  const commonTooltipProps = {
-    //open: isTooltipVisible || !props.isHighlightedFromVideo || isHovered,
-    open: isTooltipVisible || isHovered,
-    arrow: false,
-    mouseEnterDelay: 100,
-    mouseLeaveDelay: 100,
-    placement: "top" as const,
-    overlayInnerStyle: {
-      backgroundColor: "white",
-      color: "black",
-      borderRadius: "10px",
-      fontSize: "16px",
-    },
   };
 
   const className = useMemo(getClassName, [
@@ -317,37 +291,23 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   ]);
 
   const renderTooltip = (children: React.ReactNode) => {
-    if (props.isSelecting) {
+    if (props.isSelecting || !React.isValidElement(children)) {
       return children as React.ReactElement;
     }
 
-    const shouldShowTooltip =
-      //props.highlightPositions?.includes(props.wordIndex!) ||
-      //props.isHighlighted ||
-      props.isHighlightedFromVideo || isHovered;
+    const shouldShowTooltip = props.isHighlightedFromVideo || isHovered;
 
-    if (!shouldShowTooltip) {
-      return children as React.ReactElement;
-    }
+    /* if (!shouldShowTooltip) {
+      return children;
+    } */
 
     if (props.mode === "all") {
       return (
-        <Tooltip
-          {...commonTooltipProps}
-          title={props.translation}
-          open={isHovered}
-          mouseLeaveDelay={mouseLeaveDelay}
-        >
-          <Tooltip
-            {...commonTooltipProps}
-            align={{ offset: [0, -50] }}
-            title={props.sentenceTranslation}
-            open={isHovered}
-            mouseLeaveDelay={mouseLeaveDelay}
-          >
+        <Tippy content={props.translation} visible={isHovered}>
+          <Tippy content={props.sentenceTranslation} visible={isHovered}>
             {children}
-          </Tooltip>
-        </Tooltip>
+          </Tippy>
+        </Tippy>
       );
     }
 
@@ -357,51 +317,41 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
         : props.sentenceTranslation;
 
     return (
-      <Tooltip {...commonTooltipProps} title={title} /* open={isHovered} */>
+      <Tippy content={title} visible={isHovered}>
         {children}
-      </Tooltip>
+      </Tippy>
     );
   };
 
   const handleTouchStart = (event: React.TouchEvent) => {
-    //event.preventDefault();
     props.onTouchStart?.(
       props.word!,
       props.sentenceNumber!,
       props.sentenceText!,
       event
     );
-
-    setIsTooltipVisible(false);
   };
 
   const handleTouchMove = (event: React.TouchEvent) => {
-    //event.preventDefault();
     props.onTouchMove?.(
       props.word!,
       props.sentenceNumber!,
       props.sentenceText!,
       event
     );
-
-    clearHoverTimeout();
-    hoverTimeout.current = window.setTimeout(() => setIsHovered(true), 300);
   };
 
   const handleTouchEnd = (event: React.TouchEvent) => {
-    //event.preventDefault();
     props.onTouchEnd?.(
       props.sentenceTranslation!,
       props.sentenceNumber!,
       props.translation!,
       event
     );
+  };
 
-    clearHoverTimeout();
-    hoverTimeout.current = window.setTimeout(
-      () => setIsHovered(false),
-      mouseLeaveDelay * 1500
-    );
+  const handleMouseLeave = () => {
+    setIsHovered(false); // Reset the hovered state
   };
 
   return renderTooltip(
