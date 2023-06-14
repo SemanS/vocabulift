@@ -49,7 +49,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             key: "vocabulary",
           },
         ],
-        locale: "en-us",
+        locale: "en-US",
         library: [],
         role: "guest",
         newUser: false,
@@ -87,7 +87,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             noticeCount: 0,
             isLogged: true,
             ...userResponse,
-            locale: "en-us",
+            locale: "en-US",
           });
           if (response.data.status === "not-verified") {
             navigate("/verification");

@@ -44,7 +44,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
             key: "vocabulary",
           },
         ],
-        locale: "en-us",
+        locale: "en-US",
         library: [],
         role: "guest",
         newUser: false,
@@ -81,7 +81,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
             username: "Slavo",
             noticeCount: 0,
             isLogged: true,
-            locale: "en-us",
+            locale: "en-US",
             ...response.data.body,
           });
 

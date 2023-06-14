@@ -1,4 +1,5 @@
 import { Snapshot } from "@/models/snapshot.interfaces";
+import { Locale } from "@/models/user";
 
 export function getRangeNumber(num: number) {
   if (num <= 100) {
@@ -24,3 +25,14 @@ export function calculatePage(
     Math.floor((newHighlightedIndex + sentenceFrom) / sentencesPerPage) + 1;
   return firstIndex;
 }
+
+export const parseLocale = (localeString: Locale): string => {
+  switch (localeString) {
+    case "en-US":
+      return "en";
+    case "sk-SK":
+      return "sk";
+    default:
+      return "en";
+  }
+};

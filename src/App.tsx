@@ -18,26 +18,25 @@ const App: React.FC = () => {
   const { locale } = user;
 
   useEffect(() => {
-    if (locale.toLowerCase() === "en-us") {
+    if (locale === "en-US") {
       moment.locale("en");
-    } else if (locale.toLowerCase() === "sk-sk") {
+    } else if (locale === "sk-SK") {
       moment.locale("sk");
     }
   }, [locale]);
 
   const getAntdLocale = () => {
-    if (locale.toLowerCase() === "en-us") {
+    if (locale === "en-US") {
       return enUS;
-    } else if (locale.toLowerCase() === "sk-sk") {
+    } else if (locale === "sk-SK") {
       return skSK;
     }
   };
 
   const getLocale = () => {
     const lang = localeConfig.find((item) => {
-      return item.key === locale.toLowerCase();
+      return item.key === locale;
     });
-
     return lang?.messages;
   };
 

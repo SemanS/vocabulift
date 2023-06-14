@@ -103,6 +103,7 @@ export const getUserPhrases = async (options: {
 
 export const updateUser = async (userEntity: Partial<User>): Promise<any> => {
   const requestBody = { userEntity };
+  console.log("userEntity" + JSON.stringify(userEntity, null, 2));
   const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/update`,
     {

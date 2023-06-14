@@ -8,7 +8,7 @@ const initialState: User = {
   locale: (localStorage.getItem("locale")! ||
     (navigator.languages && navigator.languages[0]) ||
     navigator.language ||
-    "en-us") as Locale,
+    "en-US") as Locale,
   newUser: JSON.parse(localStorage.getItem("newUser")!) ?? true,
   isLogged: false,
   menuList: [],

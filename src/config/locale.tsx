@@ -9,13 +9,13 @@ import skSK from "@/locales/sk-sk";
 export const localeConfig = [
   {
     name: "English",
-    key: "en-us",
+    key: "en-US",
     messages: enUS,
     icon: <EnUsSvg />,
   },
   {
     name: "Slovak",
-    key: "sk-sk",
+    key: "sk-SK",
     messages: skSK,
     icon: <SkSkSvg />,
   },
