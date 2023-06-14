@@ -1,5 +1,6 @@
 import { User } from "@/models/user";
 import { vocabuFetch } from "@/utils/vocabuFetch";
+import { UserPhrase } from "@/models/userSentence.interface";
 import axios from "axios";
 
 export const getSentences = async (
@@ -191,11 +192,14 @@ export const deleteUserPhrases = async (phraseIds: string[]): Promise<void> => {
   );
 };
 
-export const getPhraseMeaning = async (phrase: string): Promise<string> => {
+export const getPhraseMeaning = async (
+  phrase: string,
+  language: string
+): Promise<string> => {
   const requestBody = {
     phrase: phrase,
+    language: language,
   };
-
   try {
     const response = await vocabuFetch(
       `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/ai/wordMeaning`,

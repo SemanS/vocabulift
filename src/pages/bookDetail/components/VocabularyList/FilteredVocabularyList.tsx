@@ -1,6 +1,7 @@
 import React from "react";
 import VocabularyList from "./VocabularyList";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
+import { UserPhrase } from "@/models/userSentence.interface";
 
 interface FilteredVocabularyListProps {
   mode: string;
@@ -18,7 +19,7 @@ interface FilteredVocabularyListProps {
   setSelectedUserPhrase?: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
-  onQuestionClick?: (phrase: string) => void;
+  onQuestionClick?: (phrase: string, language: string) => void;
   onAlternativesClick?: (phrase: string) => void;
   selectedLanguageTo: string;
 }
@@ -58,7 +59,9 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       onWordClick={onWordClick}
       selectedUserPhrase={selectedUserPhrase}
       setSelectedUserPhrase={setSelectedUserPhrase!}
-      onQuestionClick={(phrase) => onQuestionClick!(phrase)}
+      onQuestionClick={(phrase: string, language: string) =>
+        onQuestionClick!(phrase, language)
+      }
       onAlternativesClick={(phrase) => onAlternativesClick!(phrase)}
       selectedLanguageTo={selectedLanguageTo}
     />

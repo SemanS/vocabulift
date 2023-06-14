@@ -86,12 +86,14 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       trigger={["click"]}
     >
       <span>
-        <Avatar
-          size="small"
-          className={classes.avatar}
-          src={avatar}
-          alt="avatar"
-        />
+        {user.picture && (
+          <Avatar
+            size="small"
+            className={classes.avatar}
+            src={user.picture}
+            alt="avatar"
+          />
+        )}
         <span className={`${classes.name} anticon`}>{username}</span>
       </span>
     </Dropdown>

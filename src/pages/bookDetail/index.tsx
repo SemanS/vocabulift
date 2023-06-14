@@ -25,7 +25,7 @@ import {
   getUserSentences,
   updateReadingProgress,
 } from "@/services/userService";
-import { UserSentence } from "@/models/userSentence.interface";
+import { UserPhrase, UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
 import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
@@ -456,10 +456,10 @@ const BookDetail: FC = () => {
     [state.userSentences, state.vocabularyListUserPhrases]
   );
 
-  const handleQuestionClick = async (phrase: string) => {
+  const handleQuestionClick = async (phrase: string, language: string) => {
     try {
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
-      const meaning = await getPhraseMeaning(phrase);
+      const meaning = await getPhraseMeaning(phrase, language);
       dispatch({ type: "setWordMeaningData", payload: meaning });
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });
     } catch (error) {

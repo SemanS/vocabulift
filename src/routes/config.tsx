@@ -64,6 +64,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
           libraryId: "6478fdc0d220b2b50883b874",
           timeStamp: 10,
         },
+        picture: "",
       };
       setUser(devUser);
       setLoading(false);
@@ -87,7 +88,6 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             noticeCount: 0,
             isLogged: true,
             ...userResponse,
-            locale: "en-US",
           });
           if (response.data.status === "not-verified") {
             navigate("/verification");

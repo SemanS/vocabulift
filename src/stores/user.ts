@@ -27,6 +27,7 @@ const initialState: User = {
     libraryId: "6478fdc0d220b2b50883b874",
     timeStamp: 5,
   },
+  picture: "",
 };
 
 export const userState = atom({

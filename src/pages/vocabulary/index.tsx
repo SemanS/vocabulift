@@ -532,7 +532,11 @@ const Vocabulary: React.FC = () => {
               </Select>
             </Space>
             <Space>
-              <Radio.Group onChange={handleDateChange} value={dateFilter}>
+              <Radio.Group
+                onChange={handleDateChange}
+                value={dateFilter}
+                buttonStyle="solid"
+              >
                 <Radio.Button value="today">Today</Radio.Button>
                 <Radio.Button value="last week">Last Week</Radio.Button>
                 <Radio.Button value="last month">Last Month</Radio.Button>

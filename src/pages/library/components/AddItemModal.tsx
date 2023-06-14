@@ -207,7 +207,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                       label="Translate to"
                       name="language"
                     >
-                      {selectedLanguageTo}
                       <LanguageSelector
                         useRecoil={false}
                         disabledLanguage={selectedLanguageFrom}

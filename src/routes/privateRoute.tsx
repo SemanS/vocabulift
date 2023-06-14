@@ -59,6 +59,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
           libraryId: "6478fdc0d220b2b50883b874",
           timeStamp: 10,
         },
+        picture: "",
       };
       setUser(devUser);
       setLoading(false);
@@ -81,7 +82,6 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
             username: "Slavo",
             noticeCount: 0,
             isLogged: true,
-            locale: "en-US",
             ...response.data.body,
           });
 

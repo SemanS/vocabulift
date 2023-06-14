@@ -62,6 +62,7 @@ export interface User {
   isLimitExceeded: boolean;
   exceededAt: Date;
   userLibraryWatched: UserLibraryWatched;
+  picture: string;
 }
 
 export interface UserEntity {

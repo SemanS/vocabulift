@@ -11,6 +11,9 @@ import "./VocabularyList.css";
 import { textToSpeech } from "@/services/userService";
 import { useLongPress } from "react-use";
 import { notification } from "antd";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
+import { parseLocale } from "@/utils/stringUtils";
 
 interface VocabularyListProps {
   mode: string;
@@ -28,7 +31,7 @@ interface VocabularyListProps {
   setSelectedUserPhrase: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
-  onQuestionClick: (phrase: string) => void;
+  onQuestionClick: (phrase: string, language: string) => void;
   onAlternativesClick: (phrase: string) => void;
   selectedLanguageTo: string;
 }
@@ -56,6 +59,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
   const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
   const [onMobile, setOnMobile] = useState(isMobile());
+  const [user, setUser] = useRecoilState(userState);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -223,6 +227,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
                             textAlign: "right",
                             paddingRight: "20px",
                           }}
+                          onClick={() => {
+                            togglePlay;
+                            handlePlayClick(
+                              word.phrase.sourceText,
+                              word.phrase.sourceLanguage
+                            );
+                          }}
                         >
                           {word.phrase.sourceText}
                         </div>
@@ -244,37 +255,84 @@ const VocabularyList: FC<VocabularyListProps> = ({
                           justifyContent: "space-between",
                           width: "100%",
                         }}
+                        onClick={() => {
+                          togglePlay;
+                          handlePlayClick(
+                            word.phrase.targetText,
+                            parseLocale(user.locale)
+                          );
+                        }}
                       >
-                        <DeleteOutlined
-                          onClick={() =>
-                            handleDeleteItem(
-                              word.phrase._id,
-                              word.phrase.sentenceId,
-                              word.phrase.startPosition,
-                              word.sentenceNo
-                            )
-                          }
-                        />
                         <Space>
-                          <QuestionCircleOutlined
+                          <DeleteOutlined
                             onClick={() =>
-                              onQuestionClick(word.phrase.sourceText)
+                              handleDeleteItem(
+                                word.phrase._id,
+                                word.phrase.sentenceId,
+                                word.phrase.startPosition,
+                                word.sentenceNo
+                              )
                             }
-                            {...onLongPressQuestion}
                           />
-                          <CommentOutlined
-                            onClick={() =>
-                              onAlternativesClick(word.phrase.sourceText)
-                            }
-                            {...onLongPressComment}
+                          {parseLocale(user.locale) !==
+                            word.phrase.sourceLanguage && (
+                            <>
+                              <QuestionCircleOutlined
+                                onClick={() =>
+                                  onQuestionClick(
+                                    word.phrase.sourceText,
+                                    parseLocale(user.locale)
+                                  )
+                                }
+                                {...onLongPressQuestion}
+                              />
+                              <CommentOutlined
+                                onClick={() =>
+                                  onAlternativesClick(word.phrase.sourceText)
+                                }
+                                {...onLongPressComment}
+                              />
+                            </>
+                          )}
+                          <CaretRightOutlined
+                            key="icon"
+                            onClick={() => {
+                              togglePlay;
+                              handlePlayClick(
+                                word.phrase.sourceText,
+                                word.phrase.sourceLanguage
+                              );
+                            }}
                           />
+                        </Space>
+                        <Space>
+                          {parseLocale(user.locale) !==
+                            word.phrase.targetLanguage && (
+                            <>
+                              <QuestionCircleOutlined
+                                onClick={() =>
+                                  onQuestionClick(
+                                    word.phrase.targetText,
+                                    parseLocale(user.locale)
+                                  )
+                                }
+                                {...onLongPressQuestion}
+                              />
+                              <CommentOutlined
+                                onClick={() =>
+                                  onAlternativesClick(word.phrase.targetText)
+                                }
+                                {...onLongPressComment}
+                              />
+                            </>
+                          )}
                           <CaretRightOutlined
                             key="icon"
                             onClick={() => {
                               togglePlay;
                               handlePlayClick(
                                 word.phrase.targetText,
-                                word.phrase.targetLanguage
+                                parseLocale(user.locale)
                               );
                             }}
                           />
@@ -309,18 +367,42 @@ const VocabularyList: FC<VocabularyListProps> = ({
                               )
                             }
                           />
-                          <QuestionCircleOutlined
-                            onClick={() =>
-                              onQuestionClick(word.phrase.sourceText)
-                            }
-                            {...onLongPressQuestion}
-                          />
-                          <CommentOutlined
-                            onClick={() =>
-                              onAlternativesClick(word.phrase.sourceText)
-                            }
-                            {...onLongPressComment}
-                          />
+                          {parseLocale(user.locale) !==
+                            word.phrase.sourceLanguage && (
+                            <>
+                              <QuestionCircleOutlined
+                                onClick={() =>
+                                  onQuestionClick(
+                                    word.phrase.sourceText,
+                                    parseLocale(user.locale)
+                                  )
+                                }
+                                {...onLongPressQuestion}
+                              />
+                              <CommentOutlined
+                                onClick={() =>
+                                  onAlternativesClick(word.phrase.sourceText)
+                                }
+                                {...onLongPressComment}
+                              />
+                            </>
+                          )}
+                        </Space>
+                        <div
+                          style={{
+                            width: "50%",
+                            textAlign: "right",
+                            paddingRight: "20px",
+                          }}
+                          onClick={() => {
+                            togglePlay;
+                            handlePlayClick(
+                              word.phrase.sourceText,
+                              word.phrase.sourceLanguage
+                            );
+                          }}
+                        >
+                          {word.phrase.sourceText}
                           <CaretRightOutlined
                             key="icon"
                             onClick={() => {
@@ -331,15 +413,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                               );
                             }}
                           />
-                        </Space>
-                        <div
-                          style={{
-                            width: "50%",
-                            textAlign: "right",
-                            paddingRight: "20px",
-                          }}
-                        >
-                          {word.phrase.sourceText}
                         </div>
                         <div
                           style={{
@@ -348,23 +421,15 @@ const VocabularyList: FC<VocabularyListProps> = ({
                             paddingLeft: "20px",
                             borderLeft: "1px solid #000",
                           }}
+                          onClick={() => {
+                            togglePlay;
+                            handlePlayClick(
+                              word.phrase.targetText,
+                              word.phrase.targetLanguage
+                            );
+                          }}
                         >
                           {word.phrase.targetText}
-                        </div>
-                        <audio key="audio" ref={audioRef} />
-                        <Space>
-                          <QuestionCircleOutlined
-                            onClick={() =>
-                              onQuestionClick(word.phrase.sourceText)
-                            }
-                            {...onLongPressQuestion}
-                          />
-                          <CommentOutlined
-                            onClick={() =>
-                              onAlternativesClick(word.phrase.sourceText)
-                            }
-                            {...onLongPressComment}
-                          />
                           <CaretRightOutlined
                             key="icon"
                             onClick={() => {
@@ -375,6 +440,29 @@ const VocabularyList: FC<VocabularyListProps> = ({
                               );
                             }}
                           />
+                        </div>
+                        <audio key="audio" ref={audioRef} />
+                        <Space>
+                          {parseLocale(user.locale) !==
+                            word.phrase.targetLanguage && (
+                            <>
+                              <QuestionCircleOutlined
+                                onClick={() =>
+                                  onQuestionClick(
+                                    word.phrase.targetText,
+                                    parseLocale(user.locale)
+                                  )
+                                }
+                                {...onLongPressQuestion}
+                              />
+                              <CommentOutlined
+                                onClick={() =>
+                                  onAlternativesClick(word.phrase.sourceText)
+                                }
+                                {...onLongPressComment}
+                              />
+                            </>
+                          )}
                         </Space>
                       </div>
                     </div>

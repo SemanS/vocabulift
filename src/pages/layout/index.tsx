@@ -119,7 +119,11 @@ const LayoutPage: FC = () => {
             !menuItemProps.path ||
             location.pathname === menuItemProps.path
           ) {
-            return defaultDom;
+            return (
+              <Button>
+                <Link to={menuItemProps.path!}>{defaultDom}</Link>
+              </Button>
+            );
           }
           if (menuItemProps.name === "settings") {
             return (
@@ -131,7 +135,11 @@ const LayoutPage: FC = () => {
               </Button>
             );
           } else {
-            return <Link to={menuItemProps.path}>{defaultDom}</Link>;
+            return (
+              <Button type="primary">
+                <Link to={menuItemProps.path}>{defaultDom}</Link>
+              </Button>
+            );
           }
         }}
         rightContentRender={() => <RightContent></RightContent>}
