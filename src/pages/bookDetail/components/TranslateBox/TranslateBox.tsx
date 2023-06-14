@@ -327,11 +327,18 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     language: string
   ): SentenceData[] {
     let sentences: SentenceData[] = [];
+    let languageFound = false;
 
     for (let snapshot of snapshots) {
       if (snapshot.language === language) {
         sentences = sentences.concat(snapshot.sentencesData);
+        languageFound = true;
       }
+    }
+
+    // If the specified language was not found, return the sentences of the first snapshot
+    if (!languageFound && snapshots.length > 0) {
+      sentences = snapshots[1].sentencesData;
     }
 
     return sentences;

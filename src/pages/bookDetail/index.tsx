@@ -356,24 +356,7 @@ const BookDetail: FC = () => {
         localSentenceFrom
       );
 
-      const userSentencesData: UserSentence[] = await getUserSentences({
-        sentenceFrom: state.sentenceFrom,
-        countOfSentences: state.countOfSentences,
-        sourceLanguage: user.sourceLanguage,
-        targetLanguage: state.selectedLanguageTo,
-        orderBy: "sentenceNo",
-        libraryId,
-        localSentenceFrom,
-      });
-
-      const vocabularyListUserPhrases =
-        mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
-
-      await updateSentencesState(
-        userSentencesData,
-        snapshots,
-        vocabularyListUserPhrases
-      );
+      await updateSentencesState(snapshots, localSentenceFrom);
 
       dispatch({ type: "setLoadingFromFetch", payload: false });
     },
@@ -387,11 +370,33 @@ const BookDetail: FC = () => {
   );
 
   const updateSentencesState = useCallback(
-    async (
-      userSentencesData: UserSentence[],
-      snapshots: Snapshot[],
-      vocabularyListUserPhrases: VocabularyListUserPhrase[]
-    ) => {
+    async (snapshots: Snapshot[], localSentenceFrom: number) => {
+      let language = state.selectedLanguageTo;
+      const isLanguageInSnapshots = snapshots.some(
+        (snapshot) => snapshot.language === state.selectedLanguageTo
+      );
+
+      if (!isLanguageInSnapshots && snapshots.length > 0) {
+        language = snapshots[1].language;
+        dispatch({
+          type: "setSelectedLanguageTo",
+          payload: language,
+        });
+      }
+
+      const userSentencesData: UserSentence[] = await getUserSentences({
+        sentenceFrom: state.sentenceFrom,
+        countOfSentences: state.countOfSentences,
+        sourceLanguage: user.sourceLanguage,
+        targetLanguage: language,
+        orderBy: "sentenceNo",
+        libraryId,
+        localSentenceFrom,
+      });
+
+      const vocabularyListUserPhrases =
+        mapUserSentencesToVocabularyListUserPhrases(userSentencesData);
+
       dispatch({ type: "setSnapshots", payload: snapshots });
       dispatch({ type: "setLibraryTitle", payload: snapshots[0].title });
       dispatch({ type: "setLabel", payload: snapshots[0].label });
@@ -406,7 +411,7 @@ const BookDetail: FC = () => {
       });
       dispatch({ type: "setUserSentences", payload: userSentencesData });
     },
-    []
+    [state.selectedLanguageTo, setSelectedLanguageTo]
   );
 
   const handleAddUserPhrase = useCallback(

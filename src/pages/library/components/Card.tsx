@@ -34,6 +34,7 @@ export const Card: React.FC<CardProps> = ({
   const [alertOneDone, setAlertOneDone] = useState(false);
   const [alertTwoDone, setAlertTwoDone] = useState(false);
   const [alertThreeDone, setAlertThreeDone] = useState(false);
+  const [zIndex, setZIndex] = useState(0);
 
   useEffect(() => {
     if (progress >= 33) {
@@ -54,7 +55,6 @@ export const Card: React.FC<CardProps> = ({
     let timeoutId: any;
     if (isHovered) {
       timeoutId = setTimeout(() => {
-        console.log("isDelayPassed" + JSON.stringify(isDelayPassed, null, 2));
         setIsImgHovered(true);
         setIsDelayPassed(true);
       }, 400);
@@ -62,7 +62,7 @@ export const Card: React.FC<CardProps> = ({
       timeoutId = setTimeout(() => {
         setIsDelayPassed(false);
         setIsImgHovered(false);
-      }, 100);
+      }, 400);
     }
 
     return () => {
@@ -84,6 +84,25 @@ export const Card: React.FC<CardProps> = ({
     conditionalZIndex: isDelayPassed,
   });
 
+  useEffect(() => {
+    let timeoutId: string | number | NodeJS.Timeout | undefined;
+
+    if (transitionState === "scalingDown") {
+      timeoutId = setTimeout(() => {
+        setZIndex(1100);
+      }, 1000);
+    } else if (transitionState === "scalingUp") {
+      timeoutId = setTimeout(() => {
+        setZIndex(1200);
+      }, 1000);
+    }
+
+    // Clear the timeout on unmount or if dependencies change
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [transitionState]);
+
   return (
     <div
       className={cardClassName}
@@ -95,6 +114,7 @@ export const Card: React.FC<CardProps> = ({
         className={`${styles.cardContainer} ${
           isImgHovered ? styles.zoomedImage : ""
         } ${styles[transitionState]}`}
+        style={{ zIndex, position: "relative" }}
       >
         <Link
           to={
@@ -222,7 +242,9 @@ export const Card: React.FC<CardProps> = ({
             } ${isImgHovered ? styles.zoomedDetails : ""} ${
               isImgHovered ? styles.hoverDetailsTransition : ""
             }`}
-            style={{ pointerEvents: isImgHovered ? undefined : "none" }}
+            style={{
+              pointerEvents: isImgHovered ? undefined : "none",
+            }}
           >
             <Row>
               <Col span={4}>

@@ -25,6 +25,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
 }) => {
   const [showControls, setShowControls] = useState(false);
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const sliderRef = useRef<Slider>(null);
 
@@ -92,8 +93,18 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
       className={`${
         showControls ? styles.showControls : ""
       } ${sliderClassName}`}
-      onMouseEnter={() => setShowControls(true)}
-      onMouseLeave={() => setShowControls(false)}
+      onMouseEnter={() => {
+        if (timeoutId) clearTimeout(timeoutId);
+
+        // Set a new timeout
+        setTimeoutId(setTimeout(() => setShowControls(true), 800));
+      }}
+      onMouseLeave={() => {
+        if (timeoutId) clearTimeout(timeoutId);
+
+        // Set a new timeout
+        setTimeoutId(setTimeout(() => setShowControls(false), 500));
+      }}
     >
       <h1 style={{ color: "white" }}>{category}</h1>
       <div className={`${styles.slider}`}>

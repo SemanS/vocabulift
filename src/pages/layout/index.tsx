@@ -64,7 +64,7 @@ const LayoutPage: FC = () => {
 
     if (libraryId) {
       m.push({
-        path: `/library/${libraryId}?currentPage=${currentPage}&pageSize=${pageSize}`,
+        path: `/library/${libraryId}?currentPage=${currentPage}&pageSize=${pageSize}&targetLanguage=${user.targetLanguage}`,
         name: "library",
         locale: "menu.library",
         icon: IconMap["library" as string],
@@ -136,7 +136,7 @@ const LayoutPage: FC = () => {
             );
           } else {
             return (
-              <Button type="primary">
+              <Button>
                 <Link to={menuItemProps.path}>{defaultDom}</Link>
               </Button>
             );
