@@ -182,15 +182,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     props.sentencesPerPage,
   ]);
 
-  const shouldShowTooltip =
-    //isWordHighlighted ||
-    props.isHighlighted || props.isHighlightedFromVideo || isHovered;
-
   const getClassName = () => {
-    /* console.log(
-      `isWord: ${isWord}, isPhrase: ${isPhrase}, isWordPhrase: ${isWordPhrase}, props.mode: ${props.mode}, props.word: ${props.word}`
-    ); */
-
     let result = styles.textbox;
     if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
     else if (props.isHighlightedFromVideo)
@@ -229,10 +221,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   }, []);
 
   useEffect(() => {
-    if (
-      isMobileDevice ||
-      (props.isHighlightedFromVideo && props.mode === "sentences")
-    ) {
+    if (isMobileDevice || props.isHighlightedFromVideo) {
       setIsTooltipVisible(true);
     } else {
       setIsTooltipVisible(false);
@@ -303,8 +292,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     if (props.mode === "all") {
       return (
-        <Tippy content={props.translation} visible={isHovered}>
-          <Tippy content={props.sentenceTranslation} visible={isHovered}>
+        <Tippy
+          content={props.translation}
+          visible={isHovered}
+          placement="bottom"
+        >
+          <Tippy
+            content={props.sentenceTranslation}
+            visible={isHovered}
+            placement="top"
+          >
             {children}
           </Tippy>
         </Tippy>

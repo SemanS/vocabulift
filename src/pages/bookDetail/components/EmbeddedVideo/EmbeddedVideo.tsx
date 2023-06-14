@@ -70,7 +70,6 @@ const EmbeddedVideo: React.FC<EmbeddedVideoProps> = ({
   }
 
   useEffect(() => {
-    // Replace the current history event with a new one that has the same URL as the current page
     window.history.replaceState(
       "fake-route",
       document.title,

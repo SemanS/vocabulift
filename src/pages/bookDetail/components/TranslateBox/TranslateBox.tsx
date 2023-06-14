@@ -233,6 +233,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     sentenceNumber: number,
     translation: string | null
   ) => {
+    let blockMode = mode;
     if (selectedWords.length > 1) {
       onChangeMode("phrases");
     }
@@ -241,8 +242,17 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       onChangeMode("words");
     }
 
+    if (selectedWords.length === 1 && mode === "phrases") {
+      onChangeMode("all");
+      blockMode = "all";
+    }
+
     if (
-      isWordInVocabularyList(mode, selectedWords, vocabularyListUserPhrases)
+      isWordInVocabularyList(
+        blockMode,
+        selectedWords,
+        vocabularyListUserPhrases
+      )
     ) {
       notification.open({
         message: "Word Found",
@@ -262,10 +272,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       sortedSelectedWords[sortedSelectedWords.length - 1].wordIndexInSentence;
 
     const phrase = getPhraseIfNotInHighlighted(
-      vocabularyListUserPhrases,
+      vocabularyListUserPhrases!,
       sortedSelectedWords,
       sentenceNumber,
-      mode
+      blockMode
     );
 
     const isPhraseInVocabulary = vocabularyListUserPhrases!.some(

@@ -18,11 +18,11 @@ const PaginationControls: FC<PaginationControlsProps> = ({
 }) => {
   return (
     <Pagination
-      style={{
+      /* style={{
         marginTop: "20px",
         display: "flex",
         justifyContent: "center",
-      }}
+      }} */
       current={currentPage}
       onShowSizeChange={(pageNum, pageSize = sentencesPerPage) => {
         if (pageSize * currentPage > totalSentences) {

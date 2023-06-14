@@ -74,6 +74,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   selectedLanguageTo: targetLanguageFromQuery,
   wordMeaningData: null,
   loadingFromWordMeaning: false,
+  isMobile: false,
 });
 
 function reducer(state: any, action: any) {
@@ -138,6 +139,8 @@ function reducer(state: any, action: any) {
       return { ...state, selectedLanguageTo: action.payload };
     case "setWordMeaningData":
       return { ...state, wordMeaningData: action.payload };
+    case "setIsMobile":
+      return { ...state, isMobile: action.payload };
     default:
       throw new Error();
   }
@@ -189,6 +192,8 @@ const BookDetail: FC = () => {
     dispatch({ type: "setShouldSetVideo", payload: shouldSetVideo });
   const setMode = (mode: string) =>
     dispatch({ type: "setMode", payload: mode });
+  const setIsMobile = (isMobile: boolean) =>
+    dispatch({ type: "isMobile", payload: isMobile });
   const setHighlightedSubtitleIndex = (
     highlightedSubtitleIndex: number | null
   ) =>
@@ -301,6 +306,15 @@ const BookDetail: FC = () => {
       setRecoilCurrentPage(currentPageFromQuery);
       setRecoilPageSize(pageSizeFromQuery);
     }
+
+    const handleResize = () => {
+      dispatch({ type: "setIsMobile", payload: window.innerWidth <= 750 });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   const handleAddWordDefinition = useCallback(async (word: string) => {
@@ -660,9 +674,146 @@ const BookDetail: FC = () => {
   const breakpointColumnsObj = {
     default: 2,
     1100: 2,
-    700: 2,
-    600: 1,
+    750: 2,
+    749: 1,
   };
+
+  const videoContainer = (
+    <div className={`${styles.myVideoContainer}`}>
+      {state.label === LabelType.VIDEO && (
+        <EmbeddedVideo
+          onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+          sentencesPerPage={state.sentencesPerPage}
+          handlePageChange={handlePageChange}
+          snapshots={memoizedSnapshots}
+          shouldSetVideo={state.shouldSetVideo}
+          setShouldSetVideo={setShouldSetVideo}
+          firstIndexAfterReset={state.firstIndexAfterReset!}
+          setLoadingFromFetch={setLoadingFromFetch}
+        />
+      )}
+    </div>
+  );
+
+  const translateBoxContainer = (
+    <div>
+      <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
+        <>
+          <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
+          <Select
+            value={state.selectedLanguageTo}
+            onChange={(value) => {
+              dispatch({
+                type: "setSelectedLanguageTo",
+                payload: value,
+              });
+              fetchVocabularyAndSetState(state.sentenceFrom, value);
+            }}
+            style={{ marginRight: 16 }}
+          >
+            {memoizedSnapshots &&
+              memoizedSnapshots
+                .filter((snapshot) => snapshot.language !== user.sourceLanguage)
+                .map((snapshot, index) => (
+                  <Select.Option key={index} value={snapshot.language}>
+                    <Flag code={snapshot.language} height="16" />{" "}
+                  </Select.Option>
+                ))}
+          </Select>
+
+          <Radio.Group
+            onChange={handleModeChange}
+            value={state.mode}
+            buttonStyle="solid"
+          >
+            <Radio.Button value="words">Words</Radio.Button>
+            <Radio.Button value="phrases">Phrases</Radio.Button>
+            <Radio.Button value="sentences">Sentences</Radio.Button>
+            <Radio.Button value="all">All</Radio.Button>
+          </Radio.Group>
+        </>
+      </Card>
+      <Card
+        loading={state.loading || state.loadingFromFetch}
+        className={styles.translateBoxScroll}
+      >
+        <TranslateBox
+          sourceLanguage={user.sourceLanguage}
+          currentTextIndex={state.currentTextIndex}
+          sentenceFrom={state.sentenceFrom}
+          sentencesPerPage={state.sentencesPerPage}
+          currentPage={state.currentPage}
+          libraryTitle={state.libraryTitle}
+          mode={state.mode}
+          snapshots={memoizedSnapshots}
+          userSentences={state.userSentences}
+          onAddUserPhrase={handleAddUserPhrase}
+          vocabularyListUserPhrases={state.vocabularyListUserPhrases}
+          highlightedSentenceIndex={
+            state.highlightedSubtitleIndex !== null
+              ? state.highlightedSubtitleIndex - (state.currentTextIndex % 100)
+              : null
+          }
+          selectedLanguageTo={state.selectedLanguageTo}
+          onChangeMode={setMode}
+        />
+      </Card>
+    </div>
+  );
+
+  const phraseListContainer = (
+    <div className={styles.myVocabularyContainer} style={{ marginTop: "16px" }}>
+      {state.showVocabularyList &&
+        state.vocabularyListUserPhrases?.length !== 0 &&
+        state.vocabularyListUserPhrases && (
+          <>
+            <FilteredVocabularyList
+              title="Words list"
+              mode={"words"}
+              phrases={state.vocabularyListUserPhrases!}
+              onDeleteItem={handleDeleteUserPhrase}
+              onWordClick={handleAddWordDefinition}
+              onQuestionClick={handleQuestionClick}
+              onAlternativesClick={handleAlternativesClick}
+              selectedUserPhrase={state.selectedUserPhrase}
+              setSelectedUserPhrase={setSelectedUserPhrase}
+              selectedLanguageTo={state.selectedLanguageTo}
+              style={{ marginBottom: "16px" }}
+            />
+            <FilteredVocabularyList
+              title="Phrases list"
+              mode={"phrases"}
+              phrases={state.vocabularyListUserPhrases!}
+              onDeleteItem={handleDeleteUserPhrase}
+              onWordClick={handleAddWordDefinition}
+              onQuestionClick={handleQuestionClick}
+              onAlternativesClick={handleAlternativesClick}
+              selectedLanguageTo={state.selectedLanguageTo}
+              style={{ marginBottom: "16px" }}
+            />
+          </>
+        )}
+    </div>
+  );
+  const paginationControlsContainer = (
+    <Card
+      bodyStyle={{
+        paddingTop: "15px",
+        paddingBottom: "15px",
+      }}
+      style={{ marginBottom: 16 }}
+    >
+      <PaginationControls
+        currentPage={state.currentPage}
+        onShowSizeChange={onShowSizeChange}
+        handlePageChange={handlePageChange}
+        totalSentences={state.totalSentences}
+        sentencesPerPage={state.sentencesPerPage}
+      />
+    </Card>
+  );
+
+  const isMobile = window.innerWidth <= 700;
 
   return (
     <PageContainer title={false} className={styles.container}>
@@ -685,152 +836,57 @@ const BookDetail: FC = () => {
         </Modal>
       ) : (
         <>
-          <Masonry
-            breakpointCols={breakpointColumnsObj}
-            className={styles.myMasonryGrid}
-            columnClassName={styles.myMasonryGridColumn}
-          >
-            <div
-              className={`${styles.myVideoContainer} ${styles.fixedVideoAndVocabulary}`}
+          {!isMobile ? (
+            // Mobile order
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className={styles.myMasonryGrid}
+              columnClassName={styles.myMasonryGridColumn}
             >
-              {state.label === LabelType.VIDEO && (
-                <EmbeddedVideo
-                  onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
-                  sentencesPerPage={state.sentencesPerPage}
-                  handlePageChange={handlePageChange}
-                  snapshots={memoizedSnapshots}
-                  shouldSetVideo={state.shouldSetVideo}
-                  setShouldSetVideo={setShouldSetVideo}
-                  firstIndexAfterReset={state.firstIndexAfterReset!}
-                  setLoadingFromFetch={setLoadingFromFetch}
-                />
-              )}
-            </div>
-            <div className={styles.translateBoxScroll}>
-              <Card
-                loading={state.loading || state.loadingFromFetch}
-                title={state.libraryTitle}
-                extra={
-                  <>
-                    <Select
-                      value={state.selectedLanguageTo}
-                      onChange={(value) => {
-                        dispatch({
-                          type: "setSelectedLanguageTo",
-                          payload: value,
-                        });
-                        fetchVocabularyAndSetState(state.sentenceFrom, value);
-                      }}
-                      style={{ marginRight: 16 }}
-                    >
-                      {memoizedSnapshots &&
-                        memoizedSnapshots
-                          .filter(
-                            (snapshot) =>
-                              snapshot.language !== user.sourceLanguage
-                          )
-                          .map((snapshot, index) => (
-                            <Select.Option
-                              key={index}
-                              value={snapshot.language}
-                            >
-                              <Flag code={snapshot.language} height="16" />{" "}
-                            </Select.Option>
-                          ))}
-                    </Select>
-
-                    <Radio.Group
-                      onChange={handleModeChange}
-                      value={state.mode}
-                      buttonStyle="solid"
-                    >
-                      <Radio.Button value="words">Words</Radio.Button>
-                      <Radio.Button value="phrases">Phrases</Radio.Button>
-                      <Radio.Button value="sentences">Sentences</Radio.Button>
-                      <Radio.Button value="all">All</Radio.Button>
-                    </Radio.Group>
-                  </>
-                }
-              >
-                <TranslateBox
-                  sourceLanguage={user.sourceLanguage}
-                  currentTextIndex={state.currentTextIndex}
-                  sentenceFrom={state.sentenceFrom}
-                  sentencesPerPage={state.sentencesPerPage}
-                  currentPage={state.currentPage}
-                  libraryTitle={state.libraryTitle}
-                  mode={state.mode}
-                  snapshots={memoizedSnapshots}
-                  userSentences={state.userSentences}
-                  onAddUserPhrase={handleAddUserPhrase}
-                  vocabularyListUserPhrases={state.vocabularyListUserPhrases}
-                  highlightedSentenceIndex={
-                    state.highlightedSubtitleIndex !== null
-                      ? state.highlightedSubtitleIndex -
-                        (state.currentTextIndex % 100)
-                      : null
-                  }
-                  selectedLanguageTo={state.selectedLanguageTo}
-                  onChangeMode={setMode}
-                />
-                <PaginationControls
-                  currentPage={state.currentPage}
-                  onShowSizeChange={onShowSizeChange}
-                  handlePageChange={handlePageChange}
-                  totalSentences={state.totalSentences}
-                  sentencesPerPage={state.sentencesPerPage}
-                />
-              </Card>
-            </div>
-            <div
-              className={styles.myVocabularyContainer}
-              style={{ marginTop: "16px" }}
-            >
-              {state.showVocabularyList &&
-                state.vocabularyListUserPhrases?.length !== 0 &&
-                state.vocabularyListUserPhrases && (
-                  <>
-                    <FilteredVocabularyList
-                      title="Words list"
-                      mode={"words"}
-                      phrases={state.vocabularyListUserPhrases!}
-                      onDeleteItem={handleDeleteUserPhrase}
-                      onWordClick={handleAddWordDefinition}
-                      selectedUserPhrase={state.selectedUserPhrase}
-                      setSelectedUserPhrase={setSelectedUserPhrase}
-                    />
-                    <FilteredVocabularyList
-                      title="Phrases list"
-                      mode={"phrases"}
-                      phrases={state.vocabularyListUserPhrases!}
-                      onDeleteItem={handleDeleteUserPhrase}
-                      onWordClick={handleAddWordDefinition}
-                      onQuestionClick={handleQuestionClick}
-                      onAlternativesClick={handleAlternativesClick}
-                    />
-                  </>
-                )}
-
-              {(state.loadingFromWordMeaning || state.wordMeaningData) && (
-                <>
+              {videoContainer}
+              {translateBoxContainer}
+              {phraseListContainer}
+              <div className={`${styles.myVideoContainer}`}>
+                {paginationControlsContainer}
+                {(state.loadingFromWordMeaning || state.wordMeaningData) && (
                   <Card
                     title={"Word meaning"}
                     loading={state.loadingFromWordMeaning}
                   >
                     {state.wordMeaningData && state.wordMeaningData.data}
                   </Card>
-                </>
-              )}
-
-              {/* {state.showWordDefinition && (
+                )}
+              </div>
+            </Masonry>
+          ) : (
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className={styles.myMasonryGrid}
+              columnClassName={styles.myMasonryGridColumn}
+            >
+              {videoContainer}
+              {translateBoxContainer}
+              <div className={`${styles.myVideoContainer}`}>
+                {paginationControlsContainer}
+                {(state.loadingFromWordMeaning || state.wordMeaningData) && (
+                  <Card
+                    title={"Word meaning"}
+                    loading={state.loadingFromWordMeaning}
+                  >
+                    {state.wordMeaningData && state.wordMeaningData.data}
+                  </Card>
+                )}
+              </div>
+              {phraseListContainer}
+            </Masonry>
+          )}
+          {/* {state.showWordDefinition && (
                   <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
                     <WordDefinitionCard
                       wordData={state.wordData}
                     ></WordDefinitionCard>
                   </Col>
                 )} */}
-            </div>
-          </Masonry>
         </>
       )}
     </PageContainer>

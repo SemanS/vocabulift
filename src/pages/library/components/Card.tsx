@@ -54,27 +54,28 @@ export const Card: React.FC<CardProps> = ({
     let timeoutId: any;
     if (isHovered) {
       timeoutId = setTimeout(() => {
+        console.log("isDelayPassed" + JSON.stringify(isDelayPassed, null, 2));
+        setIsImgHovered(true);
         setIsDelayPassed(true);
-      }, 300);
+      }, 400);
     } else {
       timeoutId = setTimeout(() => {
         setIsDelayPassed(false);
-      }, 300);
+        setIsImgHovered(false);
+      }, 100);
     }
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [isHovered, isDelayPassed]);
+  }, [isHovered, isDelayPassed, isImgHovered]);
 
   const handleMouseEnter = () => {
-    setIsImgHovered(true);
     onCardHover(cardIndex);
     setTransitionState("scalingUp");
   };
 
   const handleMouseLeave = () => {
-    setIsImgHovered(false);
     onCardHover(null);
     setTransitionState("scalingDown");
   };

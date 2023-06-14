@@ -30,7 +30,13 @@ interface VocabularyListProps {
   ) => void;
   onQuestionClick: (phrase: string) => void;
   onAlternativesClick: (phrase: string) => void;
+  selectedLanguageTo: string;
 }
+
+const isMobile = () =>
+  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
 
 const VocabularyList: FC<VocabularyListProps> = ({
   mode,
@@ -43,11 +49,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
   setSelectedUserPhrase,
   onQuestionClick,
   onAlternativesClick,
+  selectedLanguageTo,
 }) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
   const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
+  const [onMobile, setOnMobile] = useState(isMobile());
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -81,18 +89,23 @@ const VocabularyList: FC<VocabularyListProps> = ({
     }
   };
 
-  const handleWordClick = async (word: VocabularyListUserPhrase) => {
-    mode === "words" && onWordClick && onWordClick(word.phrase.sourceText);
-    mode === "words" && setSelectedWord(word.phrase.sourceText);
-    mode === "words" && setSelectedUserPhrase(word);
-
-    const audioUrl = await textToSpeech(word.phrase.targetText, "sk-SK");
+  const handlePlayClick = async (text: string, language: string) => {
+    const audioUrl = await textToSpeech(text, language);
 
     const audio = audioRef.current;
     if (audio) {
       audio.src = audioUrl!;
+      audio.playbackRate = 1;
       audio.play();
     }
+  };
+
+  const handleWordClick = async (
+    word: VocabularyListUserPhrase
+  ): Promise<any> => {
+    mode === "words" && onWordClick && onWordClick(word.phrase.sourceText);
+    mode === "words" && setSelectedWord(word.phrase.sourceText);
+    mode === "words" && setSelectedUserPhrase(word);
   };
 
   const handleDeleteItem = async (
@@ -132,7 +145,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
           return (
             <List.Item
               key={word.sentenceNo + word.phrase.startPosition}
-              className={isSelected ? "selected-word" : ""}
+              //className={isSelected ? "selected-word" : ""}
               style={{ padding: "4px 0" }}
               onClick={() => {
                 mode === "words" &&
@@ -142,7 +155,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 mode === "words" && setSelectedUserPhrase(word);
               }}
             >
-              {mode === "words" && (
+              {/* {mode === "words" && (
                 <List.Item.Meta
                   className={mode === "words" ? "list-item-content" : ""}
                   style={{ display: "flex", alignItems: "center" }}
@@ -180,14 +193,17 @@ const VocabularyList: FC<VocabularyListProps> = ({
                         key="icon"
                         onClick={() => {
                           togglePlay;
-                          handleWordClick(word);
+                          handlePlayClick(
+                            word.phrase.targetText,
+                            word.phrase.sourceLanguage
+                          );
                         }}
                       />
                     </div>
                   }
                 />
-              )}
-              {mode === "phrases" && (
+              )} */}
+              {(mode === "phrases" || mode === "words") && onMobile && (
                 <List.Item.Meta
                   style={{ display: "flex", alignItems: "center" }}
                   title={
@@ -197,9 +213,29 @@ const VocabularyList: FC<VocabularyListProps> = ({
                         style={{
                           fontWeight: "normal",
                           cursor: mode === "phrases" ? "default" : "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
                         }}
                       >
-                        {word.phrase.sourceText} - {word.phrase.targetText}
+                        <div
+                          style={{
+                            width: "50%",
+                            textAlign: "right",
+                            paddingRight: "20px",
+                          }}
+                        >
+                          {word.phrase.sourceText}
+                        </div>
+                        <div
+                          style={{
+                            width: "50%",
+                            textAlign: "left",
+                            paddingLeft: "20px",
+                            borderLeft: "1px solid #000",
+                          }}
+                        >
+                          {word.phrase.targetText}
+                        </div>
                       </div>
                       <audio key="audio" ref={audioRef} />
                       <div
@@ -236,7 +272,107 @@ const VocabularyList: FC<VocabularyListProps> = ({
                             key="icon"
                             onClick={() => {
                               togglePlay;
-                              handleWordClick(word);
+                              handlePlayClick(
+                                word.phrase.targetText,
+                                word.phrase.targetLanguage
+                              );
+                            }}
+                          />
+                        </Space>
+                      </div>
+                    </div>
+                  }
+                />
+              )}
+              {(mode === "phrases" || mode === "words") && !onMobile && (
+                <List.Item.Meta
+                  style={{ display: "flex", alignItems: "center" }}
+                  title={
+                    <div>
+                      <div
+                        ref={(el) => (itemRefs.current[index] = el)}
+                        style={{
+                          fontWeight: "normal",
+                          cursor: mode === "phrases" ? "default" : "pointer",
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Space>
+                          <DeleteOutlined
+                            onClick={() =>
+                              handleDeleteItem(
+                                word.phrase._id,
+                                word.phrase.sentenceId,
+                                word.phrase.startPosition,
+                                word.sentenceNo
+                              )
+                            }
+                          />
+                          <QuestionCircleOutlined
+                            onClick={() =>
+                              onQuestionClick(word.phrase.sourceText)
+                            }
+                            {...onLongPressQuestion}
+                          />
+                          <CommentOutlined
+                            onClick={() =>
+                              onAlternativesClick(word.phrase.sourceText)
+                            }
+                            {...onLongPressComment}
+                          />
+                          <CaretRightOutlined
+                            key="icon"
+                            onClick={() => {
+                              togglePlay;
+                              handlePlayClick(
+                                word.phrase.sourceText,
+                                word.phrase.sourceLanguage
+                              );
+                            }}
+                          />
+                        </Space>
+                        <div
+                          style={{
+                            width: "50%",
+                            textAlign: "right",
+                            paddingRight: "20px",
+                          }}
+                        >
+                          {word.phrase.sourceText}
+                        </div>
+                        <div
+                          style={{
+                            width: "50%",
+                            textAlign: "left",
+                            paddingLeft: "20px",
+                            borderLeft: "1px solid #000",
+                          }}
+                        >
+                          {word.phrase.targetText}
+                        </div>
+                        <audio key="audio" ref={audioRef} />
+                        <Space>
+                          <QuestionCircleOutlined
+                            onClick={() =>
+                              onQuestionClick(word.phrase.sourceText)
+                            }
+                            {...onLongPressQuestion}
+                          />
+                          <CommentOutlined
+                            onClick={() =>
+                              onAlternativesClick(word.phrase.sourceText)
+                            }
+                            {...onLongPressComment}
+                          />
+                          <CaretRightOutlined
+                            key="icon"
+                            onClick={() => {
+                              togglePlay;
+                              handlePlayClick(
+                                word.phrase.targetText,
+                                word.phrase.targetLanguage
+                              );
                             }}
                           />
                         </Space>
