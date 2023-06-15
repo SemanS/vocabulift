@@ -9,22 +9,37 @@ const PricingComponent = () => {
 
   const pricingData = [
     {
-      title: "Basic",
-      monthlyPrice: 19.99,
-      annualPrice: 199.99,
-      features: ["500 GB Storage", "2 Users Allowed", "Send up to 3 GB"],
+      title: "Explorer",
+      monthlyPrice: 0,
+      annualPrice: 0,
+      features: [
+        "Access to Beginner-Level Videos",
+        "Basic Transcript Interaction",
+        "Limited Vocabulary Lists",
+      ],
     },
     {
-      title: "Professional",
-      monthlyPrice: 24.99,
-      annualPrice: 249.99,
-      features: ["1 TB Storage", "5 Users Allowed", "Send up to 10 GB"],
+      title: "Linguist",
+      monthlyPrice: 4.99,
+      annualPrice: 39.99,
+      features: [
+        "Access to All Level Videos",
+        "Full Transcript Interaction",
+        "Unlimited Vocabulary Lists",
+        "Access to Community Forum",
+      ],
     },
     {
-      title: "Master",
-      monthlyPrice: 39.99,
-      annualPrice: 399.99,
-      features: ["2 TB Storage", "10 Users Allowed", "Send up to 20 GB"],
+      title: "Polyglot",
+      monthlyPrice: 6.99,
+      annualPrice: 59.99,
+      features: [
+        "Access to All Level Videos",
+        "Full Transcript Interaction",
+        "Unlimited Vocabulary Lists",
+        "Priority Access to New Features",
+        "Dedicated Language Learning Support",
+      ],
     },
   ];
 

@@ -90,11 +90,11 @@ export const Card: React.FC<CardProps> = ({
     if (transitionState === "scalingDown") {
       timeoutId = setTimeout(() => {
         setZIndex(1100);
-      }, 1000);
+      }, 500);
     } else if (transitionState === "scalingUp") {
       timeoutId = setTimeout(() => {
         setZIndex(1200);
-      }, 1000);
+      }, 500);
     }
 
     // Clear the timeout on unmount or if dependencies change
@@ -230,6 +230,20 @@ export const Card: React.FC<CardProps> = ({
               className={`${styles.cardImg}`}
               src={itemData.videoThumbnail}
               alt="card"
+              style={
+                isImgHovered
+                  ? {
+                      borderTopLeftRadius: "15px",
+                      borderTopRightRadius: "15px",
+                      borderBottomLeftRadius: "0px",
+                      borderBottomRightRadius: "0px",
+                      transition: "border-radius 0.9s ease",
+                    }
+                  : {
+                      borderRadius: "15px",
+                      transition: "border-radius 0.9s ease",
+                    }
+              }
             />
           )}
         </Link>
@@ -244,9 +258,11 @@ export const Card: React.FC<CardProps> = ({
             }`}
             style={{
               pointerEvents: isImgHovered ? undefined : "none",
+              borderBottomLeftRadius: "15px",
+              borderBottomRightRadius: "15px",
             }}
           >
-            <Row>
+            <Row style={{ marginBottom: "20px" }}>
               <Col span={4}>
                 <PlayCircleOutlined
                   className={`${styles.playIcon} ${
@@ -260,7 +276,7 @@ export const Card: React.FC<CardProps> = ({
                 </Typography.Text>
               </Col>
             </Row>
-            <Row align="middle" className={styles.stats}>
+            {/* <Row align="middle" className={styles.stats}>
               <Col span={4}>
                 <Tooltip title="Likes">
                   <LikeOutlined style={{ fontSize: "10px" }} />
@@ -277,7 +293,7 @@ export const Card: React.FC<CardProps> = ({
                   <span style={{ fontSize: "10px" }}>{2}</span>
                 </Typography.Text>
               </Col>
-            </Row>
+            </Row> */}
             <Typography.Text
               className={styles.description}
               style={{ fontSize: "10px" }}
@@ -290,12 +306,12 @@ export const Card: React.FC<CardProps> = ({
             <Row justify="space-between">
               <Col>
                 <Typography.Text style={{ fontSize: "10px" }}>
-                  Level: {itemData.level}
+                  Level: {itemData.level[itemData.level.length - 1]}
                 </Typography.Text>
               </Col>
               <Col>
                 <Typography.Text style={{ fontSize: "10px" }}>
-                  Duration: 11:22
+                  Duration: {itemData.duration}
                 </Typography.Text>
               </Col>
             </Row>

@@ -97,7 +97,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
         if (timeoutId) clearTimeout(timeoutId);
 
         // Set a new timeout
-        setTimeoutId(setTimeout(() => setShowControls(true), 800));
+        setTimeoutId(setTimeout(() => setShowControls(true), 500));
       }}
       onMouseLeave={() => {
         if (timeoutId) clearTimeout(timeoutId);

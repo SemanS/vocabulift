@@ -59,7 +59,8 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
           libraryId: "6478fdc0d220b2b50883b874",
           timeStamp: 10,
         },
-        picture: "",
+        picture:
+          "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
       };
       setUser(devUser);
       setLoading(false);

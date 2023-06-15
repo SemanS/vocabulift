@@ -412,6 +412,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                 word.phrase.sourceLanguage
                               );
                             }}
+                            style={{ marginLeft: "5px" }}
                           />
                         </div>
                         <div
@@ -431,6 +432,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                         >
                           {word.phrase.targetText}
                           <CaretRightOutlined
+                            style={{ marginLeft: "5px" }}
                             key="icon"
                             onClick={() => {
                               togglePlay;

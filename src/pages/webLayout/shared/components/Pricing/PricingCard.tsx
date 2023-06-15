@@ -1,5 +1,6 @@
 import React from "react";
 import "./PricingComponent.less";
+import { Typography } from "antd";
 
 const PricingCard = ({
   title,
@@ -13,7 +14,7 @@ const PricingCard = ({
 
   return (
     <div className={cardStyle}>
-      <h2 className="card-title">{title}</h2>
+      <Typography.Title className="card-title">{title}</Typography.Title>
       <h3 className="card-price">
         <small>$</small>
         <span hidden={isMonthly}>{annualPrice}</span>

@@ -11,6 +11,7 @@ export interface LibraryItem {
   category: string;
   level: string[];
   snapshotsInfo: SnapshotInfo[];
+  duration: string;
 }
 
 export interface SnapshotInfo {

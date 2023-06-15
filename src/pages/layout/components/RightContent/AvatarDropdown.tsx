@@ -88,7 +88,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       <span>
         {user.picture && (
           <Avatar
-            size="small"
+            size="default"
             className={classes.avatar}
             src={user.picture}
             alt="avatar"
