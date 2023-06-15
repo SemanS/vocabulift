@@ -26,7 +26,7 @@ interface AddItemModalProps {
   selectOptions: any[];
   targetLanguage: string;
   onLanguageSelect: (language: string) => void;
-  onAddItemClick: (videoThumbnail: string) => void;
+  onAddItemClick: (videoThumbnail: string, status: string) => void;
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({
@@ -74,9 +74,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     onLanguageSelect(language);
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     console.log("inputValue prop", inputValue);
-  }, [inputValue]);
+  }, [inputValue]); */
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -118,6 +118,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       youtubeUrl
     );
 
+    if (response.status === "conflict") {
+      handleModalCancelAndReset();
+      return response.status;
+    }
+
     const { videoThumbnail, eventId } = response;
 
     socket.emit("add-video", {
@@ -128,7 +133,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     });
     localStorage.setItem("ongoingEventId", eventId);
 
-    onAddItemClick(videoThumbnail);
+    onAddItemClick(videoThumbnail, response.status);
     handleModalCancelAndReset();
   };
 

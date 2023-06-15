@@ -517,10 +517,12 @@ const Library: React.FC = () => {
             selectOptions={selectOptions}
             targetLanguage={user.targetLanguage}
             onLanguageSelect={handleLanguageSelect}
-            onAddItemClick={(videoThumbnail) => {
-              setPolling(true);
-              setSliderUpdated(true);
-              updateVideoThumbnail(videoThumbnail);
+            onAddItemClick={(videoThumbnail: string, status: string) => {
+              if (status !== "conflict") {
+                setPolling(true);
+                setSliderUpdated(true);
+                updateVideoThumbnail(videoThumbnail);
+              }
             }}
           />
         </div>
