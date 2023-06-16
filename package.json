@@ -22,6 +22,8 @@
     "@ant-design/pro-form": "^2.5.5",
     "@ant-design/pro-layout": "^7.7.0",
     "@ant-design/pro-table": "^3.2.13",
+    "@stripe/react-stripe-js": "^2.1.0",
+    "@stripe/stripe-js": "^1.54.0",
     "@tanstack/react-query": "^4.29.1",
     "@tanstack/react-table": "^8.8.5",
     "@tippyjs/react": "^4.2.6",
