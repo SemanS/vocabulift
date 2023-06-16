@@ -13,6 +13,7 @@ interface CardProps {
   isHovered: boolean;
   progress: number;
   selectedLanguageTo: string;
+  eventFinalized: boolean;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -22,6 +23,7 @@ export const Card: React.FC<CardProps> = ({
   isHovered,
   progress,
   selectedLanguageTo,
+  eventFinalized,
 }) => {
   const [isImgHovered, setIsImgHovered] = useState(false);
   const [isDelayPassed, setIsDelayPassed] = useState(false);
@@ -32,6 +34,11 @@ export const Card: React.FC<CardProps> = ({
   const [zIndex, setZIndex] = useState(0);
 
   useEffect(() => {
+    if (eventFinalized) {
+      setAlertOneDone(false);
+      setAlertTwoDone(false);
+      setAlertThreeDone(false);
+    }
     if (progress >= 33) {
       setAlertOneDone(true);
     }
@@ -41,7 +48,7 @@ export const Card: React.FC<CardProps> = ({
     if (progress >= 99) {
       setAlertThreeDone(true);
     }
-  }, [progress]);
+  }, [progress, eventFinalized]);
 
   const isOngoingEvent =
     localStorage.getItem("ongoingEventId") === itemData.eventId;
@@ -92,6 +99,7 @@ export const Card: React.FC<CardProps> = ({
       }, 500);
     }
 
+    // Clear the timeout on unmount or if dependencies change
     return () => {
       clearTimeout(timeoutId);
     };

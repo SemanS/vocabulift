@@ -7,6 +7,7 @@ import styles from "../index.module.less";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { Typography } from "antd";
 
 interface CustomSliderProps {
   items: LibraryItem[];
@@ -14,6 +15,7 @@ interface CustomSliderProps {
   category: string;
   progress: number;
   selectedLanguageTo: string;
+  eventFinalized: boolean;
 }
 
 export const CustomSlider: React.FC<CustomSliderProps> = ({
@@ -22,6 +24,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
   category,
   progress,
   selectedLanguageTo,
+  eventFinalized,
 }) => {
   const [showControls, setShowControls] = useState(false);
   const [hoveredCardIndex, setHoveredCardIndex] = useState<number | null>(null);
@@ -105,8 +108,11 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
         // Set a new timeout
         setTimeoutId(setTimeout(() => setShowControls(false), 500));
       }}
+      style={{ marginBottom: "40px" }}
     >
-      <h1 style={{ color: "white" }}>{category}</h1>
+      <Typography.Title level={5} style={{ color: "white" }}>
+        {category}
+      </Typography.Title>
       <div className={`${styles.slider}`}>
         <Slider {...settings} ref={sliderRef}>
           {items.map((item, index) => {
@@ -119,6 +125,7 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
                 isHovered={hoveredCardIndex === index}
                 progress={progress}
                 selectedLanguageTo={selectedLanguageTo}
+                eventFinalized={eventFinalized}
               />
             );
           })}

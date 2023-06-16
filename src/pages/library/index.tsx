@@ -57,6 +57,7 @@ const Library: React.FC = () => {
   const [videoThumbnail, setVideoThumbnail] = useState<string | undefined>(
     localStorage.getItem("videoThumbnail") || undefined
   );
+  const [eventFinalized, setEventFinalized] = useState(false);
 
   const fetchOptions = async (input: string) => {
     try {
@@ -90,6 +91,7 @@ const Library: React.FC = () => {
       sourceLanguage: user.sourceLanguage,
       targetLanguage: user.targetLanguage,
     };
+    console.log("userEntity" + JSON.stringify(userEntity, null, 2));
     const data: ApiResponse = await getLibraryItems(userEntity);
 
     if (newVideoThumbnail) {
@@ -208,6 +210,7 @@ const Library: React.FC = () => {
     }
 
     async function onFinalizeEvent() {
+      setEventFinalized(true);
       localStorage.removeItem("ongoingEventId");
       localStorage.removeItem("progress");
       localStorage.removeItem("videoThumbnail");
@@ -226,7 +229,7 @@ const Library: React.FC = () => {
 
     async function onProgressUpdate(progressData: any) {
       if (
-        progressData.progressPercentage > 0 &&
+        Number(progressData.progressPercentage) > 35 &&
         progressData.progressStatus === "InProgress"
       ) {
         localStorage.removeItem("videoThumbnail");
@@ -491,9 +494,9 @@ const Library: React.FC = () => {
           <div style={{ paddingInline: "48px", marginTop: "30px" }}>
             {Object.entries(categorizedItems)
               .sort(([categoryA], [categoryB]) => {
-                if (categoryA === "My videos") {
+                if (categoryA === "My Videos") {
                   return -1;
-                } else if (categoryB === "My videos") {
+                } else if (categoryB === "My Videos") {
                   return 1;
                 } else {
                   return 0;
@@ -507,6 +510,7 @@ const Library: React.FC = () => {
                   category={category}
                   progress={progress}
                   selectedLanguageTo={user.targetLanguage}
+                  eventFinalized={eventFinalized}
                 />
               ))}
           </div>
@@ -520,11 +524,14 @@ const Library: React.FC = () => {
             selectOptions={selectOptions}
             targetLanguage={user.targetLanguage}
             onLanguageSelect={handleLanguageSelect}
-            onAddItemClick={(videoThumbnail: string, status: string) => {
+            onAddItemClick={async (videoThumbnail: string, status: string) => {
               if (status !== "conflict") {
+                setEventFinalized(false);
                 setPolling(true);
                 setSliderUpdated(true);
                 updateVideoThumbnail(videoThumbnail);
+              } else {
+                await fetchData();
               }
             }}
           />

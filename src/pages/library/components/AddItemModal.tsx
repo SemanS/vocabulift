@@ -119,6 +119,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     );
 
     if (response.status === "conflict") {
+      onAddItemClick("", response.status);
       handleModalCancelAndReset();
       return response.status;
     }
