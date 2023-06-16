@@ -114,7 +114,6 @@ export const Card: React.FC<CardProps> = ({
         }
         style={{ zIndex, position: "relative" }}
       >
-        {"itemID" + itemData._id}
         {isOngoingEvent || itemData._id === "temp-item" ? (
           <div className={styles.imageContainer} style={{ cursor: "default" }}>
             <img

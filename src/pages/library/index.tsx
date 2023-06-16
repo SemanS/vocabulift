@@ -58,8 +58,6 @@ const Library: React.FC = () => {
     localStorage.getItem("videoThumbnail") || undefined
   );
 
-  const abortController = useRef(new AbortController());
-
   const fetchOptions = async (input: string) => {
     try {
       const response = await postLibraryInputVideoLanguages(input);
@@ -129,10 +127,12 @@ const Library: React.FC = () => {
           if (progressData.progressStatus === "Complete") {
             localStorage.removeItem("videoThumbnail");
             localStorage.removeItem("ongoingEventId");
+            localStorage.removeItem("progress");
             async () => {
               socket.disconnect();
             };
           } else {
+            setProgress(Number(localStorage.getItem("progress")));
             socket.emit("resumeProgress", {
               eventId: localStorage.getItem("ongoingEventId"),
             });
@@ -208,17 +208,19 @@ const Library: React.FC = () => {
     }
 
     async function onFinalizeEvent() {
-      console.log("FINISHUJEM");
       localStorage.removeItem("ongoingEventId");
       localStorage.removeItem("progress");
       localStorage.removeItem("videoThumbnail");
+      localStorage.removeItem("progress");
       setProgress(0);
       setLoading(true);
       fetchData();
       setLoading(false);
       socket.off("progress", onProgressUpdate);
       socket.off("finalizeEvent", onFinalizeEvent);
-      socket.disconnect();
+      async () => {
+        socket.disconnect();
+      };
       setPolling(false);
     }
 
@@ -230,6 +232,7 @@ const Library: React.FC = () => {
         localStorage.removeItem("videoThumbnail");
         setVideoThumbnail(undefined);
       }
+      localStorage.setItem("progress", progressData.progressPercentage);
       setProgress(Number(progressData.progressPercentage.toString()));
     }
 
