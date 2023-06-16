@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Col, Row, Typography, Space } from "antd";
 
 import { useRecoilState } from "recoil";
@@ -58,6 +58,8 @@ const Library: React.FC = () => {
     localStorage.getItem("videoThumbnail") || undefined
   );
 
+  const abortController = useRef(new AbortController());
+
   const fetchOptions = async (input: string) => {
     try {
       const response = await postLibraryInputVideoLanguages(input);
@@ -104,12 +106,61 @@ const Library: React.FC = () => {
   };
 
   useEffect(() => {
+    const fetchData = async () => {
+      const ongoingEventId = localStorage.getItem("ongoingEventId");
+      socket.connect();
+      if (ongoingEventId) {
+        try {
+          const response = await vocabuFetch(
+            `${
+              import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+            }/progress/${ongoingEventId}`,
+            {
+              headers: {
+                "Content-Type": "text/plain;charset=UTF-8",
+                Authorization: `Bearer ${sessionStorage.getItem(
+                  "access_token"
+                )}`,
+              },
+            }
+          );
+
+          const progressData = await response.json();
+          if (progressData.progressStatus === "Complete") {
+            localStorage.removeItem("videoThumbnail");
+            localStorage.removeItem("ongoingEventId");
+            async () => {
+              socket.disconnect();
+            };
+          } else {
+            socket.emit("resumeProgress", {
+              eventId: localStorage.getItem("ongoingEventId"),
+            });
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    };
+
+    fetchData();
+
+    if (!localStorage.getItem("ongoingEventId")) {
+      return () => {
+        async () => {
+          socket.disconnect();
+        };
+      };
+    }
+  }, []);
+
+  useEffect(() => {
     setSourceLanguageFromVideo(inputValue);
   }, [inputValue]);
 
   useEffect(() => {
     setLoading(true);
-    if (localStorage.getItem("videoThumbnail")) {
+    if (videoThumbnail) {
       fetchData(videoThumbnail);
     } else {
       fetchData();
@@ -118,13 +169,6 @@ const Library: React.FC = () => {
   }, [user]);
 
   useEffect(() => {
-    const savedProgress = localStorage.getItem("progress");
-    if (savedProgress) {
-      setProgress(Number(savedProgress));
-    } else {
-      setProgress(0);
-    }
-
     const ongoingEventId = localStorage.getItem("ongoingEventId");
 
     if (ongoingEventId) {
@@ -163,19 +207,8 @@ const Library: React.FC = () => {
       setSliderUpdated(false);
     }
 
-    async function onProgressUpdate(progressData: any) {
-      console.log("progressData" + JSON.stringify(progressData, null, 2));
-      /* if (
-        progressData.progressPercentage > 0 &&
-        progressData.progressStatus === "InProgress"
-      ) {
-        localStorage.removeItem("videoThumbnail");
-        setVideoThumbnail(undefined);
-      } */
-      setProgress(Number(progressData.progressPercentage.toString()));
-    }
-
     async function onFinalizeEvent() {
+      console.log("FINISHUJEM");
       localStorage.removeItem("ongoingEventId");
       localStorage.removeItem("progress");
       localStorage.removeItem("videoThumbnail");
@@ -187,6 +220,17 @@ const Library: React.FC = () => {
       socket.off("finalizeEvent", onFinalizeEvent);
       socket.disconnect();
       setPolling(false);
+    }
+
+    async function onProgressUpdate(progressData: any) {
+      if (
+        progressData.progressPercentage > 0 &&
+        progressData.progressStatus === "InProgress"
+      ) {
+        localStorage.removeItem("videoThumbnail");
+        setVideoThumbnail(undefined);
+      }
+      setProgress(Number(progressData.progressPercentage.toString()));
     }
 
     socket.on("progress", onProgressUpdate);
@@ -316,6 +360,14 @@ const Library: React.FC = () => {
   const { toggleSettingsDrawer, settingsDrawerVisible } =
     useSettingsDrawerContext();
 
+  useEffect(() => {
+    if (settingsDrawerVisible) {
+      setDrawerHeight(420);
+    } else {
+      setDrawerHeight(0);
+    }
+  }, [settingsDrawerVisible]);
+
   const renderSettingsDrawerContent = () => {
     return (
       <>
@@ -383,58 +435,6 @@ const Library: React.FC = () => {
       </>
     );
   };
-
-  useEffect(() => {
-    if (settingsDrawerVisible) {
-      setDrawerHeight(420);
-    } else {
-      setDrawerHeight(0);
-    }
-  }, [settingsDrawerVisible]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const ongoingEventId = localStorage.getItem("ongoingEventId");
-      if (ongoingEventId) {
-        try {
-          const response = await vocabuFetch(
-            `${
-              import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-            }/progress/${ongoingEventId}`,
-            {
-              headers: {
-                "Content-Type": "text/plain;charset=UTF-8",
-                Authorization: `Bearer ${sessionStorage.getItem(
-                  "access_token"
-                )}`,
-              },
-            }
-          );
-
-          const progressData = await response.json();
-
-          if (progressData.progressStatus === "Complete") {
-            localStorage.removeItem("ongoingEventId");
-            localStorage.removeItem("progress");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      }
-
-      socket.connect();
-    };
-
-    fetchData();
-
-    if (!localStorage.getItem("ongoingEventId")) {
-      return () => {
-        async () => {
-          socket.disconnect();
-        };
-      };
-    }
-  }, []);
 
   return (
     <PageContainer loading={loading} title={false}>

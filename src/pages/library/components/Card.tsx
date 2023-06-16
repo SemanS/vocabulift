@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { LibraryItem } from "@/models/libraryItem.interface";
 import styles from "./Card.module.less";
-import { Alert, Col, Progress, Row, Spin, Tooltip, Typography } from "antd";
-import {
-  CheckCircleOutlined,
-  DislikeOutlined,
-  LikeOutlined,
-  PlayCircleOutlined,
-} from "@ant-design/icons";
+import { Alert, Col, Progress, Row, Spin, Typography } from "antd";
+import { CheckCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
 
@@ -97,7 +92,6 @@ export const Card: React.FC<CardProps> = ({
       }, 500);
     }
 
-    // Clear the timeout on unmount or if dependencies change
     return () => {
       clearTimeout(timeoutId);
     };
@@ -111,119 +105,112 @@ export const Card: React.FC<CardProps> = ({
       onMouseLeave={() => onCardHover(null)}
     >
       <div
-        className={`${styles.cardContainer} ${
-          isImgHovered ? styles.zoomedImage : ""
-        } ${styles[transitionState]}`}
+        className={
+          itemData._id !== "temp-item"
+            ? `${styles.cardContainer} ${
+                isImgHovered ? styles.zoomedImage : ""
+              } ${styles[transitionState]}`
+            : ""
+        }
         style={{ zIndex, position: "relative" }}
       >
-        <Link
-          to={
-            itemData._id +
-            "?currentPage=" +
-            1 +
-            "&pageSize=" +
-            10 +
-            "&targetLanguage=" +
-            selectedLanguageTo
-          }
-          style={{ color: "inherit" }}
-        >
-          {isOngoingEvent || itemData._id === "temp-item" ? (
-            <div className={styles.imageContainer}>
-              <img
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={`${styles.cardImg}`}
-                src={itemData.videoThumbnail}
-                alt="card"
+        {"itemID" + itemData._id}
+        {isOngoingEvent || itemData._id === "temp-item" ? (
+          <div className={styles.imageContainer} style={{ cursor: "default" }}>
+            <img
+              className={`${styles.cardImg}`}
+              src={itemData.videoThumbnail}
+              alt="card"
+              style={{ borderRadius: "15px" }}
+            />
+            <div className={styles.progressCircle}>
+              <Progress
+                type="circle"
+                percent={progress}
+                showInfo={false}
+                width={90}
               />
-              <div
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={styles.whiteOverlay}
-              ></div>
-              <div
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={handleMouseLeave}
-                className={styles.progressCircle}
-              >
-                <Progress
-                  type="circle"
-                  percent={progress}
-                  showInfo={false}
-                  width={90}
-                />
-                <div className={styles.spinnerContainer}>
-                  <Spin size="default" />
-                  <div className={styles.percentage}>{progress}%</div>
-                </div>
-              </div>
-              <div className={styles.alertsContainer}>
-                <Alert
-                  style={{ padding: "2px 10px" }}
-                  message={
-                    alertOneDone ? (
-                      <span>
-                        <CheckCircleOutlined style={{ marginRight: "5px" }} />
-                        <Typography.Text>
-                          Text is processed by AI
-                        </Typography.Text>
-                      </span>
-                    ) : (
-                      <span>
-                        <Spin size="small" style={{ marginRight: "5px" }} />
-                        <Typography.Text>
-                          Text is processing by AI
-                        </Typography.Text>
-                      </span>
-                    )
-                  }
-                  showIcon={false}
-                  banner
-                />
-                <Alert
-                  style={{ padding: "2px 10px" }}
-                  message={
-                    alertTwoDone ? (
-                      <span>
-                        <CheckCircleOutlined style={{ marginRight: "5px" }} />
-                        <Typography.Text>
-                          Sentences are translated
-                        </Typography.Text>
-                      </span>
-                    ) : (
-                      <span>
-                        <Spin size="small" style={{ marginRight: "5px" }} />
-                        <Typography.Text>
-                          Sentences are translating
-                        </Typography.Text>
-                      </span>
-                    )
-                  }
-                  showIcon={false}
-                  banner
-                />
-                <Alert
-                  style={{ padding: "2px 10px" }}
-                  message={
-                    alertThreeDone ? (
-                      <span>
-                        <CheckCircleOutlined style={{ marginRight: "5px" }} />
-                        <Typography.Text>Words are translated</Typography.Text>
-                      </span>
-                    ) : (
-                      <span>
-                        <Spin size="small" style={{ marginRight: "5px" }} />
-                        <Typography.Text>Words are translating</Typography.Text>
-                      </span>
-                    )
-                  }
-                  showIcon={false}
-                  banner
-                />
+              <div className={styles.spinnerContainer}>
+                <Spin size="default" />
+                <div className={styles.percentage}>{progress}%</div>
               </div>
             </div>
-          ) : (
+            <div className={styles.alertsContainer}>
+              <Alert
+                style={{ padding: "2px 10px" }}
+                message={
+                  alertOneDone ? (
+                    <span>
+                      <CheckCircleOutlined style={{ marginRight: "5px" }} />
+                      <Typography.Text>Text is processed by AI</Typography.Text>
+                    </span>
+                  ) : (
+                    <span>
+                      <Spin size="small" style={{ marginRight: "5px" }} />
+                      <Typography.Text>
+                        Text is processing by AI
+                      </Typography.Text>
+                    </span>
+                  )
+                }
+                showIcon={false}
+                banner
+              />
+              <Alert
+                style={{ padding: "2px 10px" }}
+                message={
+                  alertTwoDone ? (
+                    <span>
+                      <CheckCircleOutlined style={{ marginRight: "5px" }} />
+                      <Typography.Text>
+                        Sentences are translated
+                      </Typography.Text>
+                    </span>
+                  ) : (
+                    <span>
+                      <Spin size="small" style={{ marginRight: "5px" }} />
+                      <Typography.Text>
+                        Sentences are translating
+                      </Typography.Text>
+                    </span>
+                  )
+                }
+                showIcon={false}
+                banner
+              />
+              <Alert
+                style={{ padding: "2px 10px" }}
+                message={
+                  alertThreeDone ? (
+                    <span>
+                      <CheckCircleOutlined style={{ marginRight: "5px" }} />
+                      <Typography.Text>Words are translated</Typography.Text>
+                    </span>
+                  ) : (
+                    <span>
+                      <Spin size="small" style={{ marginRight: "5px" }} />
+                      <Typography.Text>Words are translating</Typography.Text>
+                    </span>
+                  )
+                }
+                showIcon={false}
+                banner
+              />
+            </div>
+          </div>
+        ) : (
+          <Link
+            to={
+              itemData._id +
+              "?currentPage=" +
+              1 +
+              "&pageSize=" +
+              10 +
+              "&targetLanguage=" +
+              selectedLanguageTo
+            }
+            style={{ color: "inherit" }}
+          >
             <img
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -238,15 +225,17 @@ export const Card: React.FC<CardProps> = ({
                       borderBottomLeftRadius: "0px",
                       borderBottomRightRadius: "0px",
                       transition: "border-radius 0.9s ease",
+                      cursor: "pointer",
                     }
                   : {
                       borderRadius: "15px",
                       transition: "border-radius 0.9s ease",
+                      cursor: "pointer",
                     }
               }
             />
-          )}
-        </Link>
+          </Link>
+        )}
         {itemData._id !== "temp-item" ? (
           <div
             onMouseEnter={handleMouseEnter}
