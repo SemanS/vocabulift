@@ -152,6 +152,11 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       });
     }
     if (props.mode === "all") {
+      if (userWords)
+        userWords.forEach((userWord) => {
+          setIsWord(true);
+        });
+
       if (userPhrases)
         userPhrases.forEach((userPhrase) => {
           setIsPhrase(true);

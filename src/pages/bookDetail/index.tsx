@@ -717,11 +717,13 @@ const BookDetail: FC = () => {
             style={{ marginRight: 16 }}
           >
             {memoizedSnapshots &&
-              memoizedSnapshots
-                .filter((snapshot) => snapshot.language !== user.sourceLanguage)
-                .map((snapshot, index) => (
-                  <Select.Option key={index} value={snapshot.language}>
-                    <Flag code={snapshot.language} height="16" />{" "}
+              Array.from(
+                new Set(memoizedSnapshots.map((snapshot) => snapshot.language))
+              )
+                .filter((language) => language !== user.sourceLanguage)
+                .map((language, index) => (
+                  <Select.Option key={index} value={language}>
+                    <Flag code={language} height="16" />
                   </Select.Option>
                 ))}
           </Select>
