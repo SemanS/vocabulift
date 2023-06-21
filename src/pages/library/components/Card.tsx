@@ -125,10 +125,27 @@ export const Card: React.FC<CardProps> = ({
         {isOngoingEvent || itemData._id === "temp-item" ? (
           <div className={styles.imageContainer} style={{ cursor: "default" }}>
             <img
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
               className={`${styles.cardImg}`}
               src={itemData.videoThumbnail}
               alt="card"
-              style={{ borderRadius: "15px" }}
+              style={
+                itemData._id === "temp-item"
+                  ? { borderRadius: "15px" }
+                  : isImgHovered
+                  ? {
+                      borderTopLeftRadius: "15px",
+                      borderTopRightRadius: "15px",
+                      borderBottomLeftRadius: "0px",
+                      borderBottomRightRadius: "0px",
+                      transition: "border-radius 0.9s ease",
+                    }
+                  : {
+                      borderRadius: "15px",
+                      transition: "border-radius 0.9s ease",
+                    }
+              }
             />
             <div className={styles.progressCircle}>
               <Progress
@@ -144,7 +161,21 @@ export const Card: React.FC<CardProps> = ({
             </div>
             <div className={styles.alertsContainer}>
               <Alert
-                style={{ padding: "2px 10px" }}
+                style={
+                  isImgHovered
+                    ? {
+                        padding: "2px 10px",
+                        borderTopLeftRadius: "0px",
+                        borderTopRightRadius: "0px",
+                        borderBottomLeftRadius: "0px",
+                        borderBottomRightRadius: "0px",
+                        transition: "border-radius 0.9s ease",
+                      }
+                    : {
+                        padding: "2px 10px",
+                        transition: "border-radius 0.9s ease",
+                      }
+                }
                 message={
                   alertOneDone ? (
                     <span>
@@ -164,7 +195,21 @@ export const Card: React.FC<CardProps> = ({
                 banner
               />
               <Alert
-                style={{ padding: "2px 10px" }}
+                style={
+                  isImgHovered
+                    ? {
+                        padding: "2px 10px",
+                        borderTopLeftRadius: "0px",
+                        borderTopRightRadius: "0px",
+                        borderBottomLeftRadius: "0px",
+                        borderBottomRightRadius: "0px",
+                        transition: "border-radius 0.9s ease",
+                      }
+                    : {
+                        padding: "2px 10px",
+                        transition: "border-radius 0.9s ease",
+                      }
+                }
                 message={
                   alertTwoDone ? (
                     <span>
@@ -186,7 +231,27 @@ export const Card: React.FC<CardProps> = ({
                 banner
               />
               <Alert
-                style={{ padding: "2px 10px" }}
+                style={
+                  itemData._id === "temp-item"
+                    ? {
+                        padding: "2px 10px",
+                        borderBottomLeftRadius: 15,
+                        borderBottomRightRadius: 15,
+                      }
+                    : isImgHovered
+                    ? {
+                        borderTopLeftRadius: "0px",
+                        borderTopRightRadius: "0px",
+                        borderBottomLeftRadius: "0px",
+                        borderBottomRightRadius: "0px",
+                        transition: "border-radius 0.9s ease",
+                      }
+                    : {
+                        borderBottomLeftRadius: "15px",
+                        borderBottomRightRadius: "15px",
+                        transition: "border-radius 0.9s ease",
+                      }
+                }
                 message={
                   alertThreeDone ? (
                     <span>
