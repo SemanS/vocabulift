@@ -475,7 +475,6 @@ const BookDetail: FC = () => {
 
   const handleAlternativesClick = async (phrase: string) => {
     try {
-      console.log("okej");
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
       const meaning = await getPhraseAlternatives(phrase);
       dispatch({ type: "setWordMeaningData", payload: meaning });
@@ -734,7 +733,7 @@ const BookDetail: FC = () => {
             buttonStyle="solid"
           >
             <Radio.Button value="words">Words</Radio.Button>
-            <Radio.Button value="phrases">Phrases</Radio.Button>
+            {/* <Radio.Button value="phrases">Phrases</Radio.Button> */}
             <Radio.Button value="sentences">Sentences</Radio.Button>
             <Radio.Button value="all">All</Radio.Button>
           </Radio.Group>

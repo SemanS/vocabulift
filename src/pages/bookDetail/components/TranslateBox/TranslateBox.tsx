@@ -62,6 +62,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const prevLanguageRef = useRef(selectedLanguage);
   const [saveWordComplete, setSaveWordComplete] = useState(false);
   const [sentenceNo, setSentenceNo] = useState<number>();
+  const touchActive = useRef(false);
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
@@ -162,12 +163,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   ) => {
     if (eventType === "down") {
       setMouseDown(true);
+      touchActive.current = true;
       setSelectedSentence(sentenceNumber);
       setSelectedWords([{ word, wordIndexInSentence, sentenceNumber }]);
       setSelectedSentenceText(sentenceText);
     } else if (
-      eventType === "enter" &&
-      mouseDown &&
+      ((eventType === "enter" && mouseDown) ||
+        (eventType === "enter" && touchActive.current)) &&
       selectedSentence === sentenceNumber
     ) {
       setSelectedWords((prevWords: any) => {
@@ -235,7 +237,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   ) => {
     let blockMode = mode;
     if (selectedWords.length > 1) {
-      onChangeMode("phrases");
+      onChangeMode("all");
     }
 
     if (selectedWords.length === 1 && mode !== "all") {
@@ -344,9 +346,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     return sentences;
   }
 
-  if (error) {
-    return <div>An error occurred: {error.message}</div>;
-  }
+  useEffect(() => {
+    touchActive.current = true;
+  }, [vocabularyListUserPhrases]);
 
   const handleTouchEvent = (
     type: "start" | "move" | "end",
@@ -358,47 +360,66 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   ) => {
     switch (type) {
       case "start":
+        touchActive.current = true;
         handleMouseEvent("down", word, sentenceNumber, sentenceText, wordIndex);
-        break;
+      //break;
       case "move":
-        if (event.cancelable) {
+        /* if (event.cancelable) {
           event.preventDefault();
         } else {
           document.body.style.overflow = "hidden";
-        }
-
-        // Manually calculate which word element is under the finger
-        const touch = event.touches[0];
-        const elementUnderFinger = document.elementFromPoint(
-          touch.clientX,
-          touch.clientY
+        } */
+        console.log(
+          "touchActive.current" + JSON.stringify(touchActive.current, null, 2)
         );
-        const newWordElement = elementUnderFinger!.closest(".translate-word");
-        if (newWordElement) {
-          const newWordIndexStr =
-            newWordElement.getAttribute("data-word-index");
-          if (newWordIndexStr === null) {
-            console.error(
-              `Could not find "data-word-index" attribute in element`
+        if (touchActive.current) {
+          touchActive.current = true;
+          const touch = event.touches[0];
+          const elementUnderFinger = document.elementFromPoint(
+            touch.clientX,
+            touch.clientY
+          );
+          const newWordElement = elementUnderFinger!.closest(".translate-word");
+          if (newWordElement) {
+            const newWordIndexStr =
+              newWordElement.getAttribute("data-word-index");
+            if (newWordIndexStr === null) {
+              console.error(
+                `Could not find "data-word-index" attribute in element`
+              );
+              return;
+            }
+            console.log(
+              "newWordIndexStr" + JSON.stringify(newWordIndexStr, null, 2)
             );
-            return;
-          }
-          const newWordIndex = parseInt(newWordIndexStr, 10);
-          if (newWordIndex !== wordIndex) {
+
+            const newWordIndex = parseInt(newWordIndexStr, 10);
             handleMouseEvent(
-              "enter",
+              "down",
               word,
               sentenceNumber,
               sentenceText,
-              newWordIndex
+              wordIndex
             );
+            if (newWordIndex !== wordIndex) {
+              handleMouseEvent(
+                "enter",
+                word,
+                sentenceNumber,
+                sentenceText,
+                newWordIndex
+              );
+            }
           }
         }
-
+        //}
         break;
       case "end":
-        document.body.style.overflow = "auto";
-        handleMouseUp(sentenceText, sentenceNumber, sentenceText);
+        touchActive.current = false;
+        handleMouseUp(word, sentenceNumber, sentenceText);
+        /* if (event.cancelable) {
+          event.preventDefault();
+        } */
         break;
     }
   };
@@ -544,7 +565,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     )}
                     isHighlightedFromVideo={index === highlightedSentenceIndex}
                     wordIndex={wordIndex}
-                    isSelecting={mouseDown}
+                    isSelecting={mouseDown || touchActive.current}
                     sentenceTranslation={targetSentence?.sentenceText || ""}
                     vocabularyListUserPhrases={vocabularyListUserPhrases!}
                     currentPage={currentPage}

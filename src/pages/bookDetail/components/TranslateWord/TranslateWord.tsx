@@ -331,7 +331,13 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     );
   };
 
+  let touchTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
   const handleTouchStart = (event: React.TouchEvent) => {
+    touchTimeoutId = setTimeout(() => {
+      // Your scroll logic here
+    }, 500); // Set timeout to 500 ms
+
     props.onTouchStart?.(
       props.word!,
       props.sentenceNumber!,
@@ -359,7 +365,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false); // Reset the hovered state
+    setIsHovered(false);
   };
 
   return renderTooltip(
@@ -367,7 +373,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       style={{
         cursor: "pointer",
         whiteSpace: "pre-wrap",
-        touchAction: "none",
+        touchAction: "auto",
       }}
       ref={textRef}
       className={`${className} ${styles.disableSelection} translate-word`}
