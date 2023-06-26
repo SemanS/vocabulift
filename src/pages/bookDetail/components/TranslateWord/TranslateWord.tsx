@@ -187,7 +187,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     props.sentencesPerPage,
   ]);
 
-  const getClassName = () => {
+  /* const getClassName = () => {
     let result = styles.textbox;
     if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
     else if (props.isHighlightedFromVideo)
@@ -202,17 +202,46 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     if (isWordPhrase && props.mode === "all")
       result += ` ${styles.bubbleWordPhrase}`;
     return result;
+  }; */
+
+  const getClassName = () => {
+    if (props.isHighlightedFromVideo) {
+      return `${styles.textbox} ${styles.bubbleVideoHovered}`;
+    }
+
+    let result = styles.textbox;
+
+    if (isHovered || props.isHighlighted) {
+      result += ` ${styles.bubbleHovered}`;
+    }
+
+    if (
+      (isWord && props.mode === "words") ||
+      (isWord && props.mode === "all")
+    ) {
+      result += ` ${styles.bubbleWord}`;
+    }
+
+    if (
+      (isPhrase && props.mode === "phrases") ||
+      (isPhrase && props.mode === "all")
+    ) {
+      result += ` ${styles.bubblePhrase}`;
+    }
+
+    if (isWordPhrase && props.mode === "all") {
+      result += ` ${styles.bubbleWordPhrase}`;
+    }
+
+    return result;
   };
 
   useEffect(() => {
-    // Check if the user is on a mobile device
     const userAgent = window.navigator.userAgent;
     const isMobile = !!userAgent.match(/Android|iPhone/i);
     setIsMobileDevice(isMobile);
 
-    const handleContextMenu = (event: Event) => {
-      //event.preventDefault();
-    };
+    const handleContextMenu = (event: Event) => {};
 
     if (isMobile) {
       window.addEventListener("contextmenu", handleContextMenu);

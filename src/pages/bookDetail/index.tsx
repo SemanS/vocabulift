@@ -634,22 +634,6 @@ const BookDetail: FC = () => {
     dispatch({ type: "setColSpan", payload: newColSpan });
   }, [state.showVocabularyList, state.showWordDefinition]);
 
-  /* const { toggleSettingsDrawer, settingsDrawerVisible } =
-    useSettingsDrawerContext(); */
-
-  /* useEffect(() => {
-    if (
-      state.vocabularyListUserPhrases &&
-      state.vocabularyListUserPhrases.length === 0
-    ) {
-      dispatch({ type: "setShowVocabularyList", payload: false });
-      dispatch({ type: "setShowWordDefinition", payload: false });
-    } else {
-      dispatch({ type: "setShowVocabularyList", payload: true });
-      dispatch({ type: "setShowWordDefinition", payload: true });
-    }
-  }, [state.vocabularyListUserPhrases]); */
-
   const renderSettingsDrawerContent = () => {
     return (
       <>
@@ -728,8 +712,6 @@ const BookDetail: FC = () => {
     magnifyingGlass.className = "magnifying-glass";
     document.body.appendChild(magnifyingGlass);
     magnifyingGlassRef.current = magnifyingGlass;
-
-    // Make sure to remove the element when this component unmounts.
     return () => {
       document.body.removeChild(magnifyingGlass);
     };
@@ -861,14 +843,7 @@ const BookDetail: FC = () => {
   return (
     <PageContainer title={false} className={styles.container}>
       {state.isLimitExceeded ? (
-        <Modal
-          open={true}
-          closable={true}
-          //maskClosable={false}
-          footer={false}
-          width="80%"
-          centered
-        >
+        <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
             <Typography.Title style={{ marginTop: "30px" }}>
               You exceed your daily limit of 3 min, for continuing please
@@ -880,7 +855,6 @@ const BookDetail: FC = () => {
       ) : (
         <>
           {!isMobile ? (
-            // Mobile order
             <Masonry
               breakpointCols={breakpointColumnsObj}
               className={styles.myMasonryGrid}
@@ -926,16 +900,9 @@ const BookDetail: FC = () => {
               >
                 {state.isPlaying ? "❚❚" : "▶"}
               </button>
-              ;{phraseListContainer}
+              {phraseListContainer}
             </Masonry>
           )}
-          {/* {state.showWordDefinition && (
-                  <Col xxl={12} xl={12} lg={12} md={12} sm={24} xs={24}>
-                    <WordDefinitionCard
-                      wordData={state.wordData}
-                    ></WordDefinitionCard>
-                  </Col>
-                )} */}
         </>
       )}
     </PageContainer>

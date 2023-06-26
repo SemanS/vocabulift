@@ -55,7 +55,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   magnifyingGlassRef,
 }) => {
   const { libraryId } = useParams();
-  const [error, setError] = useState<Error | null>(null);
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
   const [selectedSentence, setSelectedSentence] = useState<number | null>(null);
   const [mouseDown, setMouseDown] = useState(false);
@@ -73,6 +72,20 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     const regex = /[.,?!“”„:]+/g;
     return input.replace(regex, "");
   };
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkDeviceType = () => {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      setIsMobile(isMobile);
+    };
+    checkDeviceType();
+    window.addEventListener("resize", checkDeviceType);
+    return () => {
+      window.removeEventListener("resize", checkDeviceType);
+    };
+  }, []);
 
   useEffect(() => {
     setSelectedLanguage(selectedLanguageTo);
@@ -344,8 +357,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         languageFound = true;
       }
     }
-
-    // If the specified language was not found, return the sentences of the first snapshot
     if (!languageFound && snapshots.length > 0) {
       sentences = snapshots[1].sentencesData;
     }
@@ -419,15 +430,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 );
                 return;
               }
-
               const newWordIndex = parseInt(newWordIndexStr, 10);
-              /* handleMouseEvent(
-                "down",
-                word,
-                sentenceNumber,
-                sentenceText,
-                wordIndex
-              ); */
               if (newWordIndex !== wordIndex) {
                 handleMouseEvent(
                   "enter",
@@ -439,7 +442,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               }
             }
           }
-          //}
           break;
         case "end":
           if (magnifyingGlassRef.current) {
@@ -447,34 +449,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           }
           touchActive.current = false;
           handleMouseUp(word, sentenceNumber, sentenceText);
-          /* if (event.cancelable) {
-          event.preventDefault();
-        } */
           setMagnifyingGlassStyle({ visibility: "hidden" });
           break;
       }
     }
   };
-
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkDeviceType = () => {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      setIsMobile(isMobile);
-    };
-
-    // Check on mount
-    checkDeviceType();
-
-    // Check when window resizes
-    window.addEventListener("resize", checkDeviceType);
-
-    // Cleanup on unmount
-    return () => {
-      window.removeEventListener("resize", checkDeviceType);
-    };
-  }, []);
 
   return (
     <>

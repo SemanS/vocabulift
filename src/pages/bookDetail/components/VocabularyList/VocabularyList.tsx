@@ -271,7 +271,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     }}
                                   />
                                 </div>
-                                {/* </div> */}
                               </div>
                               <audio key="audio" ref={audioRef} />
                               <div
@@ -511,22 +510,26 @@ const VocabularyList: FC<VocabularyListProps> = ({
             </div>
           </div>
         </TabPane>
-        <TabPane tab="Meaning" key="2">
-          <div
-            style={{
-              paddingRight: 25,
-              paddingLeft: 25,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            className="vocabularyListScroll"
-          >
-            <Spin spinning={state.loading} size="large">
-              {state.wordMeaningData && state.wordMeaningData.data}
-            </Spin>
-          </div>
-        </TabPane>
+        {(state.loading || state.wordMeaningData) && (
+          <TabPane tab="Meaning" key="2">
+            <div
+              className="vocabularyListScroll"
+              style={{ paddingRight: 25, paddingLeft: 25 }}
+            >
+              <Spin
+                spinning={state.loading}
+                size="large"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                {state.wordMeaningData && state.wordMeaningData.data}
+              </Spin>
+            </div>
+          </TabPane>
+        )}
         <TabPane tab="Alternatives" key="3"></TabPane>
       </Tabs>
     </Card>
