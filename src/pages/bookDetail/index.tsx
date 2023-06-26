@@ -35,8 +35,6 @@ import {
 import { UserPhrase, UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
-import WordDefinitionCard from "./components/WordDefinitionCard/WordDefinitionCard";
-import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import FilteredVocabularyList from "./components/VocabularyList/FilteredVocabularyList";
 import { sourceLanguageState, targetLanguageState } from "@/stores/language";
 import { libraryIdState } from "@/stores/library";
@@ -83,6 +81,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   wordMeaningData: null,
   loadingFromWordMeaning: false,
   isMobile: false,
+  isPlaying: false,
 });
 
 function reducer(state: any, action: any) {
@@ -149,6 +148,8 @@ function reducer(state: any, action: any) {
       return { ...state, wordMeaningData: action.payload };
     case "setIsMobile":
       return { ...state, isMobile: action.payload };
+    case "setIsPlaying":
+      return { ...state, isPlaying: action.payload };
     default:
       throw new Error();
   }
@@ -173,6 +174,7 @@ const BookDetail: FC = () => {
   const [recoilPageSize, setRecoilPageSize] = useRecoilState(pageSizeState);
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [user, setUser] = useRecoilState(userState);
+  const videoPlayerRef = useRef<ExposedFunctions | null>(null);
 
   const [state, dispatch] = useReducer(
     reducer,
@@ -202,6 +204,8 @@ const BookDetail: FC = () => {
     dispatch({ type: "setMode", payload: mode });
   const setIsMobile = (isMobile: boolean) =>
     dispatch({ type: "isMobile", payload: isMobile });
+  const setIsPlaying = (isPlaying: boolean) =>
+    dispatch({ type: "isPlaying", payload: isPlaying });
   const setHighlightedSubtitleIndex = (
     highlightedSubtitleIndex: number | null
   ) =>
@@ -292,6 +296,15 @@ const BookDetail: FC = () => {
       state.changeTriggeredByHighlightChange,
     ]
   );
+
+  const handlePlayPause = () => {
+    if (state.isPlaying) {
+      videoPlayerRef.current.pauseVideo();
+    } else {
+      videoPlayerRef.current.playVideo();
+    }
+    dispatch({ type: "setIsPlaying", payload: !state.isPlaying });
+  };
 
   useEffect(() => {
     if (user.isLimitExceeded === true) {
@@ -694,6 +707,7 @@ const BookDetail: FC = () => {
     <div className={`${styles.myVideoContainer}`}>
       {state.label === LabelType.VIDEO && (
         <EmbeddedVideo
+          ref={videoPlayerRef}
           onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
           sentencesPerPage={state.sentencesPerPage}
           handlePageChange={handlePageChange}
@@ -797,7 +811,7 @@ const BookDetail: FC = () => {
         state.vocabularyListUserPhrases && (
           <>
             <FilteredVocabularyList
-              title="Words list"
+              title="Words"
               mode={"words"}
               phrases={state.vocabularyListUserPhrases!}
               onDeleteItem={handleDeleteUserPhrase}
@@ -810,7 +824,7 @@ const BookDetail: FC = () => {
               style={{ marginBottom: "16px" }}
             />
             <FilteredVocabularyList
-              title="Phrases list"
+              title="Phrases"
               mode={"phrases"}
               phrases={state.vocabularyListUserPhrases!}
               onDeleteItem={handleDeleteUserPhrase}
@@ -906,7 +920,13 @@ const BookDetail: FC = () => {
                   </Card>
                 )}
               </div>
-              {phraseListContainer}
+              <button
+                className={`${styles.myFixedPlayButton}`}
+                onClick={handlePlayPause}
+              >
+                {state.isPlaying ? "❚❚" : "▶"}
+              </button>
+              ;{phraseListContainer}
             </Masonry>
           )}
           {/* {state.showWordDefinition && (

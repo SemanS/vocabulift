@@ -1,5 +1,5 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { Button, Card, List, Space, Typography } from "antd";
+import React, { FC, useEffect, useReducer, useRef, useState } from "react";
+import { Button, Card, List, Space, Tabs, Spin } from "antd";
 import {
   CaretRightOutlined,
   CommentOutlined,
@@ -8,13 +8,25 @@ import {
 } from "@ant-design/icons";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import "./VocabularyList.css";
-import { textToSpeech } from "@/services/userService";
-import { useLongPress } from "react-use";
+import { getPhraseMeaning, textToSpeech } from "@/services/userService";
 import { notification } from "antd";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { parseLocale } from "@/utils/stringUtils";
 import usePressHandlers from "@/hooks/userPressHandlers";
+
+const TabPane = Tabs.TabPane;
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setLoadingFromWordMeaning":
+      return { ...state, loading: action.payload };
+    case "setWordMeaningData":
+      return { ...state, wordMeaningData: action.payload };
+    default:
+      return state;
+  }
+};
 
 interface VocabularyListProps {
   mode: string;
@@ -61,8 +73,14 @@ const VocabularyList: FC<VocabularyListProps> = ({
   const [isInitialRender, setIsInitialRender] = useState<boolean>(true);
   const [onMobile, setOnMobile] = useState(isMobile());
   const [user, setUser] = useRecoilState(userState);
+  const [activeTab, setActiveTab] = useState("1");
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const [state, dispatch] = useReducer(reducer, {
+    loading: false,
+    wordMeaningData: null,
+  });
 
   const shortPressQuestionAction = (word) =>
     onQuestionClick(word.phrase.sourceText, parseLocale(user.locale));
@@ -93,6 +111,19 @@ const VocabularyList: FC<VocabularyListProps> = ({
     longPressQuestionAction,
     500
   );
+
+  const handleQuestionClick = async (phrase: string, language: string) => {
+    try {
+      setActiveTab("2");
+      dispatch({ type: "setLoadingFromWordMeaning", payload: true });
+      const meaning = await getPhraseMeaning(phrase, language);
+      dispatch({ type: "setLoadingFromWordMeaning", payload: false });
+      dispatch({ type: "setWordMeaningData", payload: meaning });
+    } catch (error) {
+      console.error("Error occurred:", error);
+      dispatch({ type: "setWordMeaningData", payload: "An error occurred." });
+    }
+  };
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -147,366 +178,357 @@ const VocabularyList: FC<VocabularyListProps> = ({
   }, [phrases]);
 
   return (
-    <Card
-      style={style}
-      title={<span style={{ fontWeight: "normal" }}>{title}: </span>}
-    >
-      <List
-        size="small"
-        dataSource={phrases}
-        renderItem={(word: VocabularyListUserPhrase, index: number) => {
-          const isSelected =
-            selectedUserPhrase?.phrase.sourceText === word.phrase.sourceText;
-
-          return (
-            <List.Item
-              key={word.sentenceNo + word.phrase.startPosition}
-              //className={isSelected ? "selected-word" : ""}
-              style={{ padding: "4px 0" }}
-              onClick={() => {
-                mode === "words" &&
-                  onWordClick &&
-                  onWordClick(word.phrase.sourceText);
-                mode === "words" && setSelectedWord(word.phrase.sourceText);
-                mode === "words" && setSelectedUserPhrase(word);
-              }}
-            >
-              {/* {mode === "words" && (
-                <List.Item.Meta
-                  className={mode === "words" ? "list-item-content" : ""}
-                  style={{ display: "flex", alignItems: "center" }}
-                  avatar={
-                    <DeleteOutlined
-                      onClick={() =>
-                        handleDeleteItem(
-                          word.phrase._id,
-                          word.phrase.sentenceId,
-                          word.phrase.startPosition,
-                          word.sentenceNo
-                        )
-                      }
-                    />
-                  }
-                  title={
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "100%",
+    <Card style={style} bodyStyle={{ padding: 0 }}>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
+      >
+        <TabPane tab={title} key="1">
+          <div className="vocabularyListScroll">
+            <div style={{ paddingTop: 10, paddingRight: 25, paddingLeft: 25 }}>
+              <List
+                size="small"
+                dataSource={phrases}
+                renderItem={(word: VocabularyListUserPhrase, index: number) => {
+                  return (
+                    <List.Item
+                      key={word.sentenceNo + word.phrase.startPosition}
+                      style={{ padding: "4px 0" }}
+                      onClick={() => {
+                        mode === "words" &&
+                          onWordClick &&
+                          onWordClick(word.phrase.sourceText);
+                        mode === "words" &&
+                          setSelectedWord(word.phrase.sourceText);
+                        mode === "words" && setSelectedUserPhrase(word);
                       }}
                     >
-                      <span
-                        ref={(el) => (itemRefs.current[index] = el)}
-                        style={{
-                          fontWeight: "normal",
-                          cursor: "default",
-                        }}
-                      >
-                        {word.phrase.sourceText} - {word.phrase.targetText}
-                      </span>
-                      <audio key="audio" ref={audioRef} />
-                      <CaretRightOutlined
-                        key="icon"
-                        onClick={() => {
-                          togglePlay;
-                          handlePlayClick(
-                            word.phrase.targetText,
-                            word.phrase.sourceLanguage
-                          );
-                        }}
-                      />
-                    </div>
-                  }
-                />
-              )} */}
-              {(mode === "phrases" || mode === "words") && onMobile && (
-                <List.Item.Meta
-                  style={{ display: "flex", alignItems: "center" }}
-                  title={
-                    <div>
-                      <div
-                        ref={(el) => (itemRefs.current[index] = el)}
-                        style={{
-                          fontWeight: "normal",
-                          cursor: mode === "phrases" ? "default" : "pointer",
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                      >
-                        <div
-                          style={{
-                            width: "50%",
-                            textAlign: "left",
-                            marginBottom: 10,
-                          }}
-                          onClick={() => {
-                            togglePlay;
-                            handlePlayClick(
-                              word.phrase.sourceText,
-                              word.phrase.sourceLanguage
-                            );
-                          }}
-                        >
-                          <span style={{ fontWeight: 600 }}>
-                            {word.phrase.sourceText}
-                          </span>
-                          <CaretRightOutlined
-                            key="icon"
-                            onClick={() => {
-                              togglePlay;
-                              handlePlayClick(
-                                word.phrase.sourceText,
-                                word.phrase.sourceLanguage
-                              );
-                            }}
-                          />
-                        </div>
-                        <div
-                          style={{
-                            width: "50%",
-                            textAlign: "left",
-                            paddingLeft: "10px",
-                            borderLeft: "1px solid #000",
-                          }}
-                        >
-                          {/* <div> */}
-                          {word.phrase.targetText}
-                          <CaretRightOutlined
-                            key="icon"
-                            onClick={() => {
-                              togglePlay;
-                              handlePlayClick(
-                                word.phrase.targetText,
-                                parseLocale(user.locale)
-                              );
-                            }}
-                          />
-                        </div>
-                        {/* </div> */}
-                      </div>
-                      <audio key="audio" ref={audioRef} />
-                      <div
-                        style={{
-                          textAlign: "left",
-                          width: "50%",
-                        }}
-                        onClick={() => {
-                          togglePlay;
-                          handlePlayClick(
-                            word.phrase.targetText,
-                            parseLocale(user.locale)
-                          );
-                        }}
-                      >
-                        <Space>
-                          <Button
-                            type="primary"
-                            icon={<DeleteOutlined />}
-                            onClick={() =>
-                              handleDeleteItem(
-                                word.phrase._id,
-                                word.phrase.sentenceId,
-                                word.phrase.startPosition,
-                                word.sentenceNo
-                              )
-                            }
-                          />
-                          {parseLocale(user.locale) !==
-                            word.phrase.sourceLanguage && (
-                            <>
-                              <Button
-                                type="default"
-                                icon={<QuestionCircleOutlined />}
-                                onClick={() =>
-                                  onQuestionClick(
-                                    word.phrase.sourceText,
-                                    parseLocale(user.locale)
-                                  )
-                                }
-                                {...pressQuestionHandlers}
-                                className={"noselect"}
-                              />
-                              <Button
-                                type="default"
-                                icon={<CommentOutlined />}
-                                onClick={() =>
-                                  onAlternativesClick(word.phrase.sourceText)
-                                }
-                                {...pressAlternativesHandlers}
-                                className={"noselect"}
-                              />
-                            </>
-                          )}
-                          {parseLocale(user.locale) !==
-                            word.phrase.targetLanguage && (
-                            <>
-                              <Button
-                                type="default"
-                                icon={<QuestionCircleOutlined />}
+                      {(mode === "phrases" || mode === "words") && onMobile && (
+                        <List.Item.Meta
+                          style={{ display: "flex", alignItems: "center" }}
+                          title={
+                            <div>
+                              <div
+                                ref={(el) => (itemRefs.current[index] = el)}
+                                style={{
+                                  fontWeight: "normal",
+                                  cursor:
+                                    mode === "phrases" ? "default" : "pointer",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  width: "100%",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: "50%",
+                                    textAlign: "left",
+                                    marginBottom: 10,
+                                    marginRight: 5,
+                                  }}
+                                  onClick={() => {
+                                    togglePlay;
+                                    handlePlayClick(
+                                      word.phrase.sourceText,
+                                      word.phrase.sourceLanguage
+                                    );
+                                  }}
+                                >
+                                  <span style={{ fontWeight: 600 }}>
+                                    {word.phrase.sourceText}
+                                  </span>
+                                  <CaretRightOutlined
+                                    key="icon"
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.sourceText,
+                                        word.phrase.sourceLanguage
+                                      );
+                                    }}
+                                  />
+                                </div>
+                                <div
+                                  style={{
+                                    width: "50%",
+                                    textAlign: "left",
+                                    paddingLeft: "10px",
+                                    borderLeft: "1px solid #000",
+                                  }}
+                                >
+                                  <span style={{ fontWeight: 600 }}>
+                                    {word.phrase.targetText}
+                                  </span>
+                                  <CaretRightOutlined
+                                    key="icon"
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.targetText,
+                                        parseLocale(user.locale)
+                                      );
+                                    }}
+                                  />
+                                </div>
+                                {/* </div> */}
+                              </div>
+                              <audio key="audio" ref={audioRef} />
+                              <div
+                                style={{
+                                  textAlign: "left",
+                                  width: "50%",
+                                  marginBottom: 20,
+                                }}
                                 onClick={() => {
-                                  onQuestionClick(
+                                  togglePlay;
+                                  handlePlayClick(
                                     word.phrase.targetText,
                                     parseLocale(user.locale)
                                   );
                                 }}
-                                {...pressQuestionHandlers}
-                                className={"noselect"}
-                              />
-                              <Button
-                                type="default"
-                                icon={<CommentOutlined />}
-                                onClick={() =>
-                                  onAlternativesClick(word.phrase.targetText)
-                                }
-                                {...pressAlternativesHandlers}
-                                className={"noselect"}
-                              />
-                            </>
-                          )}
-                        </Space>
-                      </div>
-                    </div>
-                  }
-                />
-              )}
-              {(mode === "phrases" || mode === "words") && !onMobile && (
-                <List.Item.Meta
-                  style={{ display: "flex", alignItems: "center" }}
-                  title={
-                    <div>
-                      <div
-                        ref={(el) => (itemRefs.current[index] = el)}
-                        style={{
-                          fontWeight: "normal",
-                          cursor: mode === "phrases" ? "default" : "pointer",
-                          display: "flex",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Space>
-                          <DeleteOutlined
-                            onClick={() =>
-                              handleDeleteItem(
-                                word.phrase._id,
-                                word.phrase.sentenceId,
-                                word.phrase.startPosition,
-                                word.sentenceNo
-                              )
+                              >
+                                <Space>
+                                  <Button
+                                    type="primary"
+                                    icon={<DeleteOutlined />}
+                                    onClick={() =>
+                                      handleDeleteItem(
+                                        word.phrase._id,
+                                        word.phrase.sentenceId,
+                                        word.phrase.startPosition,
+                                        word.sentenceNo
+                                      )
+                                    }
+                                  />
+                                  {parseLocale(user.locale) !==
+                                    word.phrase.sourceLanguage && (
+                                    <>
+                                      <Button
+                                        type="default"
+                                        icon={<QuestionCircleOutlined />}
+                                        onClick={() =>
+                                          handleQuestionClick(
+                                            word.phrase.sourceText,
+                                            parseLocale(user.locale)
+                                          )
+                                        }
+                                        {...pressQuestionHandlers}
+                                        className={"noselect"}
+                                      />
+                                      <Button
+                                        type="default"
+                                        icon={<CommentOutlined />}
+                                        onClick={() =>
+                                          onAlternativesClick(
+                                            word.phrase.sourceText
+                                          )
+                                        }
+                                        {...pressAlternativesHandlers}
+                                        className={"noselect"}
+                                      />
+                                    </>
+                                  )}
+                                  {parseLocale(user.locale) !==
+                                    word.phrase.targetLanguage && (
+                                    <>
+                                      <Button
+                                        type="default"
+                                        icon={<QuestionCircleOutlined />}
+                                        onClick={() =>
+                                          handleQuestionClick(
+                                            word.phrase.sourceText,
+                                            parseLocale(user.locale)
+                                          )
+                                        }
+                                        {...pressQuestionHandlers}
+                                        className={"noselect"}
+                                      />
+                                      <Button
+                                        type="default"
+                                        icon={<CommentOutlined />}
+                                        onClick={() =>
+                                          onAlternativesClick(
+                                            word.phrase.targetText
+                                          )
+                                        }
+                                        {...pressAlternativesHandlers}
+                                        className={"noselect"}
+                                      />
+                                    </>
+                                  )}
+                                </Space>
+                              </div>
+                            </div>
+                          }
+                        />
+                      )}
+                      {(mode === "phrases" || mode === "words") &&
+                        !onMobile && (
+                          <List.Item.Meta
+                            style={{ display: "flex", alignItems: "center" }}
+                            title={
+                              <div>
+                                <div
+                                  ref={(el) => (itemRefs.current[index] = el)}
+                                  style={{
+                                    fontWeight: "normal",
+                                    cursor:
+                                      mode === "phrases"
+                                        ? "default"
+                                        : "pointer",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Space>
+                                    <DeleteOutlined
+                                      onClick={() =>
+                                        handleDeleteItem(
+                                          word.phrase._id,
+                                          word.phrase.sentenceId,
+                                          word.phrase.startPosition,
+                                          word.sentenceNo
+                                        )
+                                      }
+                                    />
+                                    {parseLocale(user.locale) !==
+                                      word.phrase.sourceLanguage && (
+                                      <>
+                                        <QuestionCircleOutlined
+                                          onClick={() =>
+                                            onQuestionClick(
+                                              word.phrase.sourceText,
+                                              parseLocale(user.locale)
+                                            )
+                                          }
+                                          {...pressQuestionHandlers}
+                                          className={"noselect"}
+                                        />
+                                        <CommentOutlined
+                                          onClick={() =>
+                                            onAlternativesClick(
+                                              word.phrase.sourceText
+                                            )
+                                          }
+                                          {...pressAlternativesHandlers}
+                                          className={"noselect"}
+                                        />
+                                      </>
+                                    )}
+                                  </Space>
+                                  <div
+                                    style={{
+                                      width: "50%",
+                                      textAlign: "right",
+                                      paddingRight: "20px",
+                                    }}
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.sourceText,
+                                        word.phrase.sourceLanguage
+                                      );
+                                    }}
+                                  >
+                                    {word.phrase.sourceText}
+                                    <CaretRightOutlined
+                                      key="icon"
+                                      onClick={() => {
+                                        togglePlay;
+                                        handlePlayClick(
+                                          word.phrase.sourceText,
+                                          word.phrase.sourceLanguage
+                                        );
+                                      }}
+                                      style={{ marginLeft: "5px" }}
+                                    />
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "50%",
+                                      textAlign: "left",
+                                      paddingLeft: "20px",
+                                      borderLeft: "1px solid #000",
+                                    }}
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.targetText,
+                                        word.phrase.targetLanguage
+                                      );
+                                    }}
+                                  >
+                                    {word.phrase.targetText}
+                                    <CaretRightOutlined
+                                      style={{ marginLeft: "5px" }}
+                                      key="icon"
+                                      onClick={() => {
+                                        togglePlay;
+                                        handlePlayClick(
+                                          word.phrase.targetText,
+                                          word.phrase.targetLanguage
+                                        );
+                                      }}
+                                    />
+                                  </div>
+                                  <audio key="audio" ref={audioRef} />
+                                  <Space>
+                                    {parseLocale(user.locale) !==
+                                      word.phrase.targetLanguage && (
+                                      <>
+                                        <QuestionCircleOutlined
+                                          onClick={() =>
+                                            handleQuestionClick(
+                                              word.phrase.sourceText,
+                                              parseLocale(user.locale)
+                                            )
+                                          }
+                                          {...pressQuestionHandlers}
+                                          className={"noselect"}
+                                        />
+                                        <CommentOutlined
+                                          onClick={() =>
+                                            onAlternativesClick(
+                                              word.phrase.sourceText
+                                            )
+                                          }
+                                          {...pressAlternativesHandlers}
+                                          className={"noselect"}
+                                        />
+                                      </>
+                                    )}
+                                  </Space>
+                                </div>
+                              </div>
                             }
                           />
-                          {parseLocale(user.locale) !==
-                            word.phrase.sourceLanguage && (
-                            <>
-                              <QuestionCircleOutlined
-                                onClick={() =>
-                                  onQuestionClick(
-                                    word.phrase.sourceText,
-                                    parseLocale(user.locale)
-                                  )
-                                }
-                                {...pressQuestionHandlers}
-                                className={"noselect"}
-                              />
-                              <CommentOutlined
-                                onClick={() =>
-                                  onAlternativesClick(word.phrase.sourceText)
-                                }
-                                {...pressAlternativesHandlers}
-                                className={"noselect"}
-                              />
-                            </>
-                          )}
-                        </Space>
-                        <div
-                          style={{
-                            width: "50%",
-                            textAlign: "right",
-                            paddingRight: "20px",
-                          }}
-                          onClick={() => {
-                            togglePlay;
-                            handlePlayClick(
-                              word.phrase.sourceText,
-                              word.phrase.sourceLanguage
-                            );
-                          }}
-                        >
-                          {word.phrase.sourceText}
-                          <CaretRightOutlined
-                            key="icon"
-                            onClick={() => {
-                              togglePlay;
-                              handlePlayClick(
-                                word.phrase.sourceText,
-                                word.phrase.sourceLanguage
-                              );
-                            }}
-                            style={{ marginLeft: "5px" }}
-                          />
-                        </div>
-                        <div
-                          style={{
-                            width: "50%",
-                            textAlign: "left",
-                            paddingLeft: "20px",
-                            borderLeft: "1px solid #000",
-                          }}
-                          onClick={() => {
-                            togglePlay;
-                            handlePlayClick(
-                              word.phrase.targetText,
-                              word.phrase.targetLanguage
-                            );
-                          }}
-                        >
-                          {word.phrase.targetText}
-                          <CaretRightOutlined
-                            style={{ marginLeft: "5px" }}
-                            key="icon"
-                            onClick={() => {
-                              togglePlay;
-                              handlePlayClick(
-                                word.phrase.targetText,
-                                word.phrase.targetLanguage
-                              );
-                            }}
-                          />
-                        </div>
-                        <audio key="audio" ref={audioRef} />
-                        <Space>
-                          {parseLocale(user.locale) !==
-                            word.phrase.targetLanguage && (
-                            <>
-                              <QuestionCircleOutlined
-                                onClick={() =>
-                                  onQuestionClick(
-                                    word.phrase.targetText,
-                                    parseLocale(user.locale)
-                                  )
-                                }
-                                {...pressQuestionHandlers}
-                                className={"noselect"}
-                              />
-                              <CommentOutlined
-                                onClick={() =>
-                                  onAlternativesClick(word.phrase.sourceText)
-                                }
-                                {...pressAlternativesHandlers}
-                                className={"noselect"}
-                              />
-                            </>
-                          )}
-                        </Space>
-                      </div>
-                    </div>
-                  }
-                />
-              )}
-            </List.Item>
-          );
-        }}
-      />
+                        )}
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </div>
+        </TabPane>
+        <TabPane tab="Meaning" key="2">
+          <div
+            style={{
+              paddingRight: 25,
+              paddingLeft: 25,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            className="vocabularyListScroll"
+          >
+            <Spin spinning={state.loading} size="large">
+              {state.wordMeaningData && state.wordMeaningData.data}
+            </Spin>
+          </div>
+        </TabPane>
+        <TabPane tab="Alternatives" key="3"></TabPane>
+      </Tabs>
     </Card>
   );
 };
