@@ -34,6 +34,7 @@ interface TranslateBoxProps {
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
   selectedLanguageTo: string;
   onChangeMode: (mode: string) => void;
+  magnifyingGlassRef: any;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -51,6 +52,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   onAddUserPhrase,
   selectedLanguageTo,
   onChangeMode,
+  magnifyingGlassRef,
 }) => {
   const { libraryId } = useParams();
   const [error, setError] = useState<Error | null>(null);
@@ -63,6 +65,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [saveWordComplete, setSaveWordComplete] = useState(false);
   const [sentenceNo, setSentenceNo] = useState<number>();
   const touchActive = useRef(false);
+  const [magnifyingGlassStyle, setMagnifyingGlassStyle] = useState<any | null>(
+    null
+  );
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
@@ -165,7 +170,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       setMouseDown(true);
       touchActive.current = true;
       setSelectedSentence(sentenceNumber);
-      setSelectedWords([{ word, wordIndexInSentence, sentenceNumber }]);
+      setSelectedWords([
+        { word, wordIndexInSentence, sentenceNumber, sentenceText },
+      ]);
       setSelectedSentenceText(sentenceText);
     } else if (
       ((eventType === "enter" && mouseDown) ||
@@ -358,71 +365,116 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     wordIndex: number,
     event: React.TouchEvent
   ) => {
-    switch (type) {
-      case "start":
-        touchActive.current = true;
-        handleMouseEvent("down", word, sentenceNumber, sentenceText, wordIndex);
-      //break;
-      case "move":
-        /* if (event.cancelable) {
-          event.preventDefault();
-        } else {
-          document.body.style.overflow = "hidden";
-        } */
-        console.log(
-          "touchActive.current" + JSON.stringify(touchActive.current, null, 2)
-        );
-        if (touchActive.current) {
+    if (isMobile) {
+      switch (type) {
+        case "start":
           touchActive.current = true;
+          handleMouseEvent(
+            "down",
+            word,
+            sentenceNumber,
+            sentenceText,
+            wordIndex
+          );
           const touch = event.touches[0];
+
           const elementUnderFinger = document.elementFromPoint(
             touch.clientX,
             touch.clientY
           );
-          const newWordElement = elementUnderFinger!.closest(".translate-word");
-          if (newWordElement) {
-            const newWordIndexStr =
-              newWordElement.getAttribute("data-word-index");
-            if (newWordIndexStr === null) {
-              console.error(
-                `Could not find "data-word-index" attribute in element`
-              );
-              return;
-            }
-            console.log(
-              "newWordIndexStr" + JSON.stringify(newWordIndexStr, null, 2)
-            );
 
-            const newWordIndex = parseInt(newWordIndexStr, 10);
-            handleMouseEvent(
-              "down",
-              word,
-              sentenceNumber,
-              sentenceText,
-              wordIndex
+          const newWordElement = elementUnderFinger!.closest(".translate-word");
+          const newWordElementRect = newWordElement
+            ? newWordElement.getBoundingClientRect()
+            : null;
+          if (newWordElement) {
+            setMagnifyingGlassStyle({
+              bottom: `${
+                window.innerHeight -
+                (newWordElementRect?.top || touch.clientY) +
+                20
+              }px`,
+              left: `${newWordElementRect?.left || touch.clientX}px`,
+              visibility: "visible",
+            });
+          }
+          break;
+        case "move":
+          if (touchActive.current) {
+            touchActive.current = true;
+            const touch = event.touches[0];
+
+            const elementUnderFinger = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
             );
-            if (newWordIndex !== wordIndex) {
-              handleMouseEvent(
-                "enter",
+            const newWordElement =
+              elementUnderFinger!.closest(".translate-word");
+            if (newWordElement) {
+              const newWordIndexStr =
+                newWordElement.getAttribute("data-word-index");
+              if (newWordIndexStr === null) {
+                console.error(
+                  `Could not find "data-word-index" attribute in element`
+                );
+                return;
+              }
+
+              const newWordIndex = parseInt(newWordIndexStr, 10);
+              /* handleMouseEvent(
+                "down",
                 word,
                 sentenceNumber,
                 sentenceText,
-                newWordIndex
-              );
+                wordIndex
+              ); */
+              if (newWordIndex !== wordIndex) {
+                handleMouseEvent(
+                  "enter",
+                  word,
+                  sentenceNumber,
+                  sentenceText,
+                  newWordIndex
+                );
+              }
             }
           }
-        }
-        //}
-        break;
-      case "end":
-        touchActive.current = false;
-        handleMouseUp(word, sentenceNumber, sentenceText);
-        /* if (event.cancelable) {
+          //}
+          break;
+        case "end":
+          if (magnifyingGlassRef.current) {
+            magnifyingGlassRef.current.style.visibility = "hidden";
+          }
+          touchActive.current = false;
+          handleMouseUp(word, sentenceNumber, sentenceText);
+          /* if (event.cancelable) {
           event.preventDefault();
         } */
-        break;
+          setMagnifyingGlassStyle({ visibility: "hidden" });
+          break;
+      }
     }
   };
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkDeviceType = () => {
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      setIsMobile(isMobile);
+    };
+
+    // Check on mount
+    checkDeviceType();
+
+    // Check when window resizes
+    window.addEventListener("resize", checkDeviceType);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("resize", checkDeviceType);
+    };
+  }, []);
 
   return (
     <>

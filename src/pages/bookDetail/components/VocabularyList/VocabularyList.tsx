@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Card, List, Space } from "antd";
+import { Button, Card, List, Space, Typography } from "antd";
 import {
   CaretRightOutlined,
   CommentOutlined,
@@ -14,6 +14,7 @@ import { notification } from "antd";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { parseLocale } from "@/utils/stringUtils";
+import usePressHandlers from "@/hooks/userPressHandlers";
 
 interface VocabularyListProps {
   mode: string;
@@ -63,24 +64,35 @@ const VocabularyList: FC<VocabularyListProps> = ({
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const longPressOptions = {
-    isPreventDefault: true,
-    delay: 500, // duration of long press in ms
-  };
+  const shortPressQuestionAction = (word) =>
+    onQuestionClick(word.phrase.sourceText, parseLocale(user.locale));
 
-  const onLongPressComment = useLongPress(() => {
-    notification.info({
-      message: "Information",
-      description: "This is a comment icon.",
-    });
-  }, longPressOptions);
+  const shortPressAlternativesAction = (word) =>
+    onAlternativesClick(word.phrase.sourceText);
 
-  const onLongPressQuestion = useLongPress(() => {
+  const longPressQuestionAction = () =>
     notification.info({
       message: "Information",
       description: "This is a question icon.",
     });
-  }, longPressOptions);
+
+  const longPressAlternativesAction = () =>
+    notification.info({
+      message: "Information",
+      description: "This is a question icon.",
+    });
+
+  const pressQuestionHandlers = usePressHandlers(
+    shortPressQuestionAction,
+    longPressQuestionAction,
+    500
+  );
+
+  const pressAlternativesHandlers = usePressHandlers(
+    shortPressQuestionAction,
+    longPressQuestionAction,
+    500
+  );
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -219,13 +231,14 @@ const VocabularyList: FC<VocabularyListProps> = ({
                           cursor: mode === "phrases" ? "default" : "pointer",
                           display: "flex",
                           justifyContent: "space-between",
+                          width: "100%",
                         }}
                       >
                         <div
                           style={{
                             width: "50%",
-                            textAlign: "right",
-                            paddingRight: "20px",
+                            textAlign: "left",
+                            marginBottom: 10,
                           }}
                           onClick={() => {
                             togglePlay;
@@ -235,25 +248,48 @@ const VocabularyList: FC<VocabularyListProps> = ({
                             );
                           }}
                         >
-                          {word.phrase.sourceText}
+                          <span style={{ fontWeight: 600 }}>
+                            {word.phrase.sourceText}
+                          </span>
+                          <CaretRightOutlined
+                            key="icon"
+                            onClick={() => {
+                              togglePlay;
+                              handlePlayClick(
+                                word.phrase.sourceText,
+                                word.phrase.sourceLanguage
+                              );
+                            }}
+                          />
                         </div>
                         <div
                           style={{
                             width: "50%",
                             textAlign: "left",
-                            paddingLeft: "20px",
+                            paddingLeft: "10px",
                             borderLeft: "1px solid #000",
                           }}
                         >
+                          {/* <div> */}
                           {word.phrase.targetText}
+                          <CaretRightOutlined
+                            key="icon"
+                            onClick={() => {
+                              togglePlay;
+                              handlePlayClick(
+                                word.phrase.targetText,
+                                parseLocale(user.locale)
+                              );
+                            }}
+                          />
                         </div>
+                        {/* </div> */}
                       </div>
                       <audio key="audio" ref={audioRef} />
                       <div
                         style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
+                          textAlign: "left",
+                          width: "50%",
                         }}
                         onClick={() => {
                           togglePlay;
@@ -264,7 +300,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                         }}
                       >
                         <Space>
-                          <DeleteOutlined
+                          <Button
+                            type="primary"
+                            icon={<DeleteOutlined />}
                             onClick={() =>
                               handleDeleteItem(
                                 word.phrase._id,
@@ -277,65 +315,55 @@ const VocabularyList: FC<VocabularyListProps> = ({
                           {parseLocale(user.locale) !==
                             word.phrase.sourceLanguage && (
                             <>
-                              <QuestionCircleOutlined
+                              <Button
+                                type="default"
+                                icon={<QuestionCircleOutlined />}
                                 onClick={() =>
                                   onQuestionClick(
                                     word.phrase.sourceText,
                                     parseLocale(user.locale)
                                   )
                                 }
-                                {...onLongPressQuestion}
+                                {...pressQuestionHandlers}
+                                className={"noselect"}
                               />
-                              <CommentOutlined
+                              <Button
+                                type="default"
+                                icon={<CommentOutlined />}
                                 onClick={() =>
                                   onAlternativesClick(word.phrase.sourceText)
                                 }
-                                {...onLongPressComment}
+                                {...pressAlternativesHandlers}
+                                className={"noselect"}
                               />
                             </>
                           )}
-                          <CaretRightOutlined
-                            key="icon"
-                            onClick={() => {
-                              togglePlay;
-                              handlePlayClick(
-                                word.phrase.sourceText,
-                                word.phrase.sourceLanguage
-                              );
-                            }}
-                          />
-                        </Space>
-                        <Space>
                           {parseLocale(user.locale) !==
                             word.phrase.targetLanguage && (
                             <>
-                              <QuestionCircleOutlined
-                                onClick={() =>
+                              <Button
+                                type="default"
+                                icon={<QuestionCircleOutlined />}
+                                onClick={() => {
                                   onQuestionClick(
                                     word.phrase.targetText,
                                     parseLocale(user.locale)
-                                  )
-                                }
-                                {...onLongPressQuestion}
+                                  );
+                                }}
+                                {...pressQuestionHandlers}
+                                className={"noselect"}
                               />
-                              <CommentOutlined
+                              <Button
+                                type="default"
+                                icon={<CommentOutlined />}
                                 onClick={() =>
                                   onAlternativesClick(word.phrase.targetText)
                                 }
-                                {...onLongPressComment}
+                                {...pressAlternativesHandlers}
+                                className={"noselect"}
                               />
                             </>
                           )}
-                          <CaretRightOutlined
-                            key="icon"
-                            onClick={() => {
-                              togglePlay;
-                              handlePlayClick(
-                                word.phrase.targetText,
-                                parseLocale(user.locale)
-                              );
-                            }}
-                          />
                         </Space>
                       </div>
                     </div>
@@ -377,13 +405,15 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     parseLocale(user.locale)
                                   )
                                 }
-                                {...onLongPressQuestion}
+                                {...pressQuestionHandlers}
+                                className={"noselect"}
                               />
                               <CommentOutlined
                                 onClick={() =>
                                   onAlternativesClick(word.phrase.sourceText)
                                 }
-                                {...onLongPressComment}
+                                {...pressAlternativesHandlers}
+                                className={"noselect"}
                               />
                             </>
                           )}
@@ -455,13 +485,15 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     parseLocale(user.locale)
                                   )
                                 }
-                                {...onLongPressQuestion}
+                                {...pressQuestionHandlers}
+                                className={"noselect"}
                               />
                               <CommentOutlined
                                 onClick={() =>
                                   onAlternativesClick(word.phrase.sourceText)
                                 }
-                                {...onLongPressComment}
+                                {...pressAlternativesHandlers}
+                                className={"noselect"}
                               />
                             </>
                           )}

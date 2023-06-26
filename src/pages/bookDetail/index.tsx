@@ -1,4 +1,11 @@
-import React, { FC, useEffect, useCallback, useMemo, useReducer } from "react";
+import React, {
+  FC,
+  useEffect,
+  useCallback,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react";
 import {
   Card,
   Row,
@@ -43,6 +50,7 @@ import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 import Flag from "react-world-flags";
 import Masonry from "react-masonry-css";
+import { relative } from "path";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -699,6 +707,20 @@ const BookDetail: FC = () => {
     </div>
   );
 
+  const magnifyingGlassRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const magnifyingGlass = document.createElement("div");
+    magnifyingGlass.className = "magnifying-glass";
+    document.body.appendChild(magnifyingGlass);
+    magnifyingGlassRef.current = magnifyingGlass;
+
+    // Make sure to remove the element when this component unmounts.
+    return () => {
+      document.body.removeChild(magnifyingGlass);
+    };
+  }, []);
+
   const translateBoxContainer = (
     <div>
       <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
@@ -762,6 +784,7 @@ const BookDetail: FC = () => {
           }
           selectedLanguageTo={state.selectedLanguageTo}
           onChangeMode={setMode}
+          magnifyingGlassRef={magnifyingGlassRef}
         />
       </Card>
     </div>
@@ -819,7 +842,7 @@ const BookDetail: FC = () => {
     </Card>
   );
 
-  const isMobile = window.innerWidth <= 700;
+  const isMobile = window.innerWidth <= 600;
 
   return (
     <PageContainer title={false} className={styles.container}>

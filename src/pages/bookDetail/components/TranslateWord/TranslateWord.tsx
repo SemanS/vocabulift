@@ -334,9 +334,9 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   let touchTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   const handleTouchStart = (event: React.TouchEvent) => {
-    touchTimeoutId = setTimeout(() => {
-      // Your scroll logic here
-    }, 500); // Set timeout to 500 ms
+    //touchTimeoutId = setTimeout(() => {
+    // Your scroll logic here
+    //}, 500); // Set timeout to 500 ms
 
     props.onTouchStart?.(
       props.word!,
@@ -347,6 +347,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleTouchMove = (event: React.TouchEvent) => {
+    // Normal move handling here
     props.onTouchMove?.(
       props.word!,
       props.sentenceNumber!,
@@ -356,16 +357,21 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleTouchEnd = (event: React.TouchEvent) => {
+    /* if (touchTimeoutId !== null) {
+      clearTimeout(touchTimeoutId);
+      touchTimeoutId = null; */
+    // Normal end handling here
     props.onTouchEnd?.(
       props.sentenceTranslation!,
       props.sentenceNumber!,
       props.translation!,
       event
     );
+    //}
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
+    setIsHovered(false); // Reset the hovered state
   };
 
   return renderTooltip(
@@ -373,7 +379,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       style={{
         cursor: "pointer",
         whiteSpace: "pre-wrap",
-        touchAction: "auto",
+        touchAction: props.isSelecting ? "none" : "auto",
       }}
       ref={textRef}
       className={`${className} ${styles.disableSelection} translate-word`}

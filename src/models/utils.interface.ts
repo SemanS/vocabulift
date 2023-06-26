@@ -7,4 +7,5 @@ export interface SelectedWord {
   word: string;
   wordIndexInSentence: number;
   sentenceNumber: number;
+  sentenceText: string;
 }
