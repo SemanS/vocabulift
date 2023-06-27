@@ -35,7 +35,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
               zh_CN: "图书",
               en_US: "library",
             },
-            icon: "book",
+            icon: "library",
             key: "library",
           },
           {

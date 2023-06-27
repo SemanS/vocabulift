@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useGuide } from "../guide/useGuide";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { userState } from "@/stores/user";
@@ -12,6 +12,7 @@ import {
   FrownOutlined,
   UnorderedListOutlined,
   SettingOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
@@ -19,7 +20,7 @@ import RightContent from "./components/RightContent";
 import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
-import { Button, Space } from "antd";
+import { Space } from "antd";
 import {
   libraryIdState,
   currentPageState,
@@ -27,17 +28,18 @@ import {
 } from "@/stores/library";
 
 const IconMap: { [key: string]: React.ReactNode } = {
-  book: <ReadOutlined />,
+  library: <ReadOutlined />,
   home: <HomeOutlined />,
   frown: <FrownOutlined />,
   vocabulary: <UnorderedListOutlined />,
   settings: <SettingOutlined />,
+  last: <EyeOutlined />,
 };
 
 const LayoutPage: FC = () => {
   const [user, setUser] = useRecoilState(userState);
   const [pathname, setPathname] = useState("/welcome");
-  const { device, collapsed, newUser, settings } = user;
+  const { device, newUser, settings } = user;
   const isMobile = device === "MOBILE";
   const { driverStart } = useGuide();
   const location = useLocation();
@@ -65,23 +67,50 @@ const LayoutPage: FC = () => {
     if (libraryId) {
       m.push({
         path: `/library/${libraryId}?currentPage=${currentPage}&pageSize=${pageSize}&targetLanguage=${user.targetLanguage}`,
+        key: "last-video",
         name: "library",
-        locale: "menu.library",
-        icon: IconMap["library" as string],
+        locale: "menu.last",
+        icon: IconMap["last" as string],
         items: undefined,
       });
-
-      /* m.push({
-        path: "/",
-        name: "settings",
-        locale: "menu.settings",
-        icon: IconMap["settings" as string],
-        items: undefined,
-      }); */
     }
 
     return m;
   };
+
+  const selectedKeys = useMemo(() => {
+    // This splits the path into parts using / as the separator.
+    const pathParts = location.pathname.split("/");
+
+    // If the path starts with "/library" but is not exactly "/library", return ['last-video'].
+    // You may need to adjust this based on your actual "/last-video" path.
+    if (pathParts[1] === "library" && pathParts.length > 2) {
+      return ["last-video"];
+    }
+
+    // If the path is exactly "/library", return ['library'].
+    // For all other paths, return an array containing the first part of the path.
+    return pathParts.length === 2 && pathParts[1] === "library"
+      ? ["library"]
+      : [pathParts[1]];
+  }, [location.pathname]);
+
+  const [collapsed, setCollapsed] = useState(false);
+  const layoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (layoutRef.current && !layoutRef.current.contains(event.target)) {
+        setCollapsed(true);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [layoutRef, setCollapsed]);
 
   const [settingsDrawerVisible, setSettingsDrawerVisible] = useState(false);
 
@@ -96,57 +125,42 @@ const LayoutPage: FC = () => {
         settingsDrawerVisible,
       }}
     >
-      <ProLayout
-        location={{
-          pathname: location.pathname,
-        }}
-        breadcrumbRender={false}
-        layout="top"
-        logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
-        //{...settings}
-        formatMessage={formatMessage}
-        onMenuHeaderClick={() => navigate("/")}
-        headerTitleRender={() => (
-          <Space style={{ display: "flex", alignItems: "left" }}>
-            <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
-            <h1 style={{ marginLeft: "0px" }}>VocabuLift</h1>
-          </Space>
-        )}
-        menuDataRender={() => [...loopMenuItem(user.menuList)]}
-        menuItemRender={(menuItemProps, defaultDom) => {
-          if (
-            menuItemProps.isUrl ||
-            !menuItemProps.path ||
-            location.pathname === menuItemProps.path
-          ) {
+      <div ref={layoutRef}>
+        <ProLayout
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          location={{
+            pathname: location.pathname,
+          }}
+          selectedKeys={selectedKeys}
+          breadcrumbRender={false}
+          layout="top"
+          logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
+          formatMessage={formatMessage}
+          onMenuHeaderClick={() => navigate("/")}
+          headerTitleRender={() => (
+            <Space style={{ display: "flex", alignItems: "left" }}>
+              <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
+              <h1 style={{ marginLeft: "0px" }}>VocabuLift</h1>
+            </Space>
+          )}
+          menuDataRender={() => [...loopMenuItem(user.menuList)]}
+          menuItemRender={(menuItemProps, defaultDom) => {
+            if (menuItemProps.isUrl) {
+              return defaultDom;
+            }
             return (
-              <Button>
-                <Link to={menuItemProps.path!}>{defaultDom}</Link>
-              </Button>
-            );
-          }
-          if (menuItemProps.name === "settings") {
-            return (
-              <Button
-                style={{ marginTop: "6px", backgroundColor: "#D7DFEA" }}
-                onClick={toggleSettingsDrawer}
-              >
+              <Link to={menuItemProps.path!} onClick={() => setCollapsed(true)}>
                 {defaultDom}
-              </Button>
+              </Link>
             );
-          } else {
-            return (
-              <Button>
-                <Link to={menuItemProps.path}>{defaultDom}</Link>
-              </Button>
-            );
-          }
-        }}
-        rightContentRender={() => <RightContent></RightContent>}
-        footerRender={() => <Footer />}
-      >
-        <Outlet />
-      </ProLayout>
+          }}
+          rightContentRender={() => <RightContent></RightContent>}
+          footerRender={() => <Footer />}
+        >
+          <Outlet />
+        </ProLayout>
+      </div>
     </SettingsDrawerContext.Provider>
   );
 };
