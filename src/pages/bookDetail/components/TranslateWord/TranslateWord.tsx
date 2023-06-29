@@ -3,7 +3,7 @@ import styles from "./TranslateWord.module.less";
 import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 import { isSingleWord } from "@/utils/utilMethods";
 import Tippy from "@tippyjs/react";
-import "tippy.js/dist/tippy.css"; // Optional for styling
+import "tippy.js/dist/tippy.css";
 
 interface TranslateWordProps {
   word?: string;
@@ -291,8 +291,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceNumber!,
       props.sentenceText!
     );
-
-    setIsHovered(true); // Show the tooltip immediately
+    setIsHovered(true);
+    console.log("isHovered" + JSON.stringify(isHovered, null, 2));
   };
 
   const handleMouseUp = () => {
@@ -320,9 +320,9 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     const shouldShowTooltip = props.isHighlightedFromVideo || isHovered;
 
-    /* if (!shouldShowTooltip) {
+    if (!shouldShowTooltip) {
       return children;
-    } */
+    }
 
     if (props.mode === "all") {
       return (

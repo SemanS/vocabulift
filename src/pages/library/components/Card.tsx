@@ -32,6 +32,7 @@ export const Card: React.FC<CardProps> = ({
   const [alertTwoDone, setAlertTwoDone] = useState(false);
   const [alertThreeDone, setAlertThreeDone] = useState(false);
   const [zIndex, setZIndex] = useState(0);
+  const [alertsVisible, setAlertsVisible] = useState(false);
 
   useEffect(() => {
     if (eventFinalized) {
@@ -48,6 +49,7 @@ export const Card: React.FC<CardProps> = ({
     if (progress >= 99) {
       setAlertThreeDone(true);
     }
+    setAlertsVisible(true);
   }, [progress, eventFinalized]);
 
   const isOngoingEvent =
@@ -159,7 +161,10 @@ export const Card: React.FC<CardProps> = ({
                 <div className={styles.percentage}>{progress}%</div>
               </div>
             </div>
-            <div className={styles.alertsContainer}>
+            <div
+              className={styles.alertsContainer}
+              style={{ visibility: alertsVisible ? "visible" : "hidden" }}
+            >
               <Alert
                 style={
                   isImgHovered
@@ -337,24 +342,6 @@ export const Card: React.FC<CardProps> = ({
                 </Typography.Text>
               </Col>
             </Row>
-            {/* <Row align="middle" className={styles.stats}>
-              <Col span={4}>
-                <Tooltip title="Likes">
-                  <LikeOutlined style={{ fontSize: "10px" }} />
-                </Tooltip>
-                <Typography.Text className={styles.likeDislikeCount}>
-                  <span style={{ fontSize: "10px" }}>{4}</span>
-                </Typography.Text>
-              </Col>
-              <Col span={4}>
-                <Tooltip title="Dislikes">
-                  <DislikeOutlined style={{ fontSize: "10px" }} />
-                </Tooltip>
-                <Typography.Text className={styles.likeDislikeCount}>
-                  <span style={{ fontSize: "10px" }}>{2}</span>
-                </Typography.Text>
-              </Col>
-            </Row> */}
             <Typography.Text
               className={styles.description}
               style={{ fontSize: "10px" }}
