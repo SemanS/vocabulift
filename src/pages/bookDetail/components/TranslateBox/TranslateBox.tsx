@@ -458,6 +458,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 
   return (
     <>
+      <MagnifyingGlass
+        style={magnifyingGlassStyle}
+        words={selectedWords}
+        sentence={selectedSentenceText}
+      />
       {visibleSourceTexts.map((sourceSentence, index) => {
         const targetSentence = visibleTargetTexts.find(
           (target) => target.sentenceNo === sourceSentence.sentenceNo
