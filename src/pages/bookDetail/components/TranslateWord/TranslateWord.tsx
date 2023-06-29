@@ -318,12 +318,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       return children as React.ReactElement;
     }
 
-    const shouldShowTooltip = props.isHighlightedFromVideo || isHovered;
-
-    if (!shouldShowTooltip) {
-      return children;
-    }
-
     if (props.mode === "all") {
       return (
         <Tippy

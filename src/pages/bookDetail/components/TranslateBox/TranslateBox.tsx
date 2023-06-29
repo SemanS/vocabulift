@@ -377,6 +377,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     wordIndex: number,
     event: React.TouchEvent
   ) => {
+    console.log("isMobile" + JSON.stringify(isMobile, null, 2));
     if (isMobile) {
       switch (type) {
         case "start":
@@ -458,11 +459,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 
   return (
     <>
-      <MagnifyingGlass
-        style={magnifyingGlassStyle}
-        words={selectedWords}
-        sentence={selectedSentenceText}
-      />
+      {isMobile && (
+        <MagnifyingGlass
+          style={magnifyingGlassStyle}
+          words={selectedWords}
+          sentence={selectedSentenceText}
+        />
+      )}
       {visibleSourceTexts.map((sourceSentence, index) => {
         const targetSentence = visibleTargetTexts.find(
           (target) => target.sentenceNo === sourceSentence.sentenceNo
@@ -602,7 +605,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     )}
                     isHighlightedFromVideo={index === highlightedSentenceIndex}
                     wordIndex={wordIndex}
-                    isSelecting={mouseDown || touchActive.current}
+                    //isSelecting={mouseDown || (isMobile && touchActive.current)}
+                    isSelecting={mouseDown}
                     sentenceTranslation={targetSentence?.sentenceText || ""}
                     vocabularyListUserPhrases={vocabularyListUserPhrases!}
                     currentPage={currentPage}
