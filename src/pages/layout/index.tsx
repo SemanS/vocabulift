@@ -79,11 +79,9 @@ const LayoutPage: FC = () => {
   };
 
   const selectedKeys = useMemo(() => {
-    // This splits the path into parts using / as the separator.
     const pathParts = location.pathname.split("/");
 
     // If the path starts with "/library" but is not exactly "/library", return ['last-video'].
-    // You may need to adjust this based on your actual "/last-video" path.
     if (pathParts[1] === "library" && pathParts.length > 2) {
       return ["last-video"];
     }

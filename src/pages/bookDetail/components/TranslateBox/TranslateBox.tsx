@@ -18,6 +18,7 @@ import {
   isWordInVocabularyList,
 } from "@/utils/utilMethods";
 import { notification } from "antd";
+import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
 
 interface TranslateBoxProps {
   mode: string;
@@ -376,83 +377,76 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     wordIndex: number,
     event: React.TouchEvent
   ) => {
-    if (isMobile) {
-      switch (type) {
-        case "start":
+    //if (isMobile) {
+    switch (type) {
+      case "start":
+        touchActive.current = true;
+        handleMouseEvent("down", word, sentenceNumber, sentenceText, wordIndex);
+        const touch = event.touches[0];
+
+        const elementUnderFinger = document.elementFromPoint(
+          touch.clientX,
+          touch.clientY
+        );
+
+        const newWordElement = elementUnderFinger!.closest(".translate-word");
+        const newWordElementRect = newWordElement
+          ? newWordElement.getBoundingClientRect()
+          : null;
+        if (newWordElement) {
+          setMagnifyingGlassStyle({
+            bottom: `${
+              window.innerHeight -
+              (newWordElementRect?.top || touch.clientY) +
+              20
+            }px`,
+            left: `${newWordElementRect?.left || touch.clientX}px`,
+            visibility: "visible",
+          });
+        }
+        break;
+      case "move":
+        if (touchActive.current) {
           touchActive.current = true;
-          handleMouseEvent(
-            "down",
-            word,
-            sentenceNumber,
-            sentenceText,
-            wordIndex
-          );
           const touch = event.touches[0];
 
           const elementUnderFinger = document.elementFromPoint(
             touch.clientX,
             touch.clientY
           );
-
           const newWordElement = elementUnderFinger!.closest(".translate-word");
-          const newWordElementRect = newWordElement
-            ? newWordElement.getBoundingClientRect()
-            : null;
           if (newWordElement) {
-            setMagnifyingGlassStyle({
-              bottom: `${
-                window.innerHeight -
-                (newWordElementRect?.top || touch.clientY) +
-                20
-              }px`,
-              left: `${newWordElementRect?.left || touch.clientX}px`,
-              visibility: "visible",
-            });
-          }
-          break;
-        case "move":
-          if (touchActive.current) {
-            touchActive.current = true;
-            const touch = event.touches[0];
-
-            const elementUnderFinger = document.elementFromPoint(
-              touch.clientX,
-              touch.clientY
-            );
-            const newWordElement =
-              elementUnderFinger!.closest(".translate-word");
-            if (newWordElement) {
-              const newWordIndexStr =
-                newWordElement.getAttribute("data-word-index");
-              if (newWordIndexStr === null) {
-                console.error(
-                  `Could not find "data-word-index" attribute in element`
-                );
-                return;
-              }
-              const newWordIndex = parseInt(newWordIndexStr, 10);
-              if (newWordIndex !== wordIndex) {
-                handleMouseEvent(
-                  "enter",
-                  word,
-                  sentenceNumber,
-                  sentenceText,
-                  newWordIndex
-                );
-              }
+            const newWordIndexStr =
+              newWordElement.getAttribute("data-word-index");
+            if (newWordIndexStr === null) {
+              console.error(
+                `Could not find "data-word-index" attribute in element`
+              );
+              return;
+            }
+            const newWordIndex = parseInt(newWordIndexStr, 10);
+            if (newWordIndex !== wordIndex) {
+              handleMouseEvent(
+                "enter",
+                word,
+                sentenceNumber,
+                sentenceText,
+                newWordIndex
+              );
             }
           }
-          break;
-        case "end":
-          if (magnifyingGlassRef.current) {
-            magnifyingGlassRef.current.style.visibility = "hidden";
-          }
-          touchActive.current = false;
-          handleMouseUp(word, sentenceNumber, sentenceText);
-          setMagnifyingGlassStyle({ visibility: "hidden" });
-          break;
-      }
+        }
+        break;
+      case "end":
+        if (magnifyingGlassRef.current) {
+          magnifyingGlassRef.current.style.visibility = "hidden";
+        }
+        touchActive.current = false;
+        handleMouseUp(word, sentenceNumber, sentenceText);
+        setMagnifyingGlassStyle({ visibility: "hidden" });
+        break;
     }
+    //}
   };
 
   return (
