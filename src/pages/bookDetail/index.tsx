@@ -17,6 +17,8 @@ import {
   Modal,
   Typography,
   Select,
+  Spin,
+  Button,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -32,7 +34,7 @@ import {
   getUserSentences,
   updateReadingProgress,
 } from "@/services/userService";
-import { UserPhrase, UserSentence } from "@/models/userSentence.interface";
+import { UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
 import FilteredVocabularyList from "./components/VocabularyList/FilteredVocabularyList";
@@ -48,7 +50,8 @@ import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 import Flag from "react-world-flags";
 import Masonry from "react-masonry-css";
-import { relative } from "path";
+import fileDownload from "js-file-download";
+import { getWorkSheet } from "@/services/aiService";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -98,6 +101,8 @@ function reducer(state: any, action: any) {
       return { ...state, loading: action.payload };
     case "setLoading":
       return { ...state, loadingFromFetch: action.payload };
+    case "setLoadingWorkSheet":
+      return { ...state, loadingWorkSheet: action.payload };
     case "setLoadingFromWordMeaning":
       return { ...state, loadingFromWordMeaning: action.payload };
     case "setShouldSetVideo":
@@ -192,6 +197,8 @@ const BookDetail: FC = () => {
     dispatch({ type: "setSentenceFrom", payload: sentence });
   const setFirstIndexAfterReset = (index: number) =>
     dispatch({ type: "setFirstIndexAfterReset", payload: index });
+  const setLoadingWorkSheet = (isLoadingWorkSheet: boolean) =>
+    dispatch({ type: "setLoadingWorkSheet", payload: isLoadingWorkSheet });
   const setLoading = (isLoading: boolean) =>
     dispatch({ type: "setLoading", payload: isLoading });
   const setLoadingFromFetch = (isLoading: boolean) =>
@@ -506,6 +513,13 @@ const BookDetail: FC = () => {
     }
   };
 
+  const handleDownloadWorkSheet = async () => {
+    dispatch({ type: "setLoadingWorkSheet", payload: true });
+    const blob = await getWorkSheet(sourceLanguage, targetLanguage, libraryId!);
+    fileDownload(blob, "worksheet.pdf");
+    dispatch({ type: "setLoadingWorkSheet", payload: false });
+  };
+
   const handleDeleteUserPhrase = useCallback(
     async (
       phraseId: string,
@@ -719,7 +733,15 @@ const BookDetail: FC = () => {
 
   const translateBoxContainer = (
     <div>
-      <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
+      <Card
+        bodyStyle={{
+          paddingTop: "20px",
+          paddingBottom: "20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <>
           <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
           <Select
@@ -755,6 +777,14 @@ const BookDetail: FC = () => {
             <Radio.Button value="sentences">Sentences</Radio.Button>
             <Radio.Button value="all">All</Radio.Button>
           </Radio.Group>
+
+          <Button
+            type="default"
+            onClick={handleDownloadWorkSheet}
+            loading={state.loadingWorkSheet}
+          >
+            Download Worksheet
+          </Button>
         </>
       </Card>
       <Card

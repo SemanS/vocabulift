@@ -605,8 +605,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     )}
                     isHighlightedFromVideo={index === highlightedSentenceIndex}
                     wordIndex={wordIndex}
-                    //isSelecting={mouseDown || (isMobile && touchActive.current)}
-                    isSelecting={mouseDown}
+                    isSelecting={mouseDown || (isMobile && touchActive.current)}
+                    //isSelecting={mouseDown}
                     sentenceTranslation={targetSentence?.sentenceText || ""}
                     vocabularyListUserPhrases={vocabularyListUserPhrases!}
                     currentPage={currentPage}

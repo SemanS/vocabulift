@@ -237,6 +237,15 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   useEffect(() => {
+    if (props.isHighlightedFromVideo && textRef.current) {
+      textRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, [props.isHighlightedFromVideo]);
+
+  useEffect(() => {
     const userAgent = window.navigator.userAgent;
     const isMobile = !!userAgent.match(/Android|iPhone/i);
     setIsMobileDevice(isMobile);
