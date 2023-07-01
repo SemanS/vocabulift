@@ -50,8 +50,9 @@ import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 import Flag from "react-world-flags";
 import Masonry from "react-masonry-css";
-import fileDownload from "js-file-download";
 import { getWorkSheet } from "@/services/aiService";
+import jsPDF from "jspdf";
+import html2pdf from "html2pdf.js";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -515,8 +516,89 @@ const BookDetail: FC = () => {
 
   const handleDownloadWorkSheet = async () => {
     dispatch({ type: "setLoadingWorkSheet", payload: true });
-    const blob = await getWorkSheet(sourceLanguage, targetLanguage, libraryId!);
-    fileDownload(blob, "worksheet.pdf");
+
+    const htmlContent = await getWorkSheet(
+      sourceLanguage,
+      targetLanguage,
+      libraryId!
+    );
+
+    const htmlContent2 = `<html>
+    <head>
+        <title>Cinderella's Story Worksheet</title>
+    </head>
+    <body>
+        <h1>Cinderella's Story Worksheet</h1>
+    
+        <div>
+            <h2>Reading Comprehension</h2>
+            <p>Read the text and answer the following questions.</p>
+            <textarea rows="5" cols="50" disabled>
+            (Paste the Cinderella story here.)
+            </textarea>
+            
+            <h3>Questions:</h3>
+            <ol>
+                <li>Why did Cinderella's life change dramatically?</li>
+                <li>Describe Cinderella's stepmother and stepsisters.</li>
+                <li>What was the purpose of the ball at the castle?</li>
+                <li>Describe Cinderella's experience at the ball.</li>
+                <li>How did the prince find Cinderella?</li>
+            </ol>
+        </div>
+    
+        <div>
+            <h2>Choose the best definition</h2>
+            <p>Choose the best definition of the words and phrases from the text.</p>
+            <ul>
+                <li>1. Stepmother</li>
+                <li>2. Castle</li>
+                <li>3. Eligible</li>
+                <li>4. Ball</li>
+                <li>5. Attic</li>
+            </ul>
+        </div>
+    
+        <div>
+            <h2>Discuss the questions</h2>
+            <ol>
+                <li>Do you think Cinderella was treated fairly by her stepmother and stepsisters? Why or why not?</li>
+                <li>Why do you think Cinderella was allowed to go to the ball despite her family's treatment of her?</li>
+                <li>How do you think Cinderella felt when the prince found her?</li>
+            </ol>
+        </div>
+    
+        <div>
+            <h2>Complete the sentences</h2>
+            <p>Use the correct forms of the words and phrases in the box.</p>
+            <ul>
+                <li>Stepmother</li>
+                <li>Castle</li>
+                <li>Eligible</li>
+                <li>Ball</li>
+                <li>Attic</li>
+            </ul>
+            <p>1. Cinderella lived in the ______.</p>
+            <p>2. All ______ girls were invited to the ______.</p>
+            <p>3. Cinderella's ______ was not kind to her.</p>
+        </div>
+    
+        <div>
+            <h2>Roleplay</h2>
+            <p>Your teacher will give you a card giving you information for a roleplay.</p>
+        </div>
+    
+    </body>
+    </html>`;
+
+    const element = document.createElement("div");
+    element.style.margin = "20px";
+    element.innerHTML = htmlContent;
+
+    html2pdf()
+      .from(element)
+      .save(state.libraryTitle + "-worksheet.pdf");
+
     dispatch({ type: "setLoadingWorkSheet", payload: false });
   };
 
@@ -733,15 +815,7 @@ const BookDetail: FC = () => {
 
   const translateBoxContainer = (
     <div>
-      <Card
-        bodyStyle={{
-          paddingTop: "20px",
-          paddingBottom: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
         <>
           <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
           <Select
@@ -771,6 +845,7 @@ const BookDetail: FC = () => {
             onChange={handleModeChange}
             value={state.mode}
             buttonStyle="solid"
+            style={{ paddingRight: 20 }}
           >
             <Radio.Button value="words">Words</Radio.Button>
             {/* <Radio.Button value="phrases">Phrases</Radio.Button> */}
