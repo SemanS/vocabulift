@@ -51,7 +51,6 @@ import PricingComponent from "@/pages/webLayout/shared/components/Pricing/Pricin
 import Flag from "react-world-flags";
 import Masonry from "react-masonry-css";
 import { getWorkSheet } from "@/services/aiService";
-import jsPDF from "jspdf";
 import html2pdf from "html2pdf.js";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({

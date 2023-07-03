@@ -193,6 +193,7 @@ const Library: React.FC = () => {
       eventId: "",
       snapshotsInfo: [],
       duration: "",
+      worksheet: "",
     };
     return newItem;
   };

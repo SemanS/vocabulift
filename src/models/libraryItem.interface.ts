@@ -12,6 +12,7 @@ export interface LibraryItem {
   level: string[];
   snapshotsInfo: SnapshotInfo[];
   duration: string;
+  worksheet: string;
 }
 
 export interface SnapshotInfo {
