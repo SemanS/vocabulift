@@ -19,8 +19,6 @@ interface FilteredVocabularyListProps {
   setSelectedUserPhrase?: (
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
-  onQuestionClick?: (phrase: string, language: string) => void;
-  onAlternativesClick?: (phrase: string) => void;
   selectedLanguageTo: string;
 }
 
@@ -33,8 +31,6 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
   onWordClick,
   selectedUserPhrase,
   setSelectedUserPhrase,
-  onQuestionClick,
-  onAlternativesClick,
   selectedLanguageTo,
 }) => {
   let filteredPhrases = [];
@@ -48,7 +44,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
     );
   }
 
-  return filteredPhrases.length > 0 ? (
+  return phrases.length > 0 ? (
     <VocabularyList
       mode={mode}
       title={title}
@@ -58,10 +54,6 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       onWordClick={onWordClick}
       selectedUserPhrase={selectedUserPhrase}
       setSelectedUserPhrase={setSelectedUserPhrase!}
-      onQuestionClick={(phrase: string, language: string) =>
-        onQuestionClick!(phrase, language)
-      }
-      onAlternativesClick={(phrase) => onAlternativesClick!(phrase)}
       selectedLanguageTo={selectedLanguageTo}
     />
   ) : null;

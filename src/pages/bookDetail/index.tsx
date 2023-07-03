@@ -489,30 +489,6 @@ const BookDetail: FC = () => {
     [state.userSentences, state.vocabularyListUserPhrases]
   );
 
-  const handleQuestionClick = async (phrase: string, language: string) => {
-    try {
-      dispatch({ type: "setLoadingFromWordMeaning", payload: true });
-      const meaning = await getPhraseMeaning(phrase, language);
-      dispatch({ type: "setWordMeaningData", payload: meaning });
-      dispatch({ type: "setLoadingFromWordMeaning", payload: false });
-    } catch (error) {
-      console.error("Error occurred:", error);
-      dispatch({ type: "setWordMeaningData", payload: "An error occured." });
-    }
-  };
-
-  const handleAlternativesClick = async (phrase: string) => {
-    try {
-      dispatch({ type: "setLoadingFromWordMeaning", payload: true });
-      const meaning = await getPhraseAlternatives(phrase);
-      dispatch({ type: "setWordMeaningData", payload: meaning });
-      dispatch({ type: "setLoadingFromWordMeaning", payload: false });
-    } catch (error) {
-      console.error("Error occurred:", error);
-      dispatch({ type: "setWordMeaningData", payload: "An error occured." });
-    }
-  };
-
   const handleDownloadWorkSheet = async () => {
     dispatch({ type: "setLoadingWorkSheet", payload: true });
 
@@ -825,6 +801,10 @@ const BookDetail: FC = () => {
                 payload: value,
               });
               fetchVocabularyAndSetState(state.sentenceFrom, value);
+              const url = new URL(window.location.href);
+              const params = new URLSearchParams(url.search);
+              params.set("targetLanguage", value);
+              window.history.replaceState({}, "", `${url.pathname}?${params}`);
             }}
             style={{ marginRight: 16 }}
           >
@@ -902,8 +882,6 @@ const BookDetail: FC = () => {
               phrases={state.vocabularyListUserPhrases!}
               onDeleteItem={handleDeleteUserPhrase}
               onWordClick={handleAddWordDefinition}
-              onQuestionClick={handleQuestionClick}
-              onAlternativesClick={handleAlternativesClick}
               selectedUserPhrase={state.selectedUserPhrase}
               setSelectedUserPhrase={setSelectedUserPhrase}
               selectedLanguageTo={state.selectedLanguageTo}

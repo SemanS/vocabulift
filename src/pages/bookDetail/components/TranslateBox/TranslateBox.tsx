@@ -270,7 +270,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       blockMode = "all";
     }
 
-    if (
+    /* if (
       isWordInVocabularyList(
         blockMode,
         selectedWords,
@@ -282,7 +282,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         description: "The selected word is in the vocabulary list.",
         type: "info",
       });
-    }
+    } */
 
     setMouseDown(false);
     setSentenceNo(sentenceNumber);
