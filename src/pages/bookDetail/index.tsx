@@ -909,7 +909,7 @@ const BookDetail: FC = () => {
               selectedLanguageTo={state.selectedLanguageTo}
               style={{ marginBottom: "16px" }}
             />
-            <FilteredVocabularyList
+            {/* <FilteredVocabularyList
               title="Phrases"
               mode={"phrases"}
               phrases={state.vocabularyListUserPhrases!}
@@ -919,7 +919,7 @@ const BookDetail: FC = () => {
               onAlternativesClick={handleAlternativesClick}
               selectedLanguageTo={state.selectedLanguageTo}
               style={{ marginBottom: "16px" }}
-            />
+            /> */}
           </>
         )}
     </div>

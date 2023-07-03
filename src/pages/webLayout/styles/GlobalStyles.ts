@@ -46,7 +46,7 @@ export const GlobalStyles = createGlobalStyle`
     h4,
     h5,
     h6 {
-        color: #18216d;
+        color: #12111C;
         font-size: 65px;
         font-weight: 700;
         line-height: 1.18;
@@ -61,7 +61,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     p {
-        color: #18216d;
+        color: #12111C;
         font-size: 21px;        
         line-height: 1.41;
     }

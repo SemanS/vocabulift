@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { MenuOutlined } from "@ant-design/icons";
 
 export const HeaderSection = styled.header`
-  padding: 1rem 0.5rem;
+  .padding: 1rem 0.5rem;
 
   position: fixed;
   .ant-row-space-between {
@@ -17,7 +17,7 @@ export const HeaderSection = styled.header`
   width: 100%;
   z-index: 1000;
   background-color: #fff;
-  padding: 1rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
   .ant-row-space-between {

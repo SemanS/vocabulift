@@ -530,7 +530,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
             </div>
           </TabPane>
         )}
-        <TabPane tab="Alternatives" key="3"></TabPane>
+        {/* <TabPane tab="Alternatives" key="3"></TabPane> */}
       </Tabs>
     </Card>
   );
