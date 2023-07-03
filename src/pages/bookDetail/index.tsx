@@ -969,14 +969,15 @@ const BookDetail: FC = () => {
               {phraseListContainer}
               <div className={`${styles.myVideoContainer}`}>
                 {paginationControlsContainer}
-                {(state.loadingFromWordMeaning || state.wordMeaningData) && (
-                  <Card
+                {(state.loadingFromWordMeaning || state.wordMeaningData) &&
+                  {
+                    /* <Card
                     title={"Word meaning"}
                     loading={state.loadingFromWordMeaning}
                   >
                     {state.wordMeaningData && state.wordMeaningData.data}
-                  </Card>
-                )}
+                  </Card> */
+                  }}
               </div>
             </Masonry>
           ) : (
@@ -989,14 +990,15 @@ const BookDetail: FC = () => {
               {translateBoxContainer}
               <div className={`${styles.myVideoContainer}`}>
                 {paginationControlsContainer}
-                {(state.loadingFromWordMeaning || state.wordMeaningData) && (
-                  <Card
+                {(state.loadingFromWordMeaning || state.wordMeaningData) &&
+                  {
+                    /* <Card
                     title={"Word meaning"}
                     loading={state.loadingFromWordMeaning}
                   >
                     {state.wordMeaningData && state.wordMeaningData.data}
-                  </Card>
-                )}
+                  </Card> */
+                  }}
               </div>
               <button
                 className={`${styles.myFixedPlayButton}`}

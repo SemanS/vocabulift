@@ -114,7 +114,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
 
   const handleQuestionClick = async (phrase: string, language: string) => {
     try {
-      setActiveTab("2");
+      setActiveTab("3");
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
       const meaning = await getPhraseMeaning(phrase, language);
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });
@@ -150,9 +150,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
   const handleWordClick = async (
     word: VocabularyListUserPhrase
   ): Promise<any> => {
-    mode === "words" && onWordClick && onWordClick(word.phrase.sourceText);
-    mode === "words" && setSelectedWord(word.phrase.sourceText);
-    mode === "words" && setSelectedUserPhrase(word);
+    activeTab === "1" && onWordClick && onWordClick(word.phrase.sourceText);
+    activeTab === "1" && setSelectedWord(word.phrase.sourceText);
+    activeTab === "1" && setSelectedUserPhrase(word);
   };
 
   const handleDeleteItem = async (
@@ -184,27 +184,31 @@ const VocabularyList: FC<VocabularyListProps> = ({
         onChange={setActiveTab}
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
       >
-        <TabPane tab={title} key="1">
+        <TabPane tab={"Words"} key="1">
           <div className="vocabularyListScroll">
             <div style={{ paddingTop: 10, paddingRight: 25, paddingLeft: 25 }}>
               <List
                 size="small"
-                dataSource={phrases}
+                dataSource={phrases.filter(
+                  (phrase) =>
+                    phrase.phrase.endPosition - phrase.phrase.startPosition ===
+                    0
+                )}
                 renderItem={(word: VocabularyListUserPhrase, index: number) => {
                   return (
                     <List.Item
                       key={word.sentenceNo + word.phrase.startPosition}
                       style={{ padding: "4px 0" }}
                       onClick={() => {
-                        mode === "words" &&
+                        activeTab === "1" &&
                           onWordClick &&
                           onWordClick(word.phrase.sourceText);
-                        mode === "words" &&
+                        activeTab === "1" &&
                           setSelectedWord(word.phrase.sourceText);
-                        mode === "words" && setSelectedUserPhrase(word);
+                        activeTab === "1" && setSelectedUserPhrase(word);
                       }}
                     >
-                      {(mode === "phrases" || mode === "words") && onMobile && (
+                      {(activeTab === "2" || activeTab === "1") && onMobile && (
                         <List.Item.Meta
                           style={{ display: "flex", alignItems: "center" }}
                           title={
@@ -214,7 +218,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                 style={{
                                   fontWeight: "normal",
                                   cursor:
-                                    mode === "phrases" ? "default" : "pointer",
+                                    activeTab === "2" ? "default" : "pointer",
                                   display: "flex",
                                   justifyContent: "space-between",
                                   width: "100%",
@@ -362,7 +366,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                           }
                         />
                       )}
-                      {(mode === "phrases" || mode === "words") &&
+                      {(activeTab === "2" || activeTab === "1") &&
                         !onMobile && (
                           <List.Item.Meta
                             style={{ display: "flex", alignItems: "center" }}
@@ -373,9 +377,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                   style={{
                                     fontWeight: "normal",
                                     cursor:
-                                      mode === "phrases"
-                                        ? "default"
-                                        : "pointer",
+                                      activeTab === "2" ? "default" : "pointer",
                                     display: "flex",
                                     justifyContent: "space-between",
                                   }}
@@ -396,7 +398,334 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                       <>
                                         <QuestionCircleOutlined
                                           onClick={() =>
-                                            onQuestionClick(
+                                            handleQuestionClick(
+                                              word.phrase.sourceText,
+                                              parseLocale(user.locale)
+                                            )
+                                          }
+                                          {...pressQuestionHandlers}
+                                          className={"noselect"}
+                                        />
+                                        <CommentOutlined
+                                          onClick={() =>
+                                            onAlternativesClick(
+                                              word.phrase.sourceText
+                                            )
+                                          }
+                                          {...pressAlternativesHandlers}
+                                          className={"noselect"}
+                                        />
+                                      </>
+                                    )}
+                                  </Space>
+                                  <div
+                                    style={{
+                                      width: "50%",
+                                      textAlign: "right",
+                                      paddingRight: "20px",
+                                    }}
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.sourceText,
+                                        word.phrase.sourceLanguage
+                                      );
+                                    }}
+                                  >
+                                    {word.phrase.sourceText}
+                                    <CaretRightOutlined
+                                      key="icon"
+                                      onClick={() => {
+                                        togglePlay;
+                                        handlePlayClick(
+                                          word.phrase.sourceText,
+                                          word.phrase.sourceLanguage
+                                        );
+                                      }}
+                                      style={{ marginLeft: "5px" }}
+                                    />
+                                  </div>
+                                  <div
+                                    style={{
+                                      width: "50%",
+                                      textAlign: "left",
+                                      paddingLeft: "20px",
+                                      borderLeft: "1px solid #000",
+                                    }}
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.targetText,
+                                        word.phrase.targetLanguage
+                                      );
+                                    }}
+                                  >
+                                    {word.phrase.targetText}
+                                    <CaretRightOutlined
+                                      style={{ marginLeft: "5px" }}
+                                      key="icon"
+                                      onClick={() => {
+                                        togglePlay;
+                                        handlePlayClick(
+                                          word.phrase.targetText,
+                                          word.phrase.targetLanguage
+                                        );
+                                      }}
+                                    />
+                                  </div>
+                                  <audio key="audio" ref={audioRef} />
+                                  <Space>
+                                    {parseLocale(user.locale) !==
+                                      word.phrase.targetLanguage && (
+                                      <>
+                                        <QuestionCircleOutlined
+                                          onClick={() =>
+                                            handleQuestionClick(
+                                              word.phrase.sourceText,
+                                              parseLocale(user.locale)
+                                            )
+                                          }
+                                          {...pressQuestionHandlers}
+                                          className={"noselect"}
+                                        />
+                                        <CommentOutlined
+                                          onClick={() =>
+                                            onAlternativesClick(
+                                              word.phrase.sourceText
+                                            )
+                                          }
+                                          {...pressAlternativesHandlers}
+                                          className={"noselect"}
+                                        />
+                                      </>
+                                    )}
+                                  </Space>
+                                </div>
+                              </div>
+                            }
+                          />
+                        )}
+                    </List.Item>
+                  );
+                }}
+              />
+            </div>
+          </div>
+        </TabPane>
+        <TabPane tab={"Phrases"} key="2">
+          <div className="vocabularyListScroll">
+            <div style={{ paddingTop: 10, paddingRight: 25, paddingLeft: 25 }}>
+              <List
+                size="small"
+                dataSource={phrases.filter(
+                  (phrase) =>
+                    phrase.phrase.endPosition - phrase.phrase.startPosition > 0
+                )}
+                renderItem={(word: VocabularyListUserPhrase, index: number) => {
+                  return (
+                    <List.Item
+                      key={word.sentenceNo + word.phrase.startPosition}
+                      style={{ padding: "4px 0" }}
+                      onClick={() => {
+                        activeTab === "1" &&
+                          onWordClick &&
+                          onWordClick(word.phrase.sourceText);
+                        activeTab === "1" &&
+                          setSelectedWord(word.phrase.sourceText);
+                        activeTab === "1" && setSelectedUserPhrase(word);
+                      }}
+                    >
+                      {(activeTab === "2" || activeTab === "1") && onMobile && (
+                        <List.Item.Meta
+                          style={{ display: "flex", alignItems: "center" }}
+                          title={
+                            <div>
+                              <div
+                                ref={(el) => (itemRefs.current[index] = el)}
+                                style={{
+                                  fontWeight: "normal",
+                                  cursor:
+                                    activeTab === "2" ? "default" : "pointer",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  width: "100%",
+                                }}
+                              >
+                                <div
+                                  style={{
+                                    width: "50%",
+                                    textAlign: "left",
+                                    marginBottom: 10,
+                                    marginRight: 5,
+                                  }}
+                                  onClick={() => {
+                                    togglePlay;
+                                    handlePlayClick(
+                                      word.phrase.sourceText,
+                                      word.phrase.sourceLanguage
+                                    );
+                                  }}
+                                >
+                                  <span style={{ fontWeight: 600 }}>
+                                    {word.phrase.sourceText}
+                                  </span>
+                                  <CaretRightOutlined
+                                    key="icon"
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.sourceText,
+                                        word.phrase.sourceLanguage
+                                      );
+                                    }}
+                                  />
+                                </div>
+                                <div
+                                  style={{
+                                    width: "50%",
+                                    textAlign: "left",
+                                    paddingLeft: "10px",
+                                    borderLeft: "1px solid #000",
+                                  }}
+                                >
+                                  <span style={{ fontWeight: 600 }}>
+                                    {word.phrase.targetText}
+                                  </span>
+                                  <CaretRightOutlined
+                                    key="icon"
+                                    onClick={() => {
+                                      togglePlay;
+                                      handlePlayClick(
+                                        word.phrase.targetText,
+                                        parseLocale(user.locale)
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                              <audio key="audio" ref={audioRef} />
+                              <div
+                                style={{
+                                  textAlign: "left",
+                                  width: "50%",
+                                  marginBottom: 20,
+                                }}
+                                onClick={() => {
+                                  togglePlay;
+                                  handlePlayClick(
+                                    word.phrase.targetText,
+                                    parseLocale(user.locale)
+                                  );
+                                }}
+                              >
+                                <Space>
+                                  <Button
+                                    type="primary"
+                                    icon={<DeleteOutlined />}
+                                    onClick={() =>
+                                      handleDeleteItem(
+                                        word.phrase._id,
+                                        word.phrase.sentenceId,
+                                        word.phrase.startPosition,
+                                        word.sentenceNo
+                                      )
+                                    }
+                                  />
+                                  {parseLocale(user.locale) !==
+                                    word.phrase.sourceLanguage && (
+                                    <>
+                                      <Button
+                                        type="default"
+                                        icon={<QuestionCircleOutlined />}
+                                        onClick={() =>
+                                          handleQuestionClick(
+                                            word.phrase.sourceText,
+                                            parseLocale(user.locale)
+                                          )
+                                        }
+                                        {...pressQuestionHandlers}
+                                        className={"noselect"}
+                                      />
+                                      <Button
+                                        type="default"
+                                        icon={<CommentOutlined />}
+                                        onClick={() =>
+                                          onAlternativesClick(
+                                            word.phrase.sourceText
+                                          )
+                                        }
+                                        {...pressAlternativesHandlers}
+                                        className={"noselect"}
+                                      />
+                                    </>
+                                  )}
+                                  {parseLocale(user.locale) !==
+                                    word.phrase.targetLanguage && (
+                                    <>
+                                      <Button
+                                        type="default"
+                                        icon={<QuestionCircleOutlined />}
+                                        onClick={() =>
+                                          handleQuestionClick(
+                                            word.phrase.sourceText,
+                                            parseLocale(user.locale)
+                                          )
+                                        }
+                                        {...pressQuestionHandlers}
+                                        className={"noselect"}
+                                      />
+                                      <Button
+                                        type="default"
+                                        icon={<CommentOutlined />}
+                                        onClick={() =>
+                                          onAlternativesClick(
+                                            word.phrase.targetText
+                                          )
+                                        }
+                                        {...pressAlternativesHandlers}
+                                        className={"noselect"}
+                                      />
+                                    </>
+                                  )}
+                                </Space>
+                              </div>
+                            </div>
+                          }
+                        />
+                      )}
+                      {(activeTab === "2" || activeTab === "1") &&
+                        !onMobile && (
+                          <List.Item.Meta
+                            style={{ display: "flex", alignItems: "center" }}
+                            title={
+                              <div>
+                                <div
+                                  ref={(el) => (itemRefs.current[index] = el)}
+                                  style={{
+                                    fontWeight: "normal",
+                                    cursor:
+                                      activeTab === "2" ? "default" : "pointer",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                  }}
+                                >
+                                  <Space>
+                                    <DeleteOutlined
+                                      onClick={() =>
+                                        handleDeleteItem(
+                                          word.phrase._id,
+                                          word.phrase.sentenceId,
+                                          word.phrase.startPosition,
+                                          word.sentenceNo
+                                        )
+                                      }
+                                    />
+                                    {parseLocale(user.locale) !==
+                                      word.phrase.sourceLanguage && (
+                                      <>
+                                        <QuestionCircleOutlined
+                                          onClick={() =>
+                                            handleQuestionClick(
                                               word.phrase.sourceText,
                                               parseLocale(user.locale)
                                             )
@@ -511,7 +840,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
           </div>
         </TabPane>
         {(state.loading || state.wordMeaningData) && (
-          <TabPane tab="Meaning" key="2">
+          <TabPane tab="Meaning" key="3">
             <div
               className="vocabularyListScroll"
               style={{ paddingRight: 25, paddingLeft: 25 }}
@@ -525,7 +854,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   alignItems: "center",
                 }}
               >
-                {state.wordMeaningData && state.wordMeaningData.data}
+                {state.wordMeaningData && (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: state.wordMeaningData.data,
+                    }}
+                  />
+                )}
               </Spin>
             </div>
           </TabPane>

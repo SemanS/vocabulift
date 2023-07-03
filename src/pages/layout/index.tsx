@@ -133,22 +133,31 @@ const LayoutPage: FC = () => {
           selectedKeys={selectedKeys}
           breadcrumbRender={false}
           layout="top"
-          logo={<LogoSvg className={styles.layoutPageHeaderLogo} />}
+          title={false}
+          logo={
+            <LogoSvg
+              className={styles.layoutPageHeaderLogo}
+              style={{ width: "12rem" }}
+            />
+          }
           formatMessage={formatMessage}
           onMenuHeaderClick={() => navigate("/")}
-          headerTitleRender={() => (
+          /* headerTitleRender={() => (
             <Space style={{ display: "flex", alignItems: "left" }}>
               <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
-              <h1 style={{ marginLeft: "0px" }}>VocabuLift</h1>
             </Space>
-          )}
+          )} */
           menuDataRender={() => [...loopMenuItem(user.menuList)]}
           menuItemRender={(menuItemProps, defaultDom) => {
             if (menuItemProps.isUrl) {
               return defaultDom;
             }
             return (
-              <Link to={menuItemProps.path!} onClick={() => setCollapsed(true)}>
+              <Link
+                to={menuItemProps.path!}
+                onClick={() => setCollapsed(true)}
+                style={{ fontWeight: "450" }}
+              >
                 {defaultDom}
               </Link>
             );
