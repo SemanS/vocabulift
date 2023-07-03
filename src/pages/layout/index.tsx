@@ -123,7 +123,7 @@ const LayoutPage: FC = () => {
         settingsDrawerVisible,
       }}
     >
-      <div ref={layoutRef}>
+      <div ref={layoutRef} className={styles.proLayoutCustom}>
         <ProLayout
           collapsed={collapsed}
           onCollapse={setCollapsed}
@@ -134,14 +134,15 @@ const LayoutPage: FC = () => {
           breadcrumbRender={false}
           layout="top"
           title={false}
+          fixedHeader={true}
           logo={
             <LogoSvg
               className={styles.layoutPageHeaderLogo}
-              style={{ width: "12rem" }}
+              style={{ width: "6rem" }}
             />
           }
           formatMessage={formatMessage}
-          onMenuHeaderClick={() => navigate("/")}
+          onMenuHeaderClick={() => navigate("/library")}
           /* headerTitleRender={() => (
             <Space style={{ display: "flex", alignItems: "left" }}>
               <LogoSvg className={styles.layoutPageHeaderLogoHeader} />

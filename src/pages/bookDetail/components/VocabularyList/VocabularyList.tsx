@@ -981,7 +981,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 paddingLeft: 25,
               }}
             >
-              <CustomSpinnerComponent spinning={state.loadingFromWordMeaning}>
+              <CustomSpinnerComponent
+                spinning={state.loadingFromWordMeaning}
+                myStyle={{ left: "40%" }}
+              >
                 {state.wordMeaningData && (
                   <div
                     dangerouslySetInnerHTML={{

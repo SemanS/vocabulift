@@ -20,11 +20,13 @@ const CustomSpinner = styled.svg<{}>`
 interface SpinnerProps {
   spinning: boolean;
   children?: React.ReactNode;
+  myStyle?: React.CSSProperties;
 }
 
 const CustomSpinnerComponent: React.FC<SpinnerProps> = ({
   spinning,
   children,
+  myStyle,
 }) => {
   return (
     <Spin
@@ -33,12 +35,12 @@ const CustomSpinnerComponent: React.FC<SpinnerProps> = ({
         <CustomSpinner
           version="1.0"
           xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 834.000000 356.000000"
+          viewBox="0 0 400.000000 400.000000"
           preserveAspectRatio="xMidYMid meet"
-          style={{ left: 345, top: 145 }}
+          style={myStyle}
         >
           <g
-            transform="translate(0.000000,356.000000) scale(0.100000,-0.100000)"
+            transform="translate(0.000000,400.000000) scale(0.100000,-0.100000)"
             fill="#3C4760"
             stroke="none"
           >

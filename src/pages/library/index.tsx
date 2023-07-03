@@ -29,6 +29,7 @@ import { updateUser } from "@/services/userService";
 import { socket } from "@/messaging/socket";
 import "antd/dist/reset.css";
 import { vocabuFetch } from "@/utils/vocabuFetch";
+import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -445,101 +446,106 @@ const Library: React.FC = () => {
   };
 
   return (
-    <PageContainer loading={loading} title={false}>
-      <div className={styles.drawerContainer}>
-        <div
-          className={styles.drawerPushContent}
-          style={{ maxHeight: drawerHeight }}
-        >
-          {renderSettingsDrawerContent()}
-        </div>
-        <div className={styles.redBackground}>
-          <div className={styles.fullWidthWhiteBackground}>
-            <span onClick={toggleSettingsDrawer} className={styles.box}>
-              <span
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {settingsDrawerVisible ? (
-                  <UpOutlined
-                    style={{
-                      color: "#171625",
-                      fontSize: "20px",
-                      cursor: "pointer",
-                    }}
-                  />
-                ) : (
-                  <DownOutlined
-                    style={{
-                      color: "#171625",
-                      fontSize: "20px",
-                      cursor: "pointer",
-                    }}
-                  />
-                )}
-                <Typography.Title
+    <CustomSpinnerComponent spinning={loading}>
+      <PageContainer title={false}>
+        <div className={styles.drawerContainer}>
+          <div
+            className={styles.drawerPushContent}
+            style={{ maxHeight: drawerHeight }}
+          >
+            {renderSettingsDrawerContent()}
+          </div>
+          <div className={styles.redBackground}>
+            <div className={styles.fullWidthWhiteBackground}>
+              <span onClick={toggleSettingsDrawer} className={styles.box}>
+                <span
                   style={{
-                    color: "#171625", // Change this color to your header's color
-                    marginLeft: "8px",
-                    fontSize: "20px",
-                    cursor: "pointer",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  Settings
-                </Typography.Title>
+                  {settingsDrawerVisible ? (
+                    <UpOutlined
+                      style={{
+                        color: "#171625",
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                    />
+                  ) : (
+                    <DownOutlined
+                      style={{
+                        color: "#171625",
+                        fontSize: "20px",
+                        cursor: "pointer",
+                      }}
+                    />
+                  )}
+                  <Typography.Title
+                    style={{
+                      color: "#171625", // Change this color to your header's color
+                      marginLeft: "8px",
+                      fontSize: "20px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Settings
+                  </Typography.Title>
+                </span>
               </span>
-            </span>
-          </div>
-          <div style={{ paddingInline: "48px", marginTop: "30px" }}>
-            {Object.entries(categorizedItems)
-              .sort(([categoryA], [categoryB]) => {
-                if (categoryA === "My Videos") {
-                  return -1;
-                } else if (categoryB === "My Videos") {
-                  return 1;
+            </div>
+            <div style={{ paddingInline: "48px", marginTop: "30px" }}>
+              {Object.entries(categorizedItems)
+                .sort(([categoryA], [categoryB]) => {
+                  if (categoryA === "My Videos") {
+                    return -1;
+                  } else if (categoryB === "My Videos") {
+                    return 1;
+                  } else {
+                    return 0;
+                  }
+                })
+                .map(([category, items], index) => (
+                  <CustomSlider
+                    key={`slider${index + 1}`}
+                    items={items as LibraryItem[]}
+                    sliderId={`slider${index + 1}`}
+                    category={category}
+                    progress={progress}
+                    selectedLanguageTo={user.targetLanguage}
+                    eventFinalized={eventFinalized}
+                  />
+                ))}
+            </div>
+            <AddItemModal
+              isModalVisible={isModalVisible}
+              handleModalCancel={handleModalCancel}
+              inputValue={inputValue}
+              setInputValue={setInputValue}
+              fetchOptions={fetchOptions}
+              isFetchValid={isFetchValid}
+              selectOptions={selectOptions}
+              targetLanguage={user.targetLanguage}
+              onLanguageSelect={handleLanguageSelect}
+              onAddItemClick={async (
+                videoThumbnail: string,
+                status: string
+              ) => {
+                if (status !== "conflict") {
+                  setEventFinalized(false);
+                  setPolling(true);
+                  setSliderUpdated(true);
+                  updateVideoThumbnail(videoThumbnail);
                 } else {
-                  return 0;
+                  await fetchData();
                 }
-              })
-              .map(([category, items], index) => (
-                <CustomSlider
-                  key={`slider${index + 1}`}
-                  items={items as LibraryItem[]}
-                  sliderId={`slider${index + 1}`}
-                  category={category}
-                  progress={progress}
-                  selectedLanguageTo={user.targetLanguage}
-                  eventFinalized={eventFinalized}
-                />
-              ))}
+              }}
+            />
           </div>
-          <AddItemModal
-            isModalVisible={isModalVisible}
-            handleModalCancel={handleModalCancel}
-            inputValue={inputValue}
-            setInputValue={setInputValue}
-            fetchOptions={fetchOptions}
-            isFetchValid={isFetchValid}
-            selectOptions={selectOptions}
-            targetLanguage={user.targetLanguage}
-            onLanguageSelect={handleLanguageSelect}
-            onAddItemClick={async (videoThumbnail: string, status: string) => {
-              if (status !== "conflict") {
-                setEventFinalized(false);
-                setPolling(true);
-                setSliderUpdated(true);
-                updateVideoThumbnail(videoThumbnail);
-              } else {
-                await fetchData();
-              }
-            }}
-          />
         </div>
-      </div>
-    </PageContainer>
+      </PageContainer>
+    </CustomSpinnerComponent>
   );
 };
 

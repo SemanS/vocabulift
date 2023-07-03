@@ -6,6 +6,7 @@ import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useRecoilState } from "recoil";
 import { User } from "@/models/user";
+import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 
 export interface WrapperRouteProps {
   auth?: boolean;
@@ -114,11 +115,13 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <CustomSpinnerComponent spinning={true} />;
   }
 
   return auth ? (
-    <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+    <Suspense fallback={<CustomSpinnerComponent spinning={true} />}>
+      {children}
+    </Suspense>
   ) : (
     <Navigate to="/login" />
   );
