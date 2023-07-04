@@ -138,7 +138,7 @@ const LayoutPage: FC = () => {
           logo={
             <LogoSvg
               className={styles.layoutPageHeaderLogo}
-              style={{ width: "6rem" }}
+              style={{ width: "6rem", marginRight: "2rem" }}
             />
           }
           formatMessage={formatMessage}

@@ -52,6 +52,7 @@ import Flag from "react-world-flags";
 import Masonry from "react-masonry-css";
 import { getWorkSheet } from "@/services/aiService";
 import html2pdf from "html2pdf.js";
+import { getLibraryItem } from "@/services/libraryService";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -155,6 +156,8 @@ function reducer(state: any, action: any) {
       return { ...state, isMobile: action.payload };
     case "setIsPlaying":
       return { ...state, isPlaying: action.payload };
+    case "setLibrary":
+      return { ...state, library: action.payload };
     default:
       throw new Error();
   }
@@ -222,6 +225,8 @@ const BookDetail: FC = () => {
     });
   const setSelectedLanguageTo = (language: string) =>
     dispatch({ type: "setSelectedLanguageTo", payload: language });
+  const setLibrary = (library: any) =>
+    dispatch({ type: "setLibrary", payload: library });
 
   const handlePageChange = useCallback(
     async (
@@ -373,13 +378,13 @@ const BookDetail: FC = () => {
   const memoizedSnapshots = useMemo(() => state.snapshots, [state.snapshots]);
 
   const fetchDataAndUpdateState = useCallback(
-    async (localSentenceFrom: number) => {
+    async (localSentenceFrom: number, targetLanguage?: string) => {
       dispatch({ type: "setLoadingFromFetch", payload: true });
 
       const snapshots = await getSnapshots(
         libraryId!,
         user.sourceLanguage,
-        [user.targetLanguage],
+        targetLanguage ? [targetLanguage] : [user.targetLanguage],
         undefined,
         localSentenceFrom
       );
@@ -658,9 +663,14 @@ const BookDetail: FC = () => {
   );
 
   const fetchAndUpdate = useCallback(
-    async (localSentenceFrom: number) => {
+    async (localSentenceFrom: number, targetLanguage?: string) => {
       dispatch({ type: "setLoadingFromFetch", payload: true });
-      await fetchDataAndUpdateState(getRangeNumber(localSentenceFrom));
+      const library = await getLibraryItem(libraryId!);
+      dispatch({ type: "setLibrary", payload: library });
+      await fetchDataAndUpdateState(
+        getRangeNumber(localSentenceFrom),
+        targetLanguage
+      );
       dispatch({ type: "setLoadingFromFetch", payload: false });
     },
     [fetchDataAndUpdateState]
@@ -788,6 +798,15 @@ const BookDetail: FC = () => {
     };
   }, []);
 
+  const uniqueLanguages = Array.from(
+    new Set(state.library?.snapshotsInfo?.map((snapshot) => snapshot.language))
+  );
+  //const uniqueLanguages = state.library?.snapshotsInfo;
+
+  const languagesWithoutSource = uniqueLanguages.filter(
+    (lang) => lang !== user.sourceLanguage
+  );
+
   const translateBoxContainer = (
     <div>
       <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
@@ -801,6 +820,7 @@ const BookDetail: FC = () => {
                 payload: value,
               });
               fetchVocabularyAndSetState(state.sentenceFrom, value);
+              fetchAndUpdate(state.sentenceFrom, value);
               const url = new URL(window.location.href);
               const params = new URLSearchParams(url.search);
               params.set("targetLanguage", value);
@@ -808,18 +828,12 @@ const BookDetail: FC = () => {
             }}
             style={{ marginRight: 16 }}
           >
-            {memoizedSnapshots &&
-              Array.from(
-                new Set(memoizedSnapshots.map((snapshot) => snapshot.language))
-              )
-                .filter((language) => language !== user.sourceLanguage)
-                .map((language, index) => (
-                  <Select.Option key={index} value={language}>
-                    <Flag code={language} height="16" />
-                  </Select.Option>
-                ))}
+            {languagesWithoutSource.map((language, index) => (
+              <Select.Option key={index} value={language}>
+                <Flag code={language} height="16" />
+              </Select.Option>
+            ))}
           </Select>
-
           <Radio.Group
             onChange={handleModeChange}
             value={state.mode}

@@ -188,7 +188,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
   };
 
   useEffect(() => {
-    console.log("phrases![0]" + JSON.stringify(phrases![0], null, 2));
     if (phrases![0] !== undefined || phrases![0] !== null) {
       if (
         phrases![0].phrase.endPosition - phrases![0].phrase.startPosition >
@@ -281,7 +280,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                             onWordClick(word.phrase.sourceText);
                           activeTab === "1" &&
                             setSelectedWord(word.phrase.sourceText);
-                          activeTab === "1" && setSelectedUserPhrase(word);
+                          //activeTab === "1" && setSelectedUserPhrase(word);
                         }}
                       >
                         {(activeTab === "2" || activeTab === "1") &&
@@ -637,7 +636,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                             onWordClick(word.phrase.sourceText);
                           activeTab === "1" &&
                             setSelectedWord(word.phrase.sourceText);
-                          activeTab === "1" && setSelectedUserPhrase(word);
+                          //activeTab === "1" && setSelectedUserPhrase(word);
                         }}
                       >
                         {(activeTab === "2" || activeTab === "1") &&
@@ -1000,11 +999,16 @@ const VocabularyList: FC<VocabularyListProps> = ({
           <TabPane tab="Alternatives" key="4">
             <div
               className="vocabularyListScroll"
-              style={{ paddingRight: 25, paddingLeft: 25 }}
+              style={{
+                paddingRight: 25,
+                paddingLeft: 25,
+                display: "flex",
+                justifyContent: "center",
+              }}
             >
-              {/* <Spin spinning={state.loadingFromWordAlternatives} size="large"> */}
               <CustomSpinnerComponent
                 spinning={state.loadingFromWordAlternatives}
+                //myStyle={{ left: "20%" }}
               >
                 {state.wordAlternativesData && (
                   <div
