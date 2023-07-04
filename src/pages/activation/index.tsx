@@ -14,7 +14,7 @@ const ActivationPage: FC = () => {
     "es",
     "fr",
     "de",
-    "cz",
+    "cs",
     "sk",
     "pl",
     "hu",
