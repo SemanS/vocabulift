@@ -98,3 +98,6 @@ export function isSingleWord(text: string) {
   // Check if the text contains any whitespace characters
   return !/\s/.test(text);
 }
+
+export const getFlagCode = (code: string) =>
+  code === "en" ? "gb" : code === "cs" ? "cz" : code;

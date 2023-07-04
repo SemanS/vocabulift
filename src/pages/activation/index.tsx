@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { Card, Col, Row, Typography, Steps, Divider } from "antd";
 import styles from "./index.module.less";
 import Flag from "react-world-flags";
+import { getFlagCode } from "@/utils/utilMethods";
 
 const ActivationPage: FC = () => {
   const [current, setCurrent] = useState(0);
@@ -21,7 +22,6 @@ const ActivationPage: FC = () => {
     "it",
     "nl",
   ];
-  const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
 
   const selectFlag = (language: string) => {
     if (current === 0) {

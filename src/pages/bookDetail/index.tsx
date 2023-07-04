@@ -53,6 +53,7 @@ import Masonry from "react-masonry-css";
 import { getWorkSheet } from "@/services/aiService";
 import html2pdf from "html2pdf.js";
 import { getLibraryItem } from "@/services/libraryService";
+import { getFlagCode } from "@/utils/utilMethods";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -830,7 +831,7 @@ const BookDetail: FC = () => {
           >
             {languagesWithoutSource.map((language, index) => (
               <Select.Option key={index} value={language}>
-                <Flag code={language} height="16" />
+                <Flag code={getFlagCode(language)} height="16" />
               </Select.Option>
             ))}
           </Select>
