@@ -4,7 +4,7 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LoginParams } from "@/models/login";
 import { useLogin } from "@/api";
 import styles from "./index.module.less";
-import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
+import { ReactComponent as LogoSvg } from "@/assets/logo/logo_tooltip.svg";
 import { getGoogleUrl } from "@/utils/getGoogleUrl";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
