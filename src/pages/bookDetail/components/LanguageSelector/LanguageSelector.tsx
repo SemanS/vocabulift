@@ -8,6 +8,7 @@ import ISO6391 from "iso-639-1";
 import { updateUser } from "@/services/userService";
 import { User } from "@/models/user";
 import { userState } from "@/stores/user";
+import { getFlagCode } from "@/utils/utilMethods";
 
 interface LanguageSelectorProps {
   languageProp?: keyof User;
@@ -61,8 +62,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   useEffect(() => {
     if (languageProp) setSelectedLanguage(user[languageProp]);
   }, [user]);
-
-  const getFlagCode = (code: string) => (code === "en" ? "gb" : code);
 
   const handleCountrySelection = async (
     country: any,

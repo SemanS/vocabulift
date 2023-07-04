@@ -412,6 +412,7 @@ const Library: React.FC = () => {
                   onClick={handleSwapLanguages}
                 />
               </Col>
+              {user.targetLanguage}
               <Col span={10}>
                 <LanguageSelector
                   useRecoil={true}
