@@ -122,7 +122,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
     try {
       setActiveTab("3");
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
-      const meaning = await getPhraseMeaning(phrase, language);
+      const meaning = await getPhraseMeaning(
+        phrase,
+        language,
+        selectedLanguageTo
+      );
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });
       dispatch({ type: "setWordMeaningData", payload: meaning });
     } catch (error) {

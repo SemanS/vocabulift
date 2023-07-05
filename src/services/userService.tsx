@@ -194,11 +194,13 @@ export const deleteUserPhrases = async (phraseIds: string[]): Promise<void> => {
 
 export const getPhraseMeaning = async (
   phrase: string,
-  language: string
+  language: string,
+  targetLanguage: string
 ): Promise<string> => {
   const requestBody = {
     phrase: phrase,
     language: language,
+    targetLanguage: targetLanguage,
   };
   try {
     const response = await vocabuFetch(

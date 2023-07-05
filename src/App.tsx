@@ -16,7 +16,6 @@ const App: React.FC = () => {
   const [user, setUser] = useRecoilState(userState);
 
   const { locale } = user;
-
   useEffect(() => {
     if (locale === "en-US") {
       moment.locale("en");
@@ -134,7 +133,10 @@ const App: React.FC = () => {
           },
         }}
       >
-        <IntlProvider locale={locale.split("-")[0]} messages={getLocale()}>
+        <IntlProvider
+          locale={locale ? locale.split("-")[0] : "en"}
+          messages={getLocale()}
+        >
           <BrowserRouter>
             <RenderRouter />
           </BrowserRouter>

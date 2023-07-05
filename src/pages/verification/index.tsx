@@ -37,8 +37,9 @@ const VerificationPage: FC = () => {
         }
       );
 
-      if (response.ok) {
-        const from = location.state?.from || { pathname: "/" };
+      console.log("response.status" + JSON.stringify(response.status, null, 2));
+      if (response.status == 200) {
+        const from = location.state?.from || { pathname: "/activation" };
         navigate(from);
       } else {
         setFormError({

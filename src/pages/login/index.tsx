@@ -1,5 +1,13 @@
 import React, { FC } from "react";
-import { Button, Divider, Form, Input, Tooltip, Typography } from "antd";
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Tooltip,
+  Typography,
+  notification,
+} from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LoginParams } from "@/models/login";
 import { useLogin } from "@/api";
@@ -74,29 +82,56 @@ const LoginForm: FC = () => {
 
   const onFinished = async (form: LoginParams) => {
     const { email, password } = form;
+    try {
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+        }/api/sessions/checkUser`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
 
-    const loginForm = document.createElement("form");
-    loginForm.action = `${
-      import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-    }/api/sessions/login`;
-    loginForm.method = "POST";
+      if (response.status === 400) {
+        notification.error({
+          message: "Error",
+          description: "There is no user record corresponding to this email.",
+        });
+      } else {
+        const loginForm = document.createElement("form");
+        loginForm.action = `${
+          import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+        }/api/sessions/login`;
+        loginForm.method = "POST";
 
-    const emailInput = document.createElement("input");
-    emailInput.type = "hidden";
-    emailInput.name = "email";
-    emailInput.value = email;
+        const emailInput = document.createElement("input");
+        emailInput.type = "hidden";
+        emailInput.name = "email";
+        emailInput.value = email;
 
-    const passwordInput = document.createElement("input");
-    passwordInput.type = "hidden";
-    passwordInput.name = "password";
-    passwordInput.value = password;
+        const passwordInput = document.createElement("input");
+        passwordInput.type = "hidden";
+        passwordInput.name = "password";
+        passwordInput.value = password;
 
-    loginForm.appendChild(emailInput);
-    loginForm.appendChild(passwordInput);
+        loginForm.appendChild(emailInput);
+        loginForm.appendChild(passwordInput);
 
-    document.body.appendChild(loginForm);
-    loginForm.submit();
-    document.body.removeChild(loginForm);
+        document.body.appendChild(loginForm);
+        loginForm.submit();
+        document.body.removeChild(loginForm);
+      }
+    } catch (error) {
+      console.error(error);
+      notification.error({
+        message: "Error",
+        description: "An error occurred while attempting to login.",
+      });
+    }
   };
 
   return (
