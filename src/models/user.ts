@@ -22,7 +22,7 @@ export interface LibraryUser {
   totalSentences: number;
 }
 
-export interface UserLibraryWatched {
+export interface UserLibrary {
   libraryId: string;
   timeStamp: number;
 }
@@ -61,7 +61,7 @@ export interface User {
   activated: boolean;
   isLimitExceeded: boolean;
   exceededAt: Date;
-  userLibraryWatched: UserLibraryWatched;
+  userLibraries: UserLibrary[];
   picture: string;
 }
 

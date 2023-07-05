@@ -166,6 +166,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     useEffect(() => {
       const fetchCurrentUser = async () => {
         const user = await getUser(cookies.access_token);
+        //console.log("user" + JSON.stringify(user, null, 2));
         setCurrentUser(user);
       };
       fetchCurrentUser();
@@ -213,8 +214,20 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       }, timeUntilNextSentence);
     };
 
+    const hasSeekToBeenCalledRef = useRef(false);
+
     const handlePlayerStateChange = useCallback(
       (event: any) => {
+        if (
+          event.data === YT.PlayerState.PLAYING &&
+          !hasSeekToBeenCalledRef.current
+        ) {
+          if (!hasSeekToBeenCalledRef.current) {
+            playerRef.current?.seekTo(0.4);
+            setIsInitRender(false);
+            hasSeekToBeenCalledRef.current = true;
+          }
+        }
         if (event.data === YT.PlayerState.PLAYING && hasVideoPaused) {
           setIsVideoPaused(false);
           if (timeoutId) {
@@ -236,7 +249,9 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
             }
           }, 10000);
           if (!isInitRender) scheduleHandleTimeUpdate();
-          if (isInitRender) setIsInitRender(false);
+          if (isInitRender) {
+            setIsInitRender(false);
+          }
         } else if (
           event.data === YT.PlayerState.PAUSED ||
           event.data === YT.PlayerState.ENDED
@@ -255,15 +270,22 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
 
         if (event.data === YT.PlayerState.BUFFERING) {
           if (hasSeekHappenedRef.current === false) {
-            const userLibraryWatched = currentUser?.userLibraryWatched;
-            console.log(
-              "userLibraryWatched" + JSON.stringify(userLibraryWatched, null, 2)
-            );
             if (
-              userLibraryWatched &&
-              userLibraryWatched.libraryId.toString() === libraryId
+              currentUser?.userLibraries &&
+              currentUser.userLibraries.some(
+                (library) => library.libraryId === libraryId
+              )
             ) {
-              playerRef.current?.seekTo(userLibraryWatched.timeStamp);
+              const userLibraryWatched = currentUser.userLibraries.find(
+                (library) => library.libraryId === libraryId
+              );
+              console.log(
+                "userLibraryWatched" +
+                  JSON.stringify(userLibraryWatched, null, 2)
+              );
+              if (userLibraryWatched) {
+                playerRef.current?.seekTo(userLibraryWatched.timeStamp);
+              }
             }
           }
           hasSeekHappenedRef.current = true;
@@ -307,7 +329,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
             });
             playerRef.current.addEventListener("onReady", function () {
               if (playerRef.current.seekTo) {
-                //playerRef.current.seekTo(1);
+                //playerRef.current.seekTo(0.1, true);
               }
             });
           }

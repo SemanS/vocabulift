@@ -100,4 +100,4 @@ export function isSingleWord(text: string) {
 }
 
 export const getFlagCode = (code: string) =>
-  code === "en" ? "gb" : code === "cs" ? "cz" : code;
+  code === "en" ? "gb" : code === "cs" ? "cz" : code === "zh" ? "cn" : code;
