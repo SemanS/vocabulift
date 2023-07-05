@@ -20,7 +20,7 @@ const ActivationPage: FC = () => {
     "pl",
     "hu",
     "it",
-    "nl",
+    "cn",
   ];
 
   const selectFlag = (language: string) => {

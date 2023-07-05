@@ -839,18 +839,25 @@ const BookDetail: FC = () => {
             onChange={handleModeChange}
             value={state.mode}
             buttonStyle="solid"
-            style={{ paddingRight: 20 }}
+            style={{ paddingRight: 20, marginTop: 10 }}
           >
-            <Radio.Button value="words">Words</Radio.Button>
+            <Radio.Button value="words" style={{ fontWeight: 500 }}>
+              Words
+            </Radio.Button>
             {/* <Radio.Button value="phrases">Phrases</Radio.Button> */}
-            <Radio.Button value="sentences">Sentences</Radio.Button>
-            <Radio.Button value="all">All</Radio.Button>
+            <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
+              Sentences
+            </Radio.Button>
+            <Radio.Button value="all" style={{ fontWeight: 500 }}>
+              All
+            </Radio.Button>
           </Radio.Group>
 
           <Button
             type="default"
             onClick={handleDownloadWorkSheet}
             loading={state.loadingWorkSheet}
+            style={{ marginTop: 10, fontWeight: 500 }}
           >
             Download Worksheet
           </Button>

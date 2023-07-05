@@ -35,11 +35,15 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     ? options.map(({ label, value }) => ({ name: label, code: value }))
     : [
         { name: "English", code: "en" },
-        { name: "Germany", code: "de" },
-        { name: "Slovakia", code: "sk" },
-        { name: "French", code: "fr" },
         { name: "Spanish", code: "es" },
+        { name: "French", code: "fr" },
+        { name: "German", code: "de" },
         { name: "Czech", code: "cs" },
+        { name: "Slovak", code: "sk" },
+        { name: "Polish", code: "pl" },
+        { name: "Hungarian", code: "hu" },
+        { name: "Italian", code: "it" },
+        { name: "Chinese", code: "cn" },
       ];
 
   const [visible, setVisible] = useState(false);
