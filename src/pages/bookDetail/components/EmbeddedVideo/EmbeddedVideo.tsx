@@ -43,6 +43,8 @@ interface EmbeddedVideoProps {
   setShouldSetVideo: (shouldSetVideo: boolean) => void;
   firstIndexAfterReset: number | null;
   setLoadingFromFetch: (loadingFromFetch: boolean) => void;
+  onPlay?: () => void;
+  onPause?: () => void;
 }
 
 const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
@@ -71,6 +73,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     const [hasVideoPaused, setHasVideoPaused] = useState(true);
     const [isPlayerReady, setIsPlayerReady] = useState(false);
     const hasSeekHappenedRef = useRef(false);
+    const isMounted = useRef(true); // Set to true initially
 
     const [cookies] = useCookies(["access_token"]);
     let timeoutId: number | null = null;
@@ -83,15 +86,24 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       navigate("/library");
     }
 
+    useEffect(() => {
+      // When the component unmounts, set isMounted to false
+      return () => {
+        isMounted.current = false;
+      };
+    }, []);
+
     useImperativeHandle(ref, () => ({
       playVideo: () => {
         if (playerRef.current && playerRef.current.playVideo) {
           playerRef.current.playVideo();
+          props.onPlay && props.onPlay();
         }
       },
       pauseVideo: () => {
         if (playerRef.current && playerRef.current.pauseVideo) {
           playerRef.current.pauseVideo();
+          props.onPause && props.onPause();
         }
       },
     }));
@@ -108,6 +120,18 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       // Cleanup when this component unmounts
       return () => {
         removeEventListener("popstate", closeView);
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+        if (intervalId.current) {
+          clearInterval(intervalId.current);
+          intervalId.current = undefined;
+        }
+        // Add these lines to clean up the player events
+        if (playerRef.current) {
+          playerRef.current.stopVideo();
+          playerRef.current.destroy();
+        }
       };
     }, []);
 
@@ -166,7 +190,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     useEffect(() => {
       const fetchCurrentUser = async () => {
         const user = await getUser(cookies.access_token);
-        //console.log("user" + JSON.stringify(user, null, 2));
         setCurrentUser(user);
       };
       fetchCurrentUser();
@@ -189,13 +212,23 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     }, []);
 
     const scheduleHandleTimeUpdate = async () => {
-      if (!playerRef.current?.getCurrentTime()) {
+      if (
+        !playerRef.current?.getCurrentTime() &&
+        playerRef.current?.getCurrentTime() !== 0
+      ) {
         return;
       }
       const currentTime = playerRef.current.getCurrentTime();
-      const currentSentenceIndex = getCurrentIndex(
+      let currentSentenceIndex = getCurrentIndex(
         snapshotsRef.current!,
         currentTime
+      );
+
+      if (currentSentenceIndex === -1) {
+        currentSentenceIndex = 0;
+      }
+      console.log(
+        "currentSentenceIndex" + JSON.stringify(currentSentenceIndex, null, 2)
       );
       const nextSentence =
         snapshotsRef.current![0].sentencesData[currentSentenceIndex];
@@ -207,11 +240,13 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
-      timeoutId = window.setTimeout(async () => {
-        await handleTimeUpdate();
-        // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
-        await scheduleHandleTimeUpdate();
-      }, timeUntilNextSentence);
+      if (isMounted.current) {
+        timeoutId = window.setTimeout(async () => {
+          await handleTimeUpdate();
+          // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
+          await scheduleHandleTimeUpdate();
+        }, timeUntilNextSentence);
+      }
     };
 
     const hasSeekToBeenCalledRef = useRef(false);
@@ -223,7 +258,9 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           !hasSeekToBeenCalledRef.current
         ) {
           if (!hasSeekToBeenCalledRef.current) {
-            playerRef.current?.seekTo(0.4);
+            /* playerRef.current?.seekTo(
+              snapshotsRef.current![0].sentencesData[0].start!
+            ); */
             setIsInitRender(false);
             hasSeekToBeenCalledRef.current = true;
           }
@@ -279,10 +316,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               const userLibraryWatched = currentUser.userLibraries.find(
                 (library) => library.libraryId === libraryId
               );
-              console.log(
-                "userLibraryWatched" +
-                  JSON.stringify(userLibraryWatched, null, 2)
-              );
               if (userLibraryWatched) {
                 playerRef.current?.seekTo(userLibraryWatched.timeStamp);
               }
@@ -314,7 +347,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           setCurrentLibrary(library);
           handlePageChange(1, sentencesPerPageRef.current, false, false, false);
         }
-
         window.onYouTubeIframeAPIReady = () => {
           if (playerDivRef.current && !playerRef.current && currentLibrary) {
             playerRef.current = new YT.Player(playerDivRef.current, {
@@ -337,8 +369,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
 
         if (window.YT && window.YT.loaded) {
           window.onYouTubeIframeAPIReady();
-
-          /*  */
         } else {
           const tag = document.createElement("script");
           tag.src = "https://www.youtube.com/iframe_api";
@@ -354,7 +384,10 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     }, [sentencesPerPage]);
 
     const handleTimeUpdate = async () => {
-      if (!playerRef.current?.getCurrentTime()) {
+      if (
+        !playerRef.current?.getCurrentTime() &&
+        playerRef.current?.getCurrentTime() !== 0
+      ) {
         return;
       }
 
@@ -373,6 +406,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           : pageNumber;
 
       currentPageToUseRef.current = pageNumberToUse;
+
       const newHighlightedIndex =
         currentTime < snapshotsRef.current![0].sentencesData[0].start!
           ? 0
@@ -382,6 +416,9 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
                 currentTime < sentence.start! + sentence.duration! - 0.1
               );
             });
+      console.log(
+        "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
+      );
       if (
         newHighlightedIndex === null ||
         newHighlightedIndex === undefined ||

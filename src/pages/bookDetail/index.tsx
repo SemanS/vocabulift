@@ -310,6 +310,14 @@ const BookDetail: FC = () => {
     ]
   );
 
+  const handlePlay = () => {
+    dispatch({ type: "setIsPlaying", payload: true });
+  };
+
+  const handlePause = () => {
+    dispatch({ type: "setIsPlaying", payload: false });
+  };
+
   const handlePlayPause = () => {
     if (state.isPlaying) {
       videoPlayerRef.current.pauseVideo();
@@ -782,6 +790,8 @@ const BookDetail: FC = () => {
           setShouldSetVideo={setShouldSetVideo}
           firstIndexAfterReset={state.firstIndexAfterReset!}
           setLoadingFromFetch={setLoadingFromFetch}
+          onPlay={handlePlay}
+          onPause={handlePause}
         />
       )}
     </div>
