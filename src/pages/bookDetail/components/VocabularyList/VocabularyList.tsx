@@ -89,6 +89,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
     loadingFromWordAlternatives: false,
     loadingFromWordMeaning: false,
     wordMeaningData: null,
+    wordAlternativesData: null,
   });
 
   const longPressQuestionAction = () =>
@@ -139,13 +140,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
     try {
       setActiveTab("4");
       dispatch({ type: "setLoadingFromWordAlternatives", payload: true });
-      const meaning = await getPhraseAlternatives(
+      const alternatives = await getPhraseAlternatives(
         phrase,
         language,
         selectedLanguageTo
       );
       dispatch({ type: "setLoadingFromWordAlternatives", payload: false });
-      dispatch({ type: "setWordAlternativesData", payload: meaning });
+      dispatch({ type: "setWordAlternativesData", payload: alternatives });
     } catch (error) {
       console.error("Error occurred:", error);
       dispatch({
@@ -1010,13 +1011,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
               style={{
                 paddingRight: 25,
                 paddingLeft: 25,
-                display: "flex",
-                justifyContent: "center",
               }}
             >
               <CustomSpinnerComponent
                 spinning={state.loadingFromWordAlternatives}
-                //myStyle={{ left: "20%" }}
+                myStyle={{ left: "40%" }}
               >
                 {state.wordAlternativesData && (
                   <div
