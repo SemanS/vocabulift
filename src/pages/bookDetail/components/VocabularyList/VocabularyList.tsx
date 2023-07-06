@@ -139,7 +139,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
     try {
       setActiveTab("4");
       dispatch({ type: "setLoadingFromWordAlternatives", payload: true });
-      const meaning = await getPhraseAlternatives(phrase, language);
+      const meaning = await getPhraseAlternatives(
+        phrase,
+        language,
+        selectedLanguageTo
+      );
       dispatch({ type: "setLoadingFromWordAlternatives", payload: false });
       dispatch({ type: "setWordAlternativesData", payload: meaning });
     } catch (error) {

@@ -238,6 +238,7 @@ const BookDetail: FC = () => {
       changeTriggeredFromVideoFetch: boolean = false
     ) => {
       const newQueryParams = new URLSearchParams(location.search);
+      console.log("page" + JSON.stringify(page, null, 2));
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
       let localSentenceFrom;
@@ -389,7 +390,6 @@ const BookDetail: FC = () => {
   const fetchDataAndUpdateState = useCallback(
     async (localSentenceFrom: number, targetLanguage?: string) => {
       dispatch({ type: "setLoadingFromFetch", payload: true });
-
       const snapshots = await getSnapshots(
         libraryId!,
         user.sourceLanguage,

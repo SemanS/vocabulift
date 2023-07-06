@@ -229,11 +229,13 @@ export const getPhraseMeaning = async (
 
 export const getPhraseAlternatives = async (
   phrase: string,
-  language: string
+  language: string,
+  targetLanguage: string
 ): Promise<string> => {
   const requestBody = {
     phrase: phrase,
     language: language,
+    targetLanguage: targetLanguage,
   };
 
   try {
