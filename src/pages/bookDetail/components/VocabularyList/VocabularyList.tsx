@@ -525,6 +525,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         width: "50%",
                                         textAlign: "right",
                                         paddingRight: "20px",
+                                        fontWeight: 400,
+                                        fontSize: "16px",
                                       }}
                                       onClick={() => {
                                         togglePlay;
@@ -553,6 +555,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         textAlign: "left",
                                         paddingLeft: "20px",
                                         borderLeft: "1px solid #000",
+                                        fontWeight: 400,
+                                        fontSize: "16px",
                                       }}
                                       onClick={() => {
                                         togglePlay;
@@ -885,6 +889,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         width: "50%",
                                         textAlign: "right",
                                         paddingRight: "20px",
+                                        paddingLeft: "5px",
+                                        fontWeight: 400,
+                                        fontSize: "16px",
                                       }}
                                       onClick={() => {
                                         togglePlay;
@@ -913,6 +920,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         textAlign: "left",
                                         paddingLeft: "20px",
                                         borderLeft: "1px solid #000",
+                                        fontWeight: 400,
+                                        fontSize: "16px",
                                       }}
                                       onClick={() => {
                                         togglePlay;

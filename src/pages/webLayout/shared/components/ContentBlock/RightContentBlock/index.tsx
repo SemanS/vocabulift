@@ -39,7 +39,7 @@ const RightBlock = ({
           id={id}
           className={fadeVisible ? styles.visible : styles.notVisible}
         >
-          <Col lg={11} md={11} sm={11} xs={24}>
+          <Col lg={10} md={11} sm={11} xs={24}>
             <ContentWrapper>
               <h6>{title}</h6>
               <Content>{content}</Content>
@@ -53,8 +53,13 @@ const RightBlock = ({
               </ButtonWrapper>
             </ContentWrapper>
           </Col>
-          <Col lg={11} md={11} sm={12} xs={24}>
-            <SvgIcon src={icon} width="100%" height="100%" />
+          <Col lg={14} md={11} sm={12} xs={24}>
+            <img
+              src={"img/svg/image_1.webp"}
+              style={{ width: "100%", height: "100%" }}
+              alt="icon"
+            />
+            {/* <SvgIcon src={icon} width="100%" height="100%" /> */}
           </Col>
         </Row>
       </Fade>

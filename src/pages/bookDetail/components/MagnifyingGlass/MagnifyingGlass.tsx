@@ -2,6 +2,9 @@ import React from "react";
 import styles from "./index.module.less";
 
 function MagnifyingGlass({ style, words, sentence }) {
+  if (sentence === "" && (!words || words.length === 0)) {
+    return null;
+  }
   return (
     <div style={{ ...style }} className={styles.magnifyingGlass}>
       <span className={styles.sentenceBox}>{sentence} </span>

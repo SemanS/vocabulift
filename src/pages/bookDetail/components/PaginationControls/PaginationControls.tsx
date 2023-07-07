@@ -18,6 +18,7 @@ const PaginationControls: FC<PaginationControlsProps> = ({
 }) => {
   return (
     <Pagination
+      showSizeChanger={false}
       /* style={{
         marginTop: "20px",
         display: "flex",

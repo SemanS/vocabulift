@@ -128,7 +128,10 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           intervalId.current = undefined;
         }
         // Add these lines to clean up the player events
-        if (playerRef.current) {
+        if (
+          playerRef.current &&
+          typeof playerRef.current.stopVideo === "function"
+        ) {
           playerRef.current.stopVideo();
           playerRef.current.destroy();
         }
@@ -162,15 +165,17 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
             sentencesPerPageRef.current,
             snapshotsRef.current![0].sentenceFrom!
           );
-          handlePageChange(
-            newPage,
-            sentencesPerPageRef.current,
-            true,
-            true,
-            false
-          );
-          onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
-          setLoadingFromFetch(false);
+          if (!isNaN(newPage)) {
+            handlePageChange(
+              newPage,
+              sentencesPerPageRef.current,
+              true,
+              true,
+              false
+            );
+            onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+            setLoadingFromFetch(false);
+          }
         }
       }
       if (
@@ -266,6 +271,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           }
         }
         if (event.data === YT.PlayerState.PLAYING && hasVideoPaused) {
+          props.onPlay && props.onPlay();
           setIsVideoPaused(false);
           if (timeoutId) {
             clearTimeout(timeoutId);
@@ -278,6 +284,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               playerRef.current?.getPlayerState() !== YT.PlayerState.PAUSED &&
               playerRef.current?.getPlayerState() !== YT.PlayerState.ENDED
             ) {
+              props.onPause && props.onPause();
               console.log("Sending data...");
               socket.emit("video-playing", {
                 libraryId: libraryId,
@@ -293,6 +300,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           event.data === YT.PlayerState.PAUSED ||
           event.data === YT.PlayerState.ENDED
         ) {
+          props.onPause && props.onPause();
           setIsVideoPaused(true);
           setHasVideoPaused(true);
           if (timeoutId) {
@@ -438,13 +446,15 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         const newPage = Math.ceil(
           snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
         );
-        handlePageChange(
-          newPage,
-          sentencesPerPageRef.current,
-          false,
-          true,
-          true
-        );
+        if (!isNaN(newPage)) {
+          handlePageChange(
+            newPage,
+            sentencesPerPageRef.current,
+            false,
+            true,
+            true
+          );
+        }
       }
 
       if (newHighlightedIndex === -1) {
@@ -456,14 +466,19 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         const newPage = Math.ceil(
           snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
         );
-        startIndexRef.current =
-          newPage * sentencesPerPageRef.current -
-          snapshotsRef.current![0].sentenceFrom +
-          1;
-        endIndexRef.current = Math.ceil(
-          newPage * sentencesPerPageRef.current -
-            snapshotsRef.current![0].sentenceFrom
-        );
+        if (!isNaN(newPage)) {
+          console.log("som nula");
+          //playerRef.current.stopVideo();
+
+          startIndexRef.current =
+            newPage * sentencesPerPageRef.current -
+            snapshotsRef.current![0].sentenceFrom +
+            1;
+          endIndexRef.current = Math.ceil(
+            newPage * sentencesPerPageRef.current -
+              snapshotsRef.current![0].sentenceFrom
+          );
+        }
       } else {
         if (
           onHighlightedSubtitleIndexChange &&
@@ -482,22 +497,23 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               sentencesPerPageRef.current,
               snapshotsRef.current![0].sentenceFrom!
             );
-
-            startIndexRef.current =
-              (newPage - 1) * sentencesPerPageRef.current -
-              snapshotsRef.current![0].sentenceFrom +
-              1;
-            endIndexRef.current = Math.ceil(
-              newPage * sentencesPerPageRef.current -
-                snapshotsRef.current![0].sentenceFrom
-            );
-            handlePageChange(
-              newPage,
-              sentencesPerPageRef.current,
-              true,
-              true,
-              false
-            );
+            if (!isNaN(newPage)) {
+              startIndexRef.current =
+                (newPage - 1) * sentencesPerPageRef.current -
+                snapshotsRef.current![0].sentenceFrom +
+                1;
+              endIndexRef.current = Math.ceil(
+                newPage * sentencesPerPageRef.current -
+                  snapshotsRef.current![0].sentenceFrom
+              );
+              handlePageChange(
+                newPage,
+                sentencesPerPageRef.current,
+                true,
+                true,
+                false
+              );
+            }
           }
           if (onHighlightedSubtitleIndexChange) {
             onHighlightedSubtitleIndexChange(newHighlightedIndex!);

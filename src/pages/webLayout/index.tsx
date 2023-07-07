@@ -22,7 +22,7 @@ const WebLayoutPage: FC = () => {
           title={formatMessage({ id: "web.introContent.title" })}
           content={formatMessage({ id: "web.introContent.text" })}
           button={"button"}
-          icon="developer.svg"
+          icon="developer.webp"
           id="intro"
         />
         <MiddleBlock
@@ -39,7 +39,7 @@ const WebLayoutPage: FC = () => {
           id="about"
         /> */}
         <ContentBlock
-          type="right"
+          type="middle"
           title={"title"}
           content={"content"}
           icon="product-launch.svg"
@@ -51,6 +51,13 @@ const WebLayoutPage: FC = () => {
           content={"content"}
           icon="waving.svg"
           id="product"
+        />
+        <ContentBlock
+          type="browser"
+          title={"title"}
+          content={"content"}
+          icon="product-launch.svg"
+          id="mission"
         />
         <PricingComponent />
         <Contact title={"title"} content={"content"} id="contact" />

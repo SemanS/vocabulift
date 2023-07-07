@@ -157,7 +157,7 @@ const LayoutPage: FC = () => {
               <Link
                 to={menuItemProps.path!}
                 onClick={() => setCollapsed(true)}
-                style={{ fontWeight: "450" }}
+                style={{ fontWeight: "400", fontSize: "16px" }}
               >
                 {defaultDom}
               </Link>
