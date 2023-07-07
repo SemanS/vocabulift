@@ -13,6 +13,7 @@ import {
   Label,
   Outline,
   Span,
+  ButtonWrapper,
 } from "./styles";
 import React from "react";
 
@@ -46,13 +47,20 @@ const Header = () => {
         <CustomNavLinkSmall onClick={() => scrollTo("product")}>
           <Span>{"Product"}</Span>
         </CustomNavLinkSmall>
+        <CustomNavLinkSmall onClick={() => scrollTo("pricing")}>
+          <Span>{"Pricing"}</Span>
+        </CustomNavLinkSmall>
         <CustomNavLinkSmall
-          style={{ width: "180px" }}
+          style={{ width: "240px" }}
           onClick={() => scrollTo("contact")}
         >
-          <Span>
+          <ButtonWrapper>
+            <Button>{"Try for free"}</Button>
             <Button>{"Contact"}</Button>
-          </Span>
+          </ButtonWrapper>
+          {/* <Span>
+            <Button>{"Contact"}</Button>
+          </Span> */}
         </CustomNavLinkSmall>
       </>
     );

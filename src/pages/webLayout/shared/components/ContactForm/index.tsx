@@ -27,12 +27,18 @@ const Contact = ({ title, content, id }: IContactProps) => {
   return (
     <ContactContainer id={id}>
       <Row justify="space-between" align="middle">
-        <Col lg={12} md={11} sm={24} xs={24}>
+        <Col lg={2} md={2} sm={2} xs={2} />
+        <Col lg={10} md={10} sm={22} xs={22}>
           <Slide direction="left" triggerOnce>
-            <Block title={title} content={content} />
+            <Block
+              title={"Proudly crafted in Slovakia"}
+              content={
+                "Your thoughts and feedback fuel our innovation. Whether it's a question, suggestion, or just a hello, we're excited to hear from you."
+              }
+            />
           </Slide>
         </Col>
-        <Col lg={12} md={12} sm={24} xs={24}>
+        <Col lg={10} md={10} sm={22} xs={22}>
           <Slide direction="right" triggerOnce>
             <FormGroup autoComplete="off" onSubmit={handleSubmit}>
               <Col span={24}>
@@ -70,6 +76,7 @@ const Contact = ({ title, content, id }: IContactProps) => {
             </FormGroup>
           </Slide>
         </Col>
+        <Col lg={2} md={2} sm={2} xs={2} />
       </Row>
     </ContactContainer>
   );

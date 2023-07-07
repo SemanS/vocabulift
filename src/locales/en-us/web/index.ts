@@ -1,8 +1,8 @@
 export const en_US_web = {
-  "web.introContent.title": "Unleash Your Language Skills",
+  "web.introContent.title": "Unleash Your Language Skills with AI",
   "web.introContent.text":
-    "Discover a powerful language learning tool that helps you understand texts from videos while building a personalized vocabulary.",
-  "web.middleBlock.title": "Engaging Learning Experience",
+    "Embark on an immersive language adventure that harnesses the power of AI. Transform video texts into your personal linguistic playground, cultivating a rich vocabulary landscape as you traverse the world of languages.",
+  "web.middleBlock.title": "Pioneering the Future of Language Learning with AI",
   "web.middleBlock.text":
-    "Dive into a fun and interactive learning environment designed to keep you motivated and passionate about language mastery.",
+    "Discover a revolutionary approach to language learning, harnessing the power of advanced AI to redefine your linguistic journey. (Here is a button where you can kickstart your journey for free)",
 };

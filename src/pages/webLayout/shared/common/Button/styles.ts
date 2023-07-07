@@ -14,6 +14,7 @@ export const StyledButton = styled.button<any>`
   max-width: 350px;
   transition: all 0.3s ease-in-out;
   box-shadow: 0 16px 30px rgb(23 31 114 / 20%);
+  white-space: nowrap;
 
   /* &:hover,
   &:active,

@@ -72,7 +72,7 @@ const BrowserBlock = ({
           {/* <ContentWrapper> */}
           <h6>
             <Fade direction="left" delay={5000} triggerOnce>
-              {"Experience the Power of Vocabulift"}
+              {"Discover the Magic of Vocabulift"}
             </Fade>
           </h6>
           <Content>

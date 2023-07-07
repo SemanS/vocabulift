@@ -28,7 +28,7 @@ const WebLayoutPage: FC = () => {
         <MiddleBlock
           title={formatMessage({ id: "web.middleBlock.title" })}
           content={formatMessage({ id: "web.middleBlock.text" })}
-          button={"button"}
+          button={"Get started for free"}
         />
         {/*  <ContentBlock
           type="left"

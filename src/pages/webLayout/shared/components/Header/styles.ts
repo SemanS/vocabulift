@@ -118,3 +118,18 @@ export const Span = styled.span`
     text-decoration: rgb(255, 130, 92) wavy underline;
   }
 `;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  align-items: center; // Add this line
+  justify-content: space-between;
+  max-width: 100%;
+
+  @media screen and (min-width: 1024px) {
+    max-width: 80%;
+  }
+
+  button:last-child {
+    margin-left: 20px;
+  }
+`;

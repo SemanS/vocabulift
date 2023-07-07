@@ -13,39 +13,42 @@ const PricingComponent = () => {
       monthlyPrice: 0,
       annualPrice: 0,
       features: [
-        "Access to Beginner-Level Videos",
-        "Basic Transcript Interaction",
-        "Limited Vocabulary Lists",
+        "3-minute access to videos per day",
+        "Up to 100 words/phrases translation",
+        "No access to worksheets",
+        "No access to words/phrases meaning",
+        "No access to words/phrases alternatives",
       ],
     },
     {
       title: "Linguist",
-      monthlyPrice: 4.99,
-      annualPrice: 39.99,
+      monthlyPrice: 9.99,
+      annualPrice: 79.99,
       features: [
-        "Access to All Level Videos",
-        "Full Transcript Interaction",
-        "Unlimited Vocabulary Lists",
-        "Access to Community Forum",
+        "Unlimited access to all videos",
+        "Unlimited words/phrases translation",
+        "Access to worksheets",
+        "500 words/phrases meaning monthly",
+        "500 words/phrases alternatives monthly",
       ],
     },
     {
       title: "Polyglot",
-      monthlyPrice: 6.99,
-      annualPrice: 59.99,
+      monthlyPrice: 14.99,
+      annualPrice: 119.99,
       features: [
-        "Access to All Level Videos",
-        "Full Transcript Interaction",
-        "Unlimited Vocabulary Lists",
-        "Priority Access to New Features",
-        "Dedicated Language Learning Support",
+        "Unlimited access to all videos",
+        "Unlimited words/phrases",
+        "Access to worksheets",
+        "Unlimited words/phrases meaning",
+        "Unlimited words/phrases alternatives",
       ],
     },
   ];
 
   return (
     <div className="container text-center">
-      <h1>Our Pricing</h1>
+      <h6>Our Pricing</h6>
       <label className="pricing" onClick={toggleMonthly}>
         <span className="label">Annually</span>
         <span className={`switch ${monthly ? "monthly" : ""}`}>

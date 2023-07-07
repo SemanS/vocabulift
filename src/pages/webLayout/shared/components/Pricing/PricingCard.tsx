@@ -2,6 +2,7 @@ import React from "react";
 import "./PricingComponent.less";
 import { Typography } from "antd";
 import { loadStripe } from "@stripe/stripe-js";
+import { Button } from "../../common/Button";
 
 const PricingCard = ({
   title,
@@ -54,12 +55,9 @@ const PricingCard = ({
           <li key={index}>{feature}</li>
         ))}
       </ul>
-      <button role="link" onClick={handleClick}>
-        Checkout
-      </button>
-      <a href="#" className="btn">
-        Learn More
-      </a>
+      <Button fixedWidth={true} onClick={handleClick}>
+        {"CHECKOUT"}
+      </Button>
     </div>
   );
 };
