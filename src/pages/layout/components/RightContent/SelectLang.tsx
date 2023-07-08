@@ -36,7 +36,6 @@ const SelectLang: React.FC<SelectLangProps> = (props) => {
   ) {
     className = `dark`;
   }
-
   const items = localeConfig.map((lang) => {
     return {
       key: lang.key,

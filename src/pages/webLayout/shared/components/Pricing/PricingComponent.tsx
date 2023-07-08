@@ -12,6 +12,8 @@ const PricingComponent = () => {
       title: "Explorer",
       monthlyPrice: 0,
       annualPrice: 0,
+      annualPriceId: "",
+      monthlyPriceId: "",
       features: [
         "3-minute access to videos per day",
         "Up to 100 words/phrases translation",
@@ -24,6 +26,8 @@ const PricingComponent = () => {
       title: "Linguist",
       monthlyPrice: 9.99,
       annualPrice: 79.99,
+      annualPriceId: import.meta.env.VITE_REACT_APP_LINGUIST_ANNUAL_PRICE_ID,
+      monthlyPriceId: import.meta.env.VITE_REACT_APP_LINGUIST_MONTHLY_PRICE_ID,
       features: [
         "Unlimited access to all videos",
         "Unlimited words/phrases translation",
@@ -36,6 +40,8 @@ const PricingComponent = () => {
       title: "Polyglot",
       monthlyPrice: 14.99,
       annualPrice: 119.99,
+      annualPriceId: import.meta.env.VITE_REACT_APP_POLYGLOT_ANNUAL_PRICE_ID,
+      monthlyPriceId: import.meta.env.VITE_REACT_APP_POLYGLOT_MONTHLY_PRICE_ID,
       features: [
         "Unlimited access to all videos",
         "Unlimited words/phrases",
@@ -63,6 +69,8 @@ const PricingComponent = () => {
             {...data}
             isMonthly={monthly}
             isPrimary={index === 1}
+            annualPriceId={data.annualPriceId}
+            monthlyPriceId={data.monthlyPriceId}
           />
         ))}
       </div>

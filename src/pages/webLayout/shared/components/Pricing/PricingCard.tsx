@@ -3,6 +3,8 @@ import "./PricingComponent.less";
 import { Typography } from "antd";
 import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "../../common/Button";
+import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 const PricingCard = ({
   title,
@@ -11,20 +13,32 @@ const PricingCard = ({
   features,
   isMonthly,
   isPrimary,
+  annualPriceId,
+  monthlyPriceId,
 }) => {
+  const [cookies] = useCookies(["access_token"]);
+  const navigate = useNavigate();
   const cardStyle = isPrimary ? "card card-primary" : "card";
 
-  const stripePromise = loadStripe(
-    "pk_test_51NJch0AIigvyUQOLgpPpQDEtQl3z2fxvFFn9z7gDtU5UDo1B7LXUbilVfNA8Q6Mcx4zhR9V3rUA8NDKcRiVf1fIf00tVOS8aBu"
-  );
+  const stripeApiKey = import.meta.env.VITE_REACT_APP_STRIPE_API_KEY;
+
+  const stripePromise = loadStripe(stripeApiKey);
 
   const handleClick = async (event) => {
+    const priceId = isMonthly ? monthlyPriceId : annualPriceId;
+    console.log("priceId" + JSON.stringify(priceId, null, 2));
     // Call your backend to create the Checkout Session
     const response = await fetch(
       `${
         import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
       }/create-checkout-session`,
-      { method: "POST" }
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ priceId }),
+      }
     );
     const session = await response.json();
 
@@ -55,9 +69,20 @@ const PricingCard = ({
           <li key={index}>{feature}</li>
         ))}
       </ul>
-      <Button fixedWidth={true} onClick={handleClick}>
-        {"CHECKOUT"}
-      </Button>
+      {cookies.access_token ? (
+        <Button fixedWidth={true} onClick={handleClick}>
+          {"CHECKOUT"}
+        </Button>
+      ) : (
+        <Button
+          fixedWidth={true}
+          onClick={() => {
+            navigate("/login");
+          }}
+        >
+          {"Login or Register"}
+        </Button>
+      )}
     </div>
   );
 };

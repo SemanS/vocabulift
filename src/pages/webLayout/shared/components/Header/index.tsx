@@ -18,10 +18,13 @@ import {
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
 
 const Header = () => {
   const [visible, setVisibility] = useState(false);
-  const [cookies] = useCookies(["access_token"]);
+  const [user, setUser] = useRecoilState(userState);
+  const [cookies, setCookie] = useCookies(["access_token"]);
 
   const navigate = useNavigate();
 
@@ -31,6 +34,19 @@ const Header = () => {
 
   const onClose = () => {
     setVisibility(!visible);
+  };
+
+  const loginOut = async () => {
+    setUser({ ...user, isLogged: false });
+    if (cookies.access_token) {
+      setCookie("access_token", "", { expires: new Date(0) });
+    }
+    sessionStorage.clear();
+    if (location.pathname !== "/login") {
+      navigate("/login", {
+        replace: true,
+      });
+    }
   };
 
   const MenuItem = () => {
@@ -61,9 +77,11 @@ const Header = () => {
         <CustomNavLinkSmall>
           <Span>
             {cookies.access_token ? (
-              <a href="/login">{"Library"}</a>
-            ) : (
               <a href="/library" style={{ fontWeight: 700 }}>
+                {"Library"}
+              </a>
+            ) : (
+              <a href="/login" style={{ fontWeight: 700 }}>
                 {"Sign In"}
               </a>
             )}
@@ -77,6 +95,7 @@ const Header = () => {
             {cookies.access_token ? (
               <Button
                 onClick={() => {
+                  loginOut();
                   navigate("/logout");
                 }}
               >

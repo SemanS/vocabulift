@@ -56,7 +56,7 @@ export const localeConfig = [
     name: "Polish",
     key: "pl-PL",
     messages: plPL,
-    icon: <Flag code={getFlagCode("sk")} height="16" />,
+    icon: <Flag code={getFlagCode("pl")} height="16" />,
   },
   {
     name: "Hungarian",
