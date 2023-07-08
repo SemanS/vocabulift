@@ -1,5 +1,5 @@
 import React, { FC, Suspense, useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import { getGlobalState } from "@/models";
 import { userState } from "@/stores/user";
 import axios from "axios";
@@ -18,6 +18,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
   const [cookies] = useCookies(["access_token"]);
   const navigate = useNavigate();
   const [isLoading, setLoading] = useState(true);
+  const queryParams = new URLSearchParams(useLocation().search);
 
   useEffect(() => {
     setLoading(true);
@@ -61,10 +62,12 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         verified: true,
         isLimitExceeded: false,
         exceededAt: new Date(),
-        userLibraryWatched: {
-          libraryId: "6478fdc0d220b2b50883b874",
-          timeStamp: 10,
-        },
+        userLibraries: [
+          {
+            libraryId: "6478fdc0d220b2b50883b874",
+            timeStamp: 10,
+          },
+        ],
         picture:
           "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
       };
@@ -91,11 +94,18 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             isLogged: true,
             ...userResponse,
           });
+          if (location.pathname === "/logout") {
+            navigate("/logout");
+            return; // Prevent further execution of the useEffect hook
+          }
+
           if (response.data.status === "not-verified") {
-            navigate("/verification");
+            navigate(`/verification?code=${queryParams.get("code")}`);
+            return;
           }
           if (response.data.status === "not-activated") {
             navigate("/activation");
+            return; // Prevent further execution of the useEffect hook
           } else if (!userResponse?.verified) {
             navigate("/verification");
           } else if (userResponse?.verified && userResponse.activated) {

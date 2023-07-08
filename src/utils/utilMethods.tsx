@@ -1,5 +1,6 @@
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { SelectedWord } from "@/models/utils.interface";
+import { Locale } from "@/models/user";
 
 function calculateBookPercentage(
   page: number,
@@ -101,3 +102,19 @@ export function isSingleWord(text: string) {
 
 export const getFlagCode = (code: string) =>
   code === "en" ? "gb" : code === "cs" ? "cz" : code === "zh" ? "cn" : code;
+
+export const getLocaleFromLanguage = (language: string): Locale | undefined => {
+  const languageMapping: { [key: string]: Locale } = {
+    en: "en-US",
+    es: "es-ES",
+    fr: "fr-FR",
+    de: "de-DE",
+    cs: "cs-CZ",
+    sk: "sk-SK",
+    pl: "pl-PL",
+    hu: "hu-HU",
+    it: "it-IT",
+  };
+
+  return languageMapping[language];
+};

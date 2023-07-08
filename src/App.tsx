@@ -5,6 +5,13 @@ import { localeConfig } from "@/config/locale";
 import { ConfigProvider } from "antd";
 import enUS from "antd/es/locale/en_US";
 import skSK from "antd/es/locale/sk_SK";
+import esES from "antd/es/locale/es_ES";
+import frFR from "antd/es/locale/fr_FR";
+import deDE from "antd/es/locale/de_DE";
+import csCZ from "antd/es/locale/cs_CZ";
+import plPL from "antd/es/locale/pl_PL";
+import huHU from "antd/es/locale/hu_HU";
+import itIT from "antd/es/locale/it_IT";
 import moment from "moment";
 import RenderRouter from "./routes";
 import { useRecoilState } from "recoil";
@@ -17,18 +24,61 @@ const App: React.FC = () => {
 
   const { locale } = user;
   useEffect(() => {
-    if (locale === "en-US") {
-      moment.locale("en");
-    } else if (locale === "sk-SK") {
-      moment.locale("sk");
+    switch (locale) {
+      case "en-US":
+        moment.locale("en");
+        break;
+      case "es-ES":
+        moment.locale("es");
+        break;
+      case "fr-FR":
+        moment.locale("fr");
+        break;
+      case "de-DE":
+        moment.locale("de");
+        break;
+      case "cs-CZ":
+        moment.locale("cs");
+        break;
+      case "sk-SK":
+        moment.locale("sk");
+        break;
+      case "pl-PL":
+        moment.locale("pl");
+        break;
+      case "hu-HU":
+        moment.locale("hu");
+        break;
+      case "it-IT":
+        moment.locale("it");
+        break;
+      default:
+        moment.locale("en");
     }
   }, [locale]);
 
   const getAntdLocale = () => {
-    if (locale === "en-US") {
-      return enUS;
-    } else if (locale === "sk-SK") {
-      return skSK;
+    switch (locale) {
+      case "en-US":
+        return enUS;
+      case "es-ES":
+        return esES;
+      case "fr-FR":
+        return frFR;
+      case "de-DE":
+        return deDE;
+      case "cs-CZ":
+        return csCZ;
+      case "sk-SK":
+        return skSK;
+      case "pl-PL":
+        return plPL;
+      case "hu-HU":
+        return huHU;
+      case "it-IT":
+        return itIT;
+      default:
+        return enUS;
     }
   };
 

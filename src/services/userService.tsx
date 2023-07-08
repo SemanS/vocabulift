@@ -345,3 +345,24 @@ export const textToSpeech = async (
     console.error("Error with text to speech request:", error);
   }
 };
+
+export const postLanguages = async (
+  sourceLanguage: string,
+  targetLanguage: string
+) => {
+  const response = await vocabuFetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/setLanguages`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+      body: JSON.stringify({
+        sourceLanguage: sourceLanguage,
+        targetLanguage: targetLanguage,
+      }),
+    }
+  );
+  return response.json();
+};

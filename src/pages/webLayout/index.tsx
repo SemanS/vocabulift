@@ -1,9 +1,9 @@
-import React, { FC, lazy, Suspense } from "react";
+import React, { FC, lazy, Suspense, useEffect, useState } from "react";
 import Header from "./shared/components/Header";
 import { useLocale } from "@/locales";
 import PricingComponent from "./shared/components/Pricing/PricingComponent";
 import CookieConsent from "react-cookie-consent";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import Footer from "./shared/components/Footer";
 import { useLocation } from "react-router-dom";
 
@@ -14,14 +14,30 @@ const WebLayoutPage: FC = () => {
   const ScrollToTop = lazy(() => import("./shared/common/ScrollToTop"));
   const ContentBlock = lazy(() => import("./shared/components/ContentBlock"));
 
-  const location = useLocation();
-  const message = location.state?.message;
-
-  if (message) {
-    alert(message); // Or however you want to display the notification
-  }
-
   const { formatMessage } = useLocale();
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("hasNotified") &&
+      localStorage.getItem("hasNotified") === "false"
+    ) {
+      notification.open({
+        message: "Registration successful!",
+        description: "Please check your email.",
+        placement: "top",
+      });
+
+      // Store a flag in localStorage so we know the notification has been shown
+      localStorage.removeItem("hasNotified");
+    }
+  }, [localStorage]);
+
+  // Reset the flag when the component is unmounted
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("hasNotified");
+    };
+  }, []);
 
   return (
     <Suspense>

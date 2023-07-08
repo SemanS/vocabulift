@@ -1,0 +1,29 @@
+/* import { enUS_account } from "./account";
+import { enUS_avatorDropMenu } from "./user/avatorDropMenu";
+import { enUS_tagsViewDropMenu } from "./user/tagsViewDropMenu";
+import { enUS_title } from "./user/title";
+import { enUS_globalTips } from "./global/tips";
+import { enUS_permissionRole } from "./permission/role";
+import { enUS_dashboard } from "./dashboard";
+import { enUS_guide } from "./guide";
+import { enUS_project } from "./project";
+import { enUS_menu } from "./menu";
+import { en_US_documentation } from "./documentation";
+import { en_US_web } from "./web"; */
+
+const de_DE = {
+  /* ...enUS_account,
+  ...enUS_avatorDropMenu,
+  ...enUS_tagsViewDropMenu,
+  ...enUS_title,
+  ...enUS_globalTips,
+  ...enUS_permissionRole,
+  ...enUS_dashboard,
+  ...enUS_guide,
+  ...enUS_menu,
+  ...enUS_project,
+  ...en_US_documentation,
+  ...en_US_web, */
+};
+
+export default de_DE;

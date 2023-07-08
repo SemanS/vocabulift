@@ -4,6 +4,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./index.module.less";
 import { useCookies } from "react-cookie";
 import { vocabuFetch } from "@/utils/vocabuFetch";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
 
 const VerificationPage: FC = () => {
   const navigate = useNavigate();
@@ -19,6 +21,16 @@ const VerificationPage: FC = () => {
     status: boolean;
     message: string;
   }>({ status: false, message: "" });
+
+  const [user, setUser] = useRecoilState(userState);
+  const queryParams = new URLSearchParams(useLocation().search);
+  const verificationCode = queryParams.get("code") || "";
+
+  useEffect(() => {
+    if (user.activated === true) {
+      navigate("/library");
+    }
+  }, []);
 
   const onFinished = async (form: any) => {
     // form contains a 6 digit number
@@ -52,6 +64,22 @@ const VerificationPage: FC = () => {
       console.error("Error:", error);
     }
   };
+
+  useEffect(() => {
+    if (verificationCode && verificationCode.length === 6) {
+      const codeDigits = verificationCode.split("");
+
+      setInputs(codeDigits); // Fill input array
+
+      // Fill corresponding form values
+      let newFormValues = codeDigits.reduce((values, digit, i) => {
+        values[`digit${i + 1}`] = digit;
+        return values;
+      }, {});
+
+      form.setFieldsValue(newFormValues); // Set initial form values
+    }
+  }, [verificationCode, form]);
 
   const handleChange = (i: number) => (e) => {
     if (formError.status) {

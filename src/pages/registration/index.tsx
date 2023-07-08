@@ -1,5 +1,13 @@
 import React, { FC } from "react";
-import { Button, Divider, Form, Input, Tooltip, Typography } from "antd";
+import {
+  Button,
+  Divider,
+  Form,
+  Input,
+  Tooltip,
+  Typography,
+  notification,
+} from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LoginParams } from "@/models/login";
@@ -70,7 +78,7 @@ const RegistrationForm: FC = () => {
       });
     }
 
-    return e; // Return the event to ensure it is not prevented from updating the form's field value
+    return password; // Return the event to ensure it is not prevented from updating the form's field value
   };
 
   const generateRequirementStatus = (isValid, requirement) => {
@@ -90,49 +98,37 @@ const RegistrationForm: FC = () => {
   };
 
   const onFinished = async (form: LoginParams) => {
-    const { email, nickname, password } = form;
+    const { email, password: passwordForm, nickname } = form;
 
-    const registrationForm = document.createElement("form");
-    registrationForm.action = `${
-      import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-    }/api/sessions/register`;
-    registrationForm.method = "POST";
-
-    const emailInput = document.createElement("input");
-    emailInput.type = "hidden";
-    emailInput.name = "email";
-    emailInput.value = email;
-
-    const nicknameInput = document.createElement("input");
-    nicknameInput.type = "hidden";
-    nicknameInput.name = "nickname";
-    nicknameInput.value = nickname;
-
-    const passwordInput = document.createElement("input");
-    passwordInput.type = "hidden";
-    passwordInput.name = "password";
-    passwordInput.value = password;
-
-    registrationForm.appendChild(emailInput);
-    registrationForm.appendChild(nicknameInput);
-    registrationForm.appendChild(passwordInput);
-
-    const formData = new FormData(registrationForm);
-
-    const response = await fetch(registrationForm.action, {
-      method: registrationForm.method,
-      body: formData,
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/api/sessions/register`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          username: nickname,
+          password: password,
+        }),
+        credentials: "include",
+      }
+    );
 
     if (response.status === 200) {
-      // Navigate only if the response is successful
-      navigate("/", {
-        state: { message: "Registration successful! Please check your email." },
-      });
+      localStorage.setItem("hasNotified", "false");
 
-      /* //document.body.appendChild(registrationForm);
-      //registrationForm.submit();
-      //document.body.removeChild(registrationForm); */
+      navigate("/", {
+        state: { message: "Please check your email." },
+      });
+    } else if (response.status === 409) {
+      // If the user already exists
+      notification.error({
+        message: "Registration Failed",
+        description: "User with this email already exists.",
+        placement: "top",
+      });
     }
   };
 
@@ -170,6 +166,7 @@ const RegistrationForm: FC = () => {
             <Input size="large" placeholder="name" />
           </Form.Item>
           <Form.Item
+            name="password"
             hasFeedback
             /* rules={[
               {

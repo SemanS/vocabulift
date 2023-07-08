@@ -17,9 +17,11 @@ import {
 } from "./styles";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 
 const Header = () => {
   const [visible, setVisibility] = useState(false);
+  const [cookies] = useCookies(["access_token"]);
 
   const navigate = useNavigate();
 
@@ -56,18 +58,40 @@ const Header = () => {
         <CustomNavLinkSmall onClick={() => scrollTo("pricing", 50)}>
           <Span>{"Pricing"}</Span>
         </CustomNavLinkSmall>
+        <CustomNavLinkSmall>
+          <Span>
+            {cookies.access_token ? (
+              <a href="/login">{"Library"}</a>
+            ) : (
+              <a href="/library" style={{ fontWeight: 700 }}>
+                {"Sign In"}
+              </a>
+            )}
+          </Span>
+        </CustomNavLinkSmall>
         <CustomNavLinkSmall
           style={{ width: "240px" }}
           onClick={() => scrollTo("contact")}
         >
           <ButtonWrapper>
-            <Button
-              onClick={() => {
-                navigate("/registration");
-              }}
-            >
-              {"Try for free"}
-            </Button>
+            {cookies.access_token ? (
+              <Button
+                onClick={() => {
+                  navigate("/logout");
+                }}
+              >
+                {"Log out"}
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  navigate("/registration");
+                }}
+              >
+                {"Try for free"}
+              </Button>
+            )}
+
             <Button>{"Contact"}</Button>
           </ButtonWrapper>
           {/* <Span>

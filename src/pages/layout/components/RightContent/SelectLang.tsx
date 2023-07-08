@@ -43,7 +43,8 @@ const SelectLang: React.FC<SelectLangProps> = (props) => {
       disabled: locale === lang.key,
       label: (
         <>
-          {lang.icon} {lang.name}
+          {/* {lang.icon} {lang.name} */}
+          {lang.icon}
         </>
       ),
       onClick: selectLocale,

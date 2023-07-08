@@ -16,15 +16,28 @@ import { ReactComponent as LogoSvg } from "@/assets/logo/logo_tooltip.svg";
 import { getGoogleUrl } from "@/utils/getGoogleUrl";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
+import { each } from "cypress/types/bluebird";
 
 const LoginForm: FC = () => {
-  const loginMutation = useLogin();
+  //const loginMutation = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = ((location.state as any)?.from.pathname as string) || "/library";
+  const [password, setPassword] = React.useState("");
 
-  const [passwordStatus, setPasswordStatus] = React.useState({
+  type ValidateStatus =
+    | ""
+    | "success"
+    | "warning"
+    | "error"
+    | "validating"
+    | undefined;
+
+  const [passwordStatus, setPasswordStatus] = React.useState<{
+    validateStatus: ValidateStatus;
+    help: string;
+  }>({
     validateStatus: undefined,
     help: "",
   });
@@ -44,6 +57,8 @@ const LoginForm: FC = () => {
   const handlePasswordChange = (e) => {
     const password = e.target.value;
 
+    setPassword(password); // Set the password state
+
     setPasswordRequirements({
       length: password.length >= 8,
       number: /\d/.test(password),
@@ -56,12 +71,14 @@ const LoginForm: FC = () => {
         validateStatus: "success",
         help: "",
       });
-    } else {
+    }
+    /* else {
       setPasswordStatus({
         validateStatus: "error",
         //help: "Your password must contain at least: 8 characters, 1 number, 1 uppercase character, 1 lowercase character",
       });
-    }
+    } */
+    return password; // Return the event to ensure it is not prevented from updating the form's field value
   };
 
   const generateRequirementStatus = (isValid, requirement) => {
@@ -81,8 +98,9 @@ const LoginForm: FC = () => {
   };
 
   const onFinished = async (form: LoginParams) => {
-    const { email, password } = form;
+    const { email } = form;
     try {
+      console.log("jj");
       const response = await fetch(
         `${
           import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
@@ -93,37 +111,38 @@ const LoginForm: FC = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email }),
+          credentials: "include",
         }
       );
-
+      console.log("response.status" + JSON.stringify(response.status, null, 2));
       if (response.status === 400) {
-        notification.error({
-          message: "Error",
-          description: "There is no user record corresponding to this email.",
+        notification.info({
+          placement: "top",
+          message: "Info",
+          description:
+            "There is no user record corresponding to this email, please register.",
         });
       } else {
-        const loginForm = document.createElement("form");
-        loginForm.action = `${
-          import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-        }/api/sessions/login`;
-        loginForm.method = "POST";
-
-        const emailInput = document.createElement("input");
-        emailInput.type = "hidden";
-        emailInput.name = "email";
-        emailInput.value = email;
-
-        const passwordInput = document.createElement("input");
-        passwordInput.type = "hidden";
-        passwordInput.name = "password";
-        passwordInput.value = password;
-
-        loginForm.appendChild(emailInput);
-        loginForm.appendChild(passwordInput);
-
-        document.body.appendChild(loginForm);
-        loginForm.submit();
-        document.body.removeChild(loginForm);
+        const response2 = await fetch(
+          `${
+            import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
+          }/api/sessions/login`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              password: password,
+            }),
+            credentials: "include",
+          }
+        );
+        if (response2.status === 200) {
+          console.log("ides dalej");
+          navigate("/library");
+        }
       }
     } catch (error) {
       console.error(error);
@@ -150,10 +169,10 @@ const LoginForm: FC = () => {
       <div className={styles.main}>
         <Form<LoginParams>
           onFinish={onFinished}
-          action={`${
+          /* action={`${
             import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
           }/api/sessions/login`}
-          method="POST"
+          method="POST" */
         >
           <Form.Item
             name="email"
@@ -163,12 +182,13 @@ const LoginForm: FC = () => {
           </Form.Item>
           <Form.Item
             hasFeedback
-            rules={[
+            name="password"
+            /* rules={[
               {
                 required: true,
                 message: passwordStatus.help,
               },
-            ]}
+            ]} */
             validateStatus={passwordStatus.validateStatus}
           >
             <Tooltip
@@ -205,7 +225,6 @@ const LoginForm: FC = () => {
               }
             >
               <Input
-                name="password"
                 type="password"
                 size="large"
                 placeholder="password"

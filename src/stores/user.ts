@@ -23,10 +23,12 @@ const initialState: User = {
   activated: false,
   isLimitExceeded: false,
   exceededAt: new Date(2023, 5, 2),
-  userLibraryWatched: {
-    libraryId: "6478fdc0d220b2b50883b874",
-    timeStamp: 5,
-  },
+  userLibraries: [
+    {
+      libraryId: "6478fdc0d220b2b50883b874",
+      timeStamp: 5,
+    },
+  ],
   picture:
     "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
 };

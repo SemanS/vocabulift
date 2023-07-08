@@ -3,7 +3,16 @@ import { MenuChild } from "@/models/menu.interface";
 import { PureSettings } from "@ant-design/pro-layout/lib/defaultSettings";
 import { Role } from "./login";
 
-export type Locale = "sk-SK" | "en-US";
+export type Locale =
+  | "en-US"
+  | "es-ES"
+  | "fr-FR"
+  | "de-DE"
+  | "cs-CZ"
+  | "sk-SK"
+  | "pl-PL"
+  | "hu-HU"
+  | "it-IT";
 
 export interface CurrentUserResult {
   username: string;
