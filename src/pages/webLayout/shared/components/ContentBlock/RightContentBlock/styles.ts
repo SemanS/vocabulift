@@ -33,11 +33,23 @@ export const ButtonWrapper = styled.div`
   justify-content: space-between;
   max-width: 100%;
 
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 768px) {
     max-width: 80%;
+    button:last-child {
+      margin-left: 20px;
+    }
   }
 
-  button:last-child {
-    margin-left: 20px;
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    button {
+      margin-bottom: 20px;
+    }
+
+    button:last-child {
+      margin-bottom: 0;
+    }
   }
 `;

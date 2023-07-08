@@ -16,9 +16,12 @@ import {
   ButtonWrapper,
 } from "./styles";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [visible, setVisibility] = useState(false);
+
+  const navigate = useNavigate();
 
   const showDrawer = () => {
     setVisibility(!visible);
@@ -29,25 +32,28 @@ const Header = () => {
   };
 
   const MenuItem = () => {
-    const scrollTo = (id: string) => {
+    const scrollTo = (id: string, offset = 150) => {
       const element = document.getElementById(id) as HTMLDivElement;
-      element.scrollIntoView({
-        behavior: "smooth",
-      });
+      if (element) {
+        window.scrollTo({
+          top: element.getBoundingClientRect().top + window.scrollY - offset,
+          behavior: "smooth",
+        });
+      }
       setVisibility(false);
     };
     return (
       <>
-        <CustomNavLinkSmall onClick={() => scrollTo("about")}>
+        <CustomNavLinkSmall onClick={() => scrollTo("intro", 200)}>
           <Span>{"About"}</Span>
         </CustomNavLinkSmall>
-        <CustomNavLinkSmall onClick={() => scrollTo("mission")}>
+        <CustomNavLinkSmall onClick={() => scrollTo("mission", 200)}>
           <Span>{"Mission"}</Span>
         </CustomNavLinkSmall>
-        <CustomNavLinkSmall onClick={() => scrollTo("product")}>
+        <CustomNavLinkSmall onClick={() => scrollTo("product", 200)}>
           <Span>{"Product"}</Span>
         </CustomNavLinkSmall>
-        <CustomNavLinkSmall onClick={() => scrollTo("pricing")}>
+        <CustomNavLinkSmall onClick={() => scrollTo("pricing", 50)}>
           <Span>{"Pricing"}</Span>
         </CustomNavLinkSmall>
         <CustomNavLinkSmall
@@ -55,7 +61,13 @@ const Header = () => {
           onClick={() => scrollTo("contact")}
         >
           <ButtonWrapper>
-            <Button>{"Try for free"}</Button>
+            <Button
+              onClick={() => {
+                navigate("/registration");
+              }}
+            >
+              {"Try for free"}
+            </Button>
             <Button>{"Contact"}</Button>
           </ButtonWrapper>
           {/* <Span>

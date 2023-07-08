@@ -55,7 +55,7 @@ const RightBlock = ({
           </Col>
           <Col lg={14} md={11} sm={12} xs={24}>
             <img
-              src={"img/svg/image_1.webp"}
+              src={"img/svg/duet.png"}
               style={{ width: "100%", height: "100%" }}
               alt="icon"
             />

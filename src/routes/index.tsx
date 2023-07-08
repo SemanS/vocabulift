@@ -3,6 +3,7 @@ import Dashboard from "@/pages/dashboard";
 import { useRoutes, RouteObject } from "react-router-dom";
 import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
 const LoginPage = lazy(() => import("@/pages/login"));
+const CookiePolicy = lazy(() => import("@/pages/cookie-policy"));
 const VerificationPage = lazy(() => import("@/pages/verification"));
 const ActivationPage = lazy(() => import("@/pages/activation"));
 const RegistrationPage = lazy(() => import("@/pages/registration"));
@@ -69,6 +70,15 @@ const routeList: RouteObject[] = [
     element: (
       <>
         <WebLayoutPage />
+        <GlobalStyles />
+      </>
+    ),
+  },
+  {
+    path: "/cookie-policy",
+    element: (
+      <>
+        <CookiePolicy />
         <GlobalStyles />
       </>
     ),

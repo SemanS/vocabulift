@@ -1,0 +1,124 @@
+/* @import '~antd/es/style/themes/default.less'; */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: auto;
+  //background: @layout-body-background;
+}
+
+@media (min-width: 768px) {
+  .container {
+    background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+    background-repeat: no-repeat;
+    background-position: center 110px;
+    background-size: 100%;
+  }
+}
+
+.top {
+  text-align: center;
+}
+
+.header {
+  height: 44px;
+  line-height: 44px;
+  a {
+    text-decoration: none;
+  }
+}
+
+.logo {
+  width: 48px;
+  height: 50px;
+  //margin-right: 16px;
+  vertical-align: top;
+}
+
+.title {
+  position: relative;
+  color: #001529;
+  font-weight: 600;
+  font-size: 35px;
+  //font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.desc {
+  margin-top: 12px;
+  margin-bottom: 40px;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+}
+
+.flexContainer {
+  display: flex;
+  align-items: center; /* This will center the text and icon vertically */
+  justify-content: center; /* Optional: This will center the text and icon horizontally */
+}
+
+.flexItem {
+  margin-left: 8px; /* Optional: This will add some spacing between the icon and the text */
+}
+
+.googleIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.main {
+  width: 328px;
+  margin: 0 auto;
+  @media screen and (max-width: 576px) {
+    width: 95%;
+    max-width: 328px;
+  }
+
+  &-login-btn {
+    width: 100%;
+  }
+  
+  :global {
+    .ant-tabs-nav-list {
+      margin: auto;
+      font-size: 16px;
+    }
+  }
+
+  .icon {
+    margin-left: 16px;
+    color: rgba(0, 0, 0, 0.2);
+    font-size: 24px;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.65);
+    }
+  }
+
+  .other {
+    margin-top: 24px;
+    line-height: 22px;
+    text-align: left;
+    .register {
+      float: right;
+    }
+  }
+
+  .prefixIcon {
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 16px;;
+  }
+}
+
+.cardStyle {
+  font-family: "Open Sans", sans-serif;
+font-size: 17px;
+font-weight: 340;
+color: rgb(0, 0, 0);
+line-height: 190%;
+}

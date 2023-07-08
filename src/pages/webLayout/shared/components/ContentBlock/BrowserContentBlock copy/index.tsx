@@ -26,12 +26,6 @@ const BrowserBlock = ({
   useEffect(() => {
     setFadeVisible(true);
   }, []);
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id) as HTMLDivElement;
-    element.scrollIntoView({
-      behavior: "smooth",
-    });
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -71,35 +65,34 @@ const BrowserBlock = ({
         <Col lg={12} md={12} sm={12} xs={24}>
           {/* <ContentWrapper> */}
           <h6>
-            <Fade direction="left" delay={5000} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {"Discover the Magic of Vocabulift"}
             </Fade>
           </h6>
           <Content>
-            <Fade direction="left" delay={5000} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {
                 "Watch as our app smoothly highlights and translates words and phrases from subtitles in a foreign language."
               }
             </Fade>
           </Content>
           <Content>
-            <Fade direction="left" delay={1500} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {
                 "User interaction takes center stage as translations occur in real-time."
               }
             </Fade>
           </Content>
           <Content>
-            <Fade direction="left" delay={2000} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {"Start your adventure with Vocabulift today!"}
             </Fade>
           </Content>
           {/* </ContentWrapper> */}
         </Col>
         <Col lg={12} md={12} sm={12} xs={24}>
-          <video ref={videoRef} loop muted playsInline width={750}>
+          <video ref={videoRef} loop muted playsInline width={"100%"}>
             <source src="img/svg/video_2.webm" type="video/webm" />
-            <source src="img/svg/video_1.mp4" type="video/mp4" />
           </video>
         </Col>
       </Row>

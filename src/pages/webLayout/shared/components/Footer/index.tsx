@@ -1,4 +1,4 @@
-import { Row, Col } from "antd";
+import { Row, Col, Typography } from "antd";
 import { SvgIcon } from "../../common/SvgIcon";
 import Container from "../../common/Container";
 
@@ -42,9 +42,10 @@ const Footer = () => {
 
   return (
     <>
-      <FooterSection>
+      {/* <FooterSection>
         <Container>
           <Row justify="space-between">
+            <Col lg={10} md={10} sm={12} xs={12} />
             <Col lg={10} md={10} sm={12} xs={12}>
               <Language>{"Contact"}</Language>
               <Large to="/">{"Tell us everything"}</Large>
@@ -76,8 +77,8 @@ const Footer = () => {
             <Col lg={10} md={10} sm={12} xs={12}>
               <Empty />
               <Language>{"Address"}</Language>
-              <Para>João Pessoa, PB</Para>
-              <Para>Brasil</Para>
+              <Para>Alžbetina 16, 040 01 Košice </Para>
+              <Para>Slovakia</Para>
             </Col>
             <Col lg={8} md={8} sm={12} xs={12}>
               <Title>{"Company"}</Title>
@@ -96,7 +97,7 @@ const Footer = () => {
             </Col>
             <Col lg={6} md={6} sm={12} xs={12}>
               <Label htmlFor="select-lang">{"Language"}</Label>
-              {/* <LanguageSwitchContainer>
+              <LanguageSwitchContainer>
                 <LanguageSwitch onClick={() => handleChange("en")}>
                   <SvgIcon
                     src="united-states.svg"
@@ -113,11 +114,11 @@ const Footer = () => {
                     height="30px"
                   />
                 </LanguageSwitch>
-              </LanguageSwitchContainer> */}
+              </LanguageSwitchContainer>
             </Col>
           </Row>
         </Container>
-      </FooterSection>
+      </FooterSection> */}
       <Extra>
         <Container border={true}>
           <Row
@@ -125,26 +126,35 @@ const Footer = () => {
             align="middle"
             style={{ paddingTop: "3rem" }}
           >
-            <NavLink to="/">
-              <LogoContainer>
-                <SvgIcon
-                  src="logo.svg"
-                  aria-label="homepage"
-                  width="101px"
-                  height="64px"
+            <Col span={2} />
+            {/* <Col span={10}>
+              <NavLink to="/">
+                <LogoContainer>
+                  <SvgIcon
+                    src="logo.svg"
+                    aria-label="homepage"
+                    width="101px"
+                    height="64px"
+                  />
+                </LogoContainer>
+              </NavLink>
+            </Col> */}
+            <Col span={20}>
+              <FooterContainer>
+                {/* <SocialLink
+                  href="https://github.com/GabrielSS187/Landing-Page-Animated-Gss"
+                  src="github.svg"
+                /> */}
+                <SocialLink
+                  href="https://www.linkedin.com/in/slavoseman/"
+                  src="linkedin.svg"
                 />
-              </LogoContainer>
-            </NavLink>
-            <FooterContainer>
-              <SocialLink
-                href="https://github.com/GabrielSS187/Landing-Page-Animated-Gss"
-                src="github.svg"
-              />
-              <SocialLink
-                href="https://www.linkedin.com/in/gabriel-silva-souza-developer"
-                src="linkedin.svg"
-              />
-            </FooterContainer>
+                <Typography.Text>
+                  Webinson, s.r.o. | Alžbetina 16, 040 01 Košice, Slovakia
+                </Typography.Text>
+              </FooterContainer>
+            </Col>
+            <Col span={2} />
           </Row>
         </Container>
       </Extra>

@@ -5,7 +5,7 @@ export const StyledButton = styled.button<any>`
   color: ${(p) => (p.color ? "#2E186A" : "#fff")};
   font-size: 1rem;
   font-weight: 700;
-  width: 80%;
+  //width: 80%;
   border: 1px solid #edf3f5;
   border-radius: 4px;
   padding: 14px 20px;

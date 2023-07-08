@@ -117,9 +117,23 @@ const RegistrationForm: FC = () => {
     registrationForm.appendChild(nicknameInput);
     registrationForm.appendChild(passwordInput);
 
-    document.body.appendChild(registrationForm);
-    registrationForm.submit();
-    document.body.removeChild(registrationForm);
+    const formData = new FormData(registrationForm);
+
+    const response = await fetch(registrationForm.action, {
+      method: registrationForm.method,
+      body: formData,
+    });
+
+    if (response.status === 200) {
+      // Navigate only if the response is successful
+      navigate("/", {
+        state: { message: "Registration successful! Please check your email." },
+      });
+
+      /* //document.body.appendChild(registrationForm);
+      //registrationForm.submit();
+      //document.body.removeChild(registrationForm); */
+    }
   };
 
   return (

@@ -47,7 +47,7 @@ const PricingComponent = () => {
   ];
 
   return (
-    <div className="container text-center">
+    <div className="container text-center" id="pricing">
       <h6>Our Pricing</h6>
       <label className="pricing" onClick={toggleMonthly}>
         <span className="label">Annually</span>

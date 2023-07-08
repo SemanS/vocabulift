@@ -63,41 +63,48 @@ const MiddleBlock = ({
   return (
     <RightBlockContainer>
       <Row
+        gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
         justify="space-between"
         align="middle"
         id={id}
         className={fadeVisible ? styles.visible : styles.notVisible}
       >
-        <Col span={2} />
+        <Col span={1} />
         <Col lg={6} md={6} sm={6} xs={24}>
-          <video ref={videoRef} loop muted playsInline width={250}>
+          <video
+            ref={videoRef}
+            loop
+            muted
+            playsInline
+            width={"100%"}
+            style={{ maxWidth: "250px" }}
+          >
             <source src="img/svg/video_1.webm" type="video/webm" />
-            <source src="img/svg/video_1.mp4" type="video/mp4" />
           </video>
         </Col>
         <Col lg={16} md={16} sm={16} xs={24}>
           {/* <ContentWrapper> */}
           <h6>
-            <Fade direction="left" delay={5000} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {"Experience the Power of Vocabulift"}
             </Fade>
           </h6>
           <Content>
-            <Fade direction="left" delay={5000} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {
                 "Watch as our app smoothly highlights and translates words and phrases from subtitles in a foreign language."
               }
             </Fade>
           </Content>
           <Content>
-            <Fade direction="left" delay={1500} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {
                 "User interaction takes center stage as translations occur in real-time."
               }
             </Fade>
           </Content>
           <Content>
-            <Fade direction="left" delay={2000} triggerOnce>
+            <Fade direction="left" triggerOnce>
               {"Start your adventure with Vocabulift today!"}
             </Fade>
           </Content>
