@@ -5,7 +5,7 @@ import PricingCard from "./PricingCard";
 const PricingComponent = () => {
   const [monthly, setMonthly] = useState(false);
 
-  const toggleMonthly = () => setMonthly(!monthly);
+  const toggleMonthly = () => setMonthly(monthly);
 
   const pricingData = [
     {
@@ -24,7 +24,7 @@ const PricingComponent = () => {
     },
     {
       title: "Linguist",
-      monthlyPrice: 9.99,
+      monthlyPrice: 0.01,
       annualPrice: 79.99,
       annualPriceId: import.meta.env.VITE_REACT_APP_LINGUIST_ANNUAL_PRICE_ID,
       monthlyPriceId: import.meta.env.VITE_REACT_APP_LINGUIST_MONTHLY_PRICE_ID,
@@ -56,18 +56,18 @@ const PricingComponent = () => {
     <div className="container text-center" id="pricing">
       <h6>Our Pricing</h6>
       <label className="pricing" onClick={toggleMonthly}>
-        <span className="label">Annually</span>
+        <span className="label">Monthly</span>
         <span className={`switch ${monthly ? "monthly" : ""}`}>
           <span className="slider"></span>
         </span>
-        <span className="label">Monthly</span>
+        <span className="label">Annually</span>
       </label>
       <div className="card-group">
         {pricingData.map((data, index) => (
           <PricingCard
             key={index}
             {...data}
-            isMonthly={monthly}
+            isMonthly={!monthly}
             isPrimary={index === 1}
             annualPriceId={data.annualPriceId}
             monthlyPriceId={data.monthlyPriceId}
