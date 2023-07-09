@@ -330,7 +330,7 @@ const BookDetail: FC = () => {
   };
 
   useEffect(() => {
-    if (user.isLimitExceeded === true) {
+    if (user.isLimitExceeded === true && user.subscribed === "false") {
       dispatch({ type: "setIsLimitExceeded", payload: true });
     } else {
       if (pageSizeFromQuery) {
@@ -961,7 +961,7 @@ const BookDetail: FC = () => {
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
             <Typography.Title style={{ marginTop: "30px" }}>
-              You exceed your daily limit of 3 min, for continuing please
+              You exceed your daily limit of 5 minutes, for continuing please
               subscribe:
             </Typography.Title>
           </center>
