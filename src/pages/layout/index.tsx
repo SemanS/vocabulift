@@ -142,7 +142,7 @@ const LayoutPage: FC = () => {
             />
           }
           formatMessage={formatMessage}
-          onMenuHeaderClick={() => navigate("/library")}
+          onMenuHeaderClick={() => navigate("/")}
           /* headerTitleRender={() => (
             <Space style={{ display: "flex", alignItems: "left" }}>
               <LogoSvg className={styles.layoutPageHeaderLogoHeader} />

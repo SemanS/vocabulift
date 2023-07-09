@@ -70,7 +70,9 @@ const ActivationPage: FC = () => {
             targetLanguage: language === "en" ? nativeLanguage : "en",
             activated: true,
           };
-
+          console.log(
+            "updatedUserEntity" + JSON.stringify(updatedUserEntity, null, 2)
+          );
           const response = await updateUser(updatedUserEntity);
           console.log(response); // Log the response or handle it as you wish
         } catch (error) {

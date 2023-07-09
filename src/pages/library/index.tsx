@@ -92,7 +92,6 @@ const Library: React.FC = () => {
       sourceLanguage: user.sourceLanguage,
       targetLanguage: user.targetLanguage,
     };
-    console.log("userEntity" + JSON.stringify(userEntity, null, 2));
     const data: ApiResponse = await getLibraryItems(userEntity);
 
     if (newVideoThumbnail) {
