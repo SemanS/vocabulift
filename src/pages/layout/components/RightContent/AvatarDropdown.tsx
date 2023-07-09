@@ -33,6 +33,9 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
         setCookie("access_token", "", {
           expires: new Date(0),
           secure: true,
+          path: "/",
+          domain: "vocabulift.com",
+          sameSite: "none",
         });
       }
     }

@@ -39,6 +39,7 @@ const Header = () => {
   const loginOut = async () => {
     setUser({ ...user, isLogged: false });
     if (cookies.access_token) {
+      console.log(import.meta.env.MODE);
       if (import.meta.env.MODE === "testing") {
         setCookie("access_token", "", { expires: new Date(0) });
       } else if (
@@ -48,6 +49,9 @@ const Header = () => {
         setCookie("access_token", "", {
           expires: new Date(0),
           secure: true,
+          path: "/",
+          domain: "vocabulift.com",
+          sameSite: "none",
         });
       }
     }
