@@ -5,7 +5,7 @@ import PricingCard from "./PricingCard";
 const PricingComponent = () => {
   const [monthly, setMonthly] = useState(false);
 
-  const toggleMonthly = () => setMonthly(monthly);
+  const toggleMonthly = () => setMonthly(!monthly);
 
   const pricingData = [
     {
