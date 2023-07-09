@@ -1,4 +1,4 @@
-import { Row, Col } from "antd";
+import { Row, Col, Button as AntdButton, Typography } from "antd";
 import { SvgIcon } from "../../../common/SvgIcon";
 import { Button } from "../../../common/Button";
 import { IContentBlockProps } from "../types";
@@ -11,6 +11,10 @@ import {
 } from "./styles";
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.less";
+import { useLocation, useNavigate } from "react-router-dom";
+import { getGoogleUrl } from "@/utils/getGoogleUrl";
+import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
+import { useWindowWidth } from "@/utils/useWindowWidth";
 
 const RightBlock = ({
   title,
@@ -20,16 +24,17 @@ const RightBlock = ({
   id,
   className,
 }: IContentBlockProps) => {
+  const navigate = useNavigate();
+
   const [fadeVisible, setFadeVisible] = useState(false);
   useEffect(() => {
     setFadeVisible(true);
   }, []);
-  const scrollTo = (id: string) => {
-    const element = document.getElementById(id) as HTMLDivElement;
-    element.scrollIntoView({
-      behavior: "smooth",
-    });
-  };
+
+  const from = "/library";
+
+  const width = useWindowWidth(); // use custom hook to get window width
+
   return (
     <RightBlockContainer>
       <Fade direction="right" triggerOnce>
@@ -43,14 +48,14 @@ const RightBlock = ({
             <ContentWrapper>
               <h6>{title}</h6>
               <Content>{content}</Content>
-              <ButtonWrapper>
-                <Button fixedWidth={true} onClick={() => scrollTo("about")}>
-                  {"SIGN UP WITH EMAIL"}
-                </Button>
-                <Button fixedWidth={true} onClick={() => scrollTo("about")}>
-                  {"SIGN UP WITH GOOGLE"}
-                </Button>
-              </ButtonWrapper>
+              {/* <ButtonWrapper> */}
+              <Button fixedWidth={true} onClick={() => navigate("/login")}>
+                {"SIGN UP WITH EMAIL"}
+              </Button>{" "}
+              <Button fixedWidth={true} onClick={() => navigate("/login")}>
+                {"SIGN UP WITH GOOGLE"}
+              </Button>{" "}
+              {/* </ButtonWrapper> */}
             </ContentWrapper>
           </Col>
           <Col lg={14} md={11} sm={12} xs={24}>

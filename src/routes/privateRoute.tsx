@@ -52,6 +52,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         sourceLanguage: "en",
         targetLanguage: "sk",
         isLimitExceeded: false,
+        subscribed: false,
         activated: true,
         verified: true,
         exceededAt: new Date(2023, 5, 2),

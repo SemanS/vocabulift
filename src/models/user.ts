@@ -72,6 +72,7 @@ export interface User {
   exceededAt: Date;
   userLibraries: UserLibrary[];
   picture: string;
+  subscribed: boolean;
 }
 
 export interface UserEntity {

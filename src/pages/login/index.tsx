@@ -16,7 +16,6 @@ import { ReactComponent as LogoSvg } from "@/assets/logo/logo_tooltip.svg";
 import { getGoogleUrl } from "@/utils/getGoogleUrl";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
-import { each } from "cypress/types/bluebird";
 
 const LoginForm: FC = () => {
   //const loginMutation = useLogin();

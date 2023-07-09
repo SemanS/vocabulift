@@ -22,6 +22,7 @@ const initialState: User = {
   verified: false,
   activated: false,
   isLimitExceeded: false,
+  subscribed: false,
   exceededAt: new Date(2023, 5, 2),
   userLibraries: [
     {

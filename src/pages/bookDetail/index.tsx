@@ -87,6 +87,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   loadingFromWordMeaning: false,
   isMobile: false,
   isPlaying: false,
+  subscribed: false,
 });
 
 function reducer(state: any, action: any) {
@@ -956,7 +957,7 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
-      {state.isLimitExceeded ? (
+      {state.isLimitExceeded && user.subscribed === false ? (
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
             <Typography.Title style={{ marginTop: "30px" }}>
