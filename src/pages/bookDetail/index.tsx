@@ -330,7 +330,7 @@ const BookDetail: FC = () => {
   };
 
   useEffect(() => {
-    if (user.isLimitExceeded === true && user.subscribed === "false") {
+    if (user.isLimitExceeded === true && user.subscribed === false) {
       dispatch({ type: "setIsLimitExceeded", payload: true });
     } else {
       if (pageSizeFromQuery) {
