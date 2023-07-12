@@ -119,14 +119,15 @@ const VocabularyList: FC<VocabularyListProps> = ({
     (phrase) => phrase.phrase.endPosition - phrase.phrase.startPosition === 0
   );
 
-  const handleQuestionClick = async (phrase: string, language: string) => {
+  const handleQuestionClick = async (phrase: string, languageTo: string) => {
     try {
+      const nativeLanguage = parseLocale(user.locale);
       setActiveTab("3");
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
       const meaning = await getPhraseMeaning(
         phrase,
-        language,
-        selectedLanguageTo
+        nativeLanguage,
+        languageTo
       );
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });
       dispatch({ type: "setWordMeaningData", payload: meaning });
@@ -136,14 +137,19 @@ const VocabularyList: FC<VocabularyListProps> = ({
     }
   };
 
-  const handleAlternativesClick = async (phrase: string, language: string) => {
+  const handleAlternativesClick = async (
+    phrase: string,
+    languageTo: string
+  ) => {
     try {
+      const nativeLanguage = parseLocale(user.locale);
       setActiveTab("4");
       dispatch({ type: "setLoadingFromWordAlternatives", payload: true });
+      console.log("languageTo" + JSON.stringify(languageTo, null, 2));
       const alternatives = await getPhraseAlternatives(
         phrase,
-        language,
-        selectedLanguageTo
+        nativeLanguage,
+        languageTo
       );
       dispatch({ type: "setLoadingFromWordAlternatives", payload: false });
       dispatch({ type: "setWordAlternativesData", payload: alternatives });
@@ -401,7 +407,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                               {...pressQuestionHandlers}
@@ -415,7 +421,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                             />
@@ -431,7 +437,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             onClick={() =>
                                               handleQuestionClick(
                                                 word.phrase.sourceText,
-                                                parseLocale(user.locale)
+                                                word.phrase.sourceLanguage
                                               )
                                             }
                                             {...pressQuestionHandlers}
@@ -444,7 +450,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                               {...pressAlternativesHandlers}
@@ -500,7 +506,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                             />
@@ -512,7 +518,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                             />
@@ -591,7 +597,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                               {...pressQuestionHandlers}
@@ -605,7 +611,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                             />
@@ -761,7 +767,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                               {...pressQuestionHandlers}
@@ -775,7 +781,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                               {...pressAlternativesHandlers}
@@ -794,7 +800,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                               {...pressQuestionHandlers}
@@ -808,7 +814,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                               {...pressAlternativesHandlers}
@@ -864,7 +870,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                             />
@@ -876,7 +882,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.sourceLanguage
                                                 )
                                               }
                                             />
@@ -956,7 +962,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                             />
@@ -968,7 +974,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  parseLocale(user.locale)
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                             />

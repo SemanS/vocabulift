@@ -187,23 +187,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     props.sentencesPerPage,
   ]);
 
-  /* const getClassName = () => {
-    let result = styles.textbox;
-    if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
-    else if (props.isHighlightedFromVideo)
-      result += ` ${styles.bubbleVideoHovered}`;
-    if ((isWord && props.mode === "words") || (isWord && props.mode === "all"))
-      result += ` ${styles.bubbleWord}`;
-    if (
-      (isPhrase && props.mode === "phrases") ||
-      (isPhrase && props.mode === "all")
-    )
-      result += ` ${styles.bubblePhrase}`;
-    if (isWordPhrase && props.mode === "all")
-      result += ` ${styles.bubbleWordPhrase}`;
-    return result;
-  }; */
-
   const getClassName = () => {
     if (props.isHighlightedFromVideo) {
       return `${styles.textbox} ${styles.bubbleVideoHovered}`;
@@ -285,6 +268,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   }, [isHovered]);
 
   const handleMouseDown = () => {
+    if (props.mode === "sentences") return;
     props.onMouseDown?.(
       props.word!,
       props.sentenceNumber!,
@@ -397,7 +381,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   return renderTooltip(
     <span
       style={{
-        cursor: "pointer",
+        cursor: props.mode !== "sentences" ? "pointer" : "",
         whiteSpace: "pre-wrap",
         touchAction: props.isSelecting ? "none" : "auto",
       }}

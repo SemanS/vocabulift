@@ -6,6 +6,12 @@ import { Button } from "../../common/Button";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
+declare global {
+  interface Window {
+    Rewardful: any;
+  }
+}
+
 const PricingCard = ({
   title,
   monthlyPrice,
@@ -24,9 +30,15 @@ const PricingCard = ({
 
   const stripePromise = loadStripe(stripeApiKey);
 
+  function getClientReferenceId() {
+    return (
+      (window.Rewardful && window.Rewardful.referral) ||
+      "checkout_" + new Date().getTime()
+    );
+  }
+
   const handleClick = async (event) => {
     const priceId = isMonthly ? monthlyPriceId : annualPriceId;
-    console.log("priceId" + JSON.stringify(priceId, null, 2));
     // Call your backend to create the Checkout Session
     const response = await fetch(
       `${
@@ -38,7 +50,10 @@ const PricingCard = ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
         },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({
+          priceId,
+          clientReferenceId: getClientReferenceId,
+        }),
       }
     );
     const session = await response.json();
