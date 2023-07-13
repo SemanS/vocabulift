@@ -447,7 +447,7 @@ const Library: React.FC = () => {
   return (
     <CustomSpinnerComponent spinning={loading}>
       <PageContainer title={false}>
-        <div className={styles.drawerContainer}>
+        <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
           <div
             className={styles.drawerPushContent}
             style={{ maxHeight: drawerHeight }}
@@ -494,7 +494,13 @@ const Library: React.FC = () => {
                 </span>
               </span>
             </div>
-            <div style={{ paddingInline: "48px", marginTop: "30px" }}>
+            <div
+              style={{
+                paddingInline: "48px",
+                marginTop: "30px",
+                //overflow: "hidden",
+              }}
+            >
               {Object.entries(categorizedItems)
                 .sort(([categoryA], [categoryB]) => {
                   if (categoryA === "My Videos") {
@@ -541,6 +547,11 @@ const Library: React.FC = () => {
                 }
               }}
             />
+          </div>
+          <div className={styles.footer}>
+            <Typography.Text>
+              <center>©2023 vocabulift</center>
+            </Typography.Text>
           </div>
         </div>
       </PageContainer>

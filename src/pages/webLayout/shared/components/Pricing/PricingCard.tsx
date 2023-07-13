@@ -40,6 +40,7 @@ const PricingCard = ({
   const handleClick = async (event) => {
     const priceId = isMonthly ? monthlyPriceId : annualPriceId;
     // Call your backend to create the Checkout Session
+    const clientReferenceId = getClientReferenceId();
     const response = await fetch(
       `${
         import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
@@ -52,7 +53,7 @@ const PricingCard = ({
         },
         body: JSON.stringify({
           priceId,
-          clientReferenceId: getClientReferenceId,
+          clientReferenceId: clientReferenceId,
         }),
       }
     );

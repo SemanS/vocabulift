@@ -164,7 +164,7 @@ const LayoutPage: FC = () => {
             );
           }}
           rightContentRender={() => <RightContent></RightContent>}
-          footerRender={() => <Footer />}
+          //footerRender={() => <Footer />}
         >
           <Outlet />
         </ProLayout>
