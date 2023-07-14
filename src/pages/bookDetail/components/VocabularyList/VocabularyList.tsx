@@ -416,7 +416,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           </Tooltip>
                                           <Tooltip title="Show alternative usage of phrase">
                                             <Button
-                                              type="primary"
+                                              type="default"
                                               icon={<CommentOutlined />}
                                               onClick={() =>
                                                 handleAlternativesClick(
@@ -437,7 +437,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             onClick={() =>
                                               handleQuestionClick(
                                                 word.phrase.sourceText,
-                                                word.phrase.sourceLanguage
+                                                word.phrase.targetLanguage
                                               )
                                             }
                                             {...pressQuestionHandlers}
@@ -450,7 +450,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               onClick={() =>
                                                 handleAlternativesClick(
                                                   word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                               {...pressAlternativesHandlers}
@@ -758,7 +758,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         }
                                       />
                                       {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage && (
+                                        word.phrase.targetLanguage && (
                                         <>
                                           <Tooltip title="Show phrase meaning">
                                             <Button
