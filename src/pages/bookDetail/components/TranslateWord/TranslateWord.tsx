@@ -348,6 +348,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleTouchStart = (event: React.TouchEvent) => {
+    if (props.mode === "sentences") return;
     props.onTouchStart?.(
       props.word!,
       props.sentenceNumber!,
@@ -357,6 +358,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleTouchMove = (event: React.TouchEvent) => {
+    if (props.mode === "sentences") return;
     props.onTouchMove?.(
       props.word!,
       props.sentenceNumber!,
@@ -366,6 +368,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   const handleTouchEnd = (event: React.TouchEvent) => {
+    if (props.mode === "sentences") return;
     props.onTouchEnd?.(
       props.sentenceTranslation!,
       props.sentenceNumber!,

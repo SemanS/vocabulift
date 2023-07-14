@@ -5,6 +5,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Button } from "../../common/Button";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
+import { SubscriptionPeriod, SubscriptionType } from "@/models/user";
 
 declare global {
   interface Window {
@@ -25,6 +28,7 @@ const PricingCard = ({
   const [cookies] = useCookies(["access_token"]);
   const navigate = useNavigate();
   const cardStyle = isPrimary ? "card card-primary" : "card";
+  const [user, setUser] = useRecoilState(userState);
 
   const stripeApiKey = import.meta.env.VITE_REACT_APP_STRIPE_API_KEY;
 
@@ -36,6 +40,53 @@ const PricingCard = ({
       "checkout_" + new Date().getTime()
     );
   }
+
+  const titleToSubscriptionType = {
+    Explorer: SubscriptionType.Free,
+    Linguist: SubscriptionType.Linguist,
+    Polyglot: SubscriptionType.Polyglot,
+    // add more if you have more types
+  };
+
+  const getSubscriptionValue = (
+    type: SubscriptionType,
+    period: SubscriptionPeriod
+  ) => {
+    // Let's assume that an Annual subscription is always a higher level than a Monthly subscription,
+    // and the enum values for SubscriptionType are in ascending order
+    const typeValue = Object.values(SubscriptionType).indexOf(type);
+    const periodValue = period === SubscriptionPeriod.Annual ? 1 : 0;
+    return typeValue * 10 + periodValue; // This assumes you won't have more than 10 subscription types
+  };
+
+  const getButtonLabel = () => {
+    const cardSubscriptionType =
+      titleToSubscriptionType[title as keyof typeof titleToSubscriptionType];
+    const userSubscriptionValue = getSubscriptionValue(
+      user.subscriptionType,
+      user.subscriptionPeriod
+    );
+    const cardSubscriptionValue = getSubscriptionValue(
+      cardSubscriptionType,
+      isMonthly ? SubscriptionPeriod.Monthly : SubscriptionPeriod.Annual
+    );
+
+    // Return "Current Plan" for both monthly and annual subscriptions in case of free subscription
+    if (
+      user.subscriptionType === SubscriptionType.Free &&
+      cardSubscriptionType === SubscriptionType.Free
+    ) {
+      return "Current Plan";
+    }
+
+    if (userSubscriptionValue < cardSubscriptionValue) {
+      return "Upgrade";
+    }
+    if (userSubscriptionValue > cardSubscriptionValue) {
+      return "Downgrade";
+    }
+    return "Current Plan";
+  };
 
   const handleClick = async (event) => {
     const priceId = isMonthly ? monthlyPriceId : annualPriceId;
@@ -49,7 +100,7 @@ const PricingCard = ({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          Authorization: `Bearer ${cookies.access_token}`,
         },
         body: JSON.stringify({
           priceId,
@@ -73,6 +124,9 @@ const PricingCard = ({
     }
   };
 
+  const buttonLabel = getButtonLabel();
+  const isDisabled = buttonLabel === "Current Plan";
+
   return (
     <div className={cardStyle}>
       <Typography.Title className="card-title">{title}</Typography.Title>
@@ -87,8 +141,8 @@ const PricingCard = ({
         ))}
       </ul>
       {cookies.access_token ? (
-        <Button fixedWidth={true} onClick={handleClick}>
-          {"CHECKOUT"}
+        <Button fixedWidth={true} onClick={handleClick} disabled={isDisabled}>
+          {buttonLabel}
         </Button>
       ) : (
         <Button

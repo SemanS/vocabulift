@@ -281,10 +281,15 @@ const Library: React.FC = () => {
   );
 
   const filteredLibraryItems = filteredByLabelType.filter((item) => {
-    return item.level.some((level) => {
+    // Find the highest level of the item
+    const highestLevelIndex = item.level.reduce((highestIndex, level) => {
       const levelIndex = customRange.indexOf(level.toUpperCase());
-      return levelIndex >= sliderValue[0] && levelIndex <= sliderValue[1];
-    });
+      return levelIndex > highestIndex ? levelIndex : highestIndex;
+    }, -1);
+    // Check if the highest level is within the slider range
+    return (
+      highestLevelIndex >= sliderValue[0] && highestLevelIndex <= sliderValue[1]
+    );
   });
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
@@ -437,7 +442,8 @@ const Library: React.FC = () => {
           style={{ marginBottom: "20px" }}
         >
           <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
-            {renderLabelTypeButtonGroup()}
+            {user.email === "slavosmn@gmail.com" &&
+              renderLabelTypeButtonGroup()}
           </Col>
         </Row>
       </>

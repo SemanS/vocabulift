@@ -16,6 +16,12 @@ export const StyledButton = styled.button<any>`
   box-shadow: 0 16px 30px rgb(23 31 114 / 20%);
   white-space: nowrap;
 
+  &:disabled {
+    background: #ccc; // Change the color to indicate disabled status
+    cursor: not-allowed; // Change the cursor
+    box-shadow: none; // Remove the box shadow
+  }
+
   /* &:hover,
   &:active,
   &:focus {

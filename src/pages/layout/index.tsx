@@ -26,6 +26,8 @@ import {
   currentPageState,
   pageSizeState,
 } from "@/stores/library";
+import { MenuItemLink } from "./components/MenuItemLink/MenuItemLink";
+import styled from "styled-components";
 
 const IconMap: { [key: string]: React.ReactNode } = {
   library: <ReadOutlined />,
@@ -35,6 +37,8 @@ const IconMap: { [key: string]: React.ReactNode } = {
   settings: <SettingOutlined />,
   last: <EyeOutlined />,
 };
+
+const DashedKeys = ["settings"];
 
 const LayoutPage: FC = () => {
   const [user, setUser] = useRecoilState(userState);
@@ -149,7 +153,7 @@ const LayoutPage: FC = () => {
             </Space>
           )} */
           menuDataRender={() => [...loopMenuItem(user.menuList)]}
-          menuItemRender={(menuItemProps, defaultDom) => {
+          /* menuItemRender={(menuItemProps, defaultDom) => {
             if (menuItemProps.isUrl) {
               return defaultDom;
             }
@@ -157,10 +161,34 @@ const LayoutPage: FC = () => {
               <Link
                 to={menuItemProps.path!}
                 onClick={() => setCollapsed(true)}
-                style={{ fontWeight: "400", fontSize: "16px" }}
+                style={{
+                  fontWeight: "400",
+                  fontSize: "16px",
+                  textDecoration: selectedKeys.includes(menuItemProps.key || "")
+                    ? "line-through"
+                    : "none",
+                }}
               >
                 {defaultDom}
               </Link>
+            );
+          }} */
+          menuItemRender={(menuItemProps, defaultDom) => {
+            if (menuItemProps.isUrl) {
+              return defaultDom;
+            }
+            console.log("selectedKeys" + JSON.stringify(selectedKeys, null, 2));
+            console.log(
+              "menuItemProps.key" + JSON.stringify(menuItemProps.key, null, 2)
+            );
+            return (
+              <MenuItemLink
+                menuItemProps={menuItemProps}
+                defaultDom={defaultDom}
+                isUnderlined={selectedKeys.includes(
+                  menuItemProps.key?.replace("/", "") || ""
+                )}
+              />
             );
           }}
           rightContentRender={() => <RightContent></RightContent>}

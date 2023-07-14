@@ -3,6 +3,17 @@ import { MenuChild } from "@/models/menu.interface";
 import { PureSettings } from "@ant-design/pro-layout/lib/defaultSettings";
 import { Role } from "./login";
 
+export enum SubscriptionType {
+  Free = "Free",
+  Linguist = "Linguist",
+  Polyglot = "Polyglot",
+}
+
+export enum SubscriptionPeriod {
+  Monthly = "Monthly",
+  Annual = "Annual",
+}
+
 export type Locale =
   | "en-US"
   | "es-ES"
@@ -61,6 +72,8 @@ export interface User {
   /** Is first time to view the site ? */
   newUser: boolean;
 
+  email: string;
+
   settings: PureSettings;
   avatar: string;
   // For backend purposes
@@ -73,6 +86,8 @@ export interface User {
   userLibraries: UserLibrary[];
   picture: string;
   subscribed: boolean;
+  subscriptionType: SubscriptionType;
+  subscriptionPeriod: SubscriptionPeriod;
 }
 
 export interface UserEntity {

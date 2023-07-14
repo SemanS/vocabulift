@@ -6,7 +6,7 @@ import { useCookies } from "react-cookie";
 import axios from "axios";
 import { getGlobalState } from "../models";
 import { Spin } from "antd";
-import { User } from "@/models/user";
+import { SubscriptionPeriod, SubscriptionType, User } from "@/models/user";
 
 const PrivateRoute: FC<RouteProps> = ({ children }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -64,6 +64,9 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         ],
         picture:
           "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
+        subscriptionType: SubscriptionType.Linguist,
+        subscriptionPeriod: SubscriptionPeriod.Monthly,
+        email: "slavosmn@gmail.com",
       };
       setUser(devUser);
       setLoading(false);

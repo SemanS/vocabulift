@@ -1,6 +1,11 @@
-import { atom } from "recoil";
+import { atom, useRecoilTransactionObserver_UNSTABLE } from "recoil";
 import { Role } from "@/models/login";
-import { Locale, User } from "@/models/user";
+import {
+  Locale,
+  SubscriptionPeriod,
+  SubscriptionType,
+  User,
+} from "@/models/user";
 import { getGlobalState } from "@/models";
 
 const initialState: User = {
@@ -17,6 +22,7 @@ const initialState: User = {
   avatar:
     "https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png",
   library: [],
+  email: "slavosmn@gmail.com",
   sourceLanguage: "en",
   targetLanguage: "sk",
   verified: false,
@@ -32,9 +38,29 @@ const initialState: User = {
   ],
   picture:
     "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
+  subscriptionType: SubscriptionType.Linguist,
+  subscriptionPeriod: SubscriptionPeriod.Monthly,
 };
+
+const localStorageEffect =
+  (key) =>
+  ({ setSelf, onSet }) => {
+    const savedValue = localStorage.getItem(key);
+    if (savedValue != null) {
+      setSelf(JSON.parse(savedValue));
+    }
+
+    onSet((newValue) => {
+      if (newValue === null) {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, JSON.stringify(newValue));
+      }
+    });
+  };
 
 export const userState = atom({
   key: "userState",
   default: initialState,
+  effects_UNSTABLE: [localStorageEffect("userState")],
 });

@@ -5,7 +5,7 @@ import { userState } from "@/stores/user";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import { useRecoilState } from "recoil";
-import { User } from "@/models/user";
+import { SubscriptionPeriod, SubscriptionType, User } from "@/models/user";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 
 export interface WrapperRouteProps {
@@ -71,6 +71,9 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         ],
         picture:
           "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
+        subscriptionType: SubscriptionType.Linguist,
+        subscriptionPeriod: SubscriptionPeriod.Monthly,
+        email: "slavosmn@gmail.com",
       };
       setUser(devUser);
       setLoading(false);
