@@ -584,11 +584,6 @@ const BookDetail: FC = () => {
           let imageX = 15;
           let imageY = 15;
           pdf.addImage(base64Logo, "PNG", 15, 10, 50, 50);
-
-          pdf.text(
-            pdf.internal.pageSize.getWidth() - 85,
-            pdf.internal.pageSize.getHeight() - 8
-          );
         }
       })
       .save(state.libraryTitle + "-worksheet.pdf");

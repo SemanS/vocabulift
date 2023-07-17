@@ -62,12 +62,13 @@ const ActivationPage: FC = () => {
       if (highestCompletedStep < 2) {
         setHighestCompletedStep(2);
       }
+      console.log("nativeLanguage" + JSON.stringify(nativeLanguage, null, 2));
       if (nativeLanguage && language) {
         try {
           const updatedUserEntity: Partial<User> = {
             locale: getLocaleFromLanguage(nativeLanguage),
             sourceLanguage: "en",
-            targetLanguage: language === "en" ? nativeLanguage : "en",
+            targetLanguage: language,
             activated: true,
           };
           console.log(
@@ -158,7 +159,7 @@ const ActivationPage: FC = () => {
                     },
                     {
                       title: "Step 3",
-                      description: "Watch video tutorial",
+                      description: "Finish",
                     },
                   ]}
                 />

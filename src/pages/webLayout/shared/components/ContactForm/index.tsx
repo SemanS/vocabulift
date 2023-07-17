@@ -9,11 +9,47 @@ import Input from "../../common/Input";
 import TextArea from "../../common/TextArea";
 import { ContactContainer, FormGroup, Span, ButtonContainer } from "./styles";
 import React from "react";
+import { notification } from "antd";
 
 const Contact = ({ title, content, id }: IContactProps) => {
-  const { values, errors, handleChange, handleSubmit } = useForm(
-    validate
-  ) as any;
+  const { values, errors, handleChange } = useForm(validate) as any;
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Validate the form data
+
+    fetch(`${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/contact`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values), // Where values are the form data
+    })
+      .then((response) => {
+        if (response.ok) {
+          // If the response was successful, show a success notification
+          notification.success({
+            message: "Success",
+            description: "Your message has been sent successfully.",
+          });
+          return response.json();
+        } else {
+          // If the response was unsuccessful, throw an error
+          throw new Error("Something went wrong");
+        }
+      })
+      .then((data) => {
+        // Handle response data
+      })
+      .catch((error) => {
+        // If there was an error, show an error notification
+        notification.error({
+          message: "Error",
+          description: "There was an error sending your message.",
+        });
+      });
+  };
 
   const ValidationType = ({ type }: IValidationTypeProps) => {
     const ErrorMessage = errors[type];
