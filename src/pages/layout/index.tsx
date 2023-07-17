@@ -120,6 +120,16 @@ const LayoutPage: FC = () => {
     setSettingsDrawerVisible(!settingsDrawerVisible);
   };
 
+  const ClickableLogo = () => {
+    return (
+      <LogoSvg
+        onClick={() => navigate("/library")}
+        className={styles.layoutPageHeaderLogo}
+        style={{ width: "6rem", marginRight: "2rem" }}
+      />
+    );
+  };
+
   return (
     <SettingsDrawerContext.Provider
       value={{
@@ -139,48 +149,14 @@ const LayoutPage: FC = () => {
           layout="top"
           title={false}
           fixedHeader={true}
-          logo={
-            <LogoSvg
-              className={styles.layoutPageHeaderLogo}
-              style={{ width: "6rem", marginRight: "2rem" }}
-            />
-          }
+          logo={<ClickableLogo />}
           formatMessage={formatMessage}
           onMenuHeaderClick={() => navigate("/")}
-          /* headerTitleRender={() => (
-            <Space style={{ display: "flex", alignItems: "left" }}>
-              <LogoSvg className={styles.layoutPageHeaderLogoHeader} />
-            </Space>
-          )} */
           menuDataRender={() => [...loopMenuItem(user.menuList)]}
-          /* menuItemRender={(menuItemProps, defaultDom) => {
-            if (menuItemProps.isUrl) {
-              return defaultDom;
-            }
-            return (
-              <Link
-                to={menuItemProps.path!}
-                onClick={() => setCollapsed(true)}
-                style={{
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  textDecoration: selectedKeys.includes(menuItemProps.key || "")
-                    ? "line-through"
-                    : "none",
-                }}
-              >
-                {defaultDom}
-              </Link>
-            );
-          }} */
           menuItemRender={(menuItemProps, defaultDom) => {
             if (menuItemProps.isUrl) {
               return defaultDom;
             }
-            console.log("selectedKeys" + JSON.stringify(selectedKeys, null, 2));
-            console.log(
-              "menuItemProps.key" + JSON.stringify(menuItemProps.key, null, 2)
-            );
             return (
               <MenuItemLink
                 menuItemProps={menuItemProps}

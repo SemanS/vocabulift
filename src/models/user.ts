@@ -88,6 +88,7 @@ export interface User {
   subscribed: boolean;
   subscriptionType: SubscriptionType;
   subscriptionPeriod: SubscriptionPeriod;
+  subscriptionId: string;
 }
 
 export interface UserEntity {

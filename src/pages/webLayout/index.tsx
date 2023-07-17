@@ -65,15 +65,20 @@ const WebLayoutPage: FC = () => {
         <ScrollToTop />
         <ContentBlock
           type="right"
-          title={formatMessage({ id: "web.introContent.title" })}
-          content={formatMessage({ id: "web.introContent.text" })}
+          title={"Unleash Your Language Skills with AI"}
+          content={
+            "Embark on an immersive language adventure that harnesses the power of AI. Transform video texts into your personal linguistic playground, cultivating a rich vocabulary landscape as you traverse the world of languages."
+          }
           button={"button"}
           icon="developer.webp"
           id="intro"
         />
         <MiddleBlock
-          title={formatMessage({ id: "web.middleBlock.title" })}
-          content={formatMessage({ id: "web.middleBlock.text" })}
+          //title={formatMessage({ id: "web.middleBlock.title" })}
+          title={"Pioneering the Future of Language Learning with AI"}
+          content={
+            "Discover a revolutionary approach to language learning, harnessing the power of advanced AI to redefine your linguistic journey. (Here is a button where you can kickstart your journey for free)"
+          }
           button={"GET STARTED FOR FREE"}
         />
         <ContentBlock

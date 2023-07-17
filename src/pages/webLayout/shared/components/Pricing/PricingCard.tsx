@@ -88,6 +88,29 @@ const PricingCard = ({
     return "Current Plan";
   };
 
+  const cancelSubscription = async () => {
+    const response = await fetch(
+      `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/cancel-subscription`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.access_token}`,
+        },
+        body: JSON.stringify({
+          subscriptionId: user.subscriptionId,
+        }),
+      }
+    );
+
+    if (response.ok) {
+      const updatedUser = await response.json();
+      setUser(updatedUser);
+    } else {
+      console.error("Failed to cancel subscription");
+    }
+  };
+
   const handleClick = async (event) => {
     const priceId = isMonthly ? monthlyPriceId : annualPriceId;
     // Call your backend to create the Checkout Session
@@ -127,6 +150,15 @@ const PricingCard = ({
   const buttonLabel = getButtonLabel();
   const isDisabled = buttonLabel === "Current Plan";
 
+  const shouldShowCancelButton = () => {
+    const cardSubscriptionType =
+      titleToSubscriptionType[title as keyof typeof titleToSubscriptionType];
+    return (
+      user.subscriptionType === cardSubscriptionType &&
+      user.subscriptionType !== SubscriptionType.Free
+    );
+  };
+
   return (
     <div className={cardStyle}>
       <Typography.Title className="card-title">{title}</Typography.Title>
@@ -140,8 +172,17 @@ const PricingCard = ({
           <li key={index}>{feature}</li>
         ))}
       </ul>
+      {cookies.access_token && shouldShowCancelButton() ? (
+        <Button fixedWidth={true} onClick={cancelSubscription}>
+          {"Cancel Subscription"}
+        </Button>
+      ) : null}
       {cookies.access_token ? (
-        <Button fixedWidth={true} onClick={handleClick} disabled={isDisabled}>
+        <Button
+          fixedWidth={true}
+          onClick={handleClick}
+          disabled={buttonLabel === "Current Plan"}
+        >
           {buttonLabel}
         </Button>
       ) : (

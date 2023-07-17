@@ -54,6 +54,7 @@ import { getWorkSheet } from "@/services/aiService";
 import html2pdf from "html2pdf.js";
 import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
+import logo from "../../assets/logo/vocabulift_logo.png";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -504,6 +505,26 @@ const BookDetail: FC = () => {
     [state.userSentences, state.vocabularyListUserPhrases]
   );
 
+  function getBase64Image(imgUrl, callback) {
+    var img = new Image();
+
+    // onload event handler
+    img.onload = function () {
+      var canvas = document.createElement("canvas");
+      canvas.width = this.width;
+      canvas.height = this.height;
+
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(this, 0, 0);
+
+      var dataURL = canvas.toDataURL("image/png");
+      callback(dataURL);
+    };
+
+    // set source
+    img.src = imgUrl;
+  }
+
   const handleDownloadWorkSheet = async () => {
     dispatch({ type: "setLoadingWorkSheet", payload: true });
 
@@ -513,80 +534,63 @@ const BookDetail: FC = () => {
       libraryId!
     );
 
-    const htmlContent2 = `<html>
-    <head>
-        <title>Cinderella's Story Worksheet</title>
-    </head>
-    <body>
-        <h1>Cinderella's Story Worksheet</h1>
-    
-        <div>
-            <h2>Reading Comprehension</h2>
-            <p>Read the text and answer the following questions.</p>
-            <textarea rows="5" cols="50" disabled>
-            (Paste the Cinderella story here.)
-            </textarea>
-            
-            <h3>Questions:</h3>
-            <ol>
-                <li>Why did Cinderella's life change dramatically?</li>
-                <li>Describe Cinderella's stepmother and stepsisters.</li>
-                <li>What was the purpose of the ball at the castle?</li>
-                <li>Describe Cinderella's experience at the ball.</li>
-                <li>How did the prince find Cinderella?</li>
-            </ol>
-        </div>
-    
-        <div>
-            <h2>Choose the best definition</h2>
-            <p>Choose the best definition of the words and phrases from the text.</p>
-            <ul>
-                <li>1. Stepmother</li>
-                <li>2. Castle</li>
-                <li>3. Eligible</li>
-                <li>4. Ball</li>
-                <li>5. Attic</li>
-            </ul>
-        </div>
-    
-        <div>
-            <h2>Discuss the questions</h2>
-            <ol>
-                <li>Do you think Cinderella was treated fairly by her stepmother and stepsisters? Why or why not?</li>
-                <li>Why do you think Cinderella was allowed to go to the ball despite her family's treatment of her?</li>
-                <li>How do you think Cinderella felt when the prince found her?</li>
-            </ol>
-        </div>
-    
-        <div>
-            <h2>Complete the sentences</h2>
-            <p>Use the correct forms of the words and phrases in the box.</p>
-            <ul>
-                <li>Stepmother</li>
-                <li>Castle</li>
-                <li>Eligible</li>
-                <li>Ball</li>
-                <li>Attic</li>
-            </ul>
-            <p>1. Cinderella lived in the ______.</p>
-            <p>2. All ______ girls were invited to the ______.</p>
-            <p>3. Cinderella's ______ was not kind to her.</p>
-        </div>
-    
-        <div>
-            <h2>Roleplay</h2>
-            <p>Your teacher will give you a card giving you information for a roleplay.</p>
-        </div>
-    
-    </body>
-    </html>`;
-
     const element = document.createElement("div");
     element.style.margin = "20px";
     element.innerHTML = htmlContent;
 
+    // Here, let's say each block of content that should stay together per page is encapsulated by a div
+    const blocks = Array.from(element.getElementsByTagName("div"));
+    blocks.forEach(
+      (block) =>
+        (block.style.cssText +=
+          "; page-break-inside: avoid;margin-bottom: 13.333pt;")
+    );
+
+    let base64Logo: any;
+
+    getBase64Image(
+      "../../src/assets/logo/vocabulift_logo.png",
+      function (base64Image) {
+        base64Logo = base64Image;
+      }
+    );
+
     html2pdf()
       .from(element)
+      .set({
+        margin: [50, 15, 15, 15],
+        jsPDF: { unit: "pt", format: "letter", orientation: "portrait" },
+        pagebreak: { after: "section", mode: ["avoid-all", "css", "legacy"] },
+      })
+      .toPdf()
+      .get("pdf")
+      .then((pdf) => {
+        const totalPages = pdf.internal.getNumberOfPages();
+        const currentDate = new Date();
+
+        for (let i = 1; i <= totalPages; i++) {
+          pdf.setPage(i);
+          pdf.setFontSize(8);
+          pdf.setTextColor(150);
+
+          // Adding header line
+          let margin = 15;
+          let lineHeight = 50;
+          let pageWidth = pdf.internal.pageSize.getWidth() - margin;
+          pdf.line(margin, lineHeight, pageWidth, lineHeight);
+
+          // Adding the vocabulift.com text at the end of the line
+          pdf.text("https://vocabulift.com", pageWidth - 75, lineHeight - 5);
+          let imageX = 15;
+          let imageY = 15;
+          pdf.addImage(base64Logo, "PNG", 15, 10, 50, 50);
+
+          pdf.text(
+            pdf.internal.pageSize.getWidth() - 85,
+            pdf.internal.pageSize.getHeight() - 8
+          );
+        }
+      })
       .save(state.libraryTitle + "-worksheet.pdf");
 
     dispatch({ type: "setLoadingWorkSheet", payload: false });

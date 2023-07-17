@@ -40,6 +40,7 @@ const initialState: User = {
     "https://lh3.googleusercontent.com/ogw/AOLn63G44ZepIWVlalbQumSaDkFtQfP2w3PHBvGPjSg1=s32-c-mo",
   subscriptionType: SubscriptionType.Linguist,
   subscriptionPeriod: SubscriptionPeriod.Monthly,
+  subscriptionId: "123",
 };
 
 const localStorageEffect =
