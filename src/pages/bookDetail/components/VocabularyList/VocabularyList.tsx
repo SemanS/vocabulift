@@ -20,6 +20,7 @@ import { parseLocale } from "@/utils/stringUtils";
 import usePressHandlers from "@/hooks/userPressHandlers";
 import { Tooltip } from "antd";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
+import { SubscriptionType } from "@/models/user";
 
 const TabPane = Tabs.TabPane;
 
@@ -398,67 +399,73 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         }
                                       />
                                       {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
+                                        word.phrase.sourceLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                                {...pressQuestionHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
+                                      {parseLocale(user.locale) !==
+                                        word.phrase.targetLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
                                             <Button
                                               type="default"
                                               icon={<QuestionCircleOutlined />}
                                               onClick={() =>
                                                 handleQuestionClick(
                                                   word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
+                                                  word.phrase.targetLanguage
                                                 )
                                               }
                                               {...pressQuestionHandlers}
                                               className={"noselect"}
                                             />
-                                          </Tooltip>
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage && (
-                                        <>
-                                          <Button
-                                            type="default"
-                                            icon={<QuestionCircleOutlined />}
-                                            onClick={() =>
-                                              handleQuestionClick(
-                                                word.phrase.sourceText,
-                                                word.phrase.targetLanguage
-                                              )
-                                            }
-                                            {...pressQuestionHandlers}
-                                            className={"noselect"}
-                                          />
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                              {...pressAlternativesHandlers}
-                                              className={"noselect"}
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                                {...pressAlternativesHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                     </Space>
                                   </div>
                                 </div>
@@ -497,34 +504,38 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         }
                                       />
                                       {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<QuestionCircleOutlined />}
-                                              onClick={() =>
-                                                handleQuestionClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                        word.phrase.sourceLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                     </Space>
                                     <div
                                       style={{
@@ -588,36 +599,40 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     <audio key="audio" ref={audioRef} />
                                     <Space>
                                       {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<QuestionCircleOutlined />}
-                                              onClick={() =>
-                                                handleQuestionClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                              {...pressQuestionHandlers}
-                                              className={"noselect"}
-                                            />
-                                          </Tooltip>
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                        word.phrase.targetLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                                {...pressQuestionHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                     </Space>
                                   </div>
                                 </div>
@@ -758,71 +773,79 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         }
                                       />
                                       {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<QuestionCircleOutlined />}
-                                              onClick={() =>
-                                                handleQuestionClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                              {...pressQuestionHandlers}
-                                              className={"noselect"}
-                                            />
-                                          </Tooltip>
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                              {...pressAlternativesHandlers}
-                                              className={"noselect"}
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                        word.phrase.targetLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                                {...pressQuestionHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                                {...pressAlternativesHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                       {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<QuestionCircleOutlined />}
-                                              onClick={() =>
-                                                handleQuestionClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                              {...pressQuestionHandlers}
-                                              className={"noselect"}
-                                            />
-                                          </Tooltip>
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                              {...pressAlternativesHandlers}
-                                              className={"noselect"}
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                        word.phrase.targetLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                                {...pressQuestionHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                                {...pressAlternativesHandlers}
+                                                className={"noselect"}
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                     </Space>
                                   </div>
                                 </div>
@@ -861,34 +884,38 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         }
                                       />
                                       {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<QuestionCircleOutlined />}
-                                              onClick={() =>
-                                                handleQuestionClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                          <Tooltip title="Show alternative usage of phrase">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.sourceLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                        word.phrase.sourceLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show alternative usage of phrase">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.sourceLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                     </Space>
                                     <div
                                       style={{
@@ -953,34 +980,38 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     <audio key="audio" ref={audioRef} />
                                     <Space>
                                       {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage && (
-                                        <>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<QuestionCircleOutlined />}
-                                              onClick={() =>
-                                                handleQuestionClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                          <Tooltip title="Show phrase meaning">
-                                            <Button
-                                              type="default"
-                                              icon={<CommentOutlined />}
-                                              onClick={() =>
-                                                handleAlternativesClick(
-                                                  word.phrase.sourceText,
-                                                  word.phrase.targetLanguage
-                                                )
-                                              }
-                                            />
-                                          </Tooltip>
-                                        </>
-                                      )}
+                                        word.phrase.targetLanguage &&
+                                        user.subscriptionType !==
+                                          SubscriptionType.Free && (
+                                          <>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={
+                                                  <QuestionCircleOutlined />
+                                                }
+                                                onClick={() =>
+                                                  handleQuestionClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                            <Tooltip title="Show phrase meaning">
+                                              <Button
+                                                type="default"
+                                                icon={<CommentOutlined />}
+                                                onClick={() =>
+                                                  handleAlternativesClick(
+                                                    word.phrase.sourceText,
+                                                    word.phrase.targetLanguage
+                                                  )
+                                                }
+                                              />
+                                            </Tooltip>
+                                          </>
+                                        )}
                                     </Space>
                                   </div>
                                 </div>

@@ -55,6 +55,7 @@ import html2pdf from "html2pdf.js";
 import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
 import logo from "../../assets/logo/vocabulift_logo.png";
+import { SubscriptionType } from "@/models/user";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -862,15 +863,16 @@ const BookDetail: FC = () => {
               All
             </Radio.Button>
           </Radio.Group>
-
-          <Button
-            type="default"
-            onClick={handleDownloadWorkSheet}
-            loading={state.loadingWorkSheet}
-            style={{ marginTop: 10, fontWeight: 500 }}
-          >
-            Download Worksheet
-          </Button>
+          {user.subscriptionType !== SubscriptionType.Free && (
+            <Button
+              type="default"
+              onClick={handleDownloadWorkSheet}
+              loading={state.loadingWorkSheet}
+              style={{ marginTop: 10, fontWeight: 500 }}
+            >
+              Download Worksheet
+            </Button>
+          )}
         </>
       </Card>
       <Card
