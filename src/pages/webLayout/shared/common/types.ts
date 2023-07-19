@@ -13,9 +13,13 @@ export interface IButtonProps {
 }
 
 export interface ISvgIconProps {
-  src: string;
-  width: string;
+  src?: string;
+  code?: string;
+  width?: string;
   height: string;
+  onClick?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export interface IInputProps {

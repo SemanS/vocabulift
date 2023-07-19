@@ -29,8 +29,6 @@ import { LabelType } from "@/models/sentences.interfaces";
 import { calculateFirstIndex, getRangeNumber } from "@/utils/stringUtils";
 import {
   deleteUserPhrases,
-  getPhraseAlternatives,
-  getPhraseMeaning,
   getUserSentences,
   updateReadingProgress,
 } from "@/services/userService";
@@ -54,8 +52,8 @@ import { getWorkSheet } from "@/services/aiService";
 import html2pdf from "html2pdf.js";
 import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
-import logo from "../../assets/logo/vocabulift_logo.png";
 import { SubscriptionType } from "@/models/user";
+import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -842,7 +840,7 @@ const BookDetail: FC = () => {
           >
             {languagesWithoutSource.map((language, index) => (
               <Select.Option key={index} value={language}>
-                <Flag code={getFlagCode(language)} height="16" />
+                <SvgIcon code={getFlagCode(language)} height="16" />
               </Select.Option>
             ))}
           </Select>

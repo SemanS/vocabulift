@@ -7,6 +7,7 @@ import styleImport from "vite-plugin-style-import";
 import react from "@vitejs/plugin-react";
 import { theme } from "antd/lib";
 import { convertLegacyToken } from "@ant-design/compatible/lib";
+import visualizer from "rollup-plugin-visualizer";
 
 const { defaultAlgorithm, defaultSeed } = theme;
 
@@ -58,6 +59,7 @@ export default ({ command }: { command: string }) => {
         localEnabled: command === "serve",
         logger: true,
       }),
+      visualizer(),
       // styleImport({
       //   libs: [
       //     {

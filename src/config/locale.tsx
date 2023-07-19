@@ -14,13 +14,14 @@ import huHU from "@/locales/hu-hu";
 import itIT from "@/locales/it-it";
 import Flag from "react-world-flags";
 import { getFlagCode } from "@/utils/utilMethods";
+import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 
 export const localeConfig = [
   {
     name: "English",
     key: "en-US",
     messages: enUS,
-    icon: <Flag code={getFlagCode("en")} height="16" />,
+    icon: <SvgIcon code={getFlagCode("en")} height="16" />,
   },
   {
     name: "Spanish",

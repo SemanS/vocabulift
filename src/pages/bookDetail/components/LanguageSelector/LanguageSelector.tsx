@@ -9,6 +9,7 @@ import { updateUser } from "@/services/userService";
 import { User } from "@/models/user";
 import { userState } from "@/stores/user";
 import { getFlagCode } from "@/utils/utilMethods";
+import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 
 interface LanguageSelectorProps {
   languageProp?: keyof User;
@@ -150,7 +151,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
                       country.code === disabledLanguage && useRecoil ? 0.5 : 1,
                   }}
                 >
-                  <Flag
+                  <SvgIcon
                     className={styles.flag}
                     code={getFlagCode(country.code)}
                     height={"16"}
@@ -174,7 +175,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
           }}
         >
           {selectedCountry && (
-            <Flag
+            <SvgIcon
               className={styles.flag}
               code={getFlagCode(selectedCountry.code)}
               height="32"
