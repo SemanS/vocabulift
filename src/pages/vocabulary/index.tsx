@@ -27,6 +27,7 @@ import { useSettingsDrawerContext } from "@/contexts/SettingsDrawerContext";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 import { userState } from "@/stores/user";
 import { UserEntity } from "@/models/user";
+import { useIntl } from "react-intl";
 
 type DateFilter = "today" | "last week" | "last month" | "all";
 
@@ -44,6 +45,8 @@ const Vocabulary: React.FC = () => {
   const [selectedTitle, setSelectedTitle] = useState<string | null>(null);
   const [user, setUser] = useRecoilState(userState);
   const [onMobile, setOnMobile] = useState(isMobile());
+
+  const intl = useIntl();
 
   const fetchSize = 50;
   const scroll = { y: 800, x: "100vw" };
@@ -217,7 +220,9 @@ const Vocabulary: React.FC = () => {
           width: 60,
         },
         {
-          title: "Sentence",
+          title: `${intl.formatMessage({
+            id: "vocabulary.sentence",
+          })}`,
           dataIndex: "sentenceText",
           key: "sentenceText",
           render: (text: string, row: any) => (
@@ -225,7 +230,9 @@ const Vocabulary: React.FC = () => {
           ),
         },
         {
-          title: "Sentence Translation",
+          title: `${intl.formatMessage({
+            id: "vocabulary.sentence.translation",
+          })}`,
           dataIndex: "sentenceTextTranslation",
           key: "sentenceTextTranslation",
           render: (text: string, row: any) => (
@@ -233,7 +240,9 @@ const Vocabulary: React.FC = () => {
           ),
         },
         {
-          title: "Phrase",
+          title: `${intl.formatMessage({
+            id: "vocabulary.sentence.phrase",
+          })}`,
           dataIndex: "sourceText",
           key: "sourceText",
           render: (text: string, row: any) => (
@@ -241,7 +250,9 @@ const Vocabulary: React.FC = () => {
           ),
         },
         {
-          title: "Translation",
+          title: `${intl.formatMessage({
+            id: "vocabulary.sentence.phrase.translation",
+          })}`,
           dataIndex: "targetText",
           key: "targetText",
           render: (text: string, row: any) => (
@@ -251,12 +262,19 @@ const Vocabulary: React.FC = () => {
         {
           title: (
             <div style={{ display: "flex", alignItems: "center" }}>
-              <span>Title</span>
+              <span>
+                {" "}
+                {intl.formatMessage({
+                  id: "vocabulary.filter",
+                })}
+              </span>
               <AutoComplete
                 className={styles.customAutocomplete}
                 style={{ width: "200px", marginLeft: "8px" }}
                 options={options}
-                placeholder="Search title"
+                placeholder={intl.formatMessage({
+                  id: "language.search",
+                })}
                 dropdownStyle={{ minWidth: "300px" }} // Add this line to set a fixed width
                 value={selectedTitle}
                 onChange={(value) => setSelectedTitle(value)}
@@ -270,7 +288,9 @@ const Vocabulary: React.FC = () => {
           ),
         },
         {
-          title: "Date added",
+          title: `${intl.formatMessage({
+            id: "vocabulary.date",
+          })}`,
           dataIndex: "createdAt",
           key: "createdAt",
           render: (date: string) => {
@@ -472,7 +492,7 @@ const Vocabulary: React.FC = () => {
                   useRecoil={true}
                   languageProp="sourceLanguage"
                   disabledLanguage={user.targetLanguage}
-                  text={"Translate from: "}
+                  text={intl.formatMessage({ id: "translate.from" }) + " "}
                 />
               </Col>
               <Col
@@ -489,7 +509,7 @@ const Vocabulary: React.FC = () => {
                   useRecoil={true}
                   languageProp="targetLanguage"
                   disabledLanguage={user.sourceLanguage}
-                  text={"Translate to: "}
+                  text={intl.formatMessage({ id: "translate.to" }) + " "}
                 />
               </Col>
             </Row>
@@ -513,7 +533,7 @@ const Vocabulary: React.FC = () => {
           <Row justify="space-between">
             <Space>
               <Select
-                value="Actions"
+                value={intl.formatMessage({ id: "vocabulary.actions" })}
                 placeholder="Actions"
                 onSelect={async (value: string) => {
                   if (value === "delete") {
@@ -528,7 +548,9 @@ const Vocabulary: React.FC = () => {
                 style={{ width: 120 }}
                 disabled={selectedRowKeys.length === 0}
               >
-                <Select.Option value="delete">Delete</Select.Option>
+                <Select.Option value="delete">
+                  {intl.formatMessage({ id: "vocabulary.actions.delete" })}
+                </Select.Option>
               </Select>
             </Space>
             <Space>
@@ -537,10 +559,18 @@ const Vocabulary: React.FC = () => {
                 value={dateFilter}
                 buttonStyle="solid"
               >
-                <Radio.Button value="today">Today</Radio.Button>
-                <Radio.Button value="last week">Last Week</Radio.Button>
-                <Radio.Button value="last month">Last Month</Radio.Button>
-                <Radio.Button value="all">All</Radio.Button>
+                <Radio.Button value="today">
+                  {intl.formatMessage({ id: "vocabulary.today" })}
+                </Radio.Button>
+                <Radio.Button value="last week">
+                  {intl.formatMessage({ id: "vocabulary.last.week" })}
+                </Radio.Button>
+                <Radio.Button value="last month">
+                  {intl.formatMessage({ id: "vocabulary.last.month" })}
+                </Radio.Button>
+                <Radio.Button value="all">
+                  {intl.formatMessage({ id: "vocabulary.all" })}
+                </Radio.Button>
               </Radio.Group>
             </Space>
           </Row>

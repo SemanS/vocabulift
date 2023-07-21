@@ -30,6 +30,7 @@ import { socket } from "@/messaging/socket";
 import "antd/dist/reset.css";
 import { vocabuFetch } from "@/utils/vocabuFetch";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
+import { useIntl } from "react-intl";
 
 const Library: React.FC = () => {
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
@@ -59,6 +60,8 @@ const Library: React.FC = () => {
     localStorage.getItem("videoThumbnail") || undefined
   );
   const [eventFinalized, setEventFinalized] = useState(false);
+
+  const intl = useIntl();
 
   const fetchOptions = async (input: string) => {
     try {
@@ -404,7 +407,7 @@ const Library: React.FC = () => {
                   useRecoil={true}
                   languageProp="sourceLanguage"
                   disabledLanguage={user.targetLanguage}
-                  text={"Translate from: "}
+                  text={intl.formatMessage({ id: "translate.from" }) + " "}
                 />
               </Col>
               <Col
@@ -421,7 +424,7 @@ const Library: React.FC = () => {
                   useRecoil={true}
                   languageProp="targetLanguage"
                   disabledLanguage={user.sourceLanguage}
-                  text={"Translate to: "}
+                  text={intl.formatMessage({ id: "translate.to" }) + " "}
                 />
               </Col>
             </Row>
@@ -495,7 +498,7 @@ const Library: React.FC = () => {
                       cursor: "pointer",
                     }}
                   >
-                    Settings
+                    {intl.formatMessage({ id: "menu.settings" })}
                   </Typography.Title>
                 </span>
               </span>

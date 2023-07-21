@@ -21,6 +21,7 @@ import usePressHandlers from "@/hooks/userPressHandlers";
 import { Tooltip } from "antd";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 import { SubscriptionType } from "@/models/user";
+import { useIntl } from "react-intl";
 
 const TabPane = Tabs.TabPane;
 
@@ -83,6 +84,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
   const [activeTab, setActiveTab] = useState("1");
   const [deletedPhraseId, setDeletedPhraseId] = useState<string | null>(null);
 
+  const intl = useIntl();
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const [state, dispatch] = useReducer(reducer, {
@@ -218,7 +220,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
 
   useEffect(() => {
     if (phrases) {
-      console.log("deletedPhraseId" + JSON.stringify(deletedPhraseId, null, 2));
       const remainingPhrases = deletedPhraseId
         ? phrases.filter((phrase) => phrase.phrase._id !== deletedPhraseId)
         : phrases;
@@ -274,7 +275,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
       >
         {filteredWords.length > 0 && (
-          <TabPane tab={"Words"} key="1">
+          <TabPane
+            tab={intl.formatMessage({ id: "vocabulary.list.words" })}
+            key="1"
+          >
             <div className="vocabularyListScroll">
               <div
                 style={{ paddingTop: 10, paddingRight: 25, paddingLeft: 25 }}
@@ -403,7 +407,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -419,7 +427,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 className={"noselect"}
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -450,7 +462,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               {...pressQuestionHandlers}
                                               className={"noselect"}
                                             />
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -508,7 +524,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -522,7 +542,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 }
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -603,7 +627,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -619,7 +647,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 className={"noselect"}
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -648,7 +680,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
           </TabPane>
         )}
         {filteredPhrases.length > 0 && (
-          <TabPane tab={"Phrases"} key="2">
+          <TabPane
+            tab={intl.formatMessage({ id: "vocabulary.list.phrases" })}
+            key="2"
+          >
             <div className="vocabularyListScroll">
               <div
                 style={{ paddingTop: 10, paddingRight: 25, paddingLeft: 25 }}
@@ -777,7 +812,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -793,7 +832,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 className={"noselect"}
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -814,7 +857,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -830,7 +877,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 className={"noselect"}
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -888,7 +939,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -902,7 +957,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 }
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show alternative usage of phrase">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -984,7 +1043,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         user.subscriptionType !==
                                           SubscriptionType.Free && (
                                           <>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.meaning",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={
@@ -998,7 +1061,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 }
                                               />
                                             </Tooltip>
-                                            <Tooltip title="Show phrase meaning">
+                                            <Tooltip
+                                              title={intl.formatMessage({
+                                                id: "vocabulary.list.alternatives",
+                                              })}
+                                            >
                                               <Button
                                                 type="default"
                                                 icon={<CommentOutlined />}
@@ -1027,7 +1094,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
           </TabPane>
         )}
         {(state.loadingFromWordMeaning || state.wordMeaningData) && (
-          <TabPane tab="Meaning" key="3">
+          <TabPane
+            tab={intl.formatMessage({ id: "vocabulary.list.tab.meaning" })}
+            key="3"
+          >
             <div
               className="vocabularyListScroll"
               style={{
@@ -1051,7 +1121,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
           </TabPane>
         )}
         {(state.loadingFromWordAlternatives || state.wordAlternativesData) && (
-          <TabPane tab="Alternatives" key="4">
+          <TabPane
+            tab={intl.formatMessage({ id: "vocabulary.list.tab.alternatives" })}
+            key="4"
+          >
             <div
               className="vocabularyListScroll"
               style={{

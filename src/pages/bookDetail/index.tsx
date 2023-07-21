@@ -54,6 +54,7 @@ import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SubscriptionType } from "@/models/user";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
+import { useIntl } from "react-intl";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -229,6 +230,8 @@ const BookDetail: FC = () => {
     dispatch({ type: "setSelectedLanguageTo", payload: language });
   const setLibrary = (library: any) =>
     dispatch({ type: "setLibrary", payload: library });
+
+  const intl = useIntl();
 
   const handlePageChange = useCallback(
     async (
@@ -850,15 +853,15 @@ const BookDetail: FC = () => {
             buttonStyle="solid"
             style={{ paddingRight: 20, marginTop: 10 }}
           >
-            <Radio.Button value="words" style={{ fontWeight: 500 }}>
-              Words
-            </Radio.Button>
             {/* <Radio.Button value="phrases">Phrases</Radio.Button> */}
             <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
-              Sentences
+              {intl.formatMessage({ id: "translate.box.sentences" })}
+            </Radio.Button>
+            <Radio.Button value="words" style={{ fontWeight: 500 }}>
+              {intl.formatMessage({ id: "translate.box.words" })}
             </Radio.Button>
             <Radio.Button value="all" style={{ fontWeight: 500 }}>
-              All
+              {intl.formatMessage({ id: "translate.box.all" })}
             </Radio.Button>
           </Radio.Group>
           {user.subscriptionType !== SubscriptionType.Free && (
@@ -868,7 +871,7 @@ const BookDetail: FC = () => {
               loading={state.loadingWorkSheet}
               style={{ marginTop: 10, fontWeight: 500 }}
             >
-              Download Worksheet
+              {intl.formatMessage({ id: "translate.box.download.worksheet" })}
             </Button>
           )}
         </>

@@ -15,6 +15,7 @@ import { socket } from "@/messaging/socket";
 import { Option } from "@/models/utils.interface";
 import { postLibraryVideo } from "@/services/libraryService";
 import { PageContainer } from "@ant-design/pro-layout";
+import { useIntl } from "react-intl";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -56,6 +57,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedLanguageTo, setSelectedLanguageTo] =
     useState<string>(targetLanguage);
+
+  const intl = useIntl();
 
   useEffect(() => {
     if (activeTab === "2") {
@@ -187,7 +190,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                   {isFetchValid && inputValue && (
                     <Form.Item
                       style={{ textAlign: "left" }}
-                      label="Translate from"
+                      label={intl.formatMessage({ id: "translate.from" })}
                       name="language"
                     >
                       <LanguageSelector
@@ -210,7 +213,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                   {inputValue && (
                     <Form.Item
                       style={{ textAlign: "left" }}
-                      label="Translate to"
+                      label={intl.formatMessage({ id: "translate.to" })}
                       name="language"
                     >
                       <LanguageSelector

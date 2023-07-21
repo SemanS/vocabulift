@@ -10,6 +10,7 @@ import { User } from "@/models/user";
 import { userState } from "@/stores/user";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
+import { useIntl } from "react-intl";
 
 interface LanguageSelectorProps {
   languageProp?: keyof User;
@@ -52,6 +53,8 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
   const [countriesList, setCountriesList] = useState(initCountriesList);
   const [filteredCountries, setFilteredCountries] = useState(countriesList);
   const [selectedLanguage, setSelectedLanguage] = useState(user[languageProp!]);
+
+  const intl = useIntl();
 
   useEffect(() => {
     if (options) {
@@ -130,7 +133,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
             {!options && (
               <Input
                 size="large"
-                placeholder="Type to search"
+                placeholder={intl.formatMessage({
+                  id: "language.search",
+                })}
                 onChange={handleSearch}
               />
             )}

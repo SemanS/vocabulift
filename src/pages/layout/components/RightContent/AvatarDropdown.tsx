@@ -8,6 +8,7 @@ import classes from "./index.module.less";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { useCookies } from "react-cookie";
+import { useIntl } from "react-intl";
 
 export type GlobalHeaderRightProps = {
   menu?: boolean;
@@ -16,7 +17,7 @@ export type GlobalHeaderRightProps = {
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
   const [user, setUser] = useRecoilState(userState);
   const [cookies, setCookie] = useCookies(["access_token"]);
-
+  const intl = useIntl();
   const { username, avatar } = user;
 
   const navigate = useNavigate();
@@ -85,7 +86,10 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
       key: "logout",
       label: (
         <>
-          <LogoutOutlined /> Sign Out
+          <LogoutOutlined />{" "}
+          {intl.formatMessage({
+            id: "menu.sign.out",
+          })}
         </>
       ),
     },

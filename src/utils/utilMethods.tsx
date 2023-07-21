@@ -67,10 +67,6 @@ export function isWordInVocabularyList(
 
   const firstSelectedWord = selectedWords[0].word;
 
-  console.log(
-    "vocabularyListUserPhrases" +
-      JSON.stringify(vocabularyListUserPhrases, null, 2)
-  );
   if (vocabularyListUserPhrases)
     for (let i = 0; i < vocabularyListUserPhrases.length; i++) {
       const userPhrase = vocabularyListUserPhrases[i].phrase;
