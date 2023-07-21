@@ -139,7 +139,11 @@ const Header = () => {
       <Container>
         <Row justify="space-between">
           <LogoContainer to="/" aria-label="homepage">
-            <SvgIcon src="logo.svg" width="120px" height="64px" />
+            <SvgIcon
+              src={`${import.meta.env.VITE_BASE_URL}/vocabulift_logo.svg`}
+              width="120px"
+              height="64px"
+            />
           </LogoContainer>
           <NotHidden>
             <MenuItem />

@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { Card, Col, Row, Typography, Steps, Divider } from "antd";
 import styles from "./index.module.less";
-import Flag from "react-world-flags";
 import { getFlagCode, getLocaleFromLanguage } from "@/utils/utilMethods";
 import { SvgIcon } from "../webLayout/shared/common/SvgIcon";
 import { Button } from "../webLayout/shared/common/Button";
@@ -128,7 +127,7 @@ const ActivationPage: FC = () => {
                     xl={4}
                     style={{ margin: "1em" }}
                   >
-                    <Flag
+                    <SvgIcon
                       className={styles.flag}
                       code={getFlagCode(language)}
                       height="96"

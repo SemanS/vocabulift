@@ -11,7 +11,9 @@ export const SvgIcon = ({
   style,
 }: ISvgIconProps) => {
   // If a code is provided, use it to build the source string. Otherwise, use the provided src directly.
-  const source = code ? `src/assets/flags/${code}.svg` : src;
+  const source = code
+    ? `${import.meta.env.VITE_BASE_URL}/flags/${code}.svg`
+    : src;
 
   return (
     <img
