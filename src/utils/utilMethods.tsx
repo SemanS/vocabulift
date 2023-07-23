@@ -97,7 +97,7 @@ export function isSingleWord(text: string) {
 }
 
 export const getFlagCode = (code: string) =>
-  code === "en" ? "gb" : code === "cs" ? "cz" : code === "zh" ? "cn" : code;
+  code === "en" ? "gb" : code === "cs" ? "cz" : code;
 
 export const getLocaleFromLanguage = (language: string): Locale | undefined => {
   const languageMapping: { [key: string]: Locale } = {
@@ -110,6 +110,7 @@ export const getLocaleFromLanguage = (language: string): Locale | undefined => {
     pl: "pl-PL",
     hu: "hu-HU",
     it: "it-IT",
+    zh: "zh-CN",
   };
 
   return languageMapping[language];

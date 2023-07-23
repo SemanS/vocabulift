@@ -47,7 +47,7 @@ export const parseLocale = (localeString: Locale): string => {
     case "it-IT":
       return "it";
     case "zh-CN":
-      return "cn";
+      return "zh";
     default:
       return "en";
   }

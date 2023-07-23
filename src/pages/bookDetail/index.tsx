@@ -46,7 +46,6 @@ import { getSnapshots } from "@/services/snapshotService";
 import { userState } from "@/stores/user";
 import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
-import Flag from "react-world-flags";
 import Masonry from "react-masonry-css";
 import { getWorkSheet } from "@/services/aiService";
 import html2pdf from "html2pdf.js";

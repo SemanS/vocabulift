@@ -75,6 +75,6 @@ export const localeConfig = [
     name: "Chinese",
     key: "zh-CN",
     messages: zhCN,
-    icon: <SvgIcon code={getFlagCode("cn")} height="16" />,
+    icon: <SvgIcon code={getFlagCode("zh")} height="16" />,
   },
 ];

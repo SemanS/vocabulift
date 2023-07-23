@@ -61,7 +61,6 @@ const ActivationPage: FC = () => {
       if (highestCompletedStep < 2) {
         setHighestCompletedStep(2);
       }
-      console.log("nativeLanguage" + JSON.stringify(nativeLanguage, null, 2));
       if (nativeLanguage && language) {
         try {
           const updatedUserEntity: Partial<User> = {
@@ -70,11 +69,7 @@ const ActivationPage: FC = () => {
             targetLanguage: language,
             activated: true,
           };
-          console.log(
-            "updatedUserEntity" + JSON.stringify(updatedUserEntity, null, 2)
-          );
           const response = await updateUser(updatedUserEntity);
-          console.log(response); // Log the response or handle it as you wish
         } catch (error) {
           console.error("Failed to post languages", error);
           // Handle the error as needed, e.g., show a notification to the user
