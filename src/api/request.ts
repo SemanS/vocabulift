@@ -20,7 +20,6 @@ const axios = Axios.create({
 axios.interceptors.response.use(
   (response) => {
     const data = response.data;
-    console.log("response:", response);
     if (response.status === 200) {
       return data;
     }
@@ -37,7 +36,6 @@ axios.interceptors.response.use(
     return Promise.reject(new Error(response.statusText || "Error"));
   },
   (error) => {
-    console.log("err:", error, error.response); // for debug
     let msg = "请求错误";
     if (error.response && error.response.status) {
       switch (error.response.status) {
@@ -163,7 +161,6 @@ const useGetList = <T>(
     params.order = transformSorter(sorter);
 
     const transformRequest: any = (data, headers) => {};
-    console.log("params: ", params);
     const data: T = await axios.get(`${url}`, {
       params,
       paramsSerializer: (params) => {

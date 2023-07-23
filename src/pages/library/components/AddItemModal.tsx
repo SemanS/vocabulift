@@ -77,10 +77,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     onLanguageSelect(language);
   };
 
-  /* useEffect(() => {
-    console.log("inputValue prop", inputValue);
-  }, [inputValue]); */
-
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
@@ -142,7 +138,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   };
 
   const normFile = (e: any) => {
-    console.log("Upload event:", e);
     if (e?.file) {
       const data = new FormData();
       data.append("bookFile", e.file);

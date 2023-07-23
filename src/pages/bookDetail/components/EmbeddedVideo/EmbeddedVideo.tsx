@@ -232,9 +232,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       if (currentSentenceIndex === -1) {
         currentSentenceIndex = 0;
       }
-      console.log(
-        "currentSentenceIndex" + JSON.stringify(currentSentenceIndex, null, 2)
-      );
       const nextSentence =
         snapshotsRef.current![0].sentencesData[currentSentenceIndex];
       if (!nextSentence) {
@@ -285,7 +282,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               playerRef.current?.getPlayerState() !== YT.PlayerState.ENDED
             ) {
               props.onPause && props.onPause();
-              console.log("Sending data...");
               socket.emit("video-playing", {
                 libraryId: libraryId,
                 currentTime: playerRef.current?.getCurrentTime(),
@@ -424,9 +420,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
                 currentTime < sentence.start! + sentence.duration! - 0.1
               );
             });
-      console.log(
-        "newHighlightedIndex" + JSON.stringify(newHighlightedIndex, null, 2)
-      );
       if (
         newHighlightedIndex === null ||
         newHighlightedIndex === undefined ||
@@ -467,9 +460,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
         );
         if (!isNaN(newPage)) {
-          console.log("som nula");
-          //playerRef.current.stopVideo();
-
           startIndexRef.current =
             newPage * sentencesPerPageRef.current -
             snapshotsRef.current![0].sentenceFrom +

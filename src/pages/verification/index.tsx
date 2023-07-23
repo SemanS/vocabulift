@@ -48,8 +48,6 @@ const VerificationPage: FC = () => {
           body: JSON.stringify({ code: verificationCode }),
         }
       );
-
-      console.log("response.status" + JSON.stringify(response.status, null, 2));
       if (response.status == 200) {
         const from = location.state?.from || { pathname: "/activation" };
         navigate(from);

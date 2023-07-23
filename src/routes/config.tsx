@@ -112,7 +112,6 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             navigate("/activation");
             return; // Prevent further execution of the useEffect hook
           } else if (!userResponse?.verified) {
-            console.log("okej" + JSON.stringify(userResponse));
             navigate("/verification");
           } else if (userResponse?.verified && userResponse.activated) {
           }

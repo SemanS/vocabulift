@@ -104,7 +104,6 @@ export const getUserPhrases = async (options: {
 
 export const updateUser = async (userEntity: Partial<User>): Promise<any> => {
   const requestBody = { userEntity };
-  console.log("userEntity" + JSON.stringify(userEntity, null, 2));
   const response = await vocabuFetch(
     `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/user/update`,
     {
@@ -333,8 +332,6 @@ export const textToSpeech = async (
     }
 
     const audioBlob = await response.blob();
-    console.log("Response Content-Type:", response.headers.get("Content-Type"));
-    console.log("Audio Blob size:", audioBlob.size);
 
     const audioUrl = URL.createObjectURL(audioBlob);
     return audioUrl;

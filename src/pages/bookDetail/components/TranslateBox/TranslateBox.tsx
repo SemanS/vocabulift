@@ -309,7 +309,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     );
 
     if (isPhraseInVocabulary) {
-      console.log("This phrase already exists in the vocabulary list");
       return;
     }
 
@@ -376,7 +375,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     wordIndex: number,
     event: React.TouchEvent
   ) => {
-    console.log("isMobile" + JSON.stringify(isMobile, null, 2));
     if (isMobile) {
       switch (type) {
         case "start":

@@ -241,7 +241,6 @@ const BookDetail: FC = () => {
       changeTriggeredFromVideoFetch: boolean = false
     ) => {
       const newQueryParams = new URLSearchParams(location.search);
-      console.log("page" + JSON.stringify(page, null, 2));
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
       let localSentenceFrom;

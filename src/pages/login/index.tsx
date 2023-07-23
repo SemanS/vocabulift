@@ -99,7 +99,6 @@ const LoginForm: FC = () => {
   const onFinished = async (form: LoginParams) => {
     const { email } = form;
     try {
-      console.log("jj");
       const response = await fetch(
         `${
           import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
@@ -113,7 +112,6 @@ const LoginForm: FC = () => {
           credentials: "include",
         }
       );
-      console.log("response.status" + JSON.stringify(response.status, null, 2));
       if (response.status === 400) {
         notification.info({
           placement: "top",
@@ -139,7 +137,6 @@ const LoginForm: FC = () => {
           }
         );
         if (response2.status === 200) {
-          console.log("ides dalej");
           navigate("/library");
         }
       }

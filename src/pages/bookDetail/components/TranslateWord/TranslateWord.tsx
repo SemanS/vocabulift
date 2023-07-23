@@ -285,7 +285,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       props.sentenceText!
     );
     setIsHovered(true);
-    console.log("isHovered" + JSON.stringify(isHovered, null, 2));
   };
 
   const handleMouseUp = () => {

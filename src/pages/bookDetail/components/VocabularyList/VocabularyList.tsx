@@ -148,7 +148,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
       const nativeLanguage = parseLocale(user.locale);
       setActiveTab("4");
       dispatch({ type: "setLoadingFromWordAlternatives", payload: true });
-      console.log("languageTo" + JSON.stringify(languageTo, null, 2));
       const alternatives = await getPhraseAlternatives(
         phrase,
         nativeLanguage,
