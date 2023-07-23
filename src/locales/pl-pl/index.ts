@@ -1,18 +1,7 @@
-import { skSK_menu } from "./menu";
+import { plPL_menu } from "./menu";
 
 const pl_PL = {
-  /* ...enUS_account,
-  ...enUS_avatorDropMenu,
-  ...enUS_tagsViewDropMenu,
-  ...enUS_title,
-  ...enUS_globalTips,
-  ...enUS_permissionRole,
-  ...enUS_dashboard,
-  ...enUS_guide,
-  ...enUS_menu,
-  ...enUS_project,
-  ...en_US_documentation,
-  ...en_US_web, */
+  ...plPL_menu,
 };
 
 export default pl_PL;

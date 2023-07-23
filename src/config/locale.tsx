@@ -12,6 +12,7 @@ import csCZ from "@/locales/cs-cz";
 import plPL from "@/locales/pl-pl";
 import huHU from "@/locales/hu-hu";
 import itIT from "@/locales/it-it";
+import zhCN from "@/locales/zh-cn";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 
@@ -69,5 +70,11 @@ export const localeConfig = [
     key: "it-IT",
     messages: itIT,
     icon: <SvgIcon code={getFlagCode("it")} height="16" />,
+  },
+  {
+    name: "Chinese",
+    key: "zh-CN",
+    messages: zhCN,
+    icon: <SvgIcon code={getFlagCode("cn")} height="16" />,
   },
 ];

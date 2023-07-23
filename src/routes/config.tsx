@@ -25,6 +25,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
 
     if (import.meta.env.MODE === "staging") {
       sessionStorage.setItem("access_token", "641880e55febd60caa927162");
+      cookies.access_token = "641880e55febd60caa927162";
       const devUser: User = {
         ...getGlobalState(),
         username: "Slavo",
@@ -74,6 +75,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         subscriptionType: SubscriptionType.Linguist,
         subscriptionPeriod: SubscriptionPeriod.Monthly,
         email: "slavosmn@gmail.com",
+        subscriptionId: "",
       };
       setUser(devUser);
       setLoading(false);
@@ -102,7 +104,6 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             navigate("/logout");
             return; // Prevent further execution of the useEffect hook
           }
-
           if (response.data.status === "not-verified") {
             navigate(`/verification?code=${queryParams.get("code")}`);
             return;
@@ -111,6 +112,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
             navigate("/activation");
             return; // Prevent further execution of the useEffect hook
           } else if (!userResponse?.verified) {
+            console.log("okej" + JSON.stringify(userResponse));
             navigate("/verification");
           } else if (userResponse?.verified && userResponse.activated) {
           }

@@ -23,6 +23,7 @@ export type Locale =
   | "sk-SK"
   | "pl-PL"
   | "hu-HU"
+  | "zh-CN"
   | "it-IT";
 
 export interface CurrentUserResult {

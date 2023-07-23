@@ -67,6 +67,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         subscriptionType: SubscriptionType.Linguist,
         subscriptionPeriod: SubscriptionPeriod.Monthly,
         email: "slavosmn@gmail.com",
+        subscriptionId: "",
       };
       setUser(devUser);
       setLoading(false);

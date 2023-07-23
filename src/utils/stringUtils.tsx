@@ -32,6 +32,22 @@ export const parseLocale = (localeString: Locale): string => {
       return "en";
     case "sk-SK":
       return "sk";
+    case "es-ES":
+      return "es";
+    case "fr-FR":
+      return "fr";
+    case "de-DE":
+      return "de";
+    case "cs-CZ":
+      return "cs";
+    case "pl-PL":
+      return "pl";
+    case "hu-HU":
+      return "hu";
+    case "it-IT":
+      return "it";
+    case "zh-CN":
+      return "cn";
     default:
       return "en";
   }
