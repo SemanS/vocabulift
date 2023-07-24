@@ -5,3 +5,4 @@ dist-ssr
 *.local
 .env.development
 .env.production
+stats.html
