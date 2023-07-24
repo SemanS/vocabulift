@@ -528,7 +528,7 @@ const BookDetail: FC = () => {
   const handleDownloadWorkSheet = async () => {
     dispatch({ type: "setLoadingWorkSheet", payload: true });
 
-    const htmlContent = await getWorkSheet(
+    let htmlContent = await getWorkSheet(
       sourceLanguage,
       targetLanguage,
       libraryId!
@@ -536,6 +536,19 @@ const BookDetail: FC = () => {
 
     const element = document.createElement("div");
     element.style.margin = "20px";
+    // Create a temporary container to parse your htmlContent
+    const tempContainer = document.createElement("div");
+    tempContainer.innerHTML = htmlContent;
+
+    // Find and remove all iframes
+    Array.from(tempContainer.getElementsByTagName("iframe")).forEach(
+      (iframe) => {
+        iframe.parentElement!.removeChild(iframe);
+      }
+    );
+
+    // Now use this cleaned HTML as your content
+    htmlContent = tempContainer.innerHTML;
     element.innerHTML = htmlContent;
 
     // Here, let's say each block of content that should stay together per page is encapsulated by a div
@@ -549,7 +562,7 @@ const BookDetail: FC = () => {
     let base64Logo: any;
 
     getBase64Image(
-      "../../src/assets/logo/vocabulift_logo.png",
+      `${import.meta.env.VITE_BASE_URL}/vocabulift_logo.png`,
       function (base64Image) {
         base64Logo = base64Image;
       }
