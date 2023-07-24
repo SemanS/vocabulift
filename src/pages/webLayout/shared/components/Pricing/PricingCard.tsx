@@ -66,16 +66,19 @@ const PricingCard = ({
       user.subscriptionType,
       user.subscriptionPeriod
     );
+    console.log(
+      "cardSubscriptionType" + JSON.stringify(cardSubscriptionType, null, 2)
+    );
+    console.log(
+      "userSubscriptionValue" + JSON.stringify(userSubscriptionValue, null, 2)
+    );
     const cardSubscriptionValue = getSubscriptionValue(
       cardSubscriptionType,
       isMonthly ? SubscriptionPeriod.Monthly : SubscriptionPeriod.Annual
     );
 
     // Return "Current Plan" for both monthly and annual subscriptions in case of free subscription
-    if (
-      user.subscriptionType === SubscriptionType.Free &&
-      cardSubscriptionType === SubscriptionType.Free
-    ) {
+    if (cardSubscriptionType === SubscriptionType.Free) {
       return "Current Plan";
     }
 
