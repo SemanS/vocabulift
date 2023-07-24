@@ -65,7 +65,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   shouldSetVideo: false,
   wordData: null,
   showWordDefinition: false,
-  mode: "words",
+  mode: "sentences",
   snapshots: null,
   userSentences: null,
   libraryTitle: "",
@@ -232,6 +232,19 @@ const BookDetail: FC = () => {
 
   const intl = useIntl();
 
+  const users = [
+    { email: "slavosmn@gmail.com" },
+    { email: "vratko.ferko@gmail.com" },
+    { email: "lubec.seman@gmail.com" },
+    { email: "Paulina@polskidaily.eu" },
+    { email: "info@angolrahangolva.com" },
+    { email: "info@brona.cz" },
+  ];
+
+  const hasAccess = users.some(
+    (existingUser) => existingUser.email === user.email
+  );
+
   const handlePageChange = useCallback(
     async (
       page: number,
@@ -331,7 +344,11 @@ const BookDetail: FC = () => {
   };
 
   useEffect(() => {
-    if (user.isLimitExceeded === true && user.subscribed === false) {
+    if (
+      user.isLimitExceeded === true &&
+      user.subscribed === false &&
+      !hasAccess
+    ) {
       dispatch({ type: "setIsLimitExceeded", payload: true });
     } else {
       if (pageSizeFromQuery) {
@@ -875,16 +892,17 @@ const BookDetail: FC = () => {
               {intl.formatMessage({ id: "translate.box.all" })}
             </Radio.Button>
           </Radio.Group>
-          {user.subscriptionType !== SubscriptionType.Free && (
-            <Button
-              type="default"
-              onClick={handleDownloadWorkSheet}
-              loading={state.loadingWorkSheet}
-              style={{ marginTop: 10, fontWeight: 500 }}
-            >
-              {intl.formatMessage({ id: "translate.box.download.worksheet" })}
-            </Button>
-          )}
+          {user.subscriptionType !== SubscriptionType.Free ||
+            (hasAccess && (
+              <Button
+                type="default"
+                onClick={handleDownloadWorkSheet}
+                loading={state.loadingWorkSheet}
+                style={{ marginTop: 10, fontWeight: 500 }}
+              >
+                {intl.formatMessage({ id: "translate.box.download.worksheet" })}
+              </Button>
+            ))}
         </>
       </Card>
       <Card
@@ -964,12 +982,6 @@ const BookDetail: FC = () => {
         sentencesPerPage={state.sentencesPerPage}
       />
     </Card>
-  );
-
-  const users = [{ email: "slavosmn@gmail.com2" }];
-
-  const hasAccess = users.some(
-    (existingUser) => existingUser.email === user.email
   );
 
   const isMobile = window.innerWidth <= 600;

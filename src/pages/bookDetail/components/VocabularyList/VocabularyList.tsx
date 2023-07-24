@@ -176,6 +176,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
   };
 
   const handlePlayClick = async (text: string, language: string) => {
+    console.log("handulujem");
     const audioUrl = await textToSpeech(text, language);
 
     const audio = audioRef.current;
@@ -266,7 +267,13 @@ const VocabularyList: FC<VocabularyListProps> = ({
     }
   }, [phrases]);
 
-  const users = [{ email: "slavosmn@gmail.com2" }];
+  const users = [
+    { email: "slavosmn@gmail.com" },
+    { email: "lubec.seman@gmail.com" },
+    { email: "Paulina@polskidaily.eu" },
+    { email: "info@angolrahangolva.com" },
+    { email: "info@brona.cz" },
+  ];
 
   const hasAccess = users.some(
     (existingUser) => existingUser.email === user.email

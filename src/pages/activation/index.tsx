@@ -29,7 +29,7 @@ const ActivationPage: FC = () => {
     "pl",
     "hu",
     "it",
-    "cn",
+    "zh",
   ];
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -66,7 +66,7 @@ const ActivationPage: FC = () => {
           const updatedUserEntity: Partial<User> = {
             locale: getLocaleFromLanguage(nativeLanguage),
             sourceLanguage: "en",
-            targetLanguage: language,
+            targetLanguage: nativeLanguage,
             activated: true,
           };
           const response = await updateUser(updatedUserEntity);
@@ -181,7 +181,9 @@ const ActivationPage: FC = () => {
               >
                 <Col span={24}>
                   <SvgIcon
-                    src="party_popper.svg"
+                    src={`${
+                      import.meta.env.VITE_BASE_URL
+                    }/img/svg/party_popper.svg`}
                     width="250px"
                     height="250px"
                   />
