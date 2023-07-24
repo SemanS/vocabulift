@@ -966,7 +966,7 @@ const BookDetail: FC = () => {
     </Card>
   );
 
-  const users = [{ email: "slavosmn@gmail.com" }];
+  const users = [{ email: "slavosmn@gmail.com2" }];
 
   const hasAccess = users.some(
     (existingUser) => existingUser.email === user.email
