@@ -266,6 +266,12 @@ const VocabularyList: FC<VocabularyListProps> = ({
     }
   }, [phrases]);
 
+  const users = [{ email: "slavosmn@gmail.com" }];
+
+  const hasAccess = users.some(
+    (existingUser) => existingUser.email === user.email
+  );
+
   return (
     <Card style={style} bodyStyle={{ padding: 0 }}>
       <Tabs
@@ -403,8 +409,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                       />
                                       {parseLocale(user.locale) !==
                                         word.phrase.sourceLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -446,8 +453,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         )}
                                       {parseLocale(user.locale) !==
                                         word.phrase.targetLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Button
                                               type="default"
@@ -520,8 +528,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                       />
                                       {parseLocale(user.locale) !==
                                         word.phrase.sourceLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -623,8 +632,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     <Space>
                                       {parseLocale(user.locale) !==
                                         word.phrase.targetLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -808,8 +818,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                       />
                                       {parseLocale(user.locale) !==
                                         word.phrase.targetLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -853,8 +864,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         )}
                                       {parseLocale(user.locale) !==
                                         word.phrase.targetLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -935,8 +947,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                       />
                                       {parseLocale(user.locale) !==
                                         word.phrase.sourceLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -1039,8 +1052,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     <Space>
                                       {parseLocale(user.locale) !==
                                         word.phrase.targetLanguage &&
-                                        user.subscriptionType !==
-                                          SubscriptionType.Free && (
+                                        (user.subscriptionType !==
+                                          SubscriptionType.Free ||
+                                          hasAccess ||
+                                          hasAccess) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({

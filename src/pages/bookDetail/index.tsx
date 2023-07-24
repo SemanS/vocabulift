@@ -966,11 +966,17 @@ const BookDetail: FC = () => {
     </Card>
   );
 
+  const users = [{ email: "slavosmn@gmail.com" }];
+
+  const hasAccess = users.some(
+    (existingUser) => existingUser.email === user.email
+  );
+
   const isMobile = window.innerWidth <= 600;
 
   return (
     <PageContainer title={false} className={styles.container}>
-      {state.isLimitExceeded && user.subscribed === false ? (
+      {state.isLimitExceeded && user.subscribed === false && !hasAccess ? (
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
             <Typography.Title style={{ marginTop: "30px" }}>

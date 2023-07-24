@@ -66,12 +66,6 @@ const PricingCard = ({
       user.subscriptionType,
       user.subscriptionPeriod
     );
-    console.log(
-      "cardSubscriptionType" + JSON.stringify(cardSubscriptionType, null, 2)
-    );
-    console.log(
-      "userSubscriptionValue" + JSON.stringify(userSubscriptionValue, null, 2)
-    );
     const cardSubscriptionValue = getSubscriptionValue(
       cardSubscriptionType,
       isMonthly ? SubscriptionPeriod.Monthly : SubscriptionPeriod.Annual
