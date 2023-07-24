@@ -81,7 +81,8 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
       setLoading(false);
     } else if (
       (import.meta.env.MODE === "development" && cookies.access_token) ||
-      (import.meta.env.MODE === "testing" && cookies.access_token)
+      (import.meta.env.MODE === "testing" && cookies.access_token) ||
+      (import.meta.env.MODE === "production" && cookies.access_token)
     ) {
       sessionStorage.setItem("access_token", cookies.access_token);
       axios
