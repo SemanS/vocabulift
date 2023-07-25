@@ -15,11 +15,11 @@ const PricingComponent = () => {
       annualPriceId: "",
       monthlyPriceId: "",
       features: [
-        "3-minute access to videos per day",
-        "Up to 100 words/phrases translation",
+        "Access to videos for 5 minutes per day",
+        "Translation of up to 100 words/phrases",
         "No access to worksheets",
-        "No access to words/phrases meaning",
-        "No access to words/phrases alternatives",
+        "Meaning of 5 words/phrases every 3 hours",
+        "Alternatives for 5 words/phrases every 3 hours",
       ],
     },
     {
