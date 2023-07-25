@@ -41,6 +41,8 @@ const initialState: User = {
   subscriptionType: SubscriptionType.Linguist,
   subscriptionPeriod: SubscriptionPeriod.Monthly,
   subscriptionId: "123",
+  meanings: 0,
+  alternatives: 0,
 };
 
 const localStorageEffect =

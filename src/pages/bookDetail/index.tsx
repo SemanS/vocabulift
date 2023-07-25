@@ -234,11 +234,18 @@ const BookDetail: FC = () => {
 
   const users = [
     { email: "slavosmn@gmail.com" },
-    { email: "vratko.ferko@gmail.com" },
     { email: "lubec.seman@gmail.com" },
     { email: "Paulina@polskidaily.eu" },
     { email: "info@angolrahangolva.com" },
     { email: "info@brona.cz" },
+    { email: "ytcontact+emma@engvid.com" },
+    { email: "tiffani@speakenglishwithtiffani.com" },
+    { email: "support@francaisauthentique.com" },
+    { email: "business@englishwithlucy.co.uk" },
+    { email: "contact@speakenglishwithvanessa.com" },
+    { email: "business@3s-media.net" },
+    { email: "hello@englishwithgreg.com" },
+    { email: "info@englishlessonviaskype.com" },
   ];
 
   const hasAccess = users.some(
@@ -992,8 +999,9 @@ const BookDetail: FC = () => {
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
             <Typography.Title style={{ marginTop: "30px" }}>
-              You exceed your daily limit of 5 minutes, for continuing please
-              subscribe:
+              You have exceeded your daily limit of either 5 minutes of viewing
+              or 5 phrase meanings/alternatives. To continue, please subscribe,
+              or wait for 3 hours to reset your limit:
             </Typography.Title>
           </center>
           <PricingComponent />

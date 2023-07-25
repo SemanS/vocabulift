@@ -75,6 +75,9 @@ export interface User {
 
   email: string;
 
+  meanings: number;
+  alternatives: number;
+
   settings: PureSettings;
   avatar: string;
   // For backend purposes

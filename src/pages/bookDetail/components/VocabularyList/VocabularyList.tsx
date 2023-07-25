@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useRef, useState } from "react";
-import { Button, Card, List, Space, Tabs, Spin } from "antd";
+import { Button, Card, List, Space, Tabs } from "antd";
 import {
   CaretRightOutlined,
   CommentOutlined,
@@ -22,6 +22,7 @@ import { Tooltip } from "antd";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 import { SubscriptionType } from "@/models/user";
 import { useIntl } from "react-intl";
+import { AxiosError } from "axios";
 
 const TabPane = Tabs.TabPane;
 
@@ -35,6 +36,10 @@ const reducer = (state, action) => {
       return { ...state, loadingFromWordAlternatives: action.payload };
     case "setWordAlternativesData":
       return { ...state, wordAlternativesData: action.payload };
+    case "setDisableMeanings":
+      return { ...state, disableMeanings: action.payload };
+    case "setDisableAlternatives":
+      return { ...state, disableAlternatives: action.payload };
     default:
       return state;
   }
@@ -93,6 +98,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
     loadingFromWordMeaning: false,
     wordMeaningData: null,
     wordAlternativesData: null,
+    disableMeanings: false,
+    disableAlternatives: false,
   });
 
   const longPressQuestionAction = () =>
@@ -135,8 +142,17 @@ const VocabularyList: FC<VocabularyListProps> = ({
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });
       dispatch({ type: "setWordMeaningData", payload: meaning });
     } catch (error) {
+      const axiosError = error as AxiosError;
       console.error("Error occurred:", error);
-      dispatch({ type: "setWordMeaningData", payload: "An error occurred." });
+      if (axiosError.response && axiosError.response.status === 400) {
+        dispatch({ type: "disableMeanings", payload: true });
+      }
+      notification.error({
+        message: "Error",
+        description:
+          "You exceeded your daily limit. Please, subscribe or wait 3 hours.",
+      });
+      //dispatch({ type: "setWordMeaningData", payload: "An error occurred." });
     }
   };
 
@@ -156,11 +172,20 @@ const VocabularyList: FC<VocabularyListProps> = ({
       dispatch({ type: "setLoadingFromWordAlternatives", payload: false });
       dispatch({ type: "setWordAlternativesData", payload: alternatives });
     } catch (error) {
+      const axiosError = error as AxiosError;
       console.error("Error occurred:", error);
-      dispatch({
+      if (axiosError.response && axiosError.response.status === 400) {
+        dispatch({ type: "disableAlternatives", payload: true });
+      }
+      notification.error({
+        message: "Error",
+        description:
+          "You exceeded your daily limit. Please, subscribe or wait 3 hours.",
+      });
+      /* dispatch({
         type: "setWordAlternativesData",
         payload: "An error occurred.",
-      });
+      }); */
     }
   };
 
@@ -206,6 +231,14 @@ const VocabularyList: FC<VocabularyListProps> = ({
   };
 
   useEffect(() => {
+    console.log(state.disableMeanings);
+    console.log("user.meanings" + JSON.stringify(user.meanings, null, 2));
+    if (user.meanings > 1) {
+      dispatch({ type: "setDisableMeanings", payload: true });
+    }
+    if (user.alternatives > 1) {
+      dispatch({ type: "setDisableAlternatives", payload: true });
+    }
     if (phrases![0] !== undefined || phrases![0] !== null) {
       if (
         phrases![0].phrase.endPosition - phrases![0].phrase.startPosition >
@@ -273,6 +306,14 @@ const VocabularyList: FC<VocabularyListProps> = ({
     { email: "Paulina@polskidaily.eu" },
     { email: "info@angolrahangolva.com" },
     { email: "info@brona.cz" },
+    { email: "ytcontact+emma@engvid.com" },
+    { email: "tiffani@speakenglishwithtiffani.com" },
+    { email: "support@francaisauthentique.com" },
+    { email: "business@englishwithlucy.co.uk" },
+    { email: "contact@speakenglishwithvanessa.com" },
+    { email: "business@3s-media.net" },
+    { email: "hello@englishwithgreg.com" },
+    { email: "info@englishlessonviaskype.com" },
   ];
 
   const hasAccess = users.some(
@@ -418,7 +459,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.sourceLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -462,7 +504,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.targetLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableAlternatives) && (
                                           <>
                                             <Button
                                               type="default"
@@ -537,7 +580,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.sourceLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -641,7 +685,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.targetLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -827,7 +872,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.targetLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -873,7 +919,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.targetLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -956,7 +1003,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         word.phrase.sourceLanguage &&
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
-                                          hasAccess) && (
+                                          hasAccess ||
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
@@ -1062,7 +1110,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
-                                          hasAccess) && (
+                                          !state.disableMeanings) && (
                                           <>
                                             <Tooltip
                                               title={intl.formatMessage({
