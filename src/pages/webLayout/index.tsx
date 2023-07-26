@@ -5,7 +5,6 @@ import PricingComponent from "./shared/components/Pricing/PricingComponent";
 import CookieConsent from "react-cookie-consent";
 import { Button, notification } from "antd";
 import Footer from "./shared/components/Footer";
-import { useLocation } from "react-router-dom";
 
 const WebLayoutPage: FC = () => {
   const Contact = lazy(() => import("./shared/components/ContactForm"));
@@ -13,8 +12,6 @@ const WebLayoutPage: FC = () => {
   const Container = lazy(() => import("./shared/common/Container"));
   const ScrollToTop = lazy(() => import("./shared/common/ScrollToTop"));
   const ContentBlock = lazy(() => import("./shared/components/ContentBlock"));
-
-  const { formatMessage } = useLocale();
 
   useEffect(() => {
     if (
@@ -77,7 +74,7 @@ const WebLayoutPage: FC = () => {
           //title={formatMessage({ id: "web.middleBlock.title" })}
           title={"Pioneering the Future of Language Learning with AI"}
           content={
-            "Discover a revolutionary approach to language learning, harnessing the power of advanced AI to redefine your linguistic journey. (Here is a button where you can kickstart your journey for free)"
+            "Embrace an innovative language learning path powered by leading-edge AI. Start for free. Also, find us on ProductHunt."
           }
           button={"GET STARTED FOR FREE"}
         />

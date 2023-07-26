@@ -25,11 +25,22 @@ export const MiddleBlock = ({ title, content, button }: MiddleBlockProps) => {
             <Col lg={24} md={24} sm={24} xs={24}>
               <h6>{title}</h6>
               <Content>{content}</Content>
-              {button && (
+              {/* {button && (
                 <Button name="submit" onClick={() => scrollTo("mission")}>
                   {button}
                 </Button>
-              )}
+              )} */}
+              <a
+                href="https://www.producthunt.com/posts/vocabulift?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-vocabulift"
+                target="_blank"
+              >
+                <img
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=406479&theme=light"
+                  alt="Vocabulift - Vocabulift&#0058;&#0032;Learn&#0032;Languages&#0032;via&#0032;AI&#0045;Enhanced&#0032;Videos | Product Hunt"
+                  width="250"
+                  height="54"
+                />
+              </a>
             </Col>
           </ContentWrapper>
         </Row>

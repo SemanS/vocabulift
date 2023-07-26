@@ -4,7 +4,7 @@ import styles from "./index.module.less";
 import { getFlagCode, getLocaleFromLanguage } from "@/utils/utilMethods";
 import { SvgIcon } from "../webLayout/shared/common/SvgIcon";
 import { Button } from "../webLayout/shared/common/Button";
-import { postLanguages, updateUser } from "@/services/userService";
+import { updateUser } from "@/services/userService";
 import { User } from "@/models/user";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
@@ -63,13 +63,15 @@ const ActivationPage: FC = () => {
       }
       if (nativeLanguage && language) {
         try {
+          const targetLanguage =
+            nativeLanguage === "en" ? language : nativeLanguage;
           const updatedUserEntity: Partial<User> = {
             locale: getLocaleFromLanguage(nativeLanguage),
             sourceLanguage: "en",
-            targetLanguage: nativeLanguage,
+            targetLanguage: targetLanguage,
             activated: true,
           };
-          const response = await updateUser(updatedUserEntity);
+          await updateUser(updatedUserEntity);
         } catch (error) {
           console.error("Failed to post languages", error);
           // Handle the error as needed, e.g., show a notification to the user
@@ -133,7 +135,7 @@ const ActivationPage: FC = () => {
                           current === 1 && language === nativeLanguage
                             ? 0.5
                             : 1,
-                      }} // add this style
+                      }}
                     />
                   </Col>
                 ))}

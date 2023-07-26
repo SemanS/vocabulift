@@ -76,7 +76,25 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     event: React.MouseEvent
   ) => {
     event.stopPropagation();
-    if (country.code === disabledLanguage) return;
+    console.log("country.code" + JSON.stringify(country.code, null, 2));
+    console.log("disabledLanguage" + JSON.stringify(disabledLanguage, null, 2));
+
+    if (country.code === disabledLanguage) {
+      const previousSourceLanguage = user.sourceLanguage;
+
+      const updatedUserEntity: Partial<User> = {
+        sourceLanguage: user.targetLanguage,
+        targetLanguage: user.sourceLanguage,
+      };
+
+      await updateUser(updatedUserEntity);
+
+      setUser((prevUser) => ({
+        ...prevUser,
+        sourceLanguage: user.targetLanguage,
+        targetLanguage: previousSourceLanguage,
+      }));
+    }
     setSelectedLanguage(country.code);
     if (!useRecoil && onLanguageChange) onLanguageChange(country.code);
     setVisible(false);
@@ -148,12 +166,12 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
                     handleCountrySelection(country, event);
                   }}
                   style={{
-                    cursor:
-                      country.code === disabledLanguage
+                    cursor: "pointer",
+                    /*  country.code === disabledLanguage
                         ? "not-allowed"
-                        : "pointer",
-                    opacity:
-                      country.code === disabledLanguage && useRecoil ? 0.5 : 1,
+                        : "pointer", */
+                    /* opacity:
+                      country.code === disabledLanguage && useRecoil ? 0.5 : 1, */
                   }}
                 >
                   <SvgIcon
