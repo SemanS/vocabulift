@@ -147,7 +147,7 @@ const Footer = () => {
                 /> */}
                 <SocialLink
                   href="https://www.linkedin.com/in/slavoseman/"
-                  src="linkedin.svg"
+                  src="img/svg/linkedin.svg"
                 />
                 <Typography.Text>
                   Webinson, s.r.o. | Alžbetina 16, 040 01 Košice, Slovakia

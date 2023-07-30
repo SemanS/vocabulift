@@ -15,7 +15,11 @@ const CookiePolicy: FC = () => {
         <Container>
           <Row justify="space-between">
             <LogoContainer to="/" aria-label="homepage">
-              <SvgIcon src="src/assets/logo/logo" width="120px" height="64px" />
+              <SvgIcon
+                src={`${import.meta.env.VITE_BASE_URL}/vocabulift_logo.svg`}
+                width="120px"
+                height="64px"
+              />
             </LogoContainer>
           </Row>
         </Container>

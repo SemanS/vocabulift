@@ -16,10 +16,10 @@ import {
   ButtonWrapper,
 } from "./styles";
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [visible, setVisibility] = useState(false);
@@ -27,6 +27,7 @@ const Header = () => {
   const [cookies, setCookie] = useCookies(["access_token"]);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const showDrawer = () => {
     setVisibility(!visible);
@@ -75,18 +76,37 @@ const Header = () => {
     };
     return (
       <>
-        <CustomNavLinkSmall onClick={() => scrollTo("intro", 200)}>
-          <Span>{"About"}</Span>
-        </CustomNavLinkSmall>
-        <CustomNavLinkSmall onClick={() => scrollTo("mission", 200)}>
-          <Span>{"Mission"}</Span>
-        </CustomNavLinkSmall>
-        <CustomNavLinkSmall onClick={() => scrollTo("product", 200)}>
-          <Span>{"Product"}</Span>
-        </CustomNavLinkSmall>
-        <CustomNavLinkSmall onClick={() => scrollTo("pricing", 50)}>
-          <Span>{"Pricing"}</Span>
-        </CustomNavLinkSmall>
+        {location.pathname === "/" && (
+          <>
+            <Button
+              color={"silver"}
+              onClick={() => {
+                navigate("/academy");
+              }}
+            >
+              {"Academy (NEW)"}
+            </Button>
+            <CustomNavLinkSmall onClick={() => scrollTo("intro", 200)}>
+              <Span>{"About"}</Span>
+            </CustomNavLinkSmall>
+            <CustomNavLinkSmall onClick={() => scrollTo("mission", 200)}>
+              <Span>{"Mission"}</Span>
+            </CustomNavLinkSmall>
+            <CustomNavLinkSmall onClick={() => scrollTo("product", 200)}>
+              <Span>{"Product"}</Span>
+            </CustomNavLinkSmall>
+            <CustomNavLinkSmall onClick={() => scrollTo("pricing", 50)}>
+              <Span>{"Pricing"}</Span>
+            </CustomNavLinkSmall>
+          </>
+        )}
+        {location.pathname === "/academy" && (
+          <>
+            <CustomNavLinkSmall onClick={() => navigate("/")}>
+              <Span>{"Home"}</Span>
+            </CustomNavLinkSmall>
+          </>
+        )}
         <CustomNavLinkSmall>
           <Span>
             {cookies.access_token ? (
