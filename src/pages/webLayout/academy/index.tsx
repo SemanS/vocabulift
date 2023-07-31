@@ -30,8 +30,7 @@ const Academy: FC = () => {
               <center>
                 <h6>{"Academy"}</h6>
                 <Typography.Title level={4}>
-                  Master Languages with Vocabulift.com: Your AI-powered Video
-                  Guide!
+                  Master Languages with Vocabulift: Your AI-powered Video Guide!
                 </Typography.Title>
               </center>
               <br />

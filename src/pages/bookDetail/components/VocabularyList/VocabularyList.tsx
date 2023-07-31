@@ -458,53 +458,52 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           )
                                         }
                                       />
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage &&
-                                        (user.subscriptionType !==
-                                          SubscriptionType.Free ||
-                                          hasAccess ||
-                                          !state.disableMeanings) && (
-                                          <>
-                                            <Tooltip
-                                              title={intl.formatMessage({
-                                                id: "vocabulary.list.meaning",
-                                              })}
-                                            >
-                                              <Button
-                                                type="default"
-                                                icon={
-                                                  <QuestionCircleOutlined />
-                                                }
-                                                onClick={() =>
-                                                  handleQuestionClick(
-                                                    word.phrase.sourceText,
-                                                    word.phrase.sourceLanguage
-                                                  )
-                                                }
-                                                {...pressQuestionHandlers}
-                                                className={"noselect"}
-                                              />
-                                            </Tooltip>
-                                            <Tooltip
-                                              title={intl.formatMessage({
-                                                id: "vocabulary.list.alternatives",
-                                              })}
-                                            >
-                                              <Button
-                                                type="default"
-                                                icon={<CommentOutlined />}
-                                                onClick={() =>
-                                                  handleAlternativesClick(
-                                                    word.phrase.sourceText,
-                                                    word.phrase.sourceLanguage
-                                                  )
-                                                }
-                                              />
-                                            </Tooltip>
-                                          </>
-                                        )}
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage &&
+                                      {/* parseLocale(user.locale) !==
+                                        word.phrase.sourceLanguage && */}
+                                      {(user.subscriptionType !==
+                                        SubscriptionType.Free ||
+                                        hasAccess ||
+                                        !state.disableMeanings) && (
+                                        <>
+                                          <Tooltip
+                                            title={intl.formatMessage({
+                                              id: "vocabulary.list.meaning",
+                                            })}
+                                          >
+                                            <Button
+                                              type="default"
+                                              icon={<QuestionCircleOutlined />}
+                                              onClick={() =>
+                                                handleQuestionClick(
+                                                  word.phrase.sourceText,
+                                                  word.phrase.sourceLanguage
+                                                )
+                                              }
+                                              {...pressQuestionHandlers}
+                                              className={"noselect"}
+                                            />
+                                          </Tooltip>
+                                          <Tooltip
+                                            title={intl.formatMessage({
+                                              id: "vocabulary.list.alternatives",
+                                            })}
+                                          >
+                                            <Button
+                                              type="default"
+                                              icon={<CommentOutlined />}
+                                              onClick={() =>
+                                                handleAlternativesClick(
+                                                  word.phrase.sourceText,
+                                                  word.phrase.sourceLanguage
+                                                )
+                                              }
+                                            />
+                                          </Tooltip>
+                                        </>
+                                      )}
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.targetLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -541,7 +540,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
+                                        )
+                                      }
                                     </Space>
                                   </div>
                                 </div>
@@ -579,8 +579,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           )
                                         }
                                       />
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage &&
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.sourceLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -621,7 +622,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
+                                        )
+                                      }
                                     </Space>
                                     <div
                                       style={{
@@ -684,8 +686,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     </div>
                                     <audio key="audio" ref={audioRef} />
                                     <Space>
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage &&
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.targetLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -728,7 +731,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
+                                        )
+                                      }
                                     </Space>
                                   </div>
                                 </div>
@@ -871,8 +875,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           )
                                         }
                                       />
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage &&
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.targetLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -917,9 +922,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage &&
+                                        )
+                                      }
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.targetLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -964,7 +971,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
+                                        )
+                                      }
                                     </Space>
                                   </div>
                                 </div>
@@ -1002,8 +1010,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           )
                                         }
                                       />
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage &&
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.sourceLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -1044,7 +1053,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
+                                        )
+                                      }
                                     </Space>
                                     <div
                                       style={{
@@ -1108,8 +1118,9 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                     </div>
                                     <audio key="audio" ref={audioRef} />
                                     <Space>
-                                      {parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage &&
+                                      {
+                                        /* parseLocale(user.locale) !==
+                                        word.phrase.targetLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -1150,7 +1161,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                               />
                                             </Tooltip>
                                           </>
-                                        )}
+                                        )
+                                      }
                                     </Space>
                                   </div>
                                 </div>
