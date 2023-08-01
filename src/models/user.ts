@@ -24,7 +24,8 @@ export type Locale =
   | "pl-PL"
   | "hu-HU"
   | "zh-CN"
-  | "it-IT";
+  | "it-IT"
+  | "uk-UA";
 
 export interface CurrentUserResult {
   username: string;

@@ -13,6 +13,7 @@ import plPL from "antd/es/locale/pl_PL";
 import huHU from "antd/es/locale/hu_HU";
 import itIT from "antd/es/locale/it_IT";
 import zhCN from "antd/es/locale/zh_CN";
+import ukUA from "antd/es/locale/uk_UA";
 import moment from "moment";
 import RenderRouter from "./routes";
 import { useRecoilState } from "recoil";
@@ -56,6 +57,9 @@ const App: React.FC = () => {
       case "zh-CN":
         moment.locale("cn");
         break;
+      case "uk-UA":
+        moment.locale("uk");
+        break;
       default:
         moment.locale("en");
     }
@@ -83,6 +87,8 @@ const App: React.FC = () => {
         return itIT;
       case "zh-CN":
         return zhCN;
+      case "uk-UA":
+        return ukUA;
       default:
         return enUS;
     }

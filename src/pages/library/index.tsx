@@ -108,6 +108,11 @@ const Library: React.FC = () => {
     });
   };
 
+  const myLanguageOptions = [
+    { label: "English", value: "en" },
+    { label: "German", value: "de" },
+  ];
+
   useEffect(() => {
     const fetchData = async () => {
       const ongoingEventId = localStorage.getItem("ongoingEventId");
@@ -404,6 +409,7 @@ const Library: React.FC = () => {
             <Row gutter={[16, 16]} justify="center">
               <Col span={10}>
                 <LanguageSelector
+                  options={myLanguageOptions}
                   useRecoil={true}
                   languageProp="sourceLanguage"
                   disabledLanguage={user.targetLanguage}

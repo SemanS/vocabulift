@@ -21,6 +21,7 @@ const ActivationPage: FC = () => {
 
   const languages = [
     "en",
+    "uk",
     "es",
     "fr",
     "de",

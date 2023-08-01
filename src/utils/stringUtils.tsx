@@ -48,6 +48,8 @@ export const parseLocale = (localeString: Locale): string => {
       return "it";
     case "zh-CN":
       return "zh";
+    case "uk-UA":
+      return "uk";
     default:
       return "en";
   }

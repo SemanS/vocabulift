@@ -10,6 +10,7 @@ import plPL from "@/locales/pl-pl";
 import huHU from "@/locales/hu-hu";
 import itIT from "@/locales/it-it";
 import zhCN from "@/locales/zh-cn";
+import ukUA from "@/locales/uk-ua";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 
@@ -73,5 +74,11 @@ export const localeConfig = [
     key: "zh-CN",
     messages: zhCN,
     icon: <SvgIcon code={getFlagCode("zh")} height="16" />,
+  },
+  {
+    name: "Ukrainian",
+    key: "uk-UA",
+    messages: ukUA,
+    icon: <SvgIcon code={getFlagCode("uk")} height="16" />,
   },
 ];

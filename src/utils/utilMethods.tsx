@@ -102,6 +102,7 @@ export const getFlagCode = (code: string) =>
 export const getLocaleFromLanguage = (language: string): Locale | undefined => {
   const languageMapping: { [key: string]: Locale } = {
     en: "en-US",
+    uk: "uk-UA",
     es: "es-ES",
     fr: "fr-FR",
     de: "de-DE",

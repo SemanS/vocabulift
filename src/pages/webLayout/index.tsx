@@ -5,6 +5,8 @@ import PricingComponent from "./shared/components/Pricing/PricingComponent";
 import CookieConsent from "react-cookie-consent";
 import { Button, notification } from "antd";
 import Footer from "./shared/components/Footer";
+import { getFlagCode } from "@/utils/utilMethods";
+import { SvgIcon } from "./shared/common/SvgIcon";
 
 const WebLayoutPage: FC = () => {
   const Contact = lazy(() => import("./shared/components/ContactForm"));
@@ -60,6 +62,25 @@ const WebLayoutPage: FC = () => {
       <Header />
       <Container>
         <ScrollToTop />
+        <MiddleBlock
+          title={
+            <>
+              {getFlagCode("UA") && (
+                <SvgIcon code={getFlagCode("uk")} height="96" width="128" />
+              )}
+              {" We help Ukrainian"}
+            </>
+          }
+          content={
+            <>
+              We are thrilled to announce that we've added Ukrainian to our
+              selection of languages! Are you a Ukrainian language enthusiast?{" "}
+              <a href="#contact">Contact us</a> now and receive a free one-month
+              LINGUIST subscription as part of our support for Ukrainian
+              learners.
+            </>
+          }
+        />
         <ContentBlock
           type="right"
           title={"Unleash Your Language Skills with AI"}
@@ -77,6 +98,7 @@ const WebLayoutPage: FC = () => {
             "Embrace an innovative language learning path powered by leading-edge AI. Start for free. Also, find us on ProductHunt."
           }
           button={"GET STARTED FOR FREE"}
+          direction="up"
         />
         <ContentBlock
           type="middle"
