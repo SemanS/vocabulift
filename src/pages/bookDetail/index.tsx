@@ -233,6 +233,8 @@ const BookDetail: FC = () => {
   const intl = useIntl();
 
   const users = [
+    { email: "james@englishlab.online" },
+    { email: "adriana@taliancinaonline.sk" }, //iTalki
     { email: "krishnagoswami.52@gmail.com" },
     { email: "limudim972@gmail.com" },
     { email: "ninakocurova0@gmail.com" },
@@ -902,17 +904,17 @@ const BookDetail: FC = () => {
               {intl.formatMessage({ id: "translate.box.all" })}
             </Radio.Button>
           </Radio.Group>
-          {user.subscriptionType !== SubscriptionType.Free ||
-            (hasAccess && (
-              <Button
-                type="default"
-                onClick={handleDownloadWorkSheet}
-                loading={state.loadingWorkSheet}
-                style={{ marginTop: 10, fontWeight: 500 }}
-              >
-                {intl.formatMessage({ id: "translate.box.download.worksheet" })}
-              </Button>
-            ))}
+          {/* {user.subscriptionType !== SubscriptionType.Free ||
+            (hasAccess && ( */}
+          {/* <Button
+            type="default"
+            onClick={handleDownloadWorkSheet}
+            loading={state.loadingWorkSheet}
+            style={{ marginTop: 10, fontWeight: 500 }}
+          >
+            {intl.formatMessage({ id: "translate.box.download.worksheet" })}
+          </Button> */}
+          {/* ))} */}
         </>
       </Card>
       <Card

@@ -301,6 +301,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
   }, [phrases]);
 
   const users = [
+    { email: "james@englishlab.online" },
+    { email: "adriana@taliancinaonline.sk" }, //iTalki
     { email: "krishnagoswami.52@gmail.com" },
     { email: "limudim972@gmail.com" },
     { email: "ninakocurova0@gmail.com" },

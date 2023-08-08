@@ -1,4 +1,4 @@
-import React, { FC, Suspense, lazy } from "react";
+import React, { FC, Suspense, lazy, useEffect, useState } from "react";
 import Header from "../shared/components/Header";
 import { Card, Col, Row, Typography } from "antd";
 import Container from "../shared/common/Container";
@@ -12,8 +12,8 @@ const Academy: FC = () => {
   const ContentBlock = lazy(() => import("../shared/components/ContentBlock"));
 
   const videoOptions = {
-    height: "490",
-    width: "790",
+    height: "100%",
+    width: "100%",
     playerVars: {
       autoplay: 0,
     },
@@ -35,9 +35,9 @@ const Academy: FC = () => {
               </center>
               <br />
 
-              <center>
+              <div>
                 <YouTube videoId="nKZIHZPT8I0" opts={videoOptions} />
-              </center>
+              </div>
               {/* <Col span={8}></Col>
                 <Col span={8}>
                   <YouTube videoId="eWy7F0w0l-g" opts={videoOptions} />

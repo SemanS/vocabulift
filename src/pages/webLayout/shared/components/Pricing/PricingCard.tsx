@@ -160,7 +160,7 @@ const PricingCard = ({
     <div className={cardStyle}>
       <Typography.Title className="card-title">{title}</Typography.Title>
       <h3 className="card-price">
-        <small>$</small>
+        <small>€</small>
         <span hidden={isMonthly}>{annualPrice}</span>
         <span hidden={!isMonthly}>{monthlyPrice}</span>
       </h3>

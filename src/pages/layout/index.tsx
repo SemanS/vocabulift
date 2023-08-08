@@ -125,7 +125,6 @@ const LayoutPage: FC = () => {
       <LogoSvg
         onClick={() => navigate("/library")}
         className={styles.layoutPageHeaderLogo}
-        style={{ width: "6rem", marginRight: "2rem" }}
       />
     );
   };
