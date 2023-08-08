@@ -233,6 +233,7 @@ const BookDetail: FC = () => {
   const intl = useIntl();
 
   const users = [
+    { email: "Katharina.Landes@senacor.com" },
     { email: "james@englishlab.online" },
     { email: "adriana@taliancinaonline.sk" }, //iTalki
     { email: "krishnagoswami.52@gmail.com" },
