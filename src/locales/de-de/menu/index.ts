@@ -23,6 +23,7 @@ export const deDE_menu = {
   "translate.box.download.worksheet": "Arbeitsblatt herunterladen",
   "translate.box.words": "Wörter",
   "translate.box.sentences": "Automatische Übersetzung",
+  "translate.box.quiz": "Quiz",
   "translate.box.all": "Wörter / Sätze",
   "vocabulary.actions": "Aktionen",
   "vocabulary.today": "Heute",

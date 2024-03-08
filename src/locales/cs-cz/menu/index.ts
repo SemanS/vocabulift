@@ -21,6 +21,7 @@ export const csCZ_menu = {
   "translate.box.download.worksheet": "Stáhnout pracovní list",
   "translate.box.words": "Slova",
   "translate.box.sentences": "Automatický překlad",
+  "translate.box.quiz": "Quiz",
   "translate.box.all": "Slova / Věty",
   "vocabulary.actions": "Akce",
   "vocabulary.today": "Dnes",

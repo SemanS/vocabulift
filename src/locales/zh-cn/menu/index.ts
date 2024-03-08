@@ -22,6 +22,7 @@ export const zhCN_menu = {
   "translate.box.words": "单词",
   "translate.box.sentences": "自动翻译",
   "translate.box.all": "单词 / 句子",
+  "translate.box.quiz": "Quiz",
   "vocabulary.actions": "操作",
   "vocabulary.today": "今天",
   "vocabulary.last.week": "上周",

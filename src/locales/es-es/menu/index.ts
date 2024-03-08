@@ -20,6 +20,7 @@ export const esES_menu = {
   "vocabulary.list.tab.alternatives": "Uso alternativo de la palabra / frase",
   "translate.box.download.worksheet": "Descargar hoja de trabajo",
   "translate.box.words": "Palabras",
+  "translate.box.quiz": "Quiz",
   "translate.box.sentences": "Traducción automática",
   "translate.box.all": "Palabras / Oraciones",
   "vocabulary.actions": "Acciones",

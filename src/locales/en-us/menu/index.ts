@@ -20,6 +20,7 @@ export const enUS_menu = {
   "vocabulary.list.tab.alternatives": "Alternative usage of word / phrase",
   "translate.box.download.worksheet": "Download worksheet",
   "translate.box.words": "Words",
+  "translate.box.quiz": "Generate Quiz",
   "translate.box.sentences": "Automatic translation",
   "translate.box.all": "Words / Sentences",
   "vocabulary.actions": "Actions",

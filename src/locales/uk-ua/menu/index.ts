@@ -21,6 +21,7 @@ export const ukUA_menu = {
     "Альтернативне використання слова / фрази",
   "translate.box.download.worksheet": "Завантажити робочий лист",
   "translate.box.words": "Слова",
+  "translate.box.quiz": "Quiz",
   "translate.box.sentences": "Автоматичний переклад",
   "translate.box.all": "Слова / Речення",
   "vocabulary.actions": "Дії",

@@ -915,6 +915,14 @@ const BookDetail: FC = () => {
           >
             {intl.formatMessage({ id: "translate.box.download.worksheet" })}
           </Button> */}
+          <Button
+            type="default"
+            onClick={() => handleModeChange({ target: { value: "quiz" } } as any)}
+            //loading={state.loadingWorkSheet}
+            style={{ marginTop: 10, fontWeight: 500 }}
+          >
+            {intl.formatMessage({ id: "translate.box.quiz" })}
+          </Button>
           {/* ))} */}
         </>
       </Card>
@@ -1024,7 +1032,7 @@ const BookDetail: FC = () => {
               {translateBoxContainer}
               {phraseListContainer}
               <div className={`${styles.myVideoContainer}`}>
-                {paginationControlsContainer}
+                {state.mode !== 'quiz' && paginationControlsContainer}
                 {(state.loadingFromWordMeaning || state.wordMeaningData) &&
                   {
                     /* <Card

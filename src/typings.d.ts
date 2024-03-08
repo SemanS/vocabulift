@@ -5,3 +5,8 @@ declare module "*.svg" {
     React.SVGProps<SVGSVGElement> & { title?: string }
   >;
 }
+
+declare module 'react-quiz-component' {
+  const Quiz: any;
+  export default Quiz;
+}

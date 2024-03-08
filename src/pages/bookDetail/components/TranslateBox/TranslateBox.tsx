@@ -19,6 +19,9 @@ import {
 } from "@/utils/utilMethods";
 import { notification } from "antd";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
+import Quiz from 'react-quiz-component';
+import QuizComponent from "../Quiz/QuizComponent";
+import { targetLanguageState } from "@stores/language";
 
 interface TranslateBoxProps {
   mode: string;
@@ -552,7 +555,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               }
             />
           );
-        } else {
+        } else if(mode === "words" || mode === "all") {
           return (
             <div key={index} style={{ whiteSpace: "pre-wrap" }}>
               {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
@@ -661,6 +664,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           );
         }
       })}
+      {mode === "quiz" && <QuizComponent sourceLanguage={sourceLanguage} libraryId={libraryId} />}
     </>
   );
 };

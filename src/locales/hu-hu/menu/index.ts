@@ -21,6 +21,7 @@ export const huHU_menu = {
   "vocabulary.list.tab.alternatives": "Szó / kifejezés alternatív használata",
   "translate.box.download.worksheet": "Munkalap letöltése",
   "translate.box.words": "Szavak",
+  "translate.box.quiz": "Quiz",
   "translate.box.sentences": "Automatikus fordítás",
   "translate.box.all": "Szavak / mondatok",
   "vocabulary.actions": "Műveletek",

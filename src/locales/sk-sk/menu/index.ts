@@ -20,6 +20,7 @@ export const skSK_menu = {
   "vocabulary.list.tab.alternatives": "Alternatívne použitia slova / frázy",
   "translate.box.download.worksheet": "Stiahnuť pracovný zošit",
   "translate.box.words": "Slová",
+  "translate.box.quiz": "Quiz",
   "translate.box.sentences": "Automatický preklad",
   "translate.box.all": "Slová / Vety",
   "vocabulary.actions": "Akcie",

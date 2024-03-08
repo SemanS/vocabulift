@@ -565,7 +565,7 @@ const Library: React.FC = () => {
           </div>
           <div className={styles.footer}>
             <Typography.Text>
-              <center>©2023 vocabulift</center>
+              <center>©2024 Vocabulift</center>
             </Typography.Text>
           </div>
         </div>

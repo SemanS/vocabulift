@@ -21,6 +21,7 @@ export const itIT_menu = {
     "Utilizzo alternativo della parola / frase",
   "translate.box.download.worksheet": "Scarica foglio di lavoro",
   "translate.box.words": "Parole",
+  "translate.box.quiz": "Quiz",
   "translate.box.sentences": "Traduzione automatica",
   "translate.box.all": "Parole / Frasi",
   "vocabulary.actions": "Azioni",
