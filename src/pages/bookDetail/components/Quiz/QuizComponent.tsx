@@ -76,7 +76,7 @@ const QuizComponent: FC<QuizComponentProps> = (props) => {
         'Future Continuous (Progressive)', 'Future Perfect', 'Future Perfect Continuous',
         'Simple Conditional', 'Conditional Perfect'
       ],
-      Moods: [
+      /* Moods: [
         'Imperative Mood', // Commands, requests
         'Subjunctive Mood' // Wishes, hypotheticals, demands, and after certain expressions
       ],
@@ -115,7 +115,7 @@ const QuizComponent: FC<QuizComponentProps> = (props) => {
       ],
       Punctuation: [
         'Commas', 'Periods', 'Question Marks', 'Exclamation Points', 'Quotation Marks', 'Apostrophes', 'Colons', 'Semicolons', 'Dashes', 'Parentheses'
-      ],
+      ], */
     }
   
     const quiz =  {
