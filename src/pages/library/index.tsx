@@ -60,6 +60,7 @@ const Library: React.FC = () => {
     localStorage.getItem("videoThumbnail") || undefined
   );
   const [eventFinalized, setEventFinalized] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(isDisabled());
 
   const intl = useIntl();
 
@@ -258,6 +259,7 @@ const Library: React.FC = () => {
     };
 
     await updateUser(updatedUserEntity);
+    setIsButtonDisabled(isDisabled());
     setIsModalVisible(true);
   };
 
@@ -471,7 +473,7 @@ const Library: React.FC = () => {
           style={{ marginBottom: "20px" }}
         >
           <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
-            { renderLabelTypeButtonGroup(isDisabled())}
+            { renderLabelTypeButtonGroup(isButtonDisabled)}
           </Col>
         </Row>
       </>
@@ -517,7 +519,7 @@ const Library: React.FC = () => {
                   )}
                   <Typography.Title
                     style={{
-                      color: "#171625", // Change this color to your header's color
+                      color: "#171625",
                       marginLeft: "8px",
                       fontSize: "20px",
                       cursor: "pointer",
