@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Col, Row, Typography, Space } from "antd";
+import { Col, Row, Typography, Space, Tooltip } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -341,6 +341,7 @@ const Library: React.FC = () => {
       pointerEvents: 'none' as const,
     };
     return (
+      <Tooltip title={isDisabled && 'Subscribe to gain the ability to add more videos.'}>
       <Space size={20}>
         <div
           className={styles.whiteIconBox}
@@ -387,6 +388,7 @@ const Library: React.FC = () => {
           Books
         </Button> */}
       </Space>
+      </Tooltip>
     );
   };
 
