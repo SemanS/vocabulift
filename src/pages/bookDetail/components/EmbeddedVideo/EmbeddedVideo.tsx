@@ -423,6 +423,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       if (
         newHighlightedIndex === null ||
         newHighlightedIndex === undefined ||
+        newHighlightedIndex === -1 ||
         isNaN(newHighlightedIndex)
       ) {
         return;
