@@ -252,7 +252,12 @@ const Library: React.FC = () => {
     socket.on("finalizeEvent", onFinalizeEvent);
   }, [polling, sliderUpdated]);
 
-  const handleAddButtonClick = () => {
+  const handleAddButtonClick = async () => {
+    const updatedUserEntity: Partial<User> = {
+      isAddVideoExceeded: true,
+    };
+
+    await updateUser(updatedUserEntity);
     setIsModalVisible(true);
   };
 
@@ -328,7 +333,11 @@ const Library: React.FC = () => {
     setVideoThumbnail(newThumbnail);
   };
 
-  const renderLabelTypeButtonGroup = () => {
+  const renderLabelTypeButtonGroup = (isDisabled: boolean) => {
+    const disabledStyle = {
+      opacity: 0.5,
+      pointerEvents: 'none' as const,
+    };
     return (
       <Space size={20}>
         <div
@@ -340,6 +349,7 @@ const Library: React.FC = () => {
             flexDirection: "row",
             justifyContent: "center",
             alignItems: "center",
+            ...(isDisabled ? disabledStyle : {}),
           }}
         >
           <PlusOutlined
@@ -388,6 +398,16 @@ const Library: React.FC = () => {
       setDrawerHeight(0);
     }
   }, [settingsDrawerVisible]);
+
+   function isDisabled() {
+    if (user.email === "slavosmn@gmail.com") {
+      return false;
+    }
+    if (user.subscribed) {
+      return false;
+    }
+    return user.isAddVideoExceeded;
+  }
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -451,8 +471,7 @@ const Library: React.FC = () => {
           style={{ marginBottom: "20px" }}
         >
           <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
-            {user.email === "slavosmn@gmail.com" &&
-              renderLabelTypeButtonGroup()}
+            { renderLabelTypeButtonGroup(isDisabled())}
           </Col>
         </Row>
       </>

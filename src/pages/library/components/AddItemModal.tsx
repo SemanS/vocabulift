@@ -16,6 +16,8 @@ import { Option } from "@/models/utils.interface";
 import { postLibraryVideo } from "@/services/libraryService";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useIntl } from "react-intl";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -57,7 +59,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedLanguageTo, setSelectedLanguageTo] =
     useState<string>(targetLanguage);
-
+    const [user, setUser] = useRecoilState(userState);
   const intl = useIntl();
 
   useEffect(() => {
@@ -111,6 +113,10 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
 
   const handleFormSubmit = async (values: any) => {
     const { youtubeUrl, language } = values;
+    if (user.isAddVideoExceeded && !user.subscribed && user.email !== "slavosmn@gmail.com" ) {
+      return;
+    }
+
     const response = await postLibraryVideo(
       selectedLanguageFrom,
       selectedLanguageTo,

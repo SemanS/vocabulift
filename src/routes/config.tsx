@@ -62,6 +62,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         activated: true,
         verified: true,
         isLimitExceeded: false,
+        isAddVideoExceeded: false,
         subscribed: false,
         exceededAt: new Date(),
         userLibraries: [

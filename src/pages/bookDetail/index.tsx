@@ -51,7 +51,6 @@ import { getWorkSheet } from "@/services/aiService";
 import html2pdf from "html2pdf.js";
 import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
-import { SubscriptionType } from "@/models/user";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 import { useIntl } from "react-intl";
 
