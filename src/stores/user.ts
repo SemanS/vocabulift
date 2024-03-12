@@ -25,6 +25,7 @@ const initialState: User = {
   email: "slavosmn@gmail.com",
   sourceLanguage: "en",
   targetLanguage: "sk",
+  languageForMeaning: "en",
   verified: false,
   activated: false,
   isLimitExceeded: false,

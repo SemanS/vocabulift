@@ -865,28 +865,6 @@ const BookDetail: FC = () => {
       <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
         <>
           <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
-          <Select
-            value={state.selectedLanguageTo}
-            onChange={(value) => {
-              dispatch({
-                type: "setSelectedLanguageTo",
-                payload: value,
-              });
-              fetchVocabularyAndSetState(state.sentenceFrom, value);
-              fetchAndUpdate(state.sentenceFrom, value);
-              const url = new URL(window.location.href);
-              const params = new URLSearchParams(url.search);
-              params.set("targetLanguage", value);
-              window.history.replaceState({}, "", `${url.pathname}?${params}`);
-            }}
-            style={{ marginRight: 16 }}
-          >
-            {languagesWithoutSource.map((language, index) => (
-              <Select.Option key={index} value={language}>
-                <SvgIcon code={getFlagCode(language)} height="16" />
-              </Select.Option>
-            ))}
-          </Select>
           <Radio.Group
             onChange={handleModeChange}
             value={state.mode}
@@ -922,6 +900,28 @@ const BookDetail: FC = () => {
           >
             {intl.formatMessage({ id: "translate.box.quiz" })}
           </Button>
+          <Select
+            value={state.selectedLanguageTo}
+            onChange={(value) => {
+              dispatch({
+                type: "setSelectedLanguageTo",
+                payload: value,
+              });
+              fetchVocabularyAndSetState(state.sentenceFrom, value);
+              fetchAndUpdate(state.sentenceFrom, value);
+              const url = new URL(window.location.href);
+              const params = new URLSearchParams(url.search);
+              params.set("targetLanguage", value);
+              window.history.replaceState({}, "", `${url.pathname}?${params}`);
+            }}
+            style={{ marginLeft: 16 }}
+          >
+            {languagesWithoutSource.map((language, index) => (
+              <Select.Option key={index} value={language}>
+                <SvgIcon code={getFlagCode(language)} height="16" />
+              </Select.Option>
+            ))}
+          </Select>
           {/* ))} */}
         </>
       </Card>

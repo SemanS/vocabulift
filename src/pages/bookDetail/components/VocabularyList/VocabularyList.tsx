@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useReducer, useRef, useState } from "react";
-import { Button, Card, List, Space, Tabs } from "antd";
+import { Button, Card, List, Select, Space, Tabs } from "antd";
 import {
   CaretRightOutlined,
   CommentOutlined,
@@ -12,6 +12,7 @@ import {
   getPhraseAlternatives,
   getPhraseMeaning,
   textToSpeech,
+  updateUser,
 } from "@/services/userService";
 import { notification } from "antd";
 import { useRecoilState } from "recoil";
@@ -20,9 +21,12 @@ import { parseLocale } from "@/utils/stringUtils";
 import usePressHandlers from "@/hooks/userPressHandlers";
 import { Tooltip } from "antd";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
-import { SubscriptionType } from "@/models/user";
+import { SubscriptionType, User } from "@/models/user";
 import { useIntl } from "react-intl";
 import { AxiosError } from "axios";
+import { getFlagCode } from "@/utils/utilMethods";
+import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
+import { languages } from "@/utils/languages";
 
 const TabPane = Tabs.TabPane;
 
@@ -231,8 +235,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
   };
 
   useEffect(() => {
-    console.log(state.disableMeanings);
-    console.log("user.meanings" + JSON.stringify(user.meanings, null, 2));
     if (user.meanings > 1) {
       dispatch({ type: "setDisableMeanings", payload: true });
     }
@@ -326,12 +328,37 @@ const VocabularyList: FC<VocabularyListProps> = ({
     (existingUser) => existingUser.email === user.email
   );
 
+  const handleLanguageChange = async (newLanguage: string) => {
+
+    const updatedUserEntity: Partial<User> = {
+      languageForMeaning: newLanguage,
+    };
+  
+    try {
+      await updateUser(updatedUserEntity);
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    }
+  };
+
   return (
     <Card style={style} bodyStyle={{ padding: 0 }}>
       <Tabs
         activeKey={activeTab}
         onChange={setActiveTab}
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
+        tabBarExtraContent={(
+          <Select
+            value={user.languageForMeaning}
+            onChange={(newValue) => handleLanguageChange(newValue)}
+            >
+            {languages.map((language, index) => (
+              <Select.Option key={index} value={language.code}>
+                <SvgIcon code={getFlagCode(language.code)} height="16" />
+              </Select.Option>
+            ))}
+          </Select>
+        )}
       >
         {filteredWords.length > 0 && (
           <TabPane

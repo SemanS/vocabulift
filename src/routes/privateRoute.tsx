@@ -51,6 +51,7 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         avatar: "",
         sourceLanguage: "en",
         targetLanguage: "sk",
+        languageForMeaning: "en",
         isLimitExceeded: false,
         isAddVideoExceeded: false,
         subscribed: false,

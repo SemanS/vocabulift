@@ -11,6 +11,7 @@ import { userState } from "@/stores/user";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 import { useIntl } from "react-intl";
+import { languages } from "@/utils/languages";
 
 interface LanguageSelectorProps {
   languageProp?: keyof User;
@@ -35,19 +36,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
 
   const initCountriesList = options
     ? options.map(({ label, value }) => ({ name: label, code: value }))
-    : [
-        { name: "English", code: "en" },
-        { name: "Ukrainian", code: "uk" },
-        { name: "Spanish", code: "es" },
-        { name: "French", code: "fr" },
-        { name: "German", code: "de" },
-        { name: "Czech", code: "cs" },
-        { name: "Slovak", code: "sk" },
-        { name: "Polish", code: "pl" },
-        { name: "Hungarian", code: "hu" },
-        { name: "Italian", code: "it" },
-        { name: "Chinese", code: "zh" },
-      ];
+    : languages;
 
   const [visible, setVisible] = useState(false);
   const [user, setUser] = useRecoilState(userState);
@@ -77,8 +66,6 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     event: React.MouseEvent
   ) => {
     event.stopPropagation();
-    console.log("country.code" + JSON.stringify(country.code, null, 2));
-    console.log("disabledLanguage" + JSON.stringify(disabledLanguage, null, 2));
 
     if (country.code === disabledLanguage) {
       const previousSourceLanguage = user.sourceLanguage;

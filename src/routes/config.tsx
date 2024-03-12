@@ -59,6 +59,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         avatar: "",
         sourceLanguage: "en",
         targetLanguage: "sk",
+        languageForMeaning: "sk",
         activated: true,
         verified: true,
         isLimitExceeded: false,

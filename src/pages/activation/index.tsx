@@ -70,6 +70,7 @@ const ActivationPage: FC = () => {
             locale: getLocaleFromLanguage(nativeLanguage),
             sourceLanguage: "en",
             targetLanguage: targetLanguage,
+            languageForMeaning: targetLanguage,
             activated: true,
           };
           await updateUser(updatedUserEntity);

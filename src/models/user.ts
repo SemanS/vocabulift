@@ -84,6 +84,7 @@ export interface User {
   // For backend purposes
   sourceLanguage: string;
   targetLanguage: string;
+  languageForMeaning: string;
   verified: boolean;
   activated: boolean;
   isLimitExceeded: boolean;
