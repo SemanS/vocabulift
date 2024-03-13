@@ -140,7 +140,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
       const meaning = await getPhraseMeaning(
         phrase,
-        nativeLanguage,
+        user.languageForMeaning,
         languageTo
       );
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });
@@ -165,12 +165,12 @@ const VocabularyList: FC<VocabularyListProps> = ({
     languageTo: string
   ) => {
     try {
-      const nativeLanguage = parseLocale(user.locale);
+      //const nativeLanguage = parseLocale(user.locale);
       setActiveTab("4");
       dispatch({ type: "setLoadingFromWordAlternatives", payload: true });
       const alternatives = await getPhraseAlternatives(
         phrase,
-        nativeLanguage,
+        user.languageForMeaning,
         languageTo
       );
       dispatch({ type: "setLoadingFromWordAlternatives", payload: false });
@@ -336,6 +336,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
   
     try {
       await updateUser(updatedUserEntity);
+      setUser((prevUser) => ({
+        ...prevUser,
+        languageForMeaning: newLanguage,
+      }));
     } catch (error) {
       console.error('Failed to update user:', error);
     }
@@ -349,7 +353,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
         tabBarExtraContent={(
           <Select
-            value={user.languageForMeaning}
+            value={user.languageForMeaning || user.targetLanguage}
             onChange={(newValue) => handleLanguageChange(newValue)}
             >
             {languages.map((language, index) => (
