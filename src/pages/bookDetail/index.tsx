@@ -64,7 +64,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   shouldSetVideo: false,
   wordData: null,
   showWordDefinition: false,
-  mode: "sentences",
+  mode: "all",
   snapshots: null,
   userSentences: null,
   libraryTitle: "",
@@ -894,7 +894,9 @@ const BookDetail: FC = () => {
           </Button> */}
           <Button
             type="default"
-            onClick={() => handleModeChange({ target: { value: "quiz" } } as any)}
+            onClick={() =>
+              handleModeChange({ target: { value: "quiz" } } as any)
+            }
             //loading={state.loadingWorkSheet}
             style={{ marginTop: 10, fontWeight: 500 }}
           >
@@ -1031,7 +1033,7 @@ const BookDetail: FC = () => {
               {translateBoxContainer}
               {phraseListContainer}
               <div className={`${styles.myVideoContainer}`}>
-                {state.mode !== 'quiz' && paginationControlsContainer}
+                {state.mode !== "quiz" && paginationControlsContainer}
                 {(state.loadingFromWordMeaning || state.wordMeaningData) &&
                   {
                     /* <Card

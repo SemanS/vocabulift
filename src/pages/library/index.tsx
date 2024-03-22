@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Col, Row, Typography, Space, Tooltip } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Col, Row, Typography, Space, Tooltip, Button } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -31,8 +31,28 @@ import "antd/dist/reset.css";
 import { vocabuFetch } from "@/utils/vocabuFetch";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 import { useIntl } from "react-intl";
+import Joyride, {
+  ACTIONS,
+  CallBackProps,
+  EVENTS,
+  STATUS,
+  Step,
+} from "react-joyride";
+import { useMount, useSetState } from "react-use";
+
+interface State {
+  run: boolean;
+  steps: Step[];
+  stepIndex: number;
+  mainKey: number;
+}
 
 const Library: React.FC = () => {
+  const settingsTriggerRef = useRef(null);
+  const addMenuRef = useRef(null);
+  const targetLanguageRef = useRef(null);
+  const addVideoRef = useRef(null);
+
   const customRange = ["A1", "A2", "B1", "B2", "C1", "C2"];
   const [libraryItems, setLibraryItems] =
     useState<Record<LabelType, LibraryItem[]>>();
@@ -61,6 +81,7 @@ const Library: React.FC = () => {
   );
   const [eventFinalized, setEventFinalized] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(isDisabled());
+  const [settingsDrawerWasOpen, setSettingsDrawerWasOpen] = useState(false);
 
   const intl = useIntl();
 
@@ -91,6 +112,146 @@ const Library: React.FC = () => {
     }
   };
 
+  const [{ run, stepIndex, steps, mainKey }, setState] = useSetState<State>({
+    run: false,
+    stepIndex: 0,
+    steps: [],
+    mainKey: 0,
+  });
+
+  useMount(() => {
+    setState({
+      run: true,
+      steps: [
+        {
+          content: (
+            <div>
+              You can interact with your own components through the spotlight.
+              <br />
+              Click the menu above!
+            </div>
+          ),
+          disableBeacon: true,
+          disableOverlayClose: true,
+          hideCloseButton: true,
+          hideFooter: true,
+          placement: "bottom",
+          spotlightClicks: true,
+          /* styles: {
+            options: {
+              zIndex: 10000,
+            },
+          }, */
+          target: settingsTriggerRef.current,
+          title: "Menu",
+        },
+        {
+          content: (
+            <div>
+              You can interact with your own components through the spotlight.
+              <br />
+              Click the menu above!
+            </div>
+          ),
+          hideBackButton: true,
+          disableBeacon: true,
+          disableOverlayClose: true,
+          hideCloseButton: true,
+          //hideFooter: true,
+          placement: "bottom",
+          //spotlightClicks: true,
+          target: addMenuRef.current,
+          title: "Menu",
+        },
+        {
+          content: (
+            <div>
+              You can interact with your own components through the spotlight.
+              <br />
+              Click the menu above!
+            </div>
+          ),
+          hideBackButton: true,
+          disableBeacon: true,
+          disableOverlayClose: true,
+          hideCloseButton: true,
+          //hideFooter: true,
+          placement: "bottom",
+          //spotlightClicks: true,
+          target: targetLanguageRef.current,
+          title: "Menu",
+        },
+        {
+          content: (
+            <div>
+              You can interact with your own components through the spotlight.
+              <br />
+              Click the menu above!
+            </div>
+          ),
+          hideBackButton: true,
+          disableBeacon: true,
+          disableOverlayClose: true,
+          hideCloseButton: true,
+          //hideFooter: true,
+          placement: "bottom",
+          //spotlightClicks: true,
+          target: addVideoRef.current,
+          title: "Menu",
+        },
+      ],
+    });
+  });
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { action, index, status, type } = data;
+    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+
+    if (type === EVENTS.TOUR_START) {
+      console.log("started" + settingsDrawerVisible);
+      setSettingsDrawerWasOpen(true);
+      if (settingsDrawerVisible) {
+        //toggleSettingsDrawer();
+        setState({ stepIndex: 1 });
+      }
+    }
+
+    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+      setState({ stepIndex: nextStepIndex });
+    }
+
+    if (type === EVENTS.TOUR_END) {
+      setState({ run: false, stepIndex: 0, mainKey: mainKey + 1 });
+      if (run) {
+        toggleSettingsDrawer();
+        setSettingsDrawerWasOpen(false);
+      }
+    }
+
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      setState({ run: false, stepIndex: 0 });
+    } else if (
+      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
+    ) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+      if (index === 0) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else if (index === 1) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else if (index === 2 && action === ACTIONS.PREV) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else {
+        setState({
+          stepIndex: nextStepIndex,
+        });
+      }
+    }
+  };
+
   const fetchData = async (newVideoThumbnail: string | null = null) => {
     const userEntity: UserEntity = {
       sourceLanguage: user.sourceLanguage,
@@ -112,6 +273,8 @@ const Library: React.FC = () => {
   const myLanguageOptions = [
     { label: "English", value: "en" },
     { label: "German", value: "de" },
+    { label: "French", value: "fr" },
+    { label: "Spanish", value: "es" },
   ];
 
   useEffect(() => {
@@ -338,56 +501,61 @@ const Library: React.FC = () => {
   const renderLabelTypeButtonGroup = (isDisabled: boolean) => {
     const disabledStyle = {
       opacity: 0.5,
-      pointerEvents: 'none' as const,
+      pointerEvents: "none" as const,
     };
     return (
-      <Tooltip title={isDisabled && 'Subscribe to gain the ability to add more videos.'}>
-      <Space size={20}>
-        <div
-          className={styles.whiteIconBox}
-          onClick={handleAddButtonClick}
-          style={{
-            cursor: "pointer",
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            ...(isDisabled ? disabledStyle : {}),
-          }}
-        >
-          <PlusOutlined
+      <Tooltip
+        title={
+          isDisabled && "Subscribe to gain the ability to add more videos."
+        }
+      >
+        <Space size={20}>
+          <div
+            className={styles.whiteIconBox}
+            onClick={handleAddButtonClick}
             style={{
-              fontSize: "30px",
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              ...(isDisabled ? disabledStyle : {}),
             }}
-          />
-          <Typography.Text
-            style={{
-              marginLeft: "10px",
-              paddingRight: "10px",
-              color: "white",
-              fontWeight: "500",
-            }}
+            ref={addVideoRef}
           >
-            {" "}
-            Add Video
-          </Typography.Text>
-        </div>
-        {/* TOTO NECHAT */}
-        {/*  <Button
+            <PlusOutlined
+              style={{
+                fontSize: "30px",
+              }}
+            />
+            <Typography.Text
+              style={{
+                marginLeft: "10px",
+                paddingRight: "10px",
+                color: "white",
+                fontWeight: "500",
+              }}
+            >
+              {" "}
+              Add Video
+            </Typography.Text>
+          </div>
+          {/* TOTO NECHAT */}
+          {/*  <Button
           size="large"
           type={selectedLabelType === LabelType.VIDEO ? "primary" : "default"}
           onClick={() => handleLabelTypeButtonClick(LabelType.VIDEO)}
         >
           Videos
         </Button> */}
-        {/* <Button
+          {/* <Button
           size="large"
           type={selectedLabelType === LabelType.BOOK ? "primary" : "default"}
           onClick={() => handleLabelTypeButtonClick(LabelType.BOOK)}
         >
           Books
         </Button> */}
-      </Space>
+        </Space>
       </Tooltip>
     );
   };
@@ -403,7 +571,7 @@ const Library: React.FC = () => {
     }
   }, [settingsDrawerVisible]);
 
-   function isDisabled() {
+  function isDisabled() {
     if (user.email === "slavosmn@gmail.com") {
       return false;
     }
@@ -412,6 +580,15 @@ const Library: React.FC = () => {
     }
     return user.isAddVideoExceeded;
   }
+
+  const handleClickStart = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+
+    setState({
+      run: true,
+      stepIndex: 0,
+    });
+  };
 
   const renderSettingsDrawerContent = () => {
     return (
@@ -431,7 +608,7 @@ const Library: React.FC = () => {
             style={{ marginTop: "30px" }}
           >
             <Row gutter={[16, 16]} justify="center">
-              <Col span={10}>
+              <Col span={10} ref={addMenuRef}>
                 <LanguageSelector
                   options={myLanguageOptions}
                   useRecoil={true}
@@ -449,7 +626,7 @@ const Library: React.FC = () => {
                   onClick={handleSwapLanguages}
                 />
               </Col>
-              <Col span={10}>
+              <Col span={10} ref={targetLanguageRef}>
                 <LanguageSelector
                   useRecoil={true}
                   languageProp="targetLanguage"
@@ -475,16 +652,36 @@ const Library: React.FC = () => {
           style={{ marginBottom: "20px" }}
         >
           <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
-            { renderLabelTypeButtonGroup(isButtonDisabled)}
+            {renderLabelTypeButtonGroup(isButtonDisabled)}
           </Col>
         </Row>
       </>
     );
   };
 
+  function handleWalkthrough() {
+    setState({
+      run: stepIndex === 0 ? false : run,
+      stepIndex: stepIndex === 0 ? 1 : stepIndex,
+    });
+  }
+
   return (
     <CustomSpinnerComponent spinning={loading}>
       <PageContainer title={false}>
+        <Joyride
+          key={mainKey}
+          continuous
+          run={run}
+          disableScrolling
+          hideCloseButton
+          showProgress
+          showSkipButton
+          steps={steps}
+          stepIndex={stepIndex}
+          callback={handleJoyrideCallback}
+        />
+        <Button onClick={handleClickStart}>Start Tour</Button>
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
           <div
             className={styles.drawerPushContent}
@@ -494,13 +691,20 @@ const Library: React.FC = () => {
           </div>
           <div className={styles.redBackground}>
             <div className={styles.fullWidthWhiteBackground}>
-              <span onClick={toggleSettingsDrawer} className={styles.box}>
+              <span
+                onClick={() => {
+                  toggleSettingsDrawer();
+                  handleWalkthrough();
+                }}
+                className={styles.box}
+              >
                 <span
                   style={{
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
                   }}
+                  ref={settingsTriggerRef}
                 >
                   {settingsDrawerVisible ? (
                     <UpOutlined

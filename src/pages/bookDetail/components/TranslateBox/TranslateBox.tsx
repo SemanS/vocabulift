@@ -19,9 +19,11 @@ import {
 } from "@/utils/utilMethods";
 import { notification } from "antd";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
-import Quiz from 'react-quiz-component';
+import Quiz from "react-quiz-component";
 import QuizComponent from "../Quiz/QuizComponent";
 import { targetLanguageState } from "@stores/language";
+import { useMount, useSetState } from "react-use";
+import Joyride, { CallBackProps, EVENTS, STATUS } from "react-joyride";
 
 interface TranslateBoxProps {
   mode: string;
@@ -39,6 +41,13 @@ interface TranslateBoxProps {
   selectedLanguageTo: string;
   onChangeMode: (mode: string) => void;
   magnifyingGlassRef: any;
+}
+
+interface State {
+  run: boolean;
+  steps: Step[];
+  stepIndex: number;
+  mainKey: number;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -457,8 +466,133 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   };
 
+  const [{ run, stepIndex, steps, mainKey }, setState] = useSetState<State>({
+    run: false,
+    stepIndex: 0,
+    steps: [],
+    mainKey: 0,
+  });
+
+  useMount(() => {
+    setState({
+      run: true,
+      steps: [
+        {
+          content: (
+            <div>
+              You can interact with your own components through the spotlight.
+              <br />
+              Click the menu above!
+            </div>
+          ),
+          disableBeacon: true,
+          disableOverlayClose: true,
+          hideCloseButton: true,
+          hideFooter: true,
+          placement: "bottom",
+          spotlightClicks: true,
+          target: ["#word-0-0", "#word-0-1"],
+          /* styles: {
+            options: {
+              zIndex: 10000,
+            },
+          }, */
+          //target: settingsTriggerRef.current,
+          title: "Menu",
+        },
+      ],
+    });
+  });
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { action, index, status, type } = data;
+    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+
+    console.log({ run, steps, mainKey, type });
+
+    if (type === EVENTS.TOUR_START) {
+    }
+  };
+
+  const getCombinedRect = (elements) => {
+    const rects = elements.map((element) => element.getBoundingClientRect());
+    const combinedRect = rects.reduce(
+      (acc, rect) => ({
+        top: Math.min(acc.top, rect.top),
+        right: Math.max(acc.right, rect.right) + 10,
+        bottom: Math.max(acc.bottom, rect.bottom),
+        left: Math.min(acc.left, rect.left),
+      }),
+      {
+        top: Infinity,
+        right: -Infinity,
+        bottom: -Infinity,
+        left: Infinity,
+      }
+    );
+
+    return {
+      top: combinedRect.top + window.scrollY,
+      left: combinedRect.left + window.scrollX,
+      width: combinedRect.right - combinedRect.left,
+      height: combinedRect.bottom - combinedRect.top,
+    };
+  };
+
+  const createOverlay = (rect) => {
+    const overlay = document.createElement("div");
+    overlay.style.position = "absolute";
+    overlay.style.top = `${rect.top}px`;
+    overlay.style.left = `${rect.left}px`;
+    overlay.style.width = `${rect.width}px`;
+    overlay.style.height = `${rect.height}px`;
+    overlay.style.pointerEvents = "none"; // Allow clicks to pass through
+    //overlay.style.border = "2px solid red"; // Example styling
+    overlay.setAttribute("id", "joyride-overlay");
+
+    document.body.appendChild(overlay);
+  };
+
+  const wrapMultiElements = (steps) => {
+    steps.forEach((step, index) => {
+      if (Array.isArray(step.target)) {
+        const targets = step.target
+          .map((selector) => document.querySelector(selector))
+          .filter((el) => !!el);
+
+        if (targets.length > 0) {
+          const combinedRect = getCombinedRect(targets);
+          createOverlay(combinedRect);
+
+          // Update the step to target the overlay
+          steps[index].target = "#joyride-overlay";
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    setState((prevState) => {
+      const newSteps = [...prevState.steps];
+      wrapMultiElements(newSteps);
+      return { ...prevState, steps: newSteps };
+    });
+  }, [mainKey]);
+
   return (
     <>
+      <Joyride
+        key={mainKey}
+        continuous
+        run={run}
+        disableScrolling
+        hideCloseButton
+        showProgress
+        showSkipButton
+        steps={steps}
+        stepIndex={stepIndex}
+        callback={handleJoyrideCallback}
+      />
       {isMobile && (
         <MagnifyingGlass
           style={magnifyingGlassStyle}
@@ -473,8 +607,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         if (mode === "sentences") {
           return (
             <TranslateWord
-              key={index}
-              word={sourceSentence.sentenceText}
               translation={targetSentence?.sentenceText || ""}
               sentenceNumber={sourceSentence.sentenceNo}
               sentenceText={sourceSentence.sentenceText}
@@ -555,7 +687,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               }
             />
           );
-        } else if(mode === "words" || mode === "all") {
+        } else if (mode === "words" || mode === "all") {
           return (
             <div key={index} style={{ whiteSpace: "pre-wrap" }}>
               {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
@@ -564,6 +696,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 return (
                   <TranslateWord
                     key={`${index}-${wordIndex}`}
+                    id={`word-${index}-${wordIndex}`}
+                    data-highlight={
+                      wordIndex === 0 || wordIndex === 2 ? "true" : "false"
+                    }
                     word={sourceWord.wordText}
                     translation={translation}
                     sentenceNumber={sourceSentence.sentenceNo}
@@ -664,7 +800,9 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           );
         }
       })}
-      {mode === "quiz" && <QuizComponent sourceLanguage={sourceLanguage} libraryId={libraryId} />}
+      {mode === "quiz" && (
+        <QuizComponent sourceLanguage={sourceLanguage} libraryId={libraryId} />
+      )}
     </>
   );
 };

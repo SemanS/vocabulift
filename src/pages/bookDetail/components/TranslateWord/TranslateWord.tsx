@@ -6,6 +6,7 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 
 interface TranslateWordProps {
+  id?: string;
   word?: string;
   translation?: string;
   sentenceNumber?: number;
@@ -382,6 +383,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   return renderTooltip(
     <span
+      id={props.id}
       style={{
         cursor: props.mode !== "sentences" ? "pointer" : "",
         whiteSpace: "pre-wrap",

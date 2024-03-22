@@ -101,11 +101,11 @@ const PrivateRoute: FC<RouteProps> = ({ children }) => {
         } catch (error) {
           console.error(error);
         } finally {
-          setLoading(false); // Set loading state to false when user information is obtained
+          setLoading(false);
         }
       };
     } else {
-      setLoading(false); // Set loading state to false if there is no access token
+      setLoading(false);
     }
   }, []);
 
