@@ -20,6 +20,7 @@ interface FilteredVocabularyListProps {
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
   selectedLanguageTo: string;
+  addSteps: any;
 }
 
 const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({

@@ -5,6 +5,7 @@ import React, {
   useMemo,
   useReducer,
   useRef,
+  useState,
 } from "react";
 import {
   Card,
@@ -53,6 +54,9 @@ import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 import { useIntl } from "react-intl";
+import Joyride, { CallBackProps, EVENTS, STATUS } from "react-joyride";
+import { wrapMultiElements } from "@/utils/joyride";
+import { useMount, useSetState } from "react-use";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -88,6 +92,24 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   isPlaying: false,
   subscribed: false,
 });
+
+interface StepType {
+  content: JSX.Element | string;
+  target: string | string[];
+  title: string;
+  placement: string;
+  disableBeacon: boolean;
+  disableOverlayClose: boolean;
+  hideCloseButton: boolean;
+  spotlightClicks: boolean;
+}
+
+interface JoyrideState {
+  run: boolean;
+  stepIndex?: number; // include optional properties as needed
+  steps: StepType[];
+  mainKey?: number;
+}
 
 function reducer(state: any, action: any) {
   switch (action.type) {
@@ -860,6 +882,58 @@ const BookDetail: FC = () => {
     (lang) => lang !== user.sourceLanguage
   );
 
+  const [joyrideState, setJoyrideState] = useState<JoyrideState>({
+    run: true,
+    steps: [],
+  });
+
+  const [{ run, stepIndex, steps, mainKey }, setState] =
+    useSetState<JoyrideState>({
+      run: false,
+      stepIndex: 0,
+      steps: [],
+      mainKey: 0,
+    });
+
+  useMount(() => {
+    setState({
+      run: true,
+      steps: [],
+    });
+  });
+
+  const handleJoyrideCallback = (data: CallBackProps) => {
+    const { action, index, status, type } = data;
+    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
+
+    console.log({ run, steps, mainKey, type });
+
+    if (type === EVENTS.TOUR_START) {
+    }
+  };
+
+  const addSteps = useCallback((newSteps: StepType[]) => {
+    setJoyrideState((prevState) => ({
+      ...prevState,
+      steps: [...prevState.steps, ...newSteps],
+    }));
+  }, []);
+
+  useEffect(() => {
+    console.log("Steps updated:", joyrideState.steps);
+    setIsJoyrideReady(true);
+  }, [joyrideState.steps]);
+
+  const [isJoyrideReady, setIsJoyrideReady] = useState(false);
+
+  useEffect(() => {
+    setState(() => {
+      const newSteps = [...joyrideState.steps];
+      wrapMultiElements(newSteps);
+      return { ...joyrideState, steps: newSteps };
+    });
+  }, [addSteps, joyrideState.steps]);
+
   const translateBoxContainer = (
     <div>
       <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
@@ -951,6 +1025,7 @@ const BookDetail: FC = () => {
           selectedLanguageTo={state.selectedLanguageTo}
           onChangeMode={setMode}
           magnifyingGlassRef={magnifyingGlassRef}
+          addSteps={addSteps}
         />
       </Card>
     </div>
@@ -1010,6 +1085,19 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
+      <Joyride
+        key={joyrideState.steps.length}
+        continuous
+        run={run}
+        disableScrolling
+        hideCloseButton
+        showProgress
+        showSkipButton
+        steps={joyrideState.steps}
+        stepIndex={stepIndex}
+        callback={handleJoyrideCallback}
+      />
+
       {state.isLimitExceeded && user.subscribed === false && !hasAccess ? (
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>

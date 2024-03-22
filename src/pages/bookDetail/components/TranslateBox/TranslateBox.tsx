@@ -21,7 +21,6 @@ import { notification } from "antd";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
 import Quiz from "react-quiz-component";
 import QuizComponent from "../Quiz/QuizComponent";
-import { targetLanguageState } from "@stores/language";
 import { useMount, useSetState } from "react-use";
 import Joyride, { CallBackProps, EVENTS, STATUS } from "react-joyride";
 import { wrapMultiElements } from "@/utils/joyride";
@@ -42,13 +41,7 @@ interface TranslateBoxProps {
   selectedLanguageTo: string;
   onChangeMode: (mode: string) => void;
   magnifyingGlassRef: any;
-}
-
-interface State {
-  run: boolean;
-  steps: Step[];
-  stepIndex: number;
-  mainKey: number;
+  addSteps: any;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -67,6 +60,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   selectedLanguageTo,
   onChangeMode,
   magnifyingGlassRef,
+  addSteps,
 }) => {
   const { libraryId } = useParams();
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
@@ -81,6 +75,32 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [magnifyingGlassStyle, setMagnifyingGlassStyle] = useState<any | null>(
     null
   );
+
+  useEffect(() => {
+    // Define steps for this component
+    const translateBoxSteps = [
+      {
+        content: (
+          <div>
+            You can interact with your own components through the spotlight.
+            <br />
+            Click the menu above!
+          </div>
+        ),
+        disableBeacon: true,
+        disableOverlayClose: true,
+        hideCloseButton: true,
+        //hideFooter: true,
+        placement: "bottom",
+        spotlightClicks: false,
+        target: ["#word-0-0", "#word-0-1"],
+        //target: settingsTriggerRef.current,
+        title: "Menu",
+      },
+    ];
+
+    addSteps(translateBoxSteps);
+  }, [addSteps]);
 
   const removeSpecialChars = (input: string) => {
     const regex = /[.,?!“”„:]+/g;
@@ -467,89 +487,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   };
 
-  const [{ run, stepIndex, steps, mainKey }, setState] = useSetState<State>({
-    run: false,
-    stepIndex: 0,
-    steps: [],
-    mainKey: 0,
-  });
-
-  useMount(() => {
-    setState({
-      run: true,
-      steps: [
-        {
-          content: (
-            <div>
-              You can interact with your own components through the spotlight.
-              <br />
-              Click the menu above!
-            </div>
-          ),
-          disableBeacon: true,
-          disableOverlayClose: true,
-          hideCloseButton: true,
-          //hideFooter: true,
-          placement: "bottom",
-          spotlightClicks: false,
-          target: ["#word-0-0", "#word-0-1"],
-          //target: settingsTriggerRef.current,
-          title: "Menu",
-        },
-        {
-          content: (
-            <div>
-              You can interact with your own components through the spotlight.
-              <br />
-              Click the menu above!
-            </div>
-          ),
-          disableBeacon: true,
-          disableOverlayClose: true,
-          hideCloseButton: true,
-          //hideFooter: true,
-          placement: "bottom",
-          spotlightClicks: false,
-          target: ["#word-0-0", "#word-0-1"],
-          //target: settingsTriggerRef.current,
-          title: "Menu",
-        },
-      ],
-    });
-  });
-
-  const handleJoyrideCallback = (data: CallBackProps) => {
-    const { action, index, status, type } = data;
-    const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
-
-    console.log({ run, steps, mainKey, type });
-
-    if (type === EVENTS.TOUR_START) {
-    }
-  };
-
-  useEffect(() => {
-    setState((prevState) => {
-      const newSteps = [...prevState.steps];
-      wrapMultiElements(newSteps);
-      return { ...prevState, steps: newSteps };
-    });
-  }, [mainKey]);
-
   return (
     <>
-      <Joyride
-        key={mainKey}
-        continuous
-        run={run}
-        disableScrolling
-        hideCloseButton
-        showProgress
-        showSkipButton
-        steps={steps}
-        stepIndex={stepIndex}
-        callback={handleJoyrideCallback}
-      />
       {isMobile && (
         <MagnifyingGlass
           style={magnifyingGlassStyle}

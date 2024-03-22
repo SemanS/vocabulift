@@ -84,6 +84,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
   setSelectedUserPhrase,
   selectedLanguageTo,
 }) => {
+  const wordMeaningRef = useRef(null);
+
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
@@ -105,6 +107,31 @@ const VocabularyList: FC<VocabularyListProps> = ({
     disableMeanings: false,
     disableAlternatives: false,
   });
+
+  /* useEffect(() => {
+    const vocabularyListSteps = [
+      {
+        content: (
+          <div>
+            You can interact with your own components through the spotlight.
+            <br />
+            Click the menu above!
+          </div>
+        ),
+        disableBeacon: true,
+        disableOverlayClose: true,
+        hideCloseButton: true,
+        //hideFooter: true,
+        placement: "bottom",
+        spotlightClicks: false,
+        target: [wordMeaningRef.current],
+        //target: settingsTriggerRef.current,
+        title: "Menu",
+      },
+    ];
+
+    addSteps(vocabularyListSteps);
+  }, [addSteps]); */
 
   const longPressQuestionAction = () =>
     notification.info({
@@ -329,11 +356,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
   );
 
   const handleLanguageChange = async (newLanguage: string) => {
-
     const updatedUserEntity: Partial<User> = {
       languageForMeaning: newLanguage,
     };
-  
+
     try {
       await updateUser(updatedUserEntity);
       setUser((prevUser) => ({
@@ -341,7 +367,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
         languageForMeaning: newLanguage,
       }));
     } catch (error) {
-      console.error('Failed to update user:', error);
+      console.error("Failed to update user:", error);
     }
   };
 
@@ -351,18 +377,18 @@ const VocabularyList: FC<VocabularyListProps> = ({
         activeKey={activeTab}
         onChange={setActiveTab}
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
-        tabBarExtraContent={(
+        tabBarExtraContent={
           <Select
             value={user.languageForMeaning || user.targetLanguage}
             onChange={(newValue) => handleLanguageChange(newValue)}
-            >
+          >
             {languages.map((language, index) => (
               <Select.Option key={index} value={language.code}>
                 <SvgIcon code={getFlagCode(language.code)} height="16" />
               </Select.Option>
             ))}
           </Select>
-        )}
+        }
       >
         {filteredWords.length > 0 && (
           <TabPane
@@ -1044,51 +1070,46 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           )
                                         }
                                       />
-                                      {
-                                        /* parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage && */
-                                        (user.subscriptionType !==
-                                          SubscriptionType.Free ||
-                                          hasAccess ||
-                                          !state.disableMeanings) && (
-                                          <>
-                                            <Tooltip
-                                              title={intl.formatMessage({
-                                                id: "vocabulary.list.meaning",
-                                              })}
-                                            >
-                                              <Button
-                                                type="default"
-                                                icon={
-                                                  <QuestionCircleOutlined />
-                                                }
-                                                onClick={() =>
-                                                  handleQuestionClick(
-                                                    word.phrase.sourceText,
-                                                    word.phrase.sourceLanguage
-                                                  )
-                                                }
-                                              />
-                                            </Tooltip>
-                                            <Tooltip
-                                              title={intl.formatMessage({
-                                                id: "vocabulary.list.alternatives",
-                                              })}
-                                            >
-                                              <Button
-                                                type="default"
-                                                icon={<CommentOutlined />}
-                                                onClick={() =>
-                                                  handleAlternativesClick(
-                                                    word.phrase.sourceText,
-                                                    word.phrase.sourceLanguage
-                                                  )
-                                                }
-                                              />
-                                            </Tooltip>
-                                          </>
-                                        )
-                                      }
+                                      {(user.subscriptionType !==
+                                        SubscriptionType.Free ||
+                                        hasAccess ||
+                                        !state.disableMeanings) && (
+                                        <>
+                                          <Tooltip
+                                            title={intl.formatMessage({
+                                              id: "vocabulary.list.meaning",
+                                            })}
+                                          >
+                                            <Button
+                                              ref={wordMeaningRef.current}
+                                              type="default"
+                                              icon={<QuestionCircleOutlined />}
+                                              onClick={() =>
+                                                handleQuestionClick(
+                                                  word.phrase.sourceText,
+                                                  word.phrase.sourceLanguage
+                                                )
+                                              }
+                                            />
+                                          </Tooltip>
+                                          <Tooltip
+                                            title={intl.formatMessage({
+                                              id: "vocabulary.list.alternatives",
+                                            })}
+                                          >
+                                            <Button
+                                              type="default"
+                                              icon={<CommentOutlined />}
+                                              onClick={() =>
+                                                handleAlternativesClick(
+                                                  word.phrase.sourceText,
+                                                  word.phrase.sourceLanguage
+                                                )
+                                              }
+                                            />
+                                          </Tooltip>
+                                        </>
+                                      )}
                                     </Space>
                                     <div
                                       style={{
