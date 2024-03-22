@@ -66,6 +66,7 @@ interface VocabularyListProps {
     vocabularyListUserPhrase: VocabularyListUserPhrase
   ) => void;
   selectedLanguageTo: string;
+  addSteps: any;
 }
 
 const isMobile = () =>
@@ -83,8 +84,10 @@ const VocabularyList: FC<VocabularyListProps> = ({
   selectedUserPhrase,
   setSelectedUserPhrase,
   selectedLanguageTo,
+  addSteps,
 }) => {
   const wordMeaningRef = useRef(null);
+  const anotherRef = useRef(null);
 
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
@@ -108,7 +111,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
     disableAlternatives: false,
   });
 
-  /* useEffect(() => {
+  useEffect(() => {
     const vocabularyListSteps = [
       {
         content: (
@@ -124,14 +127,14 @@ const VocabularyList: FC<VocabularyListProps> = ({
         //hideFooter: true,
         placement: "bottom",
         spotlightClicks: false,
-        target: [wordMeaningRef.current],
+        target: ".app__carousel",
         //target: settingsTriggerRef.current,
         title: "Menu",
       },
     ];
 
     addSteps(vocabularyListSteps);
-  }, [addSteps]); */
+  }, [addSteps]);
 
   const longPressQuestionAction = () =>
     notification.info({
@@ -408,6 +411,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   ) => {
                     return (
                       <List.Item
+                        ref={anotherRef}
                         key={word.sentenceNo + word.phrase.startPosition}
                         style={{ padding: "4px 0" }}
                         onClick={() => {
@@ -1081,7 +1085,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             })}
                                           >
                                             <Button
-                                              ref={wordMeaningRef.current}
                                               type="default"
                                               icon={<QuestionCircleOutlined />}
                                               onClick={() =>
@@ -1093,6 +1096,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             />
                                           </Tooltip>
                                           <Tooltip
+                                            className="app__carousel"
                                             title={intl.formatMessage({
                                               id: "vocabulary.list.alternatives",
                                             })}

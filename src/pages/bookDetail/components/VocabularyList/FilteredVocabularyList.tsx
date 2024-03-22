@@ -33,6 +33,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
   selectedUserPhrase,
   setSelectedUserPhrase,
   selectedLanguageTo,
+  addSteps,
 }) => {
   let filteredPhrases = [];
   if (mode === "phrases") {
@@ -56,6 +57,7 @@ const FilteredVocabularyList: React.FC<FilteredVocabularyListProps> = ({
       selectedUserPhrase={selectedUserPhrase}
       setSelectedUserPhrase={setSelectedUserPhrase!}
       selectedLanguageTo={selectedLanguageTo}
+      addSteps={addSteps}
     />
   ) : null;
 };

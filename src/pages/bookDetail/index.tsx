@@ -54,7 +54,7 @@ import { getLibraryItem } from "@/services/libraryService";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 import { useIntl } from "react-intl";
-import Joyride, { CallBackProps, EVENTS, STATUS } from "react-joyride";
+import Joyride, { ACTIONS, CallBackProps, EVENTS, STATUS } from "react-joyride";
 import { wrapMultiElements } from "@/utils/joyride";
 import { useMount, useSetState } from "react-use";
 
@@ -906,13 +906,42 @@ const BookDetail: FC = () => {
     const { action, index, status, type } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
-    console.log({ run, steps, mainKey, type });
+    if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+      setState({ stepIndex: nextStepIndex });
+    }
 
-    if (type === EVENTS.TOUR_START) {
+    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      setState({ run: false, stepIndex: 0 });
+    } else if (
+      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
+    ) {
+      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+      if (index === 0) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else if (index === 1) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else if (index === 2 && action === ACTIONS.PREV) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else {
+        setState({
+          stepIndex: nextStepIndex,
+        });
+      }
     }
   };
 
-  const addSteps = useCallback((newSteps: StepType[]) => {
+  const addTranslateBoxSteps = useCallback((newSteps: StepType[]) => {
+    setJoyrideState((prevState) => ({
+      ...prevState,
+      steps: [...prevState.steps, ...newSteps],
+    }));
+  }, []);
+
+  const addVocabularyListSteps = useCallback((newSteps: StepType[]) => {
     setJoyrideState((prevState) => ({
       ...prevState,
       steps: [...prevState.steps, ...newSteps],
@@ -920,19 +949,13 @@ const BookDetail: FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Steps updated:", joyrideState.steps);
-    setIsJoyrideReady(true);
-  }, [joyrideState.steps]);
-
-  const [isJoyrideReady, setIsJoyrideReady] = useState(false);
-
-  useEffect(() => {
     setState(() => {
       const newSteps = [...joyrideState.steps];
+      console.log("newSteps" + JSON.stringify(newSteps));
       wrapMultiElements(newSteps);
       return { ...joyrideState, steps: newSteps };
     });
-  }, [addSteps, joyrideState.steps]);
+  }, [joyrideState.steps]);
 
   const translateBoxContainer = (
     <div>
@@ -1025,7 +1048,7 @@ const BookDetail: FC = () => {
           selectedLanguageTo={state.selectedLanguageTo}
           onChangeMode={setMode}
           magnifyingGlassRef={magnifyingGlassRef}
-          addSteps={addSteps}
+          addSteps={addTranslateBoxSteps}
         />
       </Card>
     </div>
@@ -1047,6 +1070,7 @@ const BookDetail: FC = () => {
               setSelectedUserPhrase={setSelectedUserPhrase}
               selectedLanguageTo={state.selectedLanguageTo}
               style={{ marginBottom: "16px" }}
+              addSteps={addVocabularyListSteps}
             />
             {/* <FilteredVocabularyList
               title="Phrases"
