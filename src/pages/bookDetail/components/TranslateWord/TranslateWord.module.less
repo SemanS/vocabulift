@@ -3,13 +3,14 @@
   //border-radius: 6px;
   padding-top: 5px;
   padding-bottom: 5px;
-  }
-  .bubbleVideoHovered {
-    background-color: rgba(155, 211, 188);
-    //border-radius: 6px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    }
+}
+.bubbleVideoHovered {
+  background-color: rgba(155, 211, 188);
+  //border-radius: 6px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 .textbox {
   font-family: "Open Sans", sans-serif;
   font-size: 17px;
@@ -22,8 +23,20 @@
 }
 
 .bubbleWord {
-  background-color: #FF8961;
+  background-color: #ff8961;
   //border-radius: 6px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.bubbleWordPhrase {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 137, 97) 0%,
+    rgba(255, 137, 97) 50%,
+    rgba(204, 183, 188) 50%,
+    rgba(204, 183, 188)
+  );
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -35,10 +48,28 @@
   padding-bottom: 5px;
 }
 
-.bubbleWordPhrase {
-  background: linear-gradient(to bottom, rgba(255, 137, 97) 0%, rgba(255, 137, 97) 50%, rgba(204, 183, 188) 50%, rgba(204, 183, 188));
-  padding-top: 5px;
-  padding-bottom: 5px;
+.bubblePhrase > .bubblePhrase:last-child {
+  position: relative;
+  background-color: rgba(204, 183, 188);
+  padding-top: 22px;
+  padding-bottom: 25px;
+  padding-right: 5px;
+}
+
+.lastInPhrase {
+  background-color: rgba(204, 183, 188);
+  padding-right: -5px;
+  margin-right: 7px;
+}
+
+.bubblePhrase > .bubblePhrase:last-child::after {
+  content: "";
+  position: absolute;
+  top: 10;
+  bottom: 10;
+  right: -25px;
+  width: 15px;
+  background-color: rgba(204, 183, 188);
 }
 
 .disable-selection {

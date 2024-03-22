@@ -63,6 +63,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isWord, setIsWord] = useState(false);
   const [isPhrase, setIsPhrase] = useState(false);
   const [isWordPhrase, setIsWordPhrase] = useState(false);
+  const [isLastInPhrase, setIsLastInPhrase] = useState(false);
 
   const textRef = useRef<HTMLDivElement | null>(null);
 
@@ -189,11 +190,11 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   ]);
 
   const getClassName = () => {
+    let result = styles.textbox;
+
     if (props.isHighlightedFromVideo) {
       return `${styles.textbox} ${styles.bubbleVideoHovered}`;
     }
-
-    let result = styles.textbox;
 
     if (isHovered || props.isHighlighted) {
       result += ` ${styles.bubbleHovered}`;
@@ -215,6 +216,10 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     if (isWordPhrase && props.mode === "all") {
       result += ` ${styles.bubbleWordPhrase}`;
+    }
+
+    if (isLastInPhrase) {
+      result += ` ${styles.lastInPhrase}`;
     }
 
     return result;
@@ -304,6 +309,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     isPhrase,
     isWordPhrase,
     props.mode,
+    isLastInPhrase,
   ]);
 
   const renderTooltip = (children: React.ReactNode) => {
@@ -381,6 +387,18 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     setIsHovered(false);
   };
 
+  useEffect(() => {
+    // Assuming you have a method to determine if a word is the last in any phrase
+    const checkIfLastInAnyPhrase = () => {
+      const isLastInAnyPhrase = userPhrases!.some(
+        (phrase) => props.wordIndex === phrase.phrase.endPosition
+      );
+      setIsLastInPhrase(isLastInAnyPhrase);
+    };
+
+    checkIfLastInAnyPhrase();
+  }, [userPhrases, props.wordIndex]);
+
   return renderTooltip(
     <span
       id={props.id}
@@ -400,7 +418,11 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       onTouchEnd={handleTouchEnd}
       data-word-index={props.wordIndex}
     >
-      {props.mode === "sentences" ? props.word + "\n" : props.word + " "}
+      {props.mode === "sentences"
+        ? props.word + "\n"
+        : isLastInPhrase
+        ? props.word
+        : props.word + " "}
     </span>
   );
 };
