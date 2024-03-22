@@ -106,8 +106,10 @@ interface StepType {
 
 interface JoyrideState {
   run: boolean;
-  stepIndex?: number; // include optional properties as needed
-  steps: StepType[];
+  stepIndex?: number;
+  //steps: StepType[];
+  translateBoxSteps: StepType[];
+  vocabularyListSteps: StepType[];
   mainKey?: number;
 }
 
@@ -876,7 +878,6 @@ const BookDetail: FC = () => {
   const uniqueLanguages = Array.from(
     new Set(state.library?.snapshotsInfo?.map((snapshot) => snapshot.language))
   );
-  //const uniqueLanguages = state.library?.snapshotsInfo;
 
   const languagesWithoutSource = uniqueLanguages.filter(
     (lang) => lang !== user.sourceLanguage
@@ -884,21 +885,26 @@ const BookDetail: FC = () => {
 
   const [joyrideState, setJoyrideState] = useState<JoyrideState>({
     run: true,
-    steps: [],
+    translateBoxSteps: [],
+    vocabularyListSteps: [],
   });
 
-  const [{ run, stepIndex, steps, mainKey }, setState] =
-    useSetState<JoyrideState>({
-      run: false,
-      stepIndex: 0,
-      steps: [],
-      mainKey: 0,
-    });
+  const [
+    { run, stepIndex, translateBoxSteps, vocabularyListSteps, mainKey },
+    setState,
+  ] = useSetState<JoyrideState>({
+    run: false,
+    stepIndex: 0,
+    translateBoxSteps: [],
+    vocabularyListSteps: [],
+    mainKey: 0,
+  });
 
   useMount(() => {
     setState({
       run: true,
-      steps: [],
+      translateBoxSteps: [],
+      vocabularyListSteps: [],
     });
   });
 
@@ -937,25 +943,28 @@ const BookDetail: FC = () => {
   const addTranslateBoxSteps = useCallback((newSteps: StepType[]) => {
     setJoyrideState((prevState) => ({
       ...prevState,
-      steps: [...prevState.steps, ...newSteps],
+      translateBoxSteps: [...prevState.translateBoxSteps, ...newSteps],
     }));
   }, []);
 
   const addVocabularyListSteps = useCallback((newSteps: StepType[]) => {
     setJoyrideState((prevState) => ({
       ...prevState,
-      steps: [...prevState.steps, ...newSteps],
+      vocabularyListSteps: [...prevState.vocabularyListSteps, ...newSteps],
     }));
   }, []);
 
   useEffect(() => {
-    setState(() => {
-      const newSteps = [...joyrideState.steps];
-      console.log("newSteps" + JSON.stringify(newSteps));
-      wrapMultiElements(newSteps);
-      return { ...joyrideState, steps: newSteps };
-    });
-  }, [joyrideState.steps]);
+    const combinedSteps = [
+      ...joyrideState.translateBoxSteps,
+      ...joyrideState.vocabularyListSteps,
+    ];
+    wrapMultiElements(combinedSteps);
+    setState((prevState) => ({
+      ...prevState,
+      joyrideSteps: combinedSteps,
+    }));
+  }, [joyrideState.translateBoxSteps, joyrideState.vocabularyListSteps]);
 
   const translateBoxContainer = (
     <div>
@@ -1110,14 +1119,17 @@ const BookDetail: FC = () => {
   return (
     <PageContainer title={false} className={styles.container}>
       <Joyride
-        key={joyrideState.steps.length}
+        key={joyrideState.translateBoxSteps.length}
         continuous
         run={run}
         disableScrolling
         hideCloseButton
         showProgress
         showSkipButton
-        steps={joyrideState.steps}
+        steps={[
+          ...joyrideState.translateBoxSteps,
+          ...joyrideState.vocabularyListSteps,
+        ]}
         stepIndex={stepIndex}
         callback={handleJoyrideCallback}
       />

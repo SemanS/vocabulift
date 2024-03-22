@@ -5,7 +5,7 @@ const getCombinedRect = (elements) => {
       top: Math.min(acc.top, rect.top),
       right: Math.max(acc.right, rect.right) + 11,
       bottom: Math.max(acc.bottom, rect.bottom),
-      left: Math.min(acc.left, rect.left) + 1,
+      left: Math.min(acc.left, rect.left) + 2,
     }),
     {
       top: Infinity,

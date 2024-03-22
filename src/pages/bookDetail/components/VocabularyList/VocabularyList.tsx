@@ -127,7 +127,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
         //hideFooter: true,
         placement: "bottom",
         spotlightClicks: false,
-        target: ".app__carousel",
+        target: ".wordMeaning",
         //target: settingsTriggerRef.current,
         title: "Menu",
       },
@@ -1086,6 +1086,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           >
                                             <Button
                                               type="default"
+                                              className="wordMeaning"
                                               icon={<QuestionCircleOutlined />}
                                               onClick={() =>
                                                 handleQuestionClick(
@@ -1096,7 +1097,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             />
                                           </Tooltip>
                                           <Tooltip
-                                            className="app__carousel"
                                             title={intl.formatMessage({
                                               id: "vocabulary.list.alternatives",
                                             })}
