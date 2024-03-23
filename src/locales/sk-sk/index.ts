@@ -10,6 +10,7 @@ import { skSK_project } from "./project";
 import { skSK_menu } from "./menu";
 import { sk_SK_documentation } from "./documentation";
 import { sk_SK_web } from "./web";
+import { skSK_joyride } from "./joyride";
 
 const sk_SK = {
   ...skSK_account,
@@ -24,6 +25,7 @@ const sk_SK = {
   ...skSK_project,
   ...sk_SK_documentation,
   ...sk_SK_web,
+  ...skSK_joyride,
 };
 
 export default sk_SK;

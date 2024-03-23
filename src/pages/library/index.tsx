@@ -123,20 +123,15 @@ const Library: React.FC = () => {
 
   useMount(() => {
     setState({
-      run: true,
+      run: false,
       steps: [
         {
           content: (
-            <div>
-              Hey there! Welcome to the Libraries Page in VocabuLift. You're now
-              looking at a bunch of cool videos designed to help you boost your
-              language skills.
-              <br />
-              <br />
-              But before you dive in, let me show you how to make this space
-              truly yours by tweaking a couple of things to suit just what you
-              need.
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: intl.formatMessage({ id: "joyride.library.step.1" }),
+              }}
+            />
           ),
           disableBeacon: true,
           showSkipButton: false,
@@ -147,18 +142,15 @@ const Library: React.FC = () => {
           placement: "bottom",
           spotlightClicks: false,
           target: settingsTriggerRef.current,
-          title: "Fine-Tuning Your Video Choices",
+          title: intl.formatMessage({ id: "joyride.library.step.1.title" }),
         },
         {
           content: (
-            <div>
-              Alright! Now now let's talk about choosing the language of the
-              videos you want to dive into. <br />
-              <br />
-              VocabuLift is all about giving you the best experience, and part
-              of that is letting you switch between languages to explore unique
-              sets of videos tailored for learning.
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: intl.formatMessage({ id: "joyride.library.step.2" }),
+              }}
+            />
           ),
           hideBackButton: true,
           disableBeacon: true,
@@ -167,20 +159,16 @@ const Library: React.FC = () => {
           placement: "bottom",
           spotlightClicks: false,
           target: addMenuRef.current,
-          title: "Selecting Your Preferred Language for Video Content",
+          title: intl.formatMessage({ id: "joyride.library.step.2.title" }),
           showSkipButton: false,
         },
         {
           content: (
-            <div>
-              After choosing the language for your video content, the next step
-              is to select the language into which you want these videos
-              translated. <br />
-              <br />
-              This feature is designed to tailor your learning experience even
-              further by providing translations that align with your language
-              learning goals.
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: intl.formatMessage({ id: "joyride.library.step.3" }),
+              }}
+            />
           ),
           hideBackButton: true,
           disableBeacon: true,
@@ -189,21 +177,16 @@ const Library: React.FC = () => {
           hideFooter: false,
           placement: "bottom",
           target: targetLanguageRef.current,
-          title: "Setting Your Target Translation Language",
+          title: intl.formatMessage({ id: "joyride.library.step.3.title" }),
           showSkipButton: false,
         },
         {
           content: (
-            <div>
-              Now that you've set your video preferences and translation
-              language, let's dive into how you can make your learning even more
-              personalized with VocabuLift. <br />
-              <br />
-              Every free user gets the opportunity to add a 1-minute video to
-              their library – at no extra cost. This is your chance to tailor
-              your learning experience with content that resonates with you
-              personally.
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: intl.formatMessage({ id: "joyride.library.step.4" }),
+              }}
+            />
           ),
           hideBackButton: true,
           disableBeacon: true,
@@ -212,20 +195,16 @@ const Library: React.FC = () => {
           hideFooter: false,
           placement: "bottom",
           target: addVideoRef.current,
-          title: "Adding Your Personalized Video",
+          title: intl.formatMessage({ id: "joyride.library.step.4.title" }),
           showSkipButton: false,
         },
         {
           content: (
-            <div>
-              Okay, you've set everything up just right, and now comes the part
-              where it all starts to click. Let's pick a video from your
-              library—the one you're curious about or the one you added
-              yourself—and see what happens next. <br />
-              <br />
-              This step is pretty straightforward but really cool because it
-              introduces you to the heart of VocabuLift, our learning engine.
-            </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: intl.formatMessage({ id: "joyride.library.step.5" }),
+              }}
+            />
           ),
           hideBackButton: true,
           disableBeacon: true,
@@ -234,7 +213,7 @@ const Library: React.FC = () => {
           placement: "bottom",
           spotlightClicks: false,
           target: "#uniqueTargetId",
-          title: "Checking Out the Learning Engine Together",
+          title: intl.formatMessage({ id: "joyride.library.step.5.title" }),
           showSkipButton: false,
         },
       ],
@@ -714,11 +693,8 @@ const Library: React.FC = () => {
   }
 
   const customLocale = {
-    back: "Zurück", // German for "Back"
-    close: "Schließen", // German for "Close"
-    last: "Letzte", // German for "Last"
-    next: "Weiter", // German for "Next"
-    skip: "Überspringen", // German for "Skip"
+    last: intl.formatMessage({ id: "joyride.last" }),
+    next: intl.formatMessage({ id: "joyride.next" }),
   };
 
   return (
@@ -735,7 +711,7 @@ const Library: React.FC = () => {
           steps={steps}
           stepIndex={stepIndex}
           callback={handleJoyrideCallback}
-          locale={customLocale} // Pass the custom locale object
+          locale={customLocale}
         />
         <Button onClick={handleClickStart}>Start Tour</Button>
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>

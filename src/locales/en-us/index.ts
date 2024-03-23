@@ -10,6 +10,7 @@ import { enUS_project } from "./project";
 import { enUS_menu } from "./menu";
 import { en_US_documentation } from "./documentation";
 import { en_US_web } from "./web";
+import { enUS_joyride } from "./joyride";
 
 const en_US = {
   ...enUS_account,
@@ -24,7 +25,7 @@ const en_US = {
   ...enUS_project,
   ...en_US_documentation,
   ...en_US_web,
+  ...enUS_joyride,
 };
-
 
 export default en_US;
