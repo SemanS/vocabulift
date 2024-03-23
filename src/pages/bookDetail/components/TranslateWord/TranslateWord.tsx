@@ -218,7 +218,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       result += ` ${styles.bubbleWordPhrase}`;
     }
 
-    if (isLastInPhrase) {
+    if (isLastInPhrase && props.mode === "all") {
       result += ` ${styles.lastInPhrase}`;
     }
 

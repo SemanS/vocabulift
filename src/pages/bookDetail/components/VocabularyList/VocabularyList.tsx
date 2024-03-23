@@ -27,6 +27,8 @@ import { AxiosError } from "axios";
 import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 import { languages } from "@/utils/languages";
+import { triggerState } from "@/stores/joyride";
+import { Link } from "react-router-dom";
 
 const TabPane = Tabs.TabPane;
 
@@ -86,9 +88,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
   selectedLanguageTo,
   addSteps,
 }) => {
-  const wordMeaningRef = useRef(null);
-  const anotherRef = useRef(null);
-
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const [prevPhrasesLength, setPrevPhrasesLength] = useState(0);
@@ -111,25 +110,69 @@ const VocabularyList: FC<VocabularyListProps> = ({
     disableAlternatives: false,
   });
 
+  const [trigger, setTrigger] = useRecoilState(triggerState);
+
+  useEffect(() => {
+    if (trigger.shouldTrigger) {
+      handleQuestionClick("taka", "sk");
+      setTrigger({ shouldTrigger: false, params: {} });
+    }
+  }, [trigger, setTrigger]);
+
   useEffect(() => {
     const vocabularyListSteps = [
       {
         content: (
           <div>
-            You can interact with your own components through the spotlight.
+            Cool, you've made it to the next stage! Quick tip: you've got the
+            power to switch up the language settings right at the top right
+            corner, so it matches your vibe. <br />
             <br />
-            Click the menu above!
+            And if you're itching to dig into what a word or phrase means, just
+            click on the question mark. It's all set up to make things super
+            easy for you. Let's keep this learning adventure going!
           </div>
         ),
         disableBeacon: true,
         disableOverlayClose: true,
         hideCloseButton: true,
-        //hideFooter: true,
         placement: "bottom",
         spotlightClicks: false,
         target: ".wordMeaning",
-        //target: settingsTriggerRef.current,
-        title: "Menu",
+        title: "Uncover meanings",
+        showSkipButton: false,
+        hideBackButton: true,
+      },
+      {
+        content: (
+          <div>
+            Here we are at the final step. You've experienced how words and
+            phrases unfold in your native language—pretty cool, right? It's all
+            designed to personalize your learning experience. While we've
+            covered the basics of Vocabulift, there's still more for you to
+            discover independently. Now, I'll let you explore further. Feel free
+            to dive in and see what else there is to learn. Remember, learning
+            is a continuous journey.
+            <br />
+            <br /> Enjoy digging into it at your own pace!
+            <br />
+            <br /> Also, if you have any feedback or suggestions, our team would
+            love to hear from you. Your insights are valuable to us and could
+            inspire our next big feature. So, don't hesitate to reach out.
+            <br />
+            <br />
+            <Link to="/#contact">Contact us</Link>
+          </div>
+        ),
+        disableBeacon: true,
+        disableOverlayClose: true,
+        hideCloseButton: true,
+        placement: "bottom",
+        spotlightClicks: true,
+        target: ".meaning-tab",
+        title: "Starting Your Learning Journey",
+        showSkipButton: false,
+        hideBackButton: true,
       },
     ];
 
@@ -377,6 +420,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
   return (
     <Card style={style} bodyStyle={{ padding: 0 }}>
       <Tabs
+        className="meaning-tab"
         activeKey={activeTab}
         onChange={setActiveTab}
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
@@ -411,7 +455,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                   ) => {
                     return (
                       <List.Item
-                        ref={anotherRef}
                         key={word.sentenceNo + word.phrase.startPosition}
                         style={{ padding: "4px 0" }}
                         onClick={() => {

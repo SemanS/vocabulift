@@ -12,18 +12,9 @@ import React from "react";
 import { SentenceData } from "@/models/sentences.interfaces";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { SelectedWord } from "@/models/utils.interface";
-import {
-  getPhraseIfNotInHighlighted,
-  isSingleWord,
-  isWordInVocabularyList,
-} from "@/utils/utilMethods";
-import { notification } from "antd";
+import { getPhraseIfNotInHighlighted, isSingleWord } from "@/utils/utilMethods";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
-import Quiz from "react-quiz-component";
 import QuizComponent from "../Quiz/QuizComponent";
-import { useMount, useSetState } from "react-use";
-import Joyride, { CallBackProps, EVENTS, STATUS } from "react-joyride";
-import { wrapMultiElements } from "@/utils/joyride";
 
 interface TranslateBoxProps {
   mode: string;
@@ -81,21 +72,86 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     const translateBoxSteps = [
       {
         content: (
-          <div>
-            You can interact with your own components through the spotlight.
-            <br />
-            Click the menu above!
+          <div style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
+            <p>
+              You've now entered the Engine of Vocabulift, where we've tailored
+              your learning experience with insights from experts in visual
+              learning. We're here to ensure your journey is both effective and
+              visually engaging.
+            </p>
+
+            <div>
+              <strong>1. Click on a Single Word:</strong>
+              <p>
+                Simply click on any word you see to delve deeper into its
+                meaning. This is your go-to for quick definitions or
+                translations.
+              </p>
+              <div
+                style={{
+                  width: "100px",
+                  height: "20px",
+                  backgroundColor: "#ff8961",
+                  marginBottom: "20px",
+                }}
+              ></div>
+            </div>
+
+            <div>
+              <strong>2. Slide Over a Phrase:</strong>
+              <p>
+                For a more comprehensive insight, slide your cursor over a
+                phrase. This option is perfect for understanding how words come
+                together in context.
+              </p>
+              <div
+                style={{
+                  width: "150px",
+                  height: "20px",
+                  backgroundColor: "rgba(204, 183, 188)",
+                  marginBottom: "20px",
+                }}
+              ></div>
+            </div>
+
+            <div>
+              <strong>3. Select a Word within a Phrase:</strong>
+              <p>
+                Similar to clicking on a single word, clicking on a phrase
+                allows you to explore its usage and nuances in detail.
+              </p>
+              <div
+                style={{
+                  position: "relative",
+                  width: "150px",
+                  height: "20px",
+                  backgroundColor: "rgba(204, 183, 188)",
+                  marginBottom: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "-10px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    width: "100px",
+                    height: "20px",
+                    backgroundColor: "#ff8961",
+                  }}
+                ></div>
+              </div>
+            </div>
           </div>
         ),
         disableBeacon: true,
         disableOverlayClose: true,
         hideCloseButton: true,
-        //hideFooter: true,
-        placement: "bottom",
+        placement: "top",
         spotlightClicks: false,
         target: ["#word-0-0", "#word-0-1"],
-        //target: settingsTriggerRef.current,
-        title: "Menu",
+        title: "Exploring Words and Phrases",
+        showSkipButton: false,
       },
     ];
 
@@ -503,6 +559,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         if (mode === "sentences") {
           return (
             <TranslateWord
+              key={index}
+              word={sourceSentence.sentenceText}
               translation={targetSentence?.sentenceText || ""}
               sentenceNumber={sourceSentence.sentenceNo}
               sentenceText={sourceSentence.sentenceText}

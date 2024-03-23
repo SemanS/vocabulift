@@ -14,6 +14,7 @@ interface CardProps {
   progress: number;
   selectedLanguageTo: string;
   eventFinalized: boolean;
+  className: string;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -24,6 +25,7 @@ export const Card: React.FC<CardProps> = ({
   progress,
   selectedLanguageTo,
   eventFinalized,
+  className,
 }) => {
   const [isImgHovered, setIsImgHovered] = useState(false);
   const [isDelayPassed, setIsDelayPassed] = useState(false);
@@ -109,7 +111,7 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <div
-      className={cardClassName}
+      className={`${cardClassName} ${className}`}
       data-index={cardIndex}
       onMouseEnter={() => onCardHover(cardIndex)}
       onMouseLeave={() => onCardHover(null)}

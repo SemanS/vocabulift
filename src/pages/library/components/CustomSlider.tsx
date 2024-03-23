@@ -117,16 +117,25 @@ export const CustomSlider: React.FC<CustomSliderProps> = ({
         <Slider {...settings} ref={sliderRef}>
           {items.map((item, index) => {
             return (
-              <Card
-                key={index}
-                itemData={item}
-                onCardHover={onCardHover}
-                cardIndex={index}
-                isHovered={hoveredCardIndex === index}
-                progress={progress}
-                selectedLanguageTo={selectedLanguageTo}
-                eventFinalized={eventFinalized}
-              />
+              <div
+                id={
+                  item._id === "65eff42ba9cddfc6887ef46a"
+                    ? "uniqueTargetId"
+                    : undefined
+                }
+              >
+                <Card
+                  key={index}
+                  itemData={item}
+                  className=""
+                  onCardHover={onCardHover}
+                  cardIndex={index}
+                  isHovered={hoveredCardIndex === index}
+                  progress={progress}
+                  selectedLanguageTo={selectedLanguageTo}
+                  eventFinalized={eventFinalized}
+                />
+              </div>
             );
           })}
         </Slider>

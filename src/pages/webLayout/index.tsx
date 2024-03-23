@@ -1,4 +1,11 @@
-import React, { FC, lazy, Suspense, useEffect, useState } from "react";
+import React, {
+  FC,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import Header from "./shared/components/Header";
 import { useLocale } from "@/locales";
 import PricingComponent from "./shared/components/Pricing/PricingComponent";
@@ -14,6 +21,32 @@ const WebLayoutPage: FC = () => {
   const Container = lazy(() => import("./shared/common/Container"));
   const ScrollToTop = lazy(() => import("./shared/common/ScrollToTop"));
   const ContentBlock = lazy(() => import("./shared/components/ContentBlock"));
+
+  const scrollToContact = useCallback(() => {
+    if (window.location.hash === "#contact") {
+      setTimeout(() => {
+        const contactElement = document.getElementById("contact");
+        if (contactElement) {
+          contactElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 550);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Call it on component mount
+    scrollToContact();
+  }, [scrollToContact]);
+
+  useEffect(() => {
+    // Add event listener for hash changes
+    window.addEventListener("hashchange", scrollToContact, false);
+
+    return () => {
+      // Clean up event listener
+      window.removeEventListener("hashchange", scrollToContact, false);
+    };
+  }, [scrollToContact]);
 
   useEffect(() => {
     if (

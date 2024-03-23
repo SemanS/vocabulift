@@ -57,6 +57,7 @@ import { useIntl } from "react-intl";
 import Joyride, { ACTIONS, CallBackProps, EVENTS, STATUS } from "react-joyride";
 import { wrapMultiElements } from "@/utils/joyride";
 import { useMount, useSetState } from "react-use";
+import { triggerState } from "@/stores/joyride";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -511,6 +512,12 @@ const BookDetail: FC = () => {
     [state.selectedLanguageTo, setSelectedLanguageTo]
   );
 
+  const [joyrideStyles, setJoyrideStyles] = useState({
+    options: {
+      width: 400,
+    },
+  });
+
   const handleAddUserPhrase = useCallback(
     async (vocabularyListUserPhrase: VocabularyListUserPhrase) => {
       try {
@@ -883,8 +890,10 @@ const BookDetail: FC = () => {
     (lang) => lang !== user.sourceLanguage
   );
 
+  const [trigger, setTrigger] = useRecoilState(triggerState);
+
   const [joyrideState, setJoyrideState] = useState<JoyrideState>({
-    run: true,
+    run: false,
     translateBoxSteps: [],
     vocabularyListSteps: [],
   });
@@ -917,6 +926,14 @@ const BookDetail: FC = () => {
       setState({ stepIndex: nextStepIndex });
     }
 
+    if (type === EVENTS.TOUR_START) {
+      setJoyrideStyles({
+        options: {
+          width: 900,
+        },
+      });
+    }
+
     if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
       setState({ run: false, stepIndex: 0 });
     } else if (
@@ -926,10 +943,24 @@ const BookDetail: FC = () => {
       if (index === 0) {
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
+        setJoyrideStyles({
+          options: {
+            width: 400,
+          },
+        });
       } else if (index === 1) {
+        setTrigger({
+          shouldTrigger: true,
+          params: { sourceLanguage: "en", targetLanguage: "sk" },
+        });
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
-      } else if (index === 2 && action === ACTIONS.PREV) {
+        setJoyrideStyles({
+          options: {
+            width: 900,
+          },
+        });
+      } else if (index === 2) {
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
       } else {
@@ -1132,8 +1163,8 @@ const BookDetail: FC = () => {
         ]}
         stepIndex={stepIndex}
         callback={handleJoyrideCallback}
+        styles={joyrideStyles}
       />
-
       {state.isLimitExceeded && user.subscribed === false && !hasAccess ? (
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>

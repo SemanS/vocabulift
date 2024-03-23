@@ -39,6 +39,7 @@ import Joyride, {
   Step,
 } from "react-joyride";
 import { useMount, useSetState } from "react-use";
+import { useNavigate } from "react-router-dom";
 
 interface State {
   run: boolean;
@@ -82,6 +83,7 @@ const Library: React.FC = () => {
   const [eventFinalized, setEventFinalized] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(isDisabled());
   const [settingsDrawerWasOpen, setSettingsDrawerWasOpen] = useState(false);
+  const navigate = useNavigate();
 
   const intl = useIntl();
 
@@ -126,78 +128,114 @@ const Library: React.FC = () => {
         {
           content: (
             <div>
-              You can interact with your own components through the spotlight.
+              Hey there! Welcome to the Libraries Page in VocabuLift. You're now
+              looking at a bunch of cool videos designed to help you boost your
+              language skills.
               <br />
-              Click the menu above!
+              <br />
+              But before you dive in, let me show you how to make this space
+              truly yours by tweaking a couple of things to suit just what you
+              need.
             </div>
           ),
           disableBeacon: true,
+          showSkipButton: false,
+          hideBackButton: true,
           disableOverlayClose: true,
           hideCloseButton: true,
-          hideFooter: true,
+          hideFooter: false,
           placement: "bottom",
-          spotlightClicks: true,
-          /* styles: {
-            options: {
-              zIndex: 10000,
-            },
-          }, */
+          spotlightClicks: false,
           target: settingsTriggerRef.current,
-          title: "Menu",
+          title: "Fine-Tuning Your Video Choices",
         },
         {
           content: (
             <div>
-              You can interact with your own components through the spotlight.
+              Alright! Now now let's talk about choosing the language of the
+              videos you want to dive into. <br />
               <br />
-              Click the menu above!
+              VocabuLift is all about giving you the best experience, and part
+              of that is letting you switch between languages to explore unique
+              sets of videos tailored for learning.
             </div>
           ),
           hideBackButton: true,
           disableBeacon: true,
           disableOverlayClose: true,
           hideCloseButton: true,
-          //hideFooter: true,
           placement: "bottom",
-          //spotlightClicks: true,
+          spotlightClicks: false,
           target: addMenuRef.current,
-          title: "Menu",
+          title: "Selecting Your Preferred Language for Video Content",
+          showSkipButton: false,
         },
         {
           content: (
             <div>
-              You can interact with your own components through the spotlight.
+              After choosing the language for your video content, the next step
+              is to select the language into which you want these videos
+              translated. <br />
               <br />
-              Click the menu above!
+              This feature is designed to tailor your learning experience even
+              further by providing translations that align with your language
+              learning goals.
             </div>
           ),
           hideBackButton: true,
           disableBeacon: true,
           disableOverlayClose: true,
           hideCloseButton: true,
-          //hideFooter: true,
+          hideFooter: false,
           placement: "bottom",
-          //spotlightClicks: true,
           target: targetLanguageRef.current,
-          title: "Menu",
+          title: "Setting Your Target Translation Language",
+          showSkipButton: false,
         },
         {
           content: (
             <div>
-              You can interact with your own components through the spotlight.
+              Now that you've set your video preferences and translation
+              language, let's dive into how you can make your learning even more
+              personalized with VocabuLift. <br />
               <br />
-              Click the menu above!
+              Every free user gets the opportunity to add a 1-minute video to
+              their library – at no extra cost. This is your chance to tailor
+              your learning experience with content that resonates with you
+              personally.
             </div>
           ),
           hideBackButton: true,
           disableBeacon: true,
           disableOverlayClose: true,
           hideCloseButton: true,
-          //hideFooter: true,
+          hideFooter: false,
           placement: "bottom",
-          //spotlightClicks: true,
           target: addVideoRef.current,
-          title: "Menu",
+          title: "Adding Your Personalized Video",
+          showSkipButton: false,
+        },
+        {
+          content: (
+            <div>
+              Okay, you've set everything up just right, and now comes the part
+              where it all starts to click. Let's pick a video from your
+              library—the one you're curious about or the one you added
+              yourself—and see what happens next. <br />
+              <br />
+              This step is pretty straightforward but really cool because it
+              introduces you to the heart of VocabuLift, our learning engine.
+            </div>
+          ),
+          hideBackButton: true,
+          disableBeacon: true,
+          disableOverlayClose: true,
+          hideCloseButton: true,
+          placement: "bottom",
+          spotlightClicks: false,
+          target: "#uniqueTargetId",
+          title: "Checking Out the Learning Engine Together",
+          showSkipButton: false,
         },
       ],
     });
@@ -208,10 +246,9 @@ const Library: React.FC = () => {
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
     if (type === EVENTS.TOUR_START) {
-      console.log("started" + settingsDrawerVisible);
       setSettingsDrawerWasOpen(true);
       if (settingsDrawerVisible) {
-        //toggleSettingsDrawer();
+        toggleSettingsDrawer();
         setState({ stepIndex: 1 });
       }
     }
@@ -237,11 +274,21 @@ const Library: React.FC = () => {
       const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
       if (index === 0) {
         document.body.style.overflow = "hidden";
+        toggleSettingsDrawer();
         setState({ run: true, stepIndex: nextStepIndex });
       } else if (index === 1) {
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
-      } else if (index === 2 && action === ACTIONS.PREV) {
+      } else if (index === 2) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else if (index === 3) {
+        document.body.style.overflow = "hidden";
+        setState({ run: true, stepIndex: nextStepIndex });
+      } else if (index === 4) {
+        navigate(
+          "/library/65eff42ba9cddfc6887ef46a?currentPage=1&pageSize=10&targetLanguage=sk"
+        );
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
       } else {
@@ -666,6 +713,14 @@ const Library: React.FC = () => {
     });
   }
 
+  const customLocale = {
+    back: "Zurück", // German for "Back"
+    close: "Schließen", // German for "Close"
+    last: "Letzte", // German for "Last"
+    next: "Weiter", // German for "Next"
+    skip: "Überspringen", // German for "Skip"
+  };
+
   return (
     <CustomSpinnerComponent spinning={loading}>
       <PageContainer title={false}>
@@ -680,6 +735,7 @@ const Library: React.FC = () => {
           steps={steps}
           stepIndex={stepIndex}
           callback={handleJoyrideCallback}
+          locale={customLocale} // Pass the custom locale object
         />
         <Button onClick={handleClickStart}>Start Tour</Button>
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
