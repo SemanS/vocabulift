@@ -25,7 +25,6 @@ const SelectLang: React.FC<SelectLangProps> = (props) => {
     const updatedUserEntity: Partial<User> = {
       locale: key,
     };
-    console.log("ale hej");
     await updateUser(updatedUserEntity);
     setUser({ ...user, locale: key });
     localStorage.setItem("locale", key);

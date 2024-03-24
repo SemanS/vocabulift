@@ -123,7 +123,7 @@ const Library: React.FC = () => {
 
   useMount(() => {
     setState({
-      run: false,
+      run: true,
       steps: [
         {
           content: (

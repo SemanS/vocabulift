@@ -32,6 +32,7 @@ import {
   deleteUserPhrases,
   getUserSentences,
   updateReadingProgress,
+  updateUser,
 } from "@/services/userService";
 import { UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
@@ -58,6 +59,7 @@ import Joyride, { ACTIONS, CallBackProps, EVENTS, STATUS } from "react-joyride";
 import { wrapMultiElements } from "@/utils/joyride";
 import { useMount, useSetState } from "react-use";
 import { triggerState } from "@/stores/joyride";
+import { User } from "@models/user";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -108,7 +110,6 @@ interface StepType {
 interface JoyrideState {
   run: boolean;
   stepIndex?: number;
-  //steps: StepType[];
   translateBoxSteps: StepType[];
   vocabularyListSteps: StepType[];
   mainKey?: number;
@@ -917,7 +918,7 @@ const BookDetail: FC = () => {
     });
   });
 
-  const handleJoyrideCallback = (data: CallBackProps) => {
+  const handleJoyrideCallback = async (data: CallBackProps) => {
     const { action, index, status, type } = data;
     const finishedStatuses: string[] = [STATUS.FINISHED, STATUS.SKIPPED];
 
@@ -935,6 +936,20 @@ const BookDetail: FC = () => {
     }
 
     if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+      if (user.newUser) {
+        const updatedUserEntity: Partial<User> = {
+          newUser: false,
+        };
+        try {
+          await updateUser(updatedUserEntity);
+          setUser((prevUser) => ({
+            ...prevUser,
+            newUser: false,
+          }));
+        } catch (error) {
+          console.error("Failed to update user", error);
+        }
+      }
       setState({ run: false, stepIndex: 0 });
     } else if (
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)

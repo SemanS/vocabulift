@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useRef, useState } from "react";
-import { useGuide } from "../guide/useGuide";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { userState } from "@/stores/user";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -45,7 +44,6 @@ const LayoutPage: FC = () => {
   const [pathname, setPathname] = useState("/welcome");
   const { device, newUser, settings } = user;
   const isMobile = device === "MOBILE";
-  const { driverStart } = useGuide();
   const location = useLocation();
   const navigate = useNavigate();
   const { formatMessage } = useLocale();
@@ -53,11 +51,6 @@ const LayoutPage: FC = () => {
   const libraryId = useRecoilValue(libraryIdState);
   const currentPage = useRecoilValue(currentPageState);
   const pageSize = useRecoilValue(pageSizeState);
-
-  useEffect(() => {
-    newUser && driverStart();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newUser]);
 
   const loopMenuItem = (menus?: MenuDataItem[]): MenuDataItem[] => {
     if (!menus) return [];

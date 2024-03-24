@@ -15,6 +15,7 @@ import { SelectedWord } from "@/models/utils.interface";
 import { getPhraseIfNotInHighlighted, isSingleWord } from "@/utils/utilMethods";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
 import QuizComponent from "../Quiz/QuizComponent";
+import { useIntl } from "react-intl";
 
 interface TranslateBoxProps {
   mode: string;
@@ -66,83 +67,18 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const [magnifyingGlassStyle, setMagnifyingGlassStyle] = useState<any | null>(
     null
   );
+  const intl = useIntl();
 
   useEffect(() => {
-    // Define steps for this component
     const translateBoxSteps = [
       {
         content: (
-          <div style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
-            <p>
-              You've now entered the Engine of Vocabulift, where we've tailored
-              your learning experience with insights from experts in visual
-              learning. We're here to ensure your journey is both effective and
-              visually engaging.
-            </p>
-
-            <div>
-              <strong>1. Click on a Single Word:</strong>
-              <p>
-                Simply click on any word you see to delve deeper into its
-                meaning. This is your go-to for quick definitions or
-                translations.
-              </p>
-              <div
-                style={{
-                  width: "100px",
-                  height: "20px",
-                  backgroundColor: "#ff8961",
-                  marginBottom: "20px",
-                }}
-              ></div>
-            </div>
-
-            <div>
-              <strong>2. Slide Over a Phrase:</strong>
-              <p>
-                For a more comprehensive insight, slide your cursor over a
-                phrase. This option is perfect for understanding how words come
-                together in context.
-              </p>
-              <div
-                style={{
-                  width: "150px",
-                  height: "20px",
-                  backgroundColor: "rgba(204, 183, 188)",
-                  marginBottom: "20px",
-                }}
-              ></div>
-            </div>
-
-            <div>
-              <strong>3. Select a Word within a Phrase:</strong>
-              <p>
-                Similar to clicking on a single word, clicking on a phrase
-                allows you to explore its usage and nuances in detail.
-              </p>
-              <div
-                style={{
-                  position: "relative",
-                  width: "150px",
-                  height: "20px",
-                  backgroundColor: "rgba(204, 183, 188)",
-                  marginBottom: "20px",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "-10px",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: "100px",
-                    height: "20px",
-                    backgroundColor: "#ff8961",
-                  }}
-                ></div>
-              </div>
-            </div>
-          </div>
+          <div
+            style={{ fontFamily: "Arial, sans-serif", color: "#333" }}
+            dangerouslySetInnerHTML={{
+              __html: intl.formatMessage({ id: "joyride.video.step.1" }),
+            }}
+          />
         ),
         disableBeacon: true,
         disableOverlayClose: true,
@@ -150,7 +86,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         placement: "top",
         spotlightClicks: false,
         target: ["#word-0-0", "#word-0-1"],
-        title: "Exploring Words and Phrases",
+        title: intl.formatMessage({ id: "joyride.video.step.1.title" }),
         showSkipButton: false,
       },
     ];

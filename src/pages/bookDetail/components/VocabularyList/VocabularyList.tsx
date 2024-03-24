@@ -123,15 +123,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
     const vocabularyListSteps = [
       {
         content: (
-          <div>
-            Cool, you've made it to the next stage! Quick tip: you've got the
-            power to switch up the language settings right at the top right
-            corner, so it matches your vibe. <br />
-            <br />
-            And if you're itching to dig into what a word or phrase means, just
-            click on the question mark. It's all set up to make things super
-            easy for you. Let's keep this learning adventure going!
-          </div>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: intl.formatMessage({ id: "joyride.video.step.2" }),
+            }}
+          />
         ),
         disableBeacon: true,
         disableOverlayClose: true,
@@ -139,30 +135,17 @@ const VocabularyList: FC<VocabularyListProps> = ({
         placement: "bottom",
         spotlightClicks: false,
         target: ".wordMeaning",
-        title: "Uncover meanings",
+        title: intl.formatMessage({ id: "joyride.video.step.2.title" }),
         showSkipButton: false,
         hideBackButton: true,
       },
       {
         content: (
-          <div>
-            Here we are at the final step. You've experienced how words and
-            phrases unfold in your native language—pretty cool, right? It's all
-            designed to personalize your learning experience. While we've
-            covered the basics of Vocabulift, there's still more for you to
-            discover independently. Now, I'll let you explore further. Feel free
-            to dive in and see what else there is to learn. Remember, learning
-            is a continuous journey.
-            <br />
-            <br /> Enjoy digging into it at your own pace!
-            <br />
-            <br /> Also, if you have any feedback or suggestions, our team would
-            love to hear from you. Your insights are valuable to us and could
-            inspire our next big feature. So, don't hesitate to reach out.
-            <br />
-            <br />
-            <Link to="/#contact">Contact us</Link>
-          </div>
+          <div
+            dangerouslySetInnerHTML={{
+              __html: intl.formatMessage({ id: "joyride.video.step.3" }),
+            }}
+          />
         ),
         disableBeacon: true,
         disableOverlayClose: true,
@@ -170,7 +153,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
         placement: "bottom",
         spotlightClicks: true,
         target: ".meaning-tab",
-        title: "Starting Your Learning Journey",
+        title: intl.formatMessage({ id: "joyride.video.step.3.title" }),
         showSkipButton: false,
         hideBackButton: true,
       },
