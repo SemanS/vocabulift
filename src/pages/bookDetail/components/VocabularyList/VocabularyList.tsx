@@ -28,7 +28,6 @@ import { getFlagCode } from "@/utils/utilMethods";
 import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
 import { languages } from "@/utils/languages";
 import { triggerState } from "@/stores/joyride";
-import { Link } from "react-router-dom";
 
 const TabPane = Tabs.TabPane;
 
@@ -114,7 +113,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
 
   useEffect(() => {
     if (trigger.shouldTrigger) {
-      handleQuestionClick("taka", "sk");
+      handleQuestionClick("I'm going to", user.targetLanguage);
       setTrigger({ shouldTrigger: false, params: {} });
     }
   }, [trigger, setTrigger]);

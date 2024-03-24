@@ -700,19 +700,21 @@ const Library: React.FC = () => {
   return (
     <CustomSpinnerComponent spinning={loading}>
       <PageContainer title={false}>
-        <Joyride
-          key={mainKey}
-          continuous
-          run={run}
-          disableScrolling
-          hideCloseButton
-          showProgress
-          showSkipButton
-          steps={steps}
-          stepIndex={stepIndex}
-          callback={handleJoyrideCallback}
-          locale={customLocale}
-        />
+        {user.newUser && (
+          <Joyride
+            key={mainKey}
+            continuous
+            run={run}
+            disableScrolling
+            hideCloseButton
+            showProgress
+            showSkipButton
+            steps={steps}
+            stepIndex={stepIndex}
+            callback={handleJoyrideCallback}
+            locale={customLocale}
+          />
+        )}
         <Button onClick={handleClickStart}>Start Tour</Button>
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
           <div

@@ -1164,22 +1164,24 @@ const BookDetail: FC = () => {
 
   return (
     <PageContainer title={false} className={styles.container}>
-      <Joyride
-        key={joyrideState.translateBoxSteps.length}
-        continuous
-        run={run}
-        disableScrolling
-        hideCloseButton
-        showProgress
-        showSkipButton
-        steps={[
-          ...joyrideState.translateBoxSteps,
-          ...joyrideState.vocabularyListSteps,
-        ]}
-        stepIndex={stepIndex}
-        callback={handleJoyrideCallback}
-        styles={joyrideStyles}
-      />
+      {user.newUser && (
+        <Joyride
+          key={joyrideState.translateBoxSteps.length}
+          continuous
+          run={run}
+          disableScrolling
+          hideCloseButton
+          showProgress
+          showSkipButton
+          steps={[
+            ...joyrideState.translateBoxSteps,
+            ...joyrideState.vocabularyListSteps,
+          ]}
+          stepIndex={stepIndex}
+          callback={handleJoyrideCallback}
+          styles={joyrideStyles}
+        />
+      )}
       {state.isLimitExceeded && user.subscribed === false && !hasAccess ? (
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
