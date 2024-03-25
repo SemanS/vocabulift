@@ -49,7 +49,10 @@ const RightBlock = ({
               <h6>{title}</h6>
               <Content>{content}</Content>
               {/* <ButtonWrapper> */}
-              <Button fixedWidth={true} onClick={() => navigate("/login")}>
+              <Button
+                fixedWidth={true}
+                onClick={() => navigate("/registration")}
+              >
                 {"SIGN UP WITH EMAIL"}
               </Button>{" "}
               <Button fixedWidth={true} onClick={() => navigate("/login")}>

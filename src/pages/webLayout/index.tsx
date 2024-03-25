@@ -95,7 +95,7 @@ const WebLayoutPage: FC = () => {
       <Header />
       <Container>
         <ScrollToTop />
-        <MiddleBlock
+        {/* <MiddleBlock
           title={
             <>
               {getFlagCode("UA") && (
@@ -113,7 +113,7 @@ const WebLayoutPage: FC = () => {
               learners.
             </>
           }
-        />
+        /> */}
         <ContentBlock
           type="right"
           title={"Unleash Your Language Skills with AI"}
@@ -128,7 +128,7 @@ const WebLayoutPage: FC = () => {
           //title={formatMessage({ id: "web.middleBlock.title" })}
           title={"Pioneering the Future of Language Learning with AI"}
           content={
-            "Embrace an innovative language learning path powered by leading-edge AI. Start for free. Also, find us on ProductHunt."
+            "Embrace an innovative language learning path powered by leading-edge AI. Start for free."
           }
           button={"GET STARTED FOR FREE"}
           direction="up"

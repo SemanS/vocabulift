@@ -607,15 +607,6 @@ const Library: React.FC = () => {
     return user.isAddVideoExceeded;
   }
 
-  const handleClickStart = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
-
-    setState({
-      run: true,
-      stepIndex: 0,
-    });
-  };
-
   const renderSettingsDrawerContent = () => {
     return (
       <>
@@ -715,7 +706,6 @@ const Library: React.FC = () => {
             locale={customLocale}
           />
         )}
-        <Button onClick={handleClickStart}>Start Tour</Button>
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
           <div
             className={styles.drawerPushContent}

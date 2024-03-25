@@ -30,12 +30,12 @@ export const MiddleBlock = ({
         <Col lg={24} md={24} sm={24} xs={24}>
           <h6>{title}</h6>
           <Content>{content}</Content>
-          {/* {button && (
-                <Button name="submit" onClick={() => scrollTo("mission")}>
-                  {button}
-                </Button>
-              )} */}
           {button && (
+            <Button name="submit" onClick={() => scrollTo("mission")}>
+              {button}
+            </Button>
+          )}
+          {/* {button && (
             <a
               href="https://www.producthunt.com/posts/vocabulift?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-vocabulift"
               target="_blank"
@@ -47,7 +47,7 @@ export const MiddleBlock = ({
                 height="54"
               />
             </a>
-          )}
+          )} */}
         </Col>
       </ContentWrapper>
     </Row>
