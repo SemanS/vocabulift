@@ -239,9 +239,9 @@ const LoginForm: FC = () => {
             </Button>
           </Form.Item>
         </Form>
-        {/* <Typography.Text className={styles.signInLink}>
-          Already have an account? <Link to="/login">Sign in</Link>
-        </Typography.Text> */}
+        <Typography.Text className={styles.signInLink}>
+          Not a member yet? <Link to="/registration">Sign up now.</Link>
+        </Typography.Text>
         <Divider plain>OR</Divider>
         <Button
           size="large"

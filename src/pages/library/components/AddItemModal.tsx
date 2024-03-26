@@ -18,6 +18,7 @@ import { PageContainer } from "@ant-design/pro-layout";
 import { useIntl } from "react-intl";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
+import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -26,7 +27,7 @@ interface AddItemModalProps {
   setInputValue: (value: string) => void;
   fetchOptions: (input: string) => Promise<void>;
   isFetchValid: boolean;
-  selectOptions: any[];
+  videoDuration: number;
   targetLanguage: string;
   onLanguageSelect: (language: string) => void;
   onAddItemClick: (videoThumbnail: string, status: string) => void;
@@ -39,7 +40,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   setInputValue,
   fetchOptions,
   isFetchValid,
-  selectOptions,
+  videoDuration,
   targetLanguage,
   onLanguageSelect,
   onAddItemClick,
@@ -59,7 +60,20 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [selectedLanguageTo, setSelectedLanguageTo] =
     useState<string>(targetLanguage);
-    const [user, setUser] = useRecoilState(userState);
+  const [user, setUser] = useRecoilState(userState);
+  const [isDurationModalVisible, setIsDurationModalVisible] = useState(false);
+
+  useEffect(() => {
+    if (!loading && videoDuration > 600 && inputValue.length > 0) {
+      setIsDurationModalVisible(true);
+    }
+  }, [loading, videoDuration, inputValue]);
+
+  const handleCloseDurationModal = () => {
+    setIsDurationModalVisible(false);
+    setButtonDisabled(true);
+  };
+
   const intl = useIntl();
 
   useEffect(() => {
@@ -113,7 +127,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
 
   const handleFormSubmit = async (values: any) => {
     const { youtubeUrl, language } = values;
-    if (user.isAddVideoExceeded && !user.subscribed && user.email !== "slavosmn@gmail.com" ) {
+    if (
+      user.isAddVideoExceeded &&
+      !user.subscribed &&
+      user.email !== "slavosmn@gmail.com"
+    ) {
       return;
     }
 
@@ -170,11 +188,29 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 onFinish={handleFormSubmit}
                 form={form}
               >
-                {!loading && !isFetchValid && inputValue.length > 0 && (
+                {/* {!loading && !isFetchValid && inputValue.length > 0 && (
                   <Typography.Text>
                     Unfortunately, this video does not contain any subtitles.
                     Try adding another video.
                   </Typography.Text>
+                )} */}
+                {!loading && videoDuration > 600 && inputValue.length > 0 && (
+                  <Modal
+                    open={isDurationModalVisible}
+                    onCancel={handleCloseDurationModal}
+                    closable={true}
+                    footer={false}
+                    width="80%"
+                    centered
+                  >
+                    <center>
+                      <Typography.Title style={{ marginTop: "30px" }}>
+                        Unfortunately, this video is longer than 1 minute. For
+                        add this video upgrade your account.
+                      </Typography.Title>
+                    </center>
+                    <PricingComponent />
+                  </Modal>
                 )}
                 <Form.Item
                   name="youtubeUrl"
@@ -187,7 +223,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                     size="large"
                   />
                 </Form.Item>
-                <Spin spinning={loading} size="large">
+                {/* <Spin spinning={loading} size="large">
                   {isFetchValid && inputValue && (
                     <Form.Item
                       style={{ textAlign: "left" }}
@@ -229,7 +265,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                       />
                     </Form.Item>
                   )}
-                </Spin>
+                </Spin> */}
               </Form>
             </Col>
           </Row>

@@ -59,7 +59,8 @@ const Library: React.FC = () => {
     useState<Record<LabelType, LibraryItem[]>>();
   const [loading, setLoading] = useState(true);
   const [inputValue, setInputValue] = useState("");
-  const [selectOptions, setSelectOptions] = useState<Option[]>([]);
+  //const [selectOptions, setSelectOptions] = useState<Option[]>([]);
+  const [videoDuration, setVideoDuration] = useState<number>(0);
   const [isFetchValid, setIsFetchValid] = useState(false);
   const [sourceLanguageFromVideo, setSourceLanguageFromVideo] = useState<
     string | null
@@ -96,20 +97,22 @@ const Library: React.FC = () => {
       }
 
       const data = await response.json();
-      if (!data.languageCodes || data.languageCodes.length === 0) {
+      if (!data.videoDuration || data.videoDuration.length === 0) {
         setIsFetchValid(false);
         throw new Error("Empty data received from server");
       }
 
-      const options = data.languageCodes.map((code: any) => ({
+      /* const options = data.languageCodes.map((code: any) => ({
         value: code,
         label: code,
-      }));
-      setSelectOptions(options);
+      })); */
+      //setSelectOptions(options);
+
+      setVideoDuration(data.videoDuration);
       setIsFetchValid(true);
     } catch (error) {
       // If there's an error, clear the options
-      setSelectOptions([]);
+      setVideoDuration(0);
       console.error("Error fetching options:", error);
     }
   };
@@ -796,7 +799,7 @@ const Library: React.FC = () => {
               setInputValue={setInputValue}
               fetchOptions={fetchOptions}
               isFetchValid={isFetchValid}
-              selectOptions={selectOptions}
+              videoDuration={videoDuration}
               targetLanguage={user.targetLanguage}
               onLanguageSelect={handleLanguageSelect}
               onAddItemClick={async (
