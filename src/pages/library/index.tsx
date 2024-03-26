@@ -446,11 +446,6 @@ const Library: React.FC = () => {
   }, [polling, sliderUpdated]);
 
   const handleAddButtonClick = async () => {
-    const updatedUserEntity: Partial<User> = {
-      isAddVideoExceeded: true,
-    };
-
-    await updateUser(updatedUserEntity);
     setIsButtonDisabled(isDisabled());
     setIsModalVisible(true);
   };
@@ -815,6 +810,7 @@ const Library: React.FC = () => {
                   await fetchData();
                 }
               }}
+              resetVideoDuration={() => setVideoDuration(0)}
             />
           </div>
           <div className={styles.footer}>

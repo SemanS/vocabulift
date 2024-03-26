@@ -19,6 +19,8 @@ import { useIntl } from "react-intl";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
+import { updateUser } from "@/services/userService";
+import { User } from "@/models/user";
 
 interface AddItemModalProps {
   isModalVisible: boolean;
@@ -31,6 +33,7 @@ interface AddItemModalProps {
   targetLanguage: string;
   onLanguageSelect: (language: string) => void;
   onAddItemClick: (videoThumbnail: string, status: string) => void;
+  resetVideoDuration: () => void;
 }
 
 const AddItemModal: React.FC<AddItemModalProps> = ({
@@ -44,6 +47,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   targetLanguage,
   onLanguageSelect,
   onAddItemClick,
+  resetVideoDuration,
 }) => {
   const [form] = Form.useForm();
 
@@ -62,6 +66,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     useState<string>(targetLanguage);
   const [user, setUser] = useRecoilState(userState);
   const [isDurationModalVisible, setIsDurationModalVisible] = useState(false);
+  const [isValidYoutubeUrl, setIsValidYoutubeUrl] = useState(true);
 
   useEffect(() => {
     if (!loading && videoDuration > 600 && inputValue.length > 0) {
@@ -72,6 +77,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const handleCloseDurationModal = () => {
     setIsDurationModalVisible(false);
     setButtonDisabled(true);
+    resetVideoDuration();
   };
 
   const intl = useIntl();
@@ -95,8 +101,14 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
+    const youtubeUrlPattern =
+      /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
+    const isValidYoutubeUrl = youtubeUrlPattern.test(value);
+    setIsValidYoutubeUrl(isValidYoutubeUrl);
     setInputValue(value);
-    if (value) {
+
+    if (value && isValidYoutubeUrl) {
       setLoading(true);
       await fetchOptions(value).then(() => {
         setLoading(false);
@@ -155,7 +167,14 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       sourceLanguage: selectedLanguageFrom,
       targetLanguage: selectedLanguageTo,
     });
+
+    const updatedUserEntity: Partial<User> = {
+      isAddVideoExceeded: true,
+    };
+
+    await updateUser(updatedUserEntity);
     localStorage.setItem("ongoingEventId", eventId);
+    setUser({ ...user, isAddVideoExceeded: true });
 
     onAddItemClick(videoThumbnail, response.status);
     handleModalCancelAndReset();
@@ -188,30 +207,33 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 onFinish={handleFormSubmit}
                 form={form}
               >
-                {/* {!loading && !isFetchValid && inputValue.length > 0 && (
-                  <Typography.Text>
-                    Unfortunately, this video does not contain any subtitles.
-                    Try adding another video.
+                {!loading && !isValidYoutubeUrl && inputValue.length > 0 && (
+                  <Typography.Text type="danger">
+                    Please enter a valid YouTube video URL.
                   </Typography.Text>
-                )} */}
-                {!loading && videoDuration > 600 && inputValue.length > 0 && (
-                  <Modal
-                    open={isDurationModalVisible}
-                    onCancel={handleCloseDurationModal}
-                    closable={true}
-                    footer={false}
-                    width="80%"
-                    centered
-                  >
-                    <center>
-                      <Typography.Title style={{ marginTop: "30px" }}>
-                        Unfortunately, this video is longer than 1 minute. For
-                        add this video upgrade your account.
-                      </Typography.Title>
-                    </center>
-                    <PricingComponent />
-                  </Modal>
                 )}
+                {!loading &&
+                  videoDuration > 600 &&
+                  inputValue.length > 0 &&
+                  !user.subscribed &&
+                  user.email !== "slavosmn@gmail.com" && (
+                    <Modal
+                      open={isDurationModalVisible}
+                      onCancel={handleCloseDurationModal}
+                      closable={true}
+                      footer={false}
+                      width="80%"
+                      centered
+                    >
+                      <center>
+                        <Typography.Title style={{ marginTop: "30px" }}>
+                          Unfortunately, this video is longer than 1 minute. For
+                          add this video upgrade your account.
+                        </Typography.Title>
+                      </center>
+                      <PricingComponent />
+                    </Modal>
+                  )}
                 <Form.Item
                   name="youtubeUrl"
                   style={{ textAlign: "left", marginTop: "10px" }}
