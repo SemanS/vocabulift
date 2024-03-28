@@ -955,7 +955,7 @@ const BookDetail: FC = () => {
       ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
     ) {
       const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
-      if (index === 0) {
+      if (index === 0 && user.newUser) {
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
         setJoyrideStyles({
