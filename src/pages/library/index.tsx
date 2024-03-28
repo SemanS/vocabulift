@@ -269,7 +269,7 @@ const Library: React.FC = () => {
         setState({ run: true, stepIndex: nextStepIndex });
       } else if (index === 4) {
         navigate(
-          "/library/65eff42ba9cddfc6887ef46a?currentPage=1&pageSize=10&targetLanguage=sk"
+          `/library/65eff42ba9cddfc6887ef46a?currentPage=1&pageSize=10&targetLanguage='${user.targetLanguage}'`
         );
         document.body.style.overflow = "hidden";
         setState({ run: true, stepIndex: nextStepIndex });
