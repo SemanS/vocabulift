@@ -1162,6 +1162,11 @@ const BookDetail: FC = () => {
 
   const isMobile = window.innerWidth <= 600;
 
+  const customLocale = {
+    last: intl.formatMessage({ id: "joyride.last" }),
+    next: intl.formatMessage({ id: "joyride.next" }),
+  };
+
   return (
     <PageContainer title={false} className={styles.container}>
       {user.newUser && (
@@ -1180,6 +1185,7 @@ const BookDetail: FC = () => {
           stepIndex={stepIndex}
           callback={handleJoyrideCallback}
           styles={joyrideStyles}
+          locale={customLocale}
         />
       )}
       {state.isLimitExceeded && user.subscribed === false && !hasAccess ? (
