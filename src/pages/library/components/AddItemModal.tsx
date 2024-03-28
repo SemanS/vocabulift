@@ -269,25 +269,25 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                       />
                     </Form.Item>
                   )}
-                  {inputValue && (
-                    <Form.Item
-                      style={{ textAlign: "left" }}
-                      label={intl.formatMessage({ id: "translate.to" })}
-                      name="language"
-                    >
-                      <LanguageSelector
-                        useRecoil={false}
-                        disabledLanguage={selectedLanguageFrom}
-                        onLanguageChange={(language) => {
-                          setSelectedLanguageTo(language);
-                        }}
-                        text={""}
-                        languageProp="targetLanguage"
-                        style={{ marginTop: "-10px" }}
-                      />
-                    </Form.Item>
-                  )}
-                </Spin> */}
+                  </Spin> */}
+                {
+                  <Form.Item
+                    style={{ textAlign: "left" }}
+                    label={intl.formatMessage({ id: "translate.to" })}
+                    name="language"
+                  >
+                    <LanguageSelector
+                      useRecoil={false}
+                      disabledLanguage={selectedLanguageFrom}
+                      onLanguageChange={(language) => {
+                        setSelectedLanguageTo(language);
+                      }}
+                      text={""}
+                      languageProp="targetLanguage"
+                      style={{ marginTop: "-10px" }}
+                    />
+                  </Form.Item>
+                }
               </Form>
             </Col>
           </Row>
