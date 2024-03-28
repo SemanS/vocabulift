@@ -248,35 +248,39 @@ const Library: React.FC = () => {
       }
     }
 
-    if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
-      setState({ run: false, stepIndex: 0 });
-    } else if (
-      ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(type)
-    ) {
-      const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
-      if (index === 0) {
-        document.body.style.overflow = "hidden";
-        toggleSettingsDrawer();
-        setState({ run: true, stepIndex: nextStepIndex });
-      } else if (index === 1) {
-        document.body.style.overflow = "hidden";
-        setState({ run: true, stepIndex: nextStepIndex });
-      } else if (index === 2) {
-        document.body.style.overflow = "hidden";
-        setState({ run: true, stepIndex: nextStepIndex });
-      } else if (index === 3) {
-        document.body.style.overflow = "hidden";
-        setState({ run: true, stepIndex: nextStepIndex });
-      } else if (index === 4) {
-        navigate(
-          `/library/65eff42ba9cddfc6887ef46a?currentPage=1&pageSize=10&targetLanguage=${user.targetLanguage}`
-        );
-        document.body.style.overflow = "hidden";
-        setState({ run: true, stepIndex: nextStepIndex });
-      } else {
-        setState({
-          stepIndex: nextStepIndex,
-        });
+    if (user.newUser) {
+      if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
+        setState({ run: false, stepIndex: 0 });
+      } else if (
+        ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(
+          type
+        )
+      ) {
+        const nextStepIndex = index + (action === ACTIONS.PREV ? -1 : 1);
+        if (index === 0) {
+          document.body.style.overflow = "hidden";
+          toggleSettingsDrawer();
+          setState({ run: true, stepIndex: nextStepIndex });
+        } else if (index === 1) {
+          document.body.style.overflow = "hidden";
+          setState({ run: true, stepIndex: nextStepIndex });
+        } else if (index === 2) {
+          document.body.style.overflow = "hidden";
+          setState({ run: true, stepIndex: nextStepIndex });
+        } else if (index === 3) {
+          document.body.style.overflow = "hidden";
+          setState({ run: true, stepIndex: nextStepIndex });
+        } else if (index === 4) {
+          navigate(
+            `/library/65eff42ba9cddfc6887ef46a?currentPage=1&pageSize=10&targetLanguage=${user.targetLanguage}`
+          );
+          document.body.style.overflow = "hidden";
+          setState({ run: true, stepIndex: nextStepIndex });
+        } else {
+          setState({
+            stepIndex: nextStepIndex,
+          });
+        }
       }
     }
   };
