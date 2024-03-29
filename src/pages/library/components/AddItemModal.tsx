@@ -159,13 +159,13 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       return response.status;
     }
 
-    const { videoThumbnail, eventId } = response;
+    const { videoThumbnail, eventId, sourceLanguage } = response;
 
-    socket.emit("add-video", {
+    void socket.emit("add-video", {
       input: youtubeUrl,
       eventId: eventId,
-      sourceLanguage: selectedLanguageFrom,
       targetLanguage: selectedLanguageTo,
+      sourceLanguage: sourceLanguage,
     });
 
     const updatedUserEntity: Partial<User> = {
