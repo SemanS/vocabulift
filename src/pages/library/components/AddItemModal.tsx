@@ -238,8 +238,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                     >
                       <center>
                         <Typography.Title style={{ marginTop: "30px" }}>
-                          Unfortunately, this video is longer than 1 minute. For
-                          add this video upgrade your account.
+                          Unfortunately, this video is longer than 10 minute.
+                          For add this video upgrade your account.
                         </Typography.Title>
                       </center>
                       <PricingComponent />
