@@ -67,6 +67,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [user, setUser] = useRecoilState(userState);
   const [isDurationModalVisible, setIsDurationModalVisible] = useState(false);
   const [isValidYoutubeUrl, setIsValidYoutubeUrl] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!loading && videoDuration > 600 && inputValue.length > 0) {
@@ -147,37 +148,47 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       return;
     }
 
-    const response = await postLibraryVideo(
-      selectedLanguageFrom,
-      selectedLanguageTo,
-      youtubeUrl
-    );
+    setIsLoading(true); // Start loading
 
-    if (response.status === "conflict") {
-      onAddItemClick("", response.status);
+    try {
+      const response = await postLibraryVideo(
+        selectedLanguageFrom,
+        selectedLanguageTo,
+        youtubeUrl
+      );
+
+      if (response.status === "conflict") {
+        onAddItemClick("", response.status);
+        handleModalCancelAndReset();
+        return response.status;
+      }
+
+      const { videoThumbnail, eventId, sourceLanguage, transcript } = response;
+
+      void socket.emit("add-video", {
+        input: youtubeUrl,
+        eventId: eventId,
+        targetLanguage: selectedLanguageTo,
+        sourceLanguage: sourceLanguage,
+        transcript: transcript,
+      });
+
+      const updatedUserEntity: Partial<User> = {
+        isAddVideoExceeded: true,
+      };
+
+      await updateUser(updatedUserEntity);
+      localStorage.setItem("ongoingEventId", eventId);
+      setUser({ ...user, isAddVideoExceeded: true });
+
+      onAddItemClick(videoThumbnail, response.status);
       handleModalCancelAndReset();
-      return response.status;
+    } catch (error) {
+      // Handle any errors
+      console.error(error);
+    } finally {
+      setIsLoading(false); // Ensure loading is stopped in case of success or failure
     }
-
-    const { videoThumbnail, eventId, sourceLanguage } = response;
-
-    void socket.emit("add-video", {
-      input: youtubeUrl,
-      eventId: eventId,
-      targetLanguage: selectedLanguageTo,
-      sourceLanguage: sourceLanguage,
-    });
-
-    const updatedUserEntity: Partial<User> = {
-      isAddVideoExceeded: true,
-    };
-
-    await updateUser(updatedUserEntity);
-    localStorage.setItem("ongoingEventId", eventId);
-    setUser({ ...user, isAddVideoExceeded: true });
-
-    onAddItemClick(videoThumbnail, response.status);
-    handleModalCancelAndReset();
   };
 
   const normFile = (e: any) => {
@@ -376,8 +387,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
           type="primary"
           onClick={handleButtonClick}
           disabled={buttonDisabled}
+          loading={isLoading}
         >
-          Add
+          {isLoading ? "Adding..." : "Add Video"}
         </Button>,
       ]}
     >
