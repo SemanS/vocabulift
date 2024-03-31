@@ -68,6 +68,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
   const [isDurationModalVisible, setIsDurationModalVisible] = useState(false);
   const [isValidYoutubeUrl, setIsValidYoutubeUrl] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [responseMessage, setResponseMessage] = useState("");
 
   useEffect(() => {
     if (!loading && videoDuration > 600 && inputValue.length > 0) {
@@ -93,6 +94,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       setButtonDisabled(true);
     }
     form.resetFields();
+    setResponseMessage("");
   }, [activeTab]);
 
   const handleLanguageSelection = (language: string) => {
@@ -158,8 +160,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       );
 
       if (response.status === "conflict") {
-        onAddItemClick("", response.status);
-        handleModalCancelAndReset();
+        console.log("ahoj");
+        console.log("response" + response.message);
+        //onAddItemClick(response.message, response.status);
+        //handleModalCancelAndReset();
+        setResponseMessage(response.message);
         return response.status;
       }
 
@@ -221,6 +226,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 {!loading && !isValidYoutubeUrl && inputValue.length > 0 && (
                   <Typography.Text type="danger">
                     Please enter a valid YouTube video URL.
+                  </Typography.Text>
+                )}
+                {responseMessage && (
+                  <Typography.Text type="danger">
+                    {responseMessage}
                   </Typography.Text>
                 )}
                 {!loading &&
