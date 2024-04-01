@@ -78,14 +78,14 @@ const Header = () => {
       <>
         {location.pathname === "/" && (
           <>
-            <Button
+            {/* <Button
               color={"silver"}
               onClick={() => {
                 navigate("/academy");
               }}
             >
               {"Academy (NEW)"}
-            </Button>
+            </Button> */}
             <CustomNavLinkSmall onClick={() => scrollTo("intro", 200)}>
               <Span>{"About"}</Span>
             </CustomNavLinkSmall>
@@ -100,13 +100,13 @@ const Header = () => {
             </CustomNavLinkSmall>
           </>
         )}
-        {location.pathname === "/academy" && (
+        {/* {location.pathname === "/academy" && (
           <>
             <CustomNavLinkSmall onClick={() => navigate("/")}>
               <Span>{"Home"}</Span>
             </CustomNavLinkSmall>
           </>
-        )}
+        )} */}
         <CustomNavLinkSmall>
           <Span>
             {cookies.access_token ? (

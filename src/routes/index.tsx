@@ -2,7 +2,7 @@ import React, { lazy, FC } from "react";
 import Dashboard from "@/pages/dashboard";
 import { useRoutes, RouteObject } from "react-router-dom";
 import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
-import Academy from "@/pages/webLayout/academy";
+//import Academy from "@/pages/webLayout/academy";
 const LoginPage = lazy(() => import("@/pages/login"));
 const CookiePolicy = lazy(() => import("@/pages/cookie-policy"));
 const VerificationPage = lazy(() => import("@/pages/verification"));
@@ -84,7 +84,7 @@ const routeList: RouteObject[] = [
       </>
     ),
   },
-  {
+  /* {
     path: "/academy",
     element: (
       <>
@@ -92,7 +92,7 @@ const routeList: RouteObject[] = [
         <GlobalStyles />
       </>
     ),
-  },
+  }, */
   {
     path: "/login",
     element: <LoginPage />,
