@@ -45,6 +45,7 @@ const initialState: User = {
   subscriptionId: "123",
   meanings: 0,
   alternatives: 0,
+  partnerCode: "edifiers123",
 };
 
 const localStorageEffect =

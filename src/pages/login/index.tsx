@@ -24,6 +24,7 @@ const LoginForm: FC = () => {
 
   const from = ((location.state as any)?.from.pathname as string) || "/library";
   const [password, setPassword] = React.useState("");
+  const [partnerCode, setPartnerCode] = React.useState("");
 
   type ValidateStatus =
     | ""
@@ -132,6 +133,7 @@ const LoginForm: FC = () => {
             body: JSON.stringify({
               email,
               password: password,
+              partnerCode: partnerCode,
             }),
             credentials: "include",
           }
@@ -170,6 +172,23 @@ const LoginForm: FC = () => {
           }/api/sessions/login`}
           method="POST" */
         >
+          <Form.Item
+            name="partner"
+            rules={[
+              {
+                required: false,
+                message: "Enter the code provided by your partner.",
+              },
+            ]}
+          >
+            <Input
+              size="large"
+              placeholder="Partner's program code"
+              value={partnerCode}
+              onChange={(e) => setPartnerCode(e.target.value)}
+            />
+          </Form.Item>
+          <Divider />
           <Form.Item
             name="email"
             rules={[{ required: true, message: "Please enter email" }]}
@@ -245,7 +264,7 @@ const LoginForm: FC = () => {
         <Divider plain>OR</Divider>
         <Button
           size="large"
-          href={getGoogleUrl(from)}
+          href={getGoogleUrl(from, partnerCode)}
           style={{ textDecoration: "none" }}
           className={`${styles.mainLoginBtn} ${styles.flexContainer}`}
         >

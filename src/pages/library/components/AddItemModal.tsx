@@ -145,7 +145,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
     if (
       user.isAddVideoExceeded &&
       !user.subscribed &&
-      user.email !== "slavosmn@gmail.com"
+      user.email !== "slavosmn@gmail.com" &&
+      user.partnerCode !== "edifiers123"
     ) {
       return;
     }
@@ -234,7 +235,9 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                   </Typography.Text>
                 )}
                 {!loading &&
-                  videoDuration > 600 &&
+                  ((videoDuration > 600 && user.partnerCode !== "edifiers") ||
+                    (videoDuration > 1000 &&
+                      user.partnerCode === "edifiers123")) &&
                   inputValue.length > 0 &&
                   !user.subscribed &&
                   user.email !== "slavosmn@gmail.com" && (

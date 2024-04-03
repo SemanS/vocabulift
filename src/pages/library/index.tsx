@@ -606,7 +606,7 @@ const Library: React.FC = () => {
     if (user.subscribed) {
       return false;
     }
-    return user.isAddVideoExceeded;
+    if (user.partnerCode === "") return user.isAddVideoExceeded;
   }
 
   const renderSettingsDrawerContent = () => {

@@ -44,7 +44,7 @@ const PricingComponent = () => {
       monthlyPriceId: import.meta.env.VITE_REACT_APP_POLYGLOT_MONTHLY_PRICE_ID,
       features: [
         "Unlimited access to all videos",
-        "Unlimited words/phrases",
+        "Unlimited words/phrases translation",
         "Access to worksheets",
         "Unlimited words/phrases meaning",
         "Unlimited words/phrases alternatives",

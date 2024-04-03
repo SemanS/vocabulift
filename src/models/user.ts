@@ -96,6 +96,7 @@ export interface User {
   subscriptionPeriod: SubscriptionPeriod;
   subscriptionId: string;
   isAddVideoExceeded: boolean;
+  partnerCode: string;
 }
 
 export interface UserEntity {
