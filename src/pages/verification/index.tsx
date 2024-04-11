@@ -146,11 +146,13 @@ const VerificationPage: FC = () => {
             <Typography.Title>Email Verification</Typography.Title>
           </div>
           <div style={{ textAlign: "center" }}>
-            <Typography.Text>We sent a 6 digit code to</Typography.Text>
+            <Typography.Text>
+              We sent a 6 digit code to your email
+            </Typography.Text>
           </div>
-          <div style={{ textAlign: "center" }}>
+          {/* <div style={{ textAlign: "center" }}>
             <Typography.Text>slavosmn@gmail.com</Typography.Text>
-          </div>
+          </div> */}
           <div style={{ textAlign: "center", marginTop: "20px" }}>
             <Typography.Text>
               For security reasons, the code will expire in 30 minutes.
