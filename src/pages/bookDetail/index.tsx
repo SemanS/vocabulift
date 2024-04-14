@@ -935,6 +935,10 @@ const BookDetail: FC = () => {
       });
     }
 
+    if (type === EVENTS.TOUR_END) {
+      document.body.style.overflow = "auto";
+    }
+
     if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
       if (user.newUser) {
         const updatedUserEntity: Partial<User> = {

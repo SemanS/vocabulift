@@ -55,7 +55,7 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         locale: "en-US",
         library: [],
         role: "guest",
-        newUser: false,
+        newUser: true,
         avatar: "",
         sourceLanguage: "en",
         targetLanguage: "sk",

@@ -242,6 +242,7 @@ const Library: React.FC = () => {
 
     if (type === EVENTS.TOUR_END) {
       setState({ run: false, stepIndex: 0, mainKey: mainKey + 1 });
+      document.body.style.overflow = "auto";
       if (run) {
         toggleSettingsDrawer();
         setSettingsDrawerWasOpen(false);
@@ -251,6 +252,7 @@ const Library: React.FC = () => {
     if (user.newUser) {
       if (([STATUS.FINISHED, STATUS.SKIPPED] as string[]).includes(status)) {
         setState({ run: false, stepIndex: 0 });
+        document.body.style.overflow = "auto";
       } else if (
         ([EVENTS.STEP_AFTER, EVENTS.TARGET_NOT_FOUND] as string[]).includes(
           type
