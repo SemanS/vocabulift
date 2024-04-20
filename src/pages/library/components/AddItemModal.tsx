@@ -147,7 +147,8 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
       !user.subscribed &&
       user.email !== "slavosmn@gmail.com" &&
       user.partnerCode !== "edifiers123" &&
-      user.partnerCode !== "senacor123"
+      user.partnerCode !== "senacor123" &&
+      user.partnerCode !== "linguarte123"
     ) {
       return;
     }
@@ -238,10 +239,12 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                 {!loading &&
                   ((videoDuration > 600 &&
                     user.partnerCode !== "edifiers123" &&
-                    user.partnerCode !== "senacor123") ||
+                    user.partnerCode !== "senacor123" &&
+                    user.partnerCode !== "linguarte123") ||
                     (videoDuration > 1000 &&
                       (user.partnerCode === "edifiers123" ||
-                        user.partnerCode === "senacor123"))) &&
+                        user.partnerCode === "senacor123")) ||
+                    user.partnerCode !== "linguarte123") &&
                   inputValue.length > 0 &&
                   !user.subscribed &&
                   user.email !== "slavosmn@gmail.com" && (
