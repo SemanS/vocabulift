@@ -190,24 +190,33 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   ]);
 
   const getClassName = () => {
-    let classes = [`translate-word ${styles.textbox}`];
-    if (props.isHighlightedFromVideo) classes.push(styles.bubbleVideoHovered);
-    if (isHovered || props.isHighlighted) classes.push(styles.bubbleHovered);
+    let result = styles.textbox;
+    if (props.isHighlightedFromVideo) result += ` ${styles.bubbleVideoHovered}`;
+    if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
 
     if (
-      (isWord || isWordPhrase) &&
-      (props.mode === "words" || props.mode === "all")
+      (isWord && props.mode === "words") ||
+      (isWord && props.mode === "all")
     ) {
-      classes.push(styles.bubbleWord); // Apply word specific style
+      result += ` ${styles.bubbleWord}`;
     }
-    if (isPhrase && (props.mode === "phrases" || props.mode === "all")) {
-      classes.push(styles.bubblePhrase); // Apply phrase specific style
+
+    if (
+      (isPhrase && props.mode === "phrases") ||
+      (isPhrase && props.mode === "all")
+    ) {
+      result += ` ${styles.bubblePhrase}`;
+    }
+
+    if (isWordPhrase && props.mode === "all") {
+      result += ` ${styles.bubbleWordPhrase}`; // Ensure this line is effectively reached
     }
 
     if (isLastInPhrase) {
-      classes.push(styles.lastInPhrase); // Specific handling for last in phrase
+      result += ` ${styles.lastInPhrase}`;
     }
-    return classes.join(" ");
+
+    return result;
   };
 
   useEffect(() => {
