@@ -190,39 +190,24 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   ]);
 
   const getClassName = () => {
-    let result = styles.textbox;
-
-    if (props.isHighlightedFromVideo) {
-      return `${styles.textbox} ${styles.bubbleVideoHovered}`;
-    }
-
-    if (isHovered || props.isHighlighted) {
-      result += ` ${styles.bubbleHovered}`;
-    }
+    let classes = [`translate-word ${styles.textbox}`];
+    if (props.isHighlightedFromVideo) classes.push(styles.bubbleVideoHovered);
+    if (isHovered || props.isHighlighted) classes.push(styles.bubbleHovered);
 
     if (
-      (isWord && props.mode === "words") ||
-      (isWord && props.mode === "all")
+      (isWord || isWordPhrase) &&
+      (props.mode === "words" || props.mode === "all")
     ) {
-      result += ` ${styles.bubbleWord}`;
+      classes.push(styles.bubbleWord); // Apply word specific style
+    }
+    if (isPhrase && (props.mode === "phrases" || props.mode === "all")) {
+      classes.push(styles.bubblePhrase); // Apply phrase specific style
     }
 
-    if (
-      (isPhrase && props.mode === "phrases") ||
-      (isPhrase && props.mode === "all")
-    ) {
-      result += ` ${styles.bubblePhrase}`;
+    if (isLastInPhrase) {
+      classes.push(styles.lastInPhrase); // Specific handling for last in phrase
     }
-
-    if (isWordPhrase && props.mode === "all") {
-      result += ` ${styles.bubbleWordPhrase}`;
-    }
-
-    if (isLastInPhrase && props.mode === "all") {
-      result += ` ${styles.lastInPhrase}`;
-    }
-
-    return result;
+    return classes.join(" ");
   };
 
   useEffect(() => {
@@ -388,16 +373,20 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   useEffect(() => {
-    // Assuming you have a method to determine if a word is the last in any phrase
-    const checkIfLastInAnyPhrase = () => {
-      const isLastInAnyPhrase = userPhrases!.some(
-        (phrase) => props.wordIndex === phrase.phrase.endPosition
-      );
-      setIsLastInPhrase(isLastInAnyPhrase);
-    };
-
-    checkIfLastInAnyPhrase();
-  }, [userPhrases, props.wordIndex]);
+    const isLastWord = userWords!.some(
+      (word) => props.wordIndex === word.phrase.endPosition
+    );
+    const isLastInPhraseForPhrases = userPhrases!.some(
+      (phrase) => props.wordIndex === phrase.phrase.endPosition
+    );
+    if (props.mode === "words") {
+      setIsLastInPhrase(isLastWord);
+    } else if (props.mode === "phrases") {
+      setIsLastInPhrase(isLastInPhraseForPhrases);
+    } else if (props.mode === "all") {
+      setIsLastInPhrase(isLastWord || isLastInPhraseForPhrases);
+    }
+  }, [userPhrases, userWords, props.wordIndex, props.mode]);
 
   return renderTooltip(
     <span
@@ -418,11 +407,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       onTouchEnd={handleTouchEnd}
       data-word-index={props.wordIndex}
     >
+      {props.word}
       {props.mode === "sentences"
-        ? props.word + "\n"
-        : isLastInPhrase
-        ? props.word
-        : props.word + " "}
+        ? "\n"
+        : isLastInPhrase || isHovered
+        ? ""
+        : " "}
     </span>
   );
 };

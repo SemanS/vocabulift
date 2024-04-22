@@ -122,7 +122,7 @@ const RegistrationForm: FC = () => {
     if (response.status === 200) {
       localStorage.setItem("hasNotified", "false");
 
-      navigate("/", {
+      navigate("/verification", {
         state: { message: "Please check your email." },
       });
     } else if (response.status === 409) {
