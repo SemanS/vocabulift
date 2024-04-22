@@ -209,7 +209,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     }
 
     if (isWordPhrase && props.mode === "all") {
-      result += ` ${styles.bubbleWordPhrase}`; // Ensure this line is effectively reached
+      result += ` ${styles.bubbleWordPhrase}`;
     }
 
     if (isLastInPhrase) {
@@ -393,7 +393,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     } else if (props.mode === "phrases") {
       setIsLastInPhrase(isLastInPhraseForPhrases);
     } else if (props.mode === "all") {
-      setIsLastInPhrase(isLastWord || isLastInPhraseForPhrases);
+      setIsLastInPhrase(!isLastWord && isLastInPhraseForPhrases);
     }
   }, [userPhrases, userWords, props.wordIndex, props.mode]);
 
@@ -417,11 +417,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       data-word-index={props.wordIndex}
     >
       {props.word}
-      {props.mode === "sentences"
-        ? "\n"
-        : isLastInPhrase || isHovered
-        ? ""
-        : " "}
+      {props.mode === "sentences" ? "\n" : isLastInPhrase ? "" : " "}
     </span>
   );
 };
