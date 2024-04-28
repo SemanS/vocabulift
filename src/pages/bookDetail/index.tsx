@@ -94,6 +94,7 @@ const initialReducerState = (targetLanguageFromQuery: string) => ({
   isMobile: false,
   isPlaying: false,
   subscribed: false,
+  selectedPartOfSpeech: "",
 });
 
 interface StepType {
@@ -185,6 +186,8 @@ function reducer(state: any, action: any) {
       return { ...state, isPlaying: action.payload };
     case "setLibrary":
       return { ...state, library: action.payload };
+    case "setSelectedPartOfSpeech":
+      return { ...state, partOfSpeech: action.payload };
     default:
       throw new Error();
   }
@@ -210,6 +213,16 @@ const BookDetail: FC = () => {
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [user, setUser] = useRecoilState(userState);
   const videoPlayerRef = useRef<ExposedFunctions | null>(null);
+  const partsOfSpeech = [
+    "noun",
+    "pronoun",
+    "verb",
+    "adjective",
+    "adverb",
+    "preposition",
+    "conjunction",
+    "interjection",
+  ];
 
   const [state, dispatch] = useReducer(
     reducer,
@@ -254,7 +267,9 @@ const BookDetail: FC = () => {
     dispatch({ type: "setSelectedLanguageTo", payload: language });
   const setLibrary = (library: any) =>
     dispatch({ type: "setLibrary", payload: library });
-
+  const setSelectedPartOfSpeech = (partOfSpeech) => {
+    dispatch({ type: "setSelectedPartOfSpeech", payload: partOfSpeech });
+  };
   const intl = useIntl();
 
   const users = [
@@ -471,6 +486,8 @@ const BookDetail: FC = () => {
   const updateSentencesState = useCallback(
     async (snapshots: Snapshot[], localSentenceFrom: number) => {
       let language = state.selectedLanguageTo;
+      console.log("snapshots" + JSON.stringify(snapshots));
+
       const isLanguageInSnapshots = snapshots.some(
         (snapshot) => snapshot.language === state.selectedLanguageTo
       );
@@ -1048,7 +1065,7 @@ const BookDetail: FC = () => {
           >
             {intl.formatMessage({ id: "translate.box.download.worksheet" })}
           </Button> */}
-          <Button
+          {/* <Button
             type="default"
             onClick={() =>
               handleModeChange({ target: { value: "quiz" } } as any)
@@ -1057,7 +1074,19 @@ const BookDetail: FC = () => {
             style={{ marginTop: 10, fontWeight: 500 }}
           >
             {intl.formatMessage({ id: "translate.box.quiz" })}
-          </Button>
+          </Button> */}
+          <Select
+            value={state.partOfSpeech}
+            onChange={setSelectedPartOfSpeech}
+            style={{ marginLeft: 16, marginTop: 10, fontWeight: 500 }}
+            defaultValue={"Exercise"}
+          >
+            {partsOfSpeech.map((part, index) => (
+              <Select.Option key={index} value={part}>
+                {part}
+              </Select.Option>
+            ))}
+          </Select>
           <Select
             value={state.selectedLanguageTo}
             onChange={(value) => {
@@ -1108,6 +1137,7 @@ const BookDetail: FC = () => {
           onChangeMode={setMode}
           magnifyingGlassRef={magnifyingGlassRef}
           addSteps={addTranslateBoxSteps}
+          partOfSpeech={state.partOfSpeech}
         />
       </Card>
     </div>

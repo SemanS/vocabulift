@@ -159,7 +159,7 @@ const LayoutPage: FC = () => {
               />
             );
           }}
-          rightContentRender={() => <RightContent></RightContent>}
+          actionsRender={() => <RightContent></RightContent>}
           //footerRender={() => <Footer />}
         >
           <Outlet />

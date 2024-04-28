@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import TranslateWord from "../TranslateWord/TranslateWord";
 import { useParams } from "react-router-dom";
 import {
@@ -16,6 +16,7 @@ import { getPhraseIfNotInHighlighted, isSingleWord } from "@/utils/utilMethods";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
 import QuizComponent from "../Quiz/QuizComponent";
 import { useIntl } from "react-intl";
+import Select from "react-select";
 
 interface TranslateBoxProps {
   mode: string;
@@ -34,6 +35,7 @@ interface TranslateBoxProps {
   onChangeMode: (mode: string) => void;
   magnifyingGlassRef: any;
   addSteps: any;
+  partOfSpeech: string;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -53,6 +55,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   onChangeMode,
   magnifyingGlassRef,
   addSteps,
+  partOfSpeech,
 }) => {
   const { libraryId } = useParams();
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
@@ -68,6 +71,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     null
   );
   const intl = useIntl();
+
+  const [tenses, setTenses] = useState<any[]>([]);
 
   useEffect(() => {
     const translateBoxSteps = [
@@ -479,6 +484,171 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   };
 
+  function extractUniqueVerbs(sentences, selectedPartOfSpeech) {
+    let usedVerbs = new Set(); // Track verbs that have already been used
+    let results = [];
+
+    sentences.forEach((sentence, index) => {
+      if (
+        !sentence ||
+        !sentence.sentenceWords ||
+        sentence.sentenceWords.length === 0
+      ) {
+        console.log(
+          `No words or sentence is malformed at index ${index}:`,
+          sentence
+        );
+        results.push({ error: "No valid words", index }); // Optionally handle no words scenario
+        return;
+      }
+
+      // Filter words to find those with partOfSpeech marked as "verb"
+      let sentenceVerbs = sentence.sentenceWords
+        .filter(
+          (word) =>
+            word.partOfSpeech &&
+            word.partOfSpeech.toLowerCase() === selectedPartOfSpeech
+        )
+        .map((word) => ({
+          text: word.wordText.toLowerCase(),
+          position: word.position,
+          sentenceNumber: sentence.sentenceNo,
+        }));
+
+      // Find the first unique verb not already used
+      let selectedVerb = sentenceVerbs.find(
+        (verb) => !usedVerbs.has(verb.text)
+      );
+
+      // If all verbs in the sentence are already used, skip or handle specially
+      if (!selectedVerb && sentenceVerbs.length > 0) {
+        selectedVerb = sentenceVerbs[0]; // Optional: choose to use the first if all are used
+      }
+
+      if (selectedVerb) {
+        results.push(selectedVerb);
+        usedVerbs.add(selectedVerb.text);
+      } else {
+        // Handle case where no verbs are found in the sentence
+        results.push({
+          error: "No verbs found",
+          sentenceNumber: sentence.sentenceNo,
+        });
+      }
+    });
+
+    return results;
+  }
+
+  function extractTenseAndSentenceNumber(sentences) {
+    let results = [];
+
+    sentences.forEach((sentence, index) => {
+      if (!sentence || !sentence.sentenceNo || !sentence.tense) {
+        console.log(`Malformed sentence at index ${index}:`, sentence);
+        results.push({ error: "Malformed sentence", index });
+        return;
+      }
+
+      results.push({
+        tense: sentence.tense,
+        sentenceNumber: sentence.sentenceNo,
+      });
+    });
+
+    return results;
+  }
+
+  const memoizedTenseAndSentenceNumber = useMemo(
+    () => extractTenseAndSentenceNumber(visibleSourceTexts),
+    [visibleSourceTexts]
+  );
+
+  const memoizedPartOfSpeech = useMemo(
+    () => extractUniqueVerbs(visibleSourceTexts, partOfSpeech),
+    [visibleSourceTexts, partOfSpeech]
+  );
+
+  const handleTenseChange = (selectedOption, sentenceNumber) => {
+    const updatedTenses = selectedTenses.map((tense) =>
+      tense.sentenceNumber === sentenceNumber
+        ? { ...tense, selectedTense: selectedOption.value }
+        : tense
+    );
+    setSelectedTenses(updatedTenses);
+  };
+
+  const customStyles = (sentenceNumber) => {
+    // Retrieve the current tense info for the given sentence number.
+    const currentTenseInfo = selectedTenses.find(
+      (tense) => tense.sentenceNumber === sentenceNumber
+    );
+
+    // Check if the tense is selected and if it matches the correct tense.
+    const isSelected =
+      currentTenseInfo && currentTenseInfo.selectedTense !== "";
+    const isCorrect =
+      isSelected &&
+      currentTenseInfo.selectedTense === currentTenseInfo.correctTense;
+
+    return {
+      singleValue: (base) => ({
+        ...base,
+        color: "white",
+      }),
+      container: (provided) => ({
+        ...provided,
+        display: "inline-block",
+      }),
+      control: (provided) => ({
+        ...provided,
+        border: 0,
+        fontSize: "17px",
+        fontWeight: 340,
+        fontFamily: `"Open Sans", sans-serif`,
+        color: "black",
+        borderColor: isSelected ? (isCorrect ? "green" : "red") : "grey",
+        boxShadow: "none",
+        cursor: "pointer",
+        paddingLeft: "10px",
+        minHeight: "30px",
+      }),
+      valueContainer: (base) => ({
+        ...base,
+        background: isSelected ? (isCorrect ? "green" : "red") : "white",
+        color: "white",
+        width: "100%",
+        padding: "0 8px",
+      }),
+    };
+  };
+
+  const tenseOptions = [
+    { label: "Simple Present", value: "Simple Present" },
+    { label: "Present Continuous", value: "Present Continuous" },
+    { label: "Present Perfect", value: "Present Perfect" },
+    {
+      label: "Present Perfect Continuous",
+      value: "Present Perfect Continuous",
+    },
+    { label: "Simple Past", value: "Simple Past" },
+    { label: "Past Continuous", value: "Past Continuous" },
+    { label: "Past Perfect", value: "Past Perfect" },
+    { label: "Past Perfect Continuous", value: "Past Perfect Continuous" },
+    { label: "Simple Future", value: "Simple Future" },
+    { label: "Future Continuous", value: "Future Continuous" },
+    { label: "Future Perfect", value: "Future Perfect" },
+    { label: "Future Perfect Continuous", value: "Future Perfect Continuous" },
+  ];
+
+  const [selectedTenses, setSelectedTenses] = useState(() =>
+    visibleSourceTexts.map((sentence) => ({
+      sentenceNumber: sentence.sentenceNo,
+      selectedTense: "", // Initialize with no selection
+      correctTense: sentence.tense, // This should be defined based on your actual data structure
+    }))
+  );
+
   return (
     <>
       {isMobile && (
@@ -500,6 +670,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               translation={targetSentence?.sentenceText || ""}
               sentenceNumber={sourceSentence.sentenceNo}
               sentenceText={sourceSentence.sentenceText}
+              /* partOfSpeech={memoizedPartOfSpeech} */
               mode={mode}
               onMouseDown={(
                 word: string,
@@ -590,6 +761,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     data-highlight={
                       wordIndex === 0 || wordIndex === 2 ? "true" : "false"
                     }
+                    partOfSpeech={memoizedPartOfSpeech}
+                    tense={memoizedTenseAndSentenceNumber}
                     word={sourceWord.wordText}
                     translation={translation}
                     sentenceNumber={sourceSentence.sentenceNo}
@@ -686,13 +859,30 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                   />
                 );
               })}
+              <Select
+                options={tenseOptions}
+                value={tenseOptions.find(
+                  (option) =>
+                    option.value ===
+                    selectedTenses.find(
+                      (tense) =>
+                        tense.sentenceNumber === sourceSentence.sentenceNo
+                    )?.selectedTense
+                )}
+                onChange={(option) =>
+                  handleTenseChange(option, sourceSentence.sentenceNo)
+                }
+                styles={customStyles(sourceSentence.sentenceNo)}
+                placeholder="Select a tense"
+                menuShouldScrollIntoView={false}
+              />
             </div>
           );
         }
       })}
-      {mode === "quiz" && (
+      {/* {mode === "quiz" && (
         <QuizComponent sourceLanguage={sourceLanguage} libraryId={libraryId} />
-      )}
+      )} */}
     </>
   );
 };

@@ -579,20 +579,22 @@ const Vocabulary: React.FC = () => {
       <Row gutter={[24, 24]} justify="center" align="middle">
         <Col span={20}>
           <ResizeObserver
-            onResize={({ width }) => {
-              setTableWidth(width);
+            onResize={({ offsetWidth }) => {
+              setTableWidth(offsetWidth);
             }}
           >
-            <Table
-              columns={mergedColumns}
-              scroll={scroll}
-              className={styles.virtualTable}
-              dataSource={dataSource}
-              pagination={false}
-              components={{
-                body: renderVirtualList,
-              }}
-            />
+            <div>
+              <Table
+                columns={mergedColumns}
+                scroll={scroll}
+                className={styles.virtualTable}
+                dataSource={dataSource}
+                pagination={false}
+                components={{
+                  body: renderVirtualList,
+                }}
+              />
+            </div>
           </ResizeObserver>
         </Col>
       </Row>

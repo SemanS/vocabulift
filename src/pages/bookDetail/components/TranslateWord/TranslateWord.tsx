@@ -4,6 +4,8 @@ import { VocabularyListUserPhrase } from "@models/VocabularyListUserPhrase";
 import { isSingleWord } from "@/utils/utilMethods";
 import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
+//import { Select } from "antd";
+import Select from "react-select";
 
 interface TranslateWordProps {
   id?: string;
@@ -11,6 +13,7 @@ interface TranslateWordProps {
   translation?: string;
   sentenceNumber?: number;
   sentenceText?: string;
+  partOfSpeech?: any[];
   mode: string;
   onMouseDown?: (
     word: string,
@@ -64,11 +67,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [isPhrase, setIsPhrase] = useState(false);
   const [isWordPhrase, setIsWordPhrase] = useState(false);
   const [isLastInPhrase, setIsLastInPhrase] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | undefined>(undefined);
+  const [selectedValues, setSelectedValues] = useState({});
 
   const textRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    // Reset all the highlight-related states whenever currentPage changes.
     setIsHovered(false);
     setIsWord(false);
     setIsPhrase(false);
@@ -190,33 +194,33 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   ]);
 
   const getClassName = () => {
-    let result = styles.textbox;
-    if (props.isHighlightedFromVideo) result += ` ${styles.bubbleVideoHovered}`;
-    if (isHovered || props.isHighlighted) result += ` ${styles.bubbleHovered}`;
-
-    if (
-      (isWord && props.mode === "words") ||
-      (isWord && props.mode === "all")
-    ) {
-      result += ` ${styles.bubbleWord}`;
+    let classes = [styles.textbox];
+    if (props.isHighlightedFromVideo) classes.push(styles.bubbleVideoHovered);
+    if (isHovered || props.isHighlighted) {
+      if (!isLastInPhrase) {
+        classes.push(styles.bubbleHovered, styles.noMarginRight); // Add no margin right if not the last in phrase
+      } else {
+        classes.push(styles.bubbleHovered); // Normal hover state with margin
+      }
     }
 
-    if (
-      (isPhrase && props.mode === "phrases") ||
-      (isPhrase && props.mode === "all")
-    ) {
-      result += ` ${styles.bubblePhrase}`;
+    if (isWord && (props.mode === "words" || props.mode === "all")) {
+      classes.push(styles.bubbleWord);
+    }
+
+    if (isPhrase && (props.mode === "phrases" || props.mode === "all")) {
+      classes.push(styles.bubblePhrase);
     }
 
     if (isWordPhrase && props.mode === "all") {
-      result += ` ${styles.bubbleWordPhrase}`;
+      classes.push(styles.bubbleWordPhrase);
     }
 
     if (isLastInPhrase) {
-      result += ` ${styles.lastInPhrase}`;
+      classes.push(styles.lastInPhrase);
     }
 
-    return result;
+    return classes.join(" ");
   };
 
   useEffect(() => {
@@ -269,30 +273,36 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   const handleMouseDown = () => {
     if (props.mode === "sentences") return;
-    props.onMouseDown?.(
-      props.word!,
-      props.sentenceNumber!,
-      props.sentenceText!
-    );
+    if (!isPositionAndSentenceMatch) {
+      props.onMouseDown?.(
+        props.word!,
+        props.sentenceNumber!,
+        props.sentenceText!
+      );
+    }
 
     setIsTooltipVisible(false);
   };
 
   const handleMouseEnter = () => {
-    props.onMouseEnter?.(
-      props.word!,
-      props.sentenceNumber!,
-      props.sentenceText!
-    );
-    setIsHovered(true);
+    if (!isPositionAndSentenceMatch) {
+      props.onMouseEnter?.(
+        props.word!,
+        props.sentenceNumber!,
+        props.sentenceText!
+      );
+      setIsHovered(true);
+    }
   };
 
   const handleMouseUp = () => {
-    props.onMouseUp?.(
-      props.sentenceTranslation!,
-      props.sentenceNumber!,
-      props.translation!
-    );
+    if (!isPositionAndSentenceMatch) {
+      props.onMouseUp?.(
+        props.sentenceTranslation!,
+        props.sentenceNumber!,
+        props.translation!
+      );
+    }
   };
 
   const className = useMemo(getClassName, [
@@ -382,20 +392,182 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   };
 
   useEffect(() => {
-    const isLastWord = userWords!.some(
-      (word) => props.wordIndex === word.phrase.endPosition
+    // Find if the word is part of any defined phrase
+    const phraseWhereWordIs = userPhrases!.find(
+      (p) =>
+        props.wordIndex! >= p.phrase.startPosition &&
+        props.wordIndex! <= p.phrase.endPosition
     );
-    const isLastInPhraseForPhrases = userPhrases!.some(
-      (phrase) => props.wordIndex === phrase.phrase.endPosition
+
+    // Check if the word is the last in a found phrase
+    const isEndOfFoundPhrase =
+      phraseWhereWordIs &&
+      props.wordIndex === phraseWhereWordIs.phrase.endPosition;
+
+    // Check directly across all phrases and words
+    const isEndOfAnyPhrase = userPhrases!.some(
+      (p) => props.wordIndex === p.phrase.endPosition
     );
+    const isEndOfAnyWord = userWords!.some(
+      (w) => props.wordIndex === w.phrase.endPosition
+    );
+
+    // Set 'isLastInPhrase' based on if it's the end position in any phrase or word
+
+    if (props.mode === "all") {
+      setIsLastInPhrase(
+        isEndOfFoundPhrase || (isEndOfAnyPhrase && isEndOfAnyWord)
+      );
+    }
+
     if (props.mode === "words") {
-      setIsLastInPhrase(isLastWord);
-    } else if (props.mode === "phrases") {
-      setIsLastInPhrase(isLastInPhraseForPhrases);
-    } else if (props.mode === "all") {
-      setIsLastInPhrase(!isLastWord && isLastInPhraseForPhrases);
+      setIsLastInPhrase(isEndOfAnyWord);
     }
   }, [userPhrases, userWords, props.wordIndex, props.mode]);
+
+  useEffect(() => {
+    if (isCorrect !== null) {
+      console.log("isCorrect updated to:", isCorrect);
+      // Perform any actions that depend on the updated value of isCorrect
+    }
+  }, [isCorrect]);
+
+  const handleSelectChange = (value, wordIndex) => {
+    const selectedText = value.value;
+    const position = props.wordIndex;
+    const sentenceNumber = props.sentenceNumber;
+
+    console.log("Selected text:", selectedText);
+    console.log("Position:", position);
+    console.log("Sentence number:", sentenceNumber);
+
+    // Finding the matching word in the part of speech array using current component props
+    const matchingWord = props.partOfSpeech?.find(
+      (word) =>
+        word.position === position && word.sentenceNumber === sentenceNumber
+    );
+
+    console.log("Found matching word:", JSON.stringify(matchingWord));
+    const correctText = matchingWord ? matchingWord.text : "";
+    const isSelectionCorrect =
+      selectedText === correctText.replace(/[.,?]/g, "");
+    setIsCorrect(isSelectionCorrect); // Update the correctness state
+
+    const key = `${props.currentPage}_${props.wordIndex}`;
+
+    setSelectedValues((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+    console.log("isCorrect:", isCorrect);
+  };
+
+  const getSelectedValue = () => {
+    const key = `${props.currentPage}_${props.wordIndex}`;
+    return selectedValues[key] || null;
+  };
+
+  // Check if the current position and sentence number match the word's properties
+  const isPositionAndSentenceMatch = props.partOfSpeech?.some(
+    (word) =>
+      word.position === props.wordIndex &&
+      word.sentenceNumber === props.sentenceNumber
+  );
+
+  function shuffleArray(array) {
+    let currentIndex = array.length,
+      randomIndex;
+
+    // While there remain elements to shuffle.
+    while (currentIndex !== 0) {
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] = [
+        array[randomIndex],
+        array[currentIndex],
+      ];
+    }
+
+    return array;
+  }
+
+  const selectOptions = useMemo(() => {
+    // Extract and shuffle partOfSpeech data if available
+    const options =
+      props.partOfSpeech?.map((wordObj) => ({
+        label: wordObj.text?.replace(/[.,?]/g, ""),
+        value: wordObj.text?.replace(/[.,?]/g, ""),
+      })) ?? [];
+
+    // Shuffle the options to randomize their order in the dropdown
+    return shuffleArray(
+      options.filter((v, i, a) => a.findIndex((t) => t.label === v.label) === i)
+    );
+  }, [props.partOfSpeech]);
+
+  const getBackgroundColor = (wordIndex) => {
+    const currentPageKey = `${props.currentPage}_${wordIndex}`;
+    const selectedOption = selectedValues[currentPageKey];
+    if (!selectedOption) return "white";
+
+    const matchingWord = props.partOfSpeech?.find(
+      (word) =>
+        word.position === wordIndex &&
+        word.sentenceNumber === props.sentenceNumber
+    );
+
+    const correctText = matchingWord ? matchingWord.text : "";
+    const isSelectionCorrect =
+      selectedOption.value === correctText.replace(/[.,?]/g, "");
+
+    return isSelectionCorrect ? "green" : "red";
+  };
+
+  const customStyles = {
+    singleValue: (base) => ({
+      ...base,
+      color: "white",
+    }),
+    container: (provided) => ({
+      ...provided,
+      display: "inline-block",
+    }),
+    control: (provided) => ({
+      ...provided,
+      border: 0,
+      boxShadow: "none",
+      cursor: "pointer",
+      paddingLeft: "10px",
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      padding: "0 8px",
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      background: getBackgroundColor(props.wordIndex),
+      color: "white",
+      width: "100%",
+      padding: "0 8px",
+    }),
+  };
+
+  const wordDisplay = isPositionAndSentenceMatch ? (
+    <Select
+      onChange={(value) => handleSelectChange(value, props.wordIndex)}
+      className="nonInteractiveSelect"
+      options={selectOptions}
+      styles={customStyles}
+      value={getSelectedValue(props.wordIndex)}
+      placeholder="Select correct option"
+      menuShouldScrollIntoView={false}
+    />
+  ) : (
+    <span>{props.word}</span>
+  );
 
   return renderTooltip(
     <span
@@ -416,7 +588,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       onTouchEnd={handleTouchEnd}
       data-word-index={props.wordIndex}
     >
-      {props.word}
+      {wordDisplay}
       {props.mode === "sentences" ? "\n" : isLastInPhrase ? "" : " "}
     </span>
   );

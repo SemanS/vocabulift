@@ -18,9 +18,11 @@ export interface SentenceData {
   sentenceWords: SentenceWordData[];
   start?: number;
   duration?: number;
+  tense?: string;
 }
 
 export interface SentenceWordData {
   position: number;
   wordText: string;
+  partOfSpeech: string;
 }

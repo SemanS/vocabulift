@@ -260,7 +260,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
   };
 
   const handlePlayClick = async (text: string, language: string) => {
-    console.log("handulujem");
     const audioUrl = await textToSpeech(text, language);
 
     const audio = audioRef.current;
