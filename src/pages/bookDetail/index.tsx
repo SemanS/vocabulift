@@ -486,7 +486,6 @@ const BookDetail: FC = () => {
   const updateSentencesState = useCallback(
     async (snapshots: Snapshot[], localSentenceFrom: number) => {
       let language = state.selectedLanguageTo;
-      console.log("snapshots" + JSON.stringify(snapshots));
 
       const isLanguageInSnapshots = snapshots.some(
         (snapshot) => snapshot.language === state.selectedLanguageTo

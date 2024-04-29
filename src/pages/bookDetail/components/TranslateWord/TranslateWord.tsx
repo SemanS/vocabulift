@@ -57,6 +57,7 @@ interface TranslateWordProps {
     translation: string,
     event: React.TouchEvent
   ) => void;
+  selectedPartOfSpeech?: string;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
@@ -427,7 +428,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   useEffect(() => {
     if (isCorrect !== null) {
-      console.log("isCorrect updated to:", isCorrect);
       // Perform any actions that depend on the updated value of isCorrect
     }
   }, [isCorrect]);
@@ -437,17 +437,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     const position = props.wordIndex;
     const sentenceNumber = props.sentenceNumber;
 
-    console.log("Selected text:", selectedText);
-    console.log("Position:", position);
-    console.log("Sentence number:", sentenceNumber);
-
     // Finding the matching word in the part of speech array using current component props
     const matchingWord = props.partOfSpeech?.find(
       (word) =>
         word.position === position && word.sentenceNumber === sentenceNumber
     );
 
-    console.log("Found matching word:", JSON.stringify(matchingWord));
     const correctText = matchingWord ? matchingWord.text : "";
     const isSelectionCorrect =
       selectedText === correctText.replace(/[.,?]/g, "");
@@ -459,7 +454,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       ...prev,
       [key]: value,
     }));
-    console.log("isCorrect:", isCorrect);
   };
 
   const getSelectedValue = () => {
@@ -562,7 +556,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       options={selectOptions}
       styles={customStyles}
       value={getSelectedValue(props.wordIndex)}
-      placeholder="Select correct option"
+      placeholder={"Select correct " + props.selectedPartOfSpeech}
       menuShouldScrollIntoView={false}
     />
   ) : (

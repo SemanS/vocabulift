@@ -18,6 +18,11 @@ import QuizComponent from "../Quiz/QuizComponent";
 import { useIntl } from "react-intl";
 import Select from "react-select";
 
+interface TenseSelection {
+  sentenceNumber: number;
+  tense: string;
+}
+
 interface TranslateBoxProps {
   mode: string;
   sourceLanguage: string;
@@ -484,7 +489,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   };
 
-  function extractUniqueVerbs(sentences, selectedPartOfSpeech) {
+  function extractUniqueVerbs(sentences, partOfSpeechForExtract) {
     let usedVerbs = new Set(); // Track verbs that have already been used
     let results = [];
 
@@ -507,7 +512,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         .filter(
           (word) =>
             word.partOfSpeech &&
-            word.partOfSpeech.toLowerCase() === selectedPartOfSpeech
+            word.partOfSpeech.toLowerCase() === partOfSpeechForExtract
         )
         .map((word) => ({
           text: word.wordText.toLowerCase(),
@@ -569,27 +574,42 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     [visibleSourceTexts, partOfSpeech]
   );
 
-  const handleTenseChange = (selectedOption, sentenceNumber) => {
-    const updatedTenses = selectedTenses.map((tense) =>
-      tense.sentenceNumber === sentenceNumber
-        ? { ...tense, selectedTense: selectedOption.value }
-        : tense
-    );
-    setSelectedTenses(updatedTenses);
-  };
+  const [selectedTenses, setSelectedTenses] = useState<TenseSelection[]>([]);
 
-  const customStyles = (sentenceNumber) => {
-    // Retrieve the current tense info for the given sentence number.
-    const currentTenseInfo = selectedTenses.find(
+  const handleTenseChange = (selectedOption, sentenceNumber: number) => {
+    // Check if the sentence number already exists in the array
+    const index = selectedTenses.findIndex(
       (tense) => tense.sentenceNumber === sentenceNumber
     );
 
-    // Check if the tense is selected and if it matches the correct tense.
-    const isSelected =
-      currentTenseInfo && currentTenseInfo.selectedTense !== "";
+    if (index === -1) {
+      // if it doesn't exist, add it
+      setSelectedTenses([
+        ...selectedTenses,
+        { sentenceNumber, tense: selectedOption.value },
+      ]);
+    } else {
+      // Optional: update the tense if it already exists
+      const newTenses = [...selectedTenses];
+      newTenses[index].tense = selectedOption.value;
+      setSelectedTenses(newTenses);
+    }
+  };
+
+  const customStyles = (sentenceNumber) => {
+    const currentTenseInfo = memoizedTenseAndSentenceNumber.find((tense) => {
+      return tense.sentenceNumber === sentenceNumber;
+    });
+
+    const isSelected = selectedTenses?.some(
+      (tense) => sentenceNumber === tense.sentenceNumber
+    );
+
     const isCorrect =
       isSelected &&
-      currentTenseInfo.selectedTense === currentTenseInfo.correctTense;
+      currentTenseInfo &&
+      selectedTenses.find((tense) => tense.sentenceNumber === sentenceNumber)
+        ?.tense === currentTenseInfo.tense;
 
     return {
       singleValue: (base) => ({
@@ -641,13 +661,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     { label: "Future Perfect Continuous", value: "Future Perfect Continuous" },
   ];
 
-  const [selectedTenses, setSelectedTenses] = useState(() =>
+  /*   const [selectedTenses, setSelectedTenses] = useState(() =>
     visibleSourceTexts.map((sentence) => ({
       sentenceNumber: sentence.sentenceNo,
       selectedTense: "", // Initialize with no selection
       correctTense: sentence.tense, // This should be defined based on your actual data structure
     }))
-  );
+  ); */
 
   return (
     <>
@@ -670,7 +690,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               translation={targetSentence?.sentenceText || ""}
               sentenceNumber={sourceSentence.sentenceNo}
               sentenceText={sourceSentence.sentenceText}
-              /* partOfSpeech={memoizedPartOfSpeech} */
               mode={mode}
               onMouseDown={(
                 word: string,
@@ -762,7 +781,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                       wordIndex === 0 || wordIndex === 2 ? "true" : "false"
                     }
                     partOfSpeech={memoizedPartOfSpeech}
-                    tense={memoizedTenseAndSentenceNumber}
+                    selectedPartOfSpeech={partOfSpeech}
                     word={sourceWord.wordText}
                     translation={translation}
                     sentenceNumber={sourceSentence.sentenceNo}
@@ -861,14 +880,19 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               })}
               <Select
                 options={tenseOptions}
-                value={tenseOptions.find(
-                  (option) =>
-                    option.value ===
-                    selectedTenses.find(
-                      (tense) =>
-                        tense.sentenceNumber === sourceSentence.sentenceNo
-                    )?.selectedTense
-                )}
+                value={
+                  selectedTenses.some((tense) => {
+                    return tense.sentenceNumber === sourceSentence.sentenceNo;
+                  })
+                    ? tenseOptions.find((option) => {
+                        const foundTense = selectedTenses.find(
+                          (tense) =>
+                            tense.sentenceNumber === sourceSentence.sentenceNo
+                        );
+                        return option.value === foundTense?.tense;
+                      })
+                    : ""
+                }
                 onChange={(option) =>
                   handleTenseChange(option, sourceSentence.sentenceNo)
                 }

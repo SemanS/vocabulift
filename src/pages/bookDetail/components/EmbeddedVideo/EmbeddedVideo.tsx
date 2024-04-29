@@ -344,6 +344,19 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       ]
     );
 
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+
+    const handleTimeChange = (event) => {
+      const newTime = event.target.value;
+      setCurrentTime(newTime);
+      playerRef.current.seekTo(newTime, true);
+    };
+
+    const handlePlayerReady = (event) => {
+      setDuration(playerRef.current.getDuration());
+    };
+
     useEffect(() => {
       const fetchLibraryItemAndSetupPlayer = async () => {
         if (isInitRender) {
@@ -355,6 +368,12 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           if (playerDivRef.current && !playerRef.current && currentLibrary) {
             playerRef.current = new YT.Player(playerDivRef.current, {
               videoId: currentLibrary!.videoId,
+              playerVars: {
+                //controls: 0, // Hide default controls
+                modestbranding: 1,
+                rel: 0,
+                showinfo: 0,
+              },
               events: {
                 onStateChange: handlePlayerStateChange,
                 onPlaybackRateChange: handlePlayerStateChange,
@@ -364,6 +383,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               },
             });
             playerRef.current.addEventListener("onReady", function () {
+              handlePlayerReady();
               if (playerRef.current.seekTo) {
                 //playerRef.current.seekTo(0.1, true);
               }
@@ -515,14 +535,26 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
 
     return (
       <div style={{ paddingBottom: "56.25%", height: 0 }}>
+        <div>
+          <input
+            type="range"
+            min="0"
+            max={duration}
+            value={currentTime}
+            onChange={handleTimeChange}
+            style={{ width: "100%", cursor: "pointer" }}
+          />
+          {duration}
+        </div>
         <div
           ref={playerDivRef}
           style={{
             position: "absolute",
-            top: 0,
+            top: 50,
             left: 0,
             width: "100%",
             height: "100%",
+            //visibility: "hidden",
           }}
         />
       </div>

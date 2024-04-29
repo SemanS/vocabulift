@@ -22,7 +22,15 @@ export interface SentenceData {
 }
 
 export interface SentenceWordData {
+  sentenceNo: number;
   position: number;
+  language: string;
+  start: number;
+  end: number;
+  duration: number;
   wordText: string;
+  wordTranslation: string;
+  punctuatedWordText: string;
+  confidence: number;
   partOfSpeech: string;
 }
