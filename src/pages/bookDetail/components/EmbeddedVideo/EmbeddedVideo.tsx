@@ -347,10 +347,39 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
 
+    const updateHighlightedSubtitleAndPage = (currentTime) => {
+      const newIndex = getCurrentIndex(snapshotsRef.current!, currentTime);
+
+      if (newIndex !== -1) {
+        onHighlightedSubtitleIndexChange?.(newIndex);
+        const newPage = calculatePage(
+          newIndex,
+          sentencesPerPageRef.current,
+          snapshotsRef.current![0].sentenceFrom
+        );
+
+        // Ensure to update the page if the new index results in a new page
+        if (newPage !== currentPageToUseRef.current) {
+          handlePageChange(
+            newPage,
+            sentencesPerPageRef.current,
+            true,
+            true,
+            false
+          );
+          currentPageToUseRef.current = newPage; // Update the current page reference
+        }
+      }
+    };
+
     const handleTimeChange = (event) => {
-      const newTime = event.target.value;
+      /* const newTime = event.target.value;
+      setCurrentTime(newTime);
+      playerRef.current.seekTo(newTime, true); */
+      const newTime = parseFloat(event.target.value);
       setCurrentTime(newTime);
       playerRef.current.seekTo(newTime, true);
+      updateHighlightedSubtitleAndPage(newTime);
     };
 
     const handlePlayerReady = (event) => {
