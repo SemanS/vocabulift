@@ -66,3 +66,44 @@
 .custom-spotlight-style-2 {
   box-shadow: 0 0 0 9999px rgba(0, 255, 0, 0.3), 0 0 0 2px green !important;
 }
+
+.sliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 15px;
+  height: 95%;
+}
+
+.sliderTrack {
+  background-color: black;
+  position: relative;
+  flex-grow: 1;
+  transform: translateX(50%);
+  border-radius: 9999px;
+  height: 3px;
+  height: 100%;
+}
+
+.sliderRange {
+  position: absolute;
+  background-color: white;
+  border-radius: 9999px;
+  width: 100%;
+}
+
+.sliderThumb {
+  display: block;
+  /* width: 30px;
+  height: 30px; */
+  background-color: white;
+  box-shadow: 0 2px 10px black;
+  border-radius: 10px;
+}
+.sliderThumb:hover {
+  background-color: rgb(246, 216, 174);
+  .sliderThumb:focus {
+    outline: none;
+    box-shadow: 0 0 0 5px black;
+  }
+}

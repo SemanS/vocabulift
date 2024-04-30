@@ -18,8 +18,6 @@ import {
   Modal,
   Typography,
   Select,
-  Spin,
-  Button,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -60,6 +58,7 @@ import { wrapMultiElements } from "@/utils/joyride";
 import { useMount, useSetState } from "react-use";
 import { triggerState } from "@/stores/joyride";
 import { User } from "@models/user";
+import * as Slider from "@radix-ui/react-slider";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -213,6 +212,8 @@ const BookDetail: FC = () => {
   const [recoilLibraryId, setRecoilLibraryId] = useRecoilState(libraryIdState);
   const [user, setUser] = useRecoilState(userState);
   const videoPlayerRef = useRef<ExposedFunctions | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+
   const partsOfSpeech = [
     "noun",
     "pronoun",
@@ -867,6 +868,26 @@ const BookDetail: FC = () => {
     749: 1,
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (videoPlayerRef.current && videoPlayerRef.current.getCurrentTime) {
+        const newTime = videoPlayerRef.current.getCurrentTime();
+        setCurrentTime(newTime); // This updates the slider position indirectly
+      }
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, [videoPlayerRef]);
+
+  const handleSliderChange = (value) => {
+    const newTime = parseFloat(value[0]);
+    setCurrentTime(newTime); // You might want to avoid this if it's directly controlled by user input
+    if (videoPlayerRef.current && videoPlayerRef.current.seekTo) {
+      videoPlayerRef.current.seekTo(newTime, true);
+      videoPlayerRef.current.updateHighlightedSubtitleAndPage(newTime);
+    }
+  };
+
   const videoContainer = (
     <div className={`${styles.myVideoContainer}`}>
       {state.label === LabelType.VIDEO && (
@@ -1035,110 +1056,116 @@ const BookDetail: FC = () => {
   const translateBoxContainer = (
     <div>
       <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
-        <>
-          <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
-          <Radio.Group
-            onChange={handleModeChange}
-            value={state.mode}
-            buttonStyle="solid"
-            style={{ paddingRight: 20, marginTop: 10 }}
-          >
-            {/* <Radio.Button value="phrases">Phrases</Radio.Button> */}
-            <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
-              {intl.formatMessage({ id: "translate.box.sentences" })}
-            </Radio.Button>
-            <Radio.Button value="words" style={{ fontWeight: 500 }}>
-              {intl.formatMessage({ id: "translate.box.words" })}
-            </Radio.Button>
-            <Radio.Button value="all" style={{ fontWeight: 500 }}>
-              {intl.formatMessage({ id: "translate.box.all" })}
-            </Radio.Button>
-          </Radio.Group>
-          {/* {user.subscriptionType !== SubscriptionType.Free ||
-            (hasAccess && ( */}
-          {/* <Button
-            type="default"
-            onClick={handleDownloadWorkSheet}
-            loading={state.loadingWorkSheet}
-            style={{ marginTop: 10, fontWeight: 500 }}
-          >
-            {intl.formatMessage({ id: "translate.box.download.worksheet" })}
-          </Button> */}
-          {/* <Button
-            type="default"
-            onClick={() =>
-              handleModeChange({ target: { value: "quiz" } } as any)
-            }
-            //loading={state.loadingWorkSheet}
-            style={{ marginTop: 10, fontWeight: 500 }}
-          >
-            {intl.formatMessage({ id: "translate.box.quiz" })}
-          </Button> */}
-          <Select
-            value={state.partOfSpeech}
-            onChange={setSelectedPartOfSpeech}
-            style={{ marginLeft: 16, marginTop: 10, fontWeight: 500 }}
-            defaultValue={"Exercise"}
-          >
-            {partsOfSpeech.map((part, index) => (
-              <Select.Option key={index} value={part}>
-                {part}
-              </Select.Option>
-            ))}
-          </Select>
-          <Select
-            value={state.selectedLanguageTo}
-            onChange={(value) => {
-              dispatch({
-                type: "setSelectedLanguageTo",
-                payload: value,
-              });
-              fetchVocabularyAndSetState(state.sentenceFrom, value);
-              fetchAndUpdate(state.sentenceFrom, value);
-              const url = new URL(window.location.href);
-              const params = new URLSearchParams(url.search);
-              params.set("targetLanguage", value);
-              window.history.replaceState({}, "", `${url.pathname}?${params}`);
-            }}
-            style={{ marginLeft: 16 }}
-          >
-            {languagesWithoutSource.map((language, index) => (
-              <Select.Option key={index} value={language}>
-                <SvgIcon code={getFlagCode(language)} height="16" />
-              </Select.Option>
-            ))}
-          </Select>
-          {/* ))} */}
-        </>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-start",
+          }}
+        >
+          <div>
+            <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
+            <Radio.Group
+              onChange={handleModeChange}
+              value={state.mode}
+              buttonStyle="solid"
+              style={{ paddingRight: 20, marginTop: 10 }}
+            >
+              <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
+                {intl.formatMessage({ id: "translate.box.sentences" })}
+              </Radio.Button>
+              <Radio.Button value="words" style={{ fontWeight: 500 }}>
+                {intl.formatMessage({ id: "translate.box.words" })}
+              </Radio.Button>
+              <Radio.Button value="all" style={{ fontWeight: 500 }}>
+                {intl.formatMessage({ id: "translate.box.all" })}
+              </Radio.Button>
+            </Radio.Group>
+            {/* Other components like Buttons if needed */}
+          </div>
+          <div>
+            <Select
+              value={state.selectedLanguageTo}
+              onChange={(value) => {
+                dispatch({
+                  type: "setSelectedLanguageTo",
+                  payload: value,
+                });
+                fetchVocabularyAndSetState(state.sentenceFrom, value);
+                fetchAndUpdate(state.sentenceFrom, value);
+                const url = new URL(window.location.href);
+                const params = new URLSearchParams(url.search);
+                params.set("targetLanguage", value);
+                window.history.replaceState(
+                  {},
+                  "",
+                  `${url.pathname}?${params}`
+                );
+              }}
+              style={{ marginLeft: 16, fontWeight: 500 }} // Adjust marginLeft if necessary
+            >
+              {languagesWithoutSource.map((language, index) => (
+                <Select.Option key={index} value={language}>
+                  <SvgIcon code={getFlagCode(language)} height="16" />
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
+        </div>
       </Card>
-      <Card
-        loading={state.loading || state.loadingFromFetch}
-        className={styles.translateBoxScroll}
-      >
-        <TranslateBox
-          sourceLanguage={user.sourceLanguage}
-          currentTextIndex={state.currentTextIndex}
-          sentenceFrom={state.sentenceFrom}
-          sentencesPerPage={state.sentencesPerPage}
-          currentPage={state.currentPage}
-          libraryTitle={state.libraryTitle}
-          mode={state.mode}
-          snapshots={memoizedSnapshots}
-          userSentences={state.userSentences}
-          onAddUserPhrase={handleAddUserPhrase}
-          vocabularyListUserPhrases={state.vocabularyListUserPhrases}
-          highlightedSentenceIndex={
-            state.highlightedSubtitleIndex !== null
-              ? state.highlightedSubtitleIndex - (state.currentTextIndex % 100)
-              : null
-          }
-          selectedLanguageTo={state.selectedLanguageTo}
-          onChangeMode={setMode}
-          magnifyingGlassRef={magnifyingGlassRef}
-          addSteps={addTranslateBoxSteps}
-          partOfSpeech={state.partOfSpeech}
-        />
-      </Card>
+      <Row>
+        <Col>
+          <Slider.Root
+            className={`${styles.sliderRoot}`}
+            value={[currentTime]}
+            onValueChange={handleSliderChange}
+            max={state.library?.duration}
+            orientation="vertical"
+            step={0.1}
+            style={{ marginLeft: "-40px" }}
+            inverted={true}
+          >
+            <Slider.Track className={`${styles.sliderTrack}`}>
+              <Slider.Range className={`${styles.sliderRange}`} />
+            </Slider.Track>
+            <Slider.Thumb
+              className={`${styles.sliderThumb}`}
+              aria-label="Volume"
+            />
+          </Slider.Root>
+        </Col>
+        <Col>
+          <Card
+            loading={state.loading || state.loadingFromFetch}
+            className={styles.translateBoxScroll}
+          >
+            <TranslateBox
+              sourceLanguage={user.sourceLanguage}
+              currentTextIndex={state.currentTextIndex}
+              sentenceFrom={state.sentenceFrom}
+              sentencesPerPage={state.sentencesPerPage}
+              currentPage={state.currentPage}
+              libraryTitle={state.libraryTitle}
+              mode={state.mode}
+              snapshots={memoizedSnapshots}
+              userSentences={state.userSentences}
+              onAddUserPhrase={handleAddUserPhrase}
+              vocabularyListUserPhrases={state.vocabularyListUserPhrases}
+              highlightedSentenceIndex={
+                state.highlightedSubtitleIndex !== null
+                  ? state.highlightedSubtitleIndex -
+                    (state.currentTextIndex % 100)
+                  : null
+              }
+              selectedLanguageTo={state.selectedLanguageTo}
+              onChangeMode={setMode}
+              magnifyingGlassRef={magnifyingGlassRef}
+              addSteps={addTranslateBoxSteps}
+              partOfSpeech={state.partOfSpeech}
+            />
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 
@@ -1235,27 +1262,33 @@ const BookDetail: FC = () => {
       ) : (
         <>
           {!isMobile ? (
-            <Masonry
-              breakpointCols={breakpointColumnsObj}
-              className={styles.myMasonryGrid}
-              columnClassName={styles.myMasonryGridColumn}
-            >
-              {videoContainer}
-              {translateBoxContainer}
-              {phraseListContainer}
-              <div className={`${styles.myVideoContainer}`}>
+            <Row>
+              <Col span={2}></Col>
+              <Col span={19}>
+                <button
+                  className={`${styles.myFixedPlayButton}`}
+                  onClick={handlePlayPause}
+                >
+                  {state.isPlaying ? "❚❚" : "▶"}
+                </button>
+                {videoContainer}
+                {translateBoxContainer}
                 {state.mode !== "quiz" && paginationControlsContainer}
-                {(state.loadingFromWordMeaning || state.wordMeaningData) &&
-                  {
-                    /* <Card
+                {/* {phraseListContainer} */}
+                <div className={`${styles.myVideoContainer}`}>
+                  {(state.loadingFromWordMeaning || state.wordMeaningData) &&
+                    {
+                      /* <Card
                     title={"Word meaning"}
                     loading={state.loadingFromWordMeaning}
                   >
                     {state.wordMeaningData && state.wordMeaningData.data}
                   </Card> */
-                  }}
-              </div>
-            </Masonry>
+                    }}
+                </div>
+              </Col>
+              <Col span={3}></Col>
+            </Row>
           ) : (
             <Masonry
               breakpointCols={breakpointColumnsObj}

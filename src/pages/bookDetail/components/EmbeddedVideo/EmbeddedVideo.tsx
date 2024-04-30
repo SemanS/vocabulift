@@ -14,6 +14,8 @@ import { socket } from "@/messaging/socket";
 import { useCookies } from "react-cookie";
 import { getUser } from "@/services/userService";
 import { User } from "@/models/user";
+import * as Slider from "@radix-ui/react-slider";
+import styles from "./index.module.less";
 
 declare const YT: any;
 declare global {
@@ -105,6 +107,16 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           playerRef.current.pauseVideo();
           props.onPause && props.onPause();
         }
+      },
+      seekTo(newTime, playAfterSeeking) {
+        playerRef.current.seekTo(newTime, true);
+        // Logic to seek the video
+      },
+      updateHighlightedSubtitleAndPage,
+      getCurrentTime: () => {
+        return playerRef.current?.getCurrentTime
+          ? playerRef.current.getCurrentTime()
+          : 0;
       },
     }));
 
@@ -372,6 +384,13 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       }
     };
 
+    const handleSliderChange = (value) => {
+      const newTime = parseFloat(value[0]);
+      setCurrentTime(newTime);
+      playerRef.current.seekTo(newTime, true);
+      updateHighlightedSubtitleAndPage(newTime);
+    };
+
     const handleTimeChange = (event) => {
       /* const newTime = event.target.value;
       setCurrentTime(newTime);
@@ -398,7 +417,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
             playerRef.current = new YT.Player(playerDivRef.current, {
               videoId: currentLibrary!.videoId,
               playerVars: {
-                //controls: 0, // Hide default controls
+                controls: 0, // Hide default controls
                 modestbranding: 1,
                 rel: 0,
                 showinfo: 0,
@@ -563,30 +582,41 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     };
 
     return (
-      <div style={{ paddingBottom: "56.25%", height: 0 }}>
+      <>
         <div>
-          <input
-            type="range"
-            min="0"
-            max={duration}
-            value={currentTime}
-            onChange={handleTimeChange}
-            style={{ width: "100%", cursor: "pointer" }}
-          />
-          {duration}
+          {/* {duration}
+          <Slider.Root
+            className={`${styles.sliderRoot}`}
+            max={2340}
+            defaultValue={[0]} // Sync default value with current time
+            onValueChange={handleSliderChange}
+            orientation="horizontal"
+            step={1}
+            style={{ marginLeft: "-60px" }}
+          >
+            <Slider.Track className={`${styles.sliderTrack}`}>
+              <Slider.Range className={`${styles.sliderRangek}`} />
+            </Slider.Track>
+            <Slider.Thumb
+              className={`${styles.sliderThumb}`}
+              aria-label="Volume"
+            />
+          </Slider.Root> */}
         </div>
+        {/* <div style={{ paddingBottom: "56.25%", height: 0 }}> */}
         <div
           ref={playerDivRef}
           style={{
-            position: "absolute",
-            top: 50,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            //visibility: "hidden",
+            /* position: "absolute",
+              top: 50,
+              left: 0, */
+            width: "0",
+            height: "0",
+            visibility: "hidden",
           }}
         />
-      </div>
+        {/* </div> */}
+      </>
     );
   }
 );
