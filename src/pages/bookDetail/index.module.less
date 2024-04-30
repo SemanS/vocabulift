@@ -8,7 +8,7 @@
 }
 
 .container {
-  padding-block: 24px;
+  padding-block: 0px;
   padding-inline: 48px;
 }
 
@@ -47,6 +47,20 @@
   position: fixed;
   right: 20px;
   bottom: 20px;
+  z-index: 9999;
+  height: 50px;
+  width: 50px;
+  border-radius: 50%; /* makes the button circular */
+  background-color: #f00; /* change to desired color */
+  color: #fff; /* changes the color of the play icon */
+  border: none; /* removes the button border */
+  display: flex; /* used to center the play icon */
+  justify-content: center; /* centers the play icon horizontally */
+  align-items: center; /* centers the play icon vertically */
+}
+
+.myPlayButton {
+  position: fixed;
   z-index: 9999;
   height: 50px;
   width: 50px;

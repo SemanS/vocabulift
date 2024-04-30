@@ -171,6 +171,8 @@ function reducer(state: any, action: any) {
       return { ...state, sentencesPerPage: action.payload };
     case "setHighlightedSubtitleIndex":
       return { ...state, highlightedSubtitleIndex: action.payload };
+    case "setHighlightedWordIndex":
+      return { ...state, highlightedWordIndex: action.payload };
     case "setInitState":
       return { ...state, initState: action.payload };
     case "setIsLimitExceeded":
@@ -263,6 +265,11 @@ const BookDetail: FC = () => {
     dispatch({
       type: "setHighlightedSubtitleIndex",
       payload: highlightedSubtitleIndex,
+    });
+  const setHighlightedWordIndex = (highlightedWordIndex: number | null) =>
+    dispatch({
+      type: "setHighlightedWordIndex",
+      payload: highlightedWordIndex,
     });
   const setSelectedLanguageTo = (language: string) =>
     dispatch({ type: "setSelectedLanguageTo", payload: language });
@@ -874,7 +881,7 @@ const BookDetail: FC = () => {
         const newTime = videoPlayerRef.current.getCurrentTime();
         setCurrentTime(newTime); // This updates the slider position indirectly
       }
-    }, 250);
+    }, 1200);
 
     return () => clearInterval(interval);
   }, [videoPlayerRef]);
@@ -894,6 +901,7 @@ const BookDetail: FC = () => {
         <EmbeddedVideo
           ref={videoPlayerRef}
           onHighlightedSubtitleIndexChange={setHighlightedSubtitleIndex}
+          onHighlightedWordIndexChange={setHighlightedWordIndex}
           sentencesPerPage={state.sentencesPerPage}
           handlePageChange={handlePageChange}
           snapshots={memoizedSnapshots}
@@ -1114,6 +1122,13 @@ const BookDetail: FC = () => {
         </div>
       </Card>
       <Row>
+        <button
+          className={`${styles.myPlayButton}`}
+          onClick={handlePlayPause}
+          style={{ marginLeft: "-100px" }}
+        >
+          {state.isPlaying ? "❚❚" : "▶"}
+        </button>
         <Col>
           <Slider.Root
             className={`${styles.sliderRoot}`}
@@ -1264,13 +1279,7 @@ const BookDetail: FC = () => {
           {!isMobile ? (
             <Row>
               <Col span={2}></Col>
-              <Col span={19}>
-                <button
-                  className={`${styles.myFixedPlayButton}`}
-                  onClick={handlePlayPause}
-                >
-                  {state.isPlaying ? "❚❚" : "▶"}
-                </button>
+              <Col span={15}>
                 {videoContainer}
                 {translateBoxContainer}
                 {state.mode !== "quiz" && paginationControlsContainer}
@@ -1287,7 +1296,7 @@ const BookDetail: FC = () => {
                     }}
                 </div>
               </Col>
-              <Col span={3}></Col>
+              <Col span={7}></Col>
             </Row>
           ) : (
             <Masonry

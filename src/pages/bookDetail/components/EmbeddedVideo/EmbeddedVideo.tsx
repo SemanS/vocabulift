@@ -32,6 +32,7 @@ interface ExposedFunctions {
 
 interface EmbeddedVideoProps {
   onHighlightedSubtitleIndexChange?: (index: number | null) => void;
+  onHighlightedWordIndexChange?: (index: number | null) => void;
   sentencesPerPage: number;
   handlePageChange: (
     page: number,
@@ -53,6 +54,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
   (props, ref) => {
     const {
       onHighlightedSubtitleIndexChange,
+      onHighlightedWordIndexChange,
       sentencesPerPage,
       handlePageChange,
       snapshots,
@@ -60,6 +62,8 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       setShouldSetVideo,
       firstIndexAfterReset,
       setLoadingFromFetch,
+      onPlay,
+      onPause,
     } = props;
 
     const { libraryId } = useParams();
@@ -99,13 +103,13 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       playVideo: () => {
         if (playerRef.current && playerRef.current.playVideo) {
           playerRef.current.playVideo();
-          props.onPlay && props.onPlay();
+          onPlay && onPlay();
         }
       },
       pauseVideo: () => {
         if (playerRef.current && playerRef.current.pauseVideo) {
           playerRef.current.pauseVideo();
-          props.onPause && props.onPause();
+          onPause && onPause();
         }
       },
       seekTo(newTime, playAfterSeeking) {
@@ -272,6 +276,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           !hasSeekToBeenCalledRef.current
         ) {
           if (!hasSeekToBeenCalledRef.current) {
+            playerRef.current.seekTo(0, true); // Force the player to start at 0
             /* playerRef.current?.seekTo(
               snapshotsRef.current![0].sentencesData[0].start!
             ); */
@@ -384,24 +389,8 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       }
     };
 
-    const handleSliderChange = (value) => {
-      const newTime = parseFloat(value[0]);
-      setCurrentTime(newTime);
-      playerRef.current.seekTo(newTime, true);
-      updateHighlightedSubtitleAndPage(newTime);
-    };
-
-    const handleTimeChange = (event) => {
-      /* const newTime = event.target.value;
-      setCurrentTime(newTime);
-      playerRef.current.seekTo(newTime, true); */
-      const newTime = parseFloat(event.target.value);
-      setCurrentTime(newTime);
-      playerRef.current.seekTo(newTime, true);
-      updateHighlightedSubtitleAndPage(newTime);
-    };
-
     const handlePlayerReady = (event) => {
+      playerRef.current.pauseVideo();
       setDuration(playerRef.current.getDuration());
     };
 
@@ -417,10 +406,11 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
             playerRef.current = new YT.Player(playerDivRef.current, {
               videoId: currentLibrary!.videoId,
               playerVars: {
+                autoplay: 0,
                 controls: 0, // Hide default controls
-                modestbranding: 1,
                 rel: 0,
                 showinfo: 0,
+                start: 0,
               },
               events: {
                 onStateChange: handlePlayerStateChange,
