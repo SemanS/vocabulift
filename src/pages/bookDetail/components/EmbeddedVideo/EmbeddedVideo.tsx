@@ -165,16 +165,36 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         !isVideoPaused
       ) {
         const currentTime = playerRef.current.getCurrentTime();
-        const newHighlightedIndex =
-          currentTime < snapshotsRef.current![0].sentencesData[0].start!
-            ? 0
-            : snapshotsRef.current![0].sentencesData.findIndex((sentence) => {
-                return (
-                  currentTime >= sentence.start! &&
-                  currentTime < sentence.start! + sentence.duration! - 0.1
-                );
-              });
+        let newHighlightedIndex = -1;
+        let newHighlightedWordIndex = -1;
+
+        const sentencesData = snapshotsRef.current![0].sentencesData;
+        for (let i = 0; i < sentencesData.length; i++) {
+          const sentence = sentencesData[i];
+          if (
+            currentTime >= sentence.start! &&
+            currentTime < sentence.start! + sentence.duration! - 0.1
+          ) {
+            newHighlightedIndex = i;
+
+            // Find the highlighted word within the found sentence
+            for (let j = 0; j < sentence.sentenceWords.length; j++) {
+              const word = sentence.sentenceWords[j];
+              if (
+                currentTime >= word.start &&
+                currentTime < word.start + word.duration
+              ) {
+                newHighlightedWordIndex = j;
+                break; // Exit the loop once the highlighted word is found
+              }
+            }
+
+            break; // Exit the loop once the highlighted sentence is found
+          }
+        }
         onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+        onHighlightedWordIndexChange?.(newHighlightedWordIndex);
+
         if (newHighlightedIndex) {
           const newPage = calculatePage(
             newHighlightedIndex!,
@@ -190,6 +210,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               false
             );
             onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
+            onHighlightedWordIndexChange?.(newHighlightedWordIndex);
             setLoadingFromFetch(false);
           }
         }
@@ -199,10 +220,27 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         playerRef.current.seekTo &&
         shouldSetVideo === true
       ) {
-        playerRef.current.seekTo(
-          snapshots![0].sentencesData[firstIndexAfterReset!].start!
-        );
+        const sentenceStart =
+          snapshots![0].sentencesData[firstIndexAfterReset!].start!;
+        const sentenceWords =
+          snapshots![0].sentencesData[firstIndexAfterReset!].sentenceWords;
+        let newHighlightedWordIndex = 0;
+
+        for (let i = 0; i < sentenceWords.length; i++) {
+          if (
+            sentenceStart <=
+            sentenceWords[i].start + sentenceWords[i].duration
+          ) {
+            newHighlightedWordIndex = i;
+            break; // Stop once the correct word is found
+          }
+        }
+
+        playerRef.current.seekTo(sentenceStart);
+
         onHighlightedSubtitleIndexChange?.(firstIndexAfterReset);
+        onHighlightedWordIndexChange?.(newHighlightedWordIndex);
+
         setShouldSetVideo(false);
       }
       setLoadingFromFetch(false);
@@ -263,7 +301,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           await handleTimeUpdate();
           // We need to reschedule the handleTimeUpdate because we just moved to the next sentence
           await scheduleHandleTimeUpdate();
-        }, timeUntilNextSentence);
+        }, 10);
       }
     };
 
@@ -361,7 +399,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       ]
     );
 
-    const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
 
     const updateHighlightedSubtitleAndPage = (currentTime) => {
@@ -369,11 +406,24 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
 
       if (newIndex !== -1) {
         onHighlightedSubtitleIndexChange?.(newIndex);
+
         const newPage = calculatePage(
           newIndex,
           sentencesPerPageRef.current,
           snapshotsRef.current![0].sentenceFrom
         );
+
+        console.log("newIndex" + newIndex);
+        console.log("currentTime" + currentTime);
+        const newHighlightedWordIndex = getCurrentWordIndex(
+          snapshotsRef.current!,
+          newIndex,
+          currentTime
+        );
+        console.log("newHighlightedWordIndex" + newHighlightedWordIndex);
+        if (newHighlightedWordIndex !== -1) {
+          onHighlightedWordIndexChange?.(newHighlightedWordIndex);
+        }
 
         // Ensure to update the page if the new index results in a new page
         if (newPage !== currentPageToUseRef.current) {
@@ -478,6 +528,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
                 currentTime < sentence.start! + sentence.duration! - 0.1
               );
             });
+
       if (
         newHighlightedIndex === null ||
         newHighlightedIndex === undefined ||
@@ -564,9 +615,27 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               );
             }
           }
+
+          const currentSentence =
+            snapshotsRef.current![0].sentencesData[newHighlightedIndex];
+          let newHighlightedWordIndex = -1; // Default to the first word unless a better match is found
+          //const currentTime = playerRef.current?.getCurrentTime(); // Assuming you have access to the current time from the player
+
+          for (let i = 0; i < currentSentence.sentenceWords.length; i++) {
+            const word = currentSentence.sentenceWords[i];
+            if (
+              currentTime >= word.start &&
+              currentTime < word.start + word.duration
+            ) {
+              newHighlightedWordIndex = i;
+              break; // Stop once the correct word is found
+            }
+          }
+
           if (onHighlightedSubtitleIndexChange) {
             onHighlightedSubtitleIndexChange(newHighlightedIndex!);
           }
+          onHighlightedWordIndexChange?.(newHighlightedWordIndex);
         }
       }
     };
@@ -637,3 +706,14 @@ export function findSnapshotWithCurrentTime(
   }
   return null;
 }
+
+const getCurrentWordIndex = (snapshots, sentenceIndex, currentTime) => {
+  const sentence = snapshots[0].sentencesData[sentenceIndex];
+  for (let i = 0; i < sentence.sentenceWords.length; i++) {
+    const word = sentence.sentenceWords[i];
+    if (currentTime >= word.start && currentTime < word.start + word.duration) {
+      return i; // Return the index of the word that is currently active
+    }
+  }
+  return -1; // Default to the first word if no specific match is found
+};

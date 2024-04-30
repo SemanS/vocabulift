@@ -35,6 +35,7 @@ interface TranslateBoxProps {
   userSentences: UserSentence[];
   vocabularyListUserPhrases?: VocabularyListUserPhrase[] | null;
   highlightedSentenceIndex?: number | null;
+  highlightedWordIndex?: number | null;
   onAddUserPhrase: (vocabularyListUserPhrase: VocabularyListUserPhrase) => void;
   selectedLanguageTo: string;
   onChangeMode: (mode: string) => void;
@@ -55,6 +56,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   userSentences,
   vocabularyListUserPhrases,
   highlightedSentenceIndex,
+  highlightedWordIndex,
   onAddUserPhrase,
   selectedLanguageTo,
   onChangeMode,
@@ -550,7 +552,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
 
     sentences.forEach((sentence, index) => {
       if (!sentence || !sentence.sentenceNo || !sentence.tense) {
-        console.log(`Malformed sentence at index ${index}:`, sentence);
+        /* console.log(`Malformed sentence at index ${index}:`, sentence); */
         results.push({ error: "Malformed sentence", index });
         return;
       }
@@ -669,6 +671,20 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }))
   ); */
 
+  const [lastHighlighted, setLastHighlighted] = useState({
+    wordIndex: -1,
+    sentenceIndex: -1,
+  });
+
+  useEffect(() => {
+    if (highlightedWordIndex !== -1 && highlightedSentenceIndex !== -1) {
+      setLastHighlighted({
+        wordIndex: highlightedWordIndex,
+        sentenceIndex: highlightedSentenceIndex,
+      });
+    }
+  }, [highlightedWordIndex, highlightedSentenceIndex]);
+
   return (
     <>
       {isMobile && (
@@ -773,6 +789,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
                 const translation =
                   targetSentence?.sentenceWords[wordIndex]?.wordText || "";
+                const isCurrentlyHighlighted =
+                  wordIndex === highlightedWordIndex &&
+                  index === highlightedSentenceIndex;
+                const preserveHighlight =
+                  wordIndex === lastHighlighted.wordIndex &&
+                  index === lastHighlighted.sentenceIndex;
+
                 return (
                   <TranslateWord
                     key={`${index}-${wordIndex}`}
@@ -821,6 +844,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                       sourceWord.position,
                       sourceSentence.sentenceNo
                     )}
+                    isWordHighlightedFromVideo={
+                      /* wordIndex === highlightedWordIndex &&
+                      index === highlightedSentenceIndex  */
+                      isCurrentlyHighlighted ||
+                      (highlightedWordIndex === -1 && preserveHighlight)
+                    }
                     isHighlightedFromVideo={index === highlightedSentenceIndex}
                     wordIndex={wordIndex}
                     isSelecting={mouseDown || (isMobile && touchActive.current)}

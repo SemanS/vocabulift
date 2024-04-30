@@ -32,6 +32,7 @@ interface TranslateWordProps {
   ) => void;
   isHighlighted?: boolean;
   isHighlightedFromVideo?: boolean;
+  isWordHighlightedFromVideo?: boolean;
   wordIndex?: number;
   isSelecting?: boolean;
   sentenceTranslation?: string;
@@ -196,6 +197,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   const getClassName = () => {
     let classes = [styles.textbox];
+    if (props.isWordHighlightedFromVideo)
+      classes.push(styles.fadeIn, styles.bubbleWordHovered);
     if (props.isHighlightedFromVideo) classes.push(styles.bubbleVideoHovered);
     if (isHovered || props.isHighlighted) {
       if (!isLastInPhrase) {
@@ -310,6 +313,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     isHovered,
     props.isHighlighted,
     props.isHighlightedFromVideo,
+    props.isWordHighlightedFromVideo,
     isWord,
     isPhrase,
     isWordPhrase,

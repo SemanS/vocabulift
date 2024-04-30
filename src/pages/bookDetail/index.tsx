@@ -1172,6 +1172,7 @@ const BookDetail: FC = () => {
                     (state.currentTextIndex % 100)
                   : null
               }
+              highlightedWordIndex={state.highlightedWordIndex}
               selectedLanguageTo={state.selectedLanguageTo}
               onChangeMode={setMode}
               magnifyingGlassRef={magnifyingGlassRef}
