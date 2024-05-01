@@ -6,6 +6,7 @@ import Tippy from "@tippyjs/react";
 import "tippy.js/dist/tippy.css";
 //import { Select } from "antd";
 import Select from "react-select";
+import { SentenceWordData } from "@/models/sentences.interfaces";
 
 interface TranslateWordProps {
   id?: string;
@@ -59,6 +60,7 @@ interface TranslateWordProps {
     event: React.TouchEvent
   ) => void;
   selectedPartOfSpeech?: string;
+  sentenceWord: SentenceWordData
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
@@ -335,7 +337,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
         >
           <Tippy
             content={props.sentenceTranslation}
-            visible={isHovered}
+            visible={props.sentenceNumber === props.word?.}
+            //isHovered
             placement="top"
           >
             {children}

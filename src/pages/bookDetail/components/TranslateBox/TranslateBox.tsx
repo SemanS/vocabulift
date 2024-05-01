@@ -810,6 +810,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     sentenceNumber={sourceSentence.sentenceNo}
                     sentenceText={sourceSentence.sentenceText}
                     mode={mode}
+                    sentenceWord={sourceWord}
                     onMouseDown={(
                       word: string,
                       sentenceNumber: number,

@@ -20,6 +20,9 @@ import {
   Select,
   Button,
   FloatButton,
+  Flex,
+  Tag,
+  Divider,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -227,17 +230,6 @@ const BookDetail: FC = () => {
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
   };
-
-  const partsOfSpeech = [
-    "noun",
-    "pronoun",
-    "verb",
-    "adjective",
-    "adverb",
-    "preposition",
-    "conjunction",
-    "interjection",
-  ];
 
   const [state, dispatch] = useReducer(
     reducer,
@@ -1075,10 +1067,12 @@ const BookDetail: FC = () => {
 
   const [rightVisible, setRightVisible] = useState(false);
   const [rightVocabVisible, setRightVocabVisible] = useState(false);
+  const [rightExerciseVisible, setRightExerciseVisible] = useState(false);
   const [sizes, setSizes] = useState({
     centerWidth: window.innerWidth,
     rightWidth: 0,
     rightVocabWidth: 0,
+    rightExerciseWidth: 0,
   });
 
   const paginationControlsContainer = (
@@ -1269,37 +1263,48 @@ const BookDetail: FC = () => {
     next: intl.formatMessage({ id: "joyride.next" }),
   };
 
-  // This effect handles the window resizing
   useEffect(() => {
     function updateSizes() {
-      if (rightVocabVisible && !rightVisible) {
+      if (rightExerciseVisible) {
+        setSizes({
+          centerWidth: window.innerWidth * 0.5,
+          rightExerciseWidth: window.innerWidth * 0.33,
+          rightVocabWidth: 0,
+          rightWidth: 0,
+        });
+      } else if (rightVocabVisible && !rightVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightVocabWidth: window.innerWidth * 0.33,
+          rightExerciseWidth: 0,
           rightWidth: 0,
         });
       } else if (!rightVocabVisible && rightVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightVocabWidth: 0,
+          rightExerciseWidth: 0,
           rightWidth: window.innerWidth * 0.33,
         });
       } else if (rightVisible && rightVocabVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightVocabWidth: window.innerWidth * 0.3312,
+          rightExerciseWidth: 0,
           rightWidth: window.innerWidth * 0.33,
         });
       } else if (!rightVisible && !rightVocabVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.7,
           rightVocabWidth: 0,
+          rightExerciseWidth: 0,
           rightWidth: 0,
         });
       } else {
         setSizes({
           centerWidth: window.innerWidth * 0.7,
           rightWidth: 0,
+          rightExerciseWidth: 0,
           rightVocabWidth: 0,
         });
       }
@@ -1307,21 +1312,73 @@ const BookDetail: FC = () => {
 
     window.addEventListener("resize", updateSizes);
 
-    // Initial update when component mounts or rightVisible changes
     updateSizes();
 
     return () => {
       window.removeEventListener("resize", updateSizes);
     };
-  }, [rightVisible, rightVocabVisible]);
+  }, [rightVisible, rightVocabVisible, rightExerciseVisible]);
 
   const toggleRightPanel = () => {
-    setRightVisible(!rightVisible);
+    if (rightExerciseVisible) {
+      setRightExerciseVisible(!rightExerciseVisible);
+      setRightVisible(!rightVisible);
+    } else {
+      setRightVisible(!rightVisible);
+    }
   };
 
   const toggleRightVocabPanel = () => {
-    setRightVocabVisible(!rightVocabVisible);
+    if (rightExerciseVisible) {
+      setRightExerciseVisible(!rightExerciseVisible);
+      setRightVocabVisible(!rightVocabVisible);
+    } else {
+      setRightVocabVisible(!rightVocabVisible);
+    }
   };
+
+  const toggleRightExercisePanel = () => {
+    setRightExerciseVisible(!rightExerciseVisible);
+  };
+
+  const [selectedTags, setSelectedTags] = React.useState<string[]>(["Movies"]);
+  const handleChange = (tag: string, checked: boolean) => {
+    const nextSelectedTags = checked
+      ? [...selectedTags, tag]
+      : selectedTags.filter((t) => t !== tag);
+    console.log("You are interested in: ", nextSelectedTags);
+    setSelectedTags(nextSelectedTags);
+  };
+
+  const partsOfSpeech = [
+    "noun",
+    "pronoun",
+    "verb",
+    "adjective",
+    "adverb",
+    "preposition",
+    "conjunction",
+    "interjection",
+    "all",
+  ];
+
+  const tenses = [
+    "Simple Present",
+    "Present Continuous (Progressive)",
+    "Present Perfect",
+    "Present Perfect Continuous",
+    "Simple Past",
+    "Past Continuous (Progressive)",
+    "Past Perfect",
+    "Past Perfect Continuous",
+    "Simple Future",
+    "Future Continuous (Progressive)",
+    "Future Perfect",
+    "Future Perfect Continuous",
+    "Simple Conditional",
+    "Conditional Perfect",
+    "All",
+  ];
 
   return (
     <PageContainer title={false} className={styles.container}>
@@ -1417,7 +1474,7 @@ const BookDetail: FC = () => {
                     Video
                   </Button>
                   <Button
-                    onClick={toggleRightPanel}
+                    onClick={toggleRightExercisePanel}
                     className={`${styles.exerciseStickyButton}`}
                     type="primary"
                     style={{ backgroundColor: "Steelblue" }}
@@ -1425,6 +1482,77 @@ const BookDetail: FC = () => {
                   >
                     Exercise
                   </Button>
+                </Resizable>
+                <Resizable
+                  size={{ width: sizes.rightExerciseWidth, height: "720px" }}
+                  className={`${styles.resizableContainer}`}
+                  style={{
+                    transition: "all 0.5s",
+                    marginLeft: "32px",
+                    marginRight: "10px",
+                    borderTopLeftRadius: "15px",
+                    borderTopRightRadius: "15px",
+                  }}
+                  enable={{ right: true }}
+                >
+                  <Card
+                    title="Choose exercise"
+                    style={{
+                      height: "690px",
+                      borderBottomLeftRadius: "15px",
+                      borderBottomRightRadius: "15px",
+                    }}
+                  >
+                    <Flex
+                      gap={10}
+                      wrap="wrap"
+                      align="center"
+                      style={{ transition: "none" }} // Directly apply to Flex, won't cascade to children
+                    >
+                      {partsOfSpeech.map((tag) => (
+                        <Tag.CheckableTag
+                          key={tag}
+                          checked={selectedTags.includes(tag)}
+                          onChange={(checked) => handleChange(tag, checked)}
+                          style={{
+                            padding: "8px 15px",
+                            fontSize: "16px",
+                            borderRadius: "10px",
+                            backgroundColor: selectedTags.includes(tag)
+                              ? "#4CAF50"
+                              : "Gainsboro",
+                          }}
+                        >
+                          {tag}
+                        </Tag.CheckableTag>
+                      ))}
+                    </Flex>
+                    <Divider />
+                    <Flex
+                      gap={10}
+                      wrap="wrap"
+                      align="center"
+                      style={{ transition: "none" }} // Directly apply to Flex, won't cascade to children
+                    >
+                      {tenses.map((tag) => (
+                        <Tag.CheckableTag
+                          key={tag}
+                          checked={selectedTags.includes(tag)}
+                          onChange={(checked) => handleChange(tag, checked)}
+                          style={{
+                            padding: "8px 15px",
+                            fontSize: "16px",
+                            borderRadius: "10px",
+                            backgroundColor: selectedTags.includes(tag)
+                              ? "#4CAF50"
+                              : "Gainsboro",
+                          }}
+                        >
+                          {tag}
+                        </Tag.CheckableTag>
+                      ))}
+                    </Flex>
+                  </Card>
                 </Resizable>
                 <div
                   style={{
@@ -1437,7 +1565,7 @@ const BookDetail: FC = () => {
                       width: sizes.rightWidth,
                       height: rightVisible ? "360px" : "0px",
                     }}
-                    className={`${styles.resizableContainer} 
+                    className={`${styles.resizableContainer}
                     }`}
                     style={{
                       transition: "all 0.5s",
