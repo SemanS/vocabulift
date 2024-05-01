@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useReducer, useRef, useState } from "react";
-import { Button, Card, List, Select, Space, Tabs } from "antd";
+import { Button, Card, List, Radio, Select, Space, Tabs } from "antd";
 import {
   CaretRightOutlined,
+  CheckOutlined,
   CommentOutlined,
   DeleteOutlined,
   QuestionCircleOutlined,
@@ -68,6 +69,7 @@ interface VocabularyListProps {
   ) => void;
   selectedLanguageTo: string;
   addSteps: any;
+  placedTop?: boolean;
 }
 
 const isMobile = () =>
@@ -656,7 +658,6 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                   >
                                     <Space>
                                       <Button
-                                        type="primary"
                                         icon={<DeleteOutlined />}
                                         onClick={() =>
                                           handleDeleteItem(
@@ -667,9 +668,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           )
                                         }
                                       />
+                                      {/*
                                       {
-                                        /* parseLocale(user.locale) !==
-                                        word.phrase.sourceLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -709,38 +709,69 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                                 }
                                               />
                                             </Tooltip>
+                                            
                                           </>
+
                                         )
+
                                       }
+                                      */}
                                     </Space>
                                     <div
                                       style={{
                                         width: "50%",
                                         textAlign: "right",
                                         paddingRight: "20px",
-                                        fontWeight: 400,
-                                        fontSize: "16px",
-                                      }}
-                                      onClick={() => {
-                                        togglePlay;
-                                        handlePlayClick(
-                                          word.phrase.sourceText,
-                                          word.phrase.sourceLanguage
-                                        );
+                                        //fontWeight: 400,
+                                        //fontSize: "16px",
                                       }}
                                     >
-                                      {word.phrase.sourceText}
-                                      <CaretRightOutlined
-                                        key="icon"
-                                        onClick={() => {
-                                          togglePlay;
-                                          handlePlayClick(
-                                            word.phrase.sourceText,
-                                            word.phrase.sourceLanguage
-                                          );
+                                      {/* {word.phrase.sourceText} */}
+                                      <Radio.Group
+                                        defaultValue="0"
+                                        style={{
+                                          display: "inline-flex",
+                                          width: "auto",
                                         }}
-                                        style={{ marginLeft: "5px" }}
-                                      />
+                                      >
+                                        <Radio.Button
+                                          value="0"
+                                          style={{
+                                            backgroundColor: "olive",
+                                            color: "white",
+                                          }}
+                                        >
+                                          {word.phrase.sourceText}
+                                        </Radio.Button>
+                                        <Radio.Button
+                                          value="1"
+                                          style={{
+                                            width: "10px",
+                                            display: "flex", // Ensures the contents are flexibly aligned
+                                            alignItems: "center", // Vertically centers the icon in the button
+                                            justifyContent: "center",
+                                          }}
+                                          onClick={() => {
+                                            togglePlay;
+                                            handlePlayClick(
+                                              word.phrase.sourceText,
+                                              word.phrase.sourceLanguage
+                                            );
+                                          }}
+                                        >
+                                          <CaretRightOutlined
+                                            style={{ fontSize: "16px" }}
+                                            onClick={(e) => {
+                                              e.stopPropagation(); // Prevent the radio button from toggling when the icon is clicked
+                                              togglePlay();
+                                              /* handlePlayClick(
+                                                phraseText,
+                                                phraseLanguage
+                                              ); */
+                                            }}
+                                          />
+                                        </Radio.Button>
+                                      </Radio.Group>
                                     </div>
                                     <div
                                       style={{
@@ -759,8 +790,52 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                         );
                                       }}
                                     >
-                                      {word.phrase.targetText}
-                                      <CaretRightOutlined
+                                      <Radio.Group
+                                        defaultValue="0"
+                                        style={{
+                                          display: "inline-flex",
+                                          width: "auto",
+                                        }}
+                                      >
+                                        <Radio.Button
+                                          value="0"
+                                          style={{
+                                            backgroundColor: "olive",
+                                            color: "white",
+                                          }}
+                                        >
+                                          {word.phrase.targetText}
+                                        </Radio.Button>
+                                        <Radio.Button
+                                          value="1"
+                                          style={{
+                                            width: "10px",
+                                            display: "flex", // Ensures the contents are flexibly aligned
+                                            alignItems: "center", // Vertically centers the icon in the button
+                                            justifyContent: "center",
+                                          }}
+                                          onClick={() => {
+                                            togglePlay;
+                                            handlePlayClick(
+                                              word.phrase.targetText,
+                                              word.phrase.targetLanguage
+                                            );
+                                          }}
+                                        >
+                                          <CaretRightOutlined
+                                            style={{ fontSize: "16px" }}
+                                            onClick={(e) => {
+                                              e.stopPropagation(); // Prevent the radio button from toggling when the icon is clicked
+                                              togglePlay();
+                                              /* handlePlayClick(
+                                                phraseText,
+                                                phraseLanguage
+                                              ); */
+                                            }}
+                                          />
+                                        </Radio.Button>
+                                      </Radio.Group>
+                                      {/* <CaretRightOutlined
                                         style={{ marginLeft: "5px" }}
                                         key="icon"
                                         onClick={() => {
@@ -770,13 +845,11 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             word.phrase.targetLanguage
                                           );
                                         }}
-                                      />
+                                      /> */}
                                     </div>
                                     <audio key="audio" ref={audioRef} />
-                                    <Space>
+                                    {/* <Space>
                                       {
-                                        /* parseLocale(user.locale) !==
-                                        word.phrase.targetLanguage && */
                                         (user.subscriptionType !==
                                           SubscriptionType.Free ||
                                           hasAccess ||
@@ -821,6 +894,38 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           </>
                                         )
                                       }
+                                    </Space> */}
+                                    <Space>
+                                      <>
+                                        <Tooltip
+                                          title={intl.formatMessage({
+                                            id: "vocabulary.list.meaning",
+                                          })}
+                                        >
+                                          <Button
+                                            type="default"
+                                            style={{
+                                              color: "white",
+                                              backgroundColor: "ForestGreen",
+                                            }}
+                                            icon={
+                                              <CheckOutlined
+                                                style={{
+                                                  fontSize: "18px",
+                                                }}
+                                              />
+                                            }
+                                            onClick={() =>
+                                              handleQuestionClick(
+                                                word.phrase.sourceText,
+                                                word.phrase.targetLanguage
+                                              )
+                                            }
+                                            {...pressQuestionHandlers}
+                                            className={"noselect"}
+                                          />
+                                        </Tooltip>
+                                      </>
                                     </Space>
                                   </div>
                                 </div>

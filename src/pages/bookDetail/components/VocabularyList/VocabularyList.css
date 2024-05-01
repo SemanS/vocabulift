@@ -29,7 +29,7 @@
 
 .vocabularyListScroll {
   overflow-y: auto;
-  height: calc(30vh);
+  height: calc(32.5vh);
   width: 100%;
   /* margin-right: -25px; */
 }

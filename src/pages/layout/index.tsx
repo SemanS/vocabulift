@@ -12,14 +12,15 @@ import {
   UnorderedListOutlined,
   SettingOutlined,
   EyeOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import { useLocale } from "@/locales";
 import RightContent from "./components/RightContent";
 import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
 import Footer from "./components/Footer";
-import { Space } from "antd";
+import { Button, Dropdown, FloatButton, Space } from "antd";
 import {
   libraryIdState,
   currentPageState,
@@ -27,6 +28,7 @@ import {
 } from "@/stores/library";
 import { MenuItemLink } from "./components/MenuItemLink/MenuItemLink";
 import styled from "styled-components";
+import SelectLang from "./components/RightContent/SelectLang";
 
 const IconMap: { [key: string]: React.ReactNode } = {
   library: <ReadOutlined />,
@@ -121,6 +123,44 @@ const LayoutPage: FC = () => {
       />
     );
   };
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.antgroup.com"
+        >
+          1st menu item
+        </a>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.aliyun.com"
+        >
+          2nd menu item
+        </a>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.luohanacademy.com"
+        >
+          3rd menu item
+        </a>
+      ),
+    },
+  ];
 
   return (
     <SettingsDrawerContext.Provider
@@ -150,19 +190,54 @@ const LayoutPage: FC = () => {
               return defaultDom;
             }
             return (
-              <MenuItemLink
-                menuItemProps={menuItemProps}
-                defaultDom={defaultDom}
-                isUnderlined={selectedKeys.includes(
-                  menuItemProps.key?.replace("/", "") || ""
-                )}
-              />
+              <>
+                <MenuItemLink
+                  menuItemProps={menuItemProps}
+                  defaultDom={defaultDom}
+                  isUnderlined={selectedKeys.includes(
+                    menuItemProps.key?.replace("/", "") || ""
+                  )}
+                />
+              </>
             );
           }}
           actionsRender={() => <RightContent></RightContent>}
           //footerRender={() => <Footer />}
         >
           <Outlet />
+          <SelectLang />
+          {/* <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              top: 0,
+              zIndex: 1000,
+            }}
+          >
+            <Dropdown menu={{ items }} trigger={["click"]}>
+              <Button
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  margin: "-30px auto",
+                }}
+              >
+                <Space>
+                  Click me
+                  <DownOutlined />
+                </Space>
+              </Button>
+            </Dropdown>
+          </div> */}
+          {/* <FloatButton
+            style={{ insetBlockStart: "10px", insetInlineStart: "700px" }}
+            onClick={() => {
+              // Assuming you have a method or state to toggle visibility
+              // For example, if you manage state in the parent component:
+              setDropdownVisible((current) => !current); // Toggle the state that controls the dropdown
+            }}
+          ></FloatButton> */}
         </ProLayout>
       </div>
     </SettingsDrawerContext.Provider>

@@ -1,66 +1,78 @@
 import React from "react";
-import { Dropdown } from "antd";
+import { Button, Dropdown, Menu } from "antd";
 import { ReactComponent as LanguageSvg } from "@/assets/header/language.svg";
 import classes from "./index.module.less";
 import { localeConfig } from "@/config/locale";
 import { useLocale } from "@/locales";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
-import { User } from "@/models/user";
 import { updateUser } from "@/services/userService";
-import { parseLocale } from "@/utils/stringUtils";
+import { DownOutlined } from "@ant-design/icons";
 
-interface SelectLangProps {
-  className?: string;
-}
-
-const SelectLang: React.FC<SelectLangProps> = (props) => {
-  const { formatMessage } = useLocale();
+const SelectLang = () => {
   const [user, setUser] = useRecoilState(userState);
 
-  const { locale, settings } = user;
-  let className = "";
-
-  const selectLocale = async ({ key }: { key: any }) => {
-    const updatedUserEntity: Partial<User> = {
-      locale: key,
-    };
-    await updateUser(updatedUserEntity);
-    setUser({ ...user, locale: key });
+  const selectLocale = async ({ key }) => {
+    await updateUser({ locale: key });
+    setUser((prev) => ({ ...prev, locale: key }));
     localStorage.setItem("locale", key);
   };
 
-  if (
-    (settings.navTheme === "realDark" && settings.layout === "top") ||
-    settings.layout === "mix"
-  ) {
-    className = `dark`;
-  }
-  const items = localeConfig.map((lang) => {
-    return {
-      key: lang.key,
-      disabled: locale === lang.key,
-      label: (
-        <>
-          {/* {lang.icon} {lang.name} */}
-          {lang.icon}
-        </>
-      ),
-      onClick: selectLocale,
-    };
-  });
+  const items = localeConfig.map((lang) => ({
+    key: lang.key,
+    disabled: user.locale === lang.key,
+    label: lang.icon,
+    onClick: () => selectLocale({ key: lang.key }),
+  }));
+
+  const currentLangIcon = localeConfig.find((lang) => lang.key === user.locale);
 
   return (
-    <Dropdown
-      placement="bottomRight"
-      className={classes.action}
-      menu={{ items }}
-      trigger={["click"]}
+    <div
+      style={{
+        position: "fixed",
+        top: "22px",
+        left: "49.6%",
+        transform: "translateX(-50%)",
+        zIndex: 1001,
+      }}
     >
-      <span id="language-change" className={classes.lang}>
-        <LanguageSvg className={`anticon `} />
-      </span>
-    </Dropdown>
+      <Dropdown
+        overlay={<Menu items={items} />}
+        trigger={["click"]}
+        arrow={true}
+        placement="bottom"
+        overlayStyle={{
+          border: "1px solid #ccc",
+          borderRadius: "10px",
+          overflow: "hidden",
+        }} // Inline styles for Menu
+      >
+        <Button
+          size="large"
+          //shape="round"
+          className={classes.actionButton}
+          style={{
+            borderRadius: "12px",
+            boxShadow: "0 2px 5px DimGrey",
+            border: "none", // Optional: Removes the border for a cleaner look
+          }}
+        >
+          <DownOutlined />
+          <span>Native language: </span>
+          <span
+            style={{
+              marginLeft: "4px",
+              marginRight: "6px",
+              fontWeight: "bold",
+            }}
+          >
+            {currentLangIcon?.name}
+          </span>
+          {currentLangIcon?.icon}
+        </Button>
+      </Dropdown>
+    </div>
   );
 };
 

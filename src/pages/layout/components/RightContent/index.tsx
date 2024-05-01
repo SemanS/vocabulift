@@ -40,7 +40,6 @@ const GlobalHeaderRight: React.FC<GlobalHeaderRightProps> = ({ children }) => {
           Log In
         </div>
       )}
-      <SelectLang />
     </Space>
   );
 };

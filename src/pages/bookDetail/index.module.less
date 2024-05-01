@@ -81,10 +81,11 @@
   display: flex;
   align-items: center;
   width: 15px;
-  height: 95%;
+  height: 91%;
 }
 
 .sliderTrack {
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.552); /* Adjust shadow strength and spread as needed */
   background-color: black;
   position: relative;
   flex-grow: 1;
@@ -106,14 +107,14 @@
   /* width: 30px;
   height: 30px; */
   background-color: white;
-  box-shadow: 0 2px 10px black;
+  box-shadow: 0 2px 10px DimGrey;
   border-radius: 10px;
 }
 .sliderThumb:hover {
   background-color: rgb(246, 216, 174);
   .sliderThumb:focus {
     outline: none;
-    box-shadow: 0 0 0 5px black;
+    box-shadow: 0 0 0 5px DimGrey;
   }
 }
 

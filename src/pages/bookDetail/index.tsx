@@ -19,6 +19,7 @@ import {
   Typography,
   Select,
   Button,
+  FloatButton,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -1072,13 +1073,25 @@ const BookDetail: FC = () => {
     }));
   }, [joyrideState.translateBoxSteps, joyrideState.vocabularyListSteps]);
 
+  const [rightVisible, setRightVisible] = useState(false);
+  const [rightVocabVisible, setRightVocabVisible] = useState(false);
+  const [sizes, setSizes] = useState({
+    centerWidth: window.innerWidth,
+    rightWidth: 0,
+    rightVocabWidth: 0,
+  });
+
   const paginationControlsContainer = (
     <Card
       bodyStyle={{
         paddingTop: "15px",
         paddingBottom: "15px",
       }}
-      style={{ marginBottom: 16 }}
+      style={{
+        marginBottom: 16,
+        borderBottomLeftRadius: "15px",
+        borderBottomRightRadius: "15px",
+      }}
     >
       <PaginationControls
         currentPage={state.currentPage}
@@ -1101,7 +1114,13 @@ const BookDetail: FC = () => {
       </button>
 
       <div>
-        <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
+        <Card
+          bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}
+          style={{
+            borderTopLeftRadius: "15px",
+            borderTopRightRadius: "15px",
+          }}
+        >
           <div
             style={{
               display: "flex",
@@ -1150,7 +1169,7 @@ const BookDetail: FC = () => {
                     `${url.pathname}?${params}`
                   );
                 }}
-                style={{ marginLeft: 16, fontWeight: 500 }} // Adjust marginLeft if necessary
+                style={{ marginLeft: 16, fontWeight: 500 }}
               >
                 {languagesWithoutSource.map((language, index) => (
                   <Select.Option key={index} value={language}>
@@ -1199,7 +1218,7 @@ const BookDetail: FC = () => {
   );
 
   const phraseListContainer = (
-    <div className={styles.myVocabularyContainer}>
+    <div>
       {state.showVocabularyList &&
         state.vocabularyListUserPhrases?.length !== 0 &&
         state.vocabularyListUserPhrases && (
@@ -1213,7 +1232,18 @@ const BookDetail: FC = () => {
               selectedUserPhrase={state.selectedUserPhrase}
               setSelectedUserPhrase={setSelectedUserPhrase}
               selectedLanguageTo={state.selectedLanguageTo}
-              style={{ marginBottom: "16px" }}
+              style={{
+                marginBottom: "16px",
+                borderBottomLeftRadius: "15px",
+                borderBottomRightRadius: "15px",
+                ...((rightVocabVisible && !rightVisible) ||
+                (!rightVocabVisible && !rightVisible)
+                  ? {
+                      borderTopLeftRadius: "15px",
+                      borderTopRightRadius: "15px",
+                    }
+                  : {}),
+              }}
               addSteps={addVocabularyListSteps}
             />
             {/* <FilteredVocabularyList
@@ -1239,14 +1269,6 @@ const BookDetail: FC = () => {
     next: intl.formatMessage({ id: "joyride.next" }),
   };
 
-  const [rightVisible, setRightVisible] = useState(false);
-  const [rightVocabVisible, setRightVocabVisible] = useState(false);
-  const [sizes, setSizes] = useState({
-    centerWidth: window.innerWidth,
-    rightWidth: 0,
-    rightVocabWidth: 0,
-  });
-
   // This effect handles the window resizing
   useEffect(() => {
     function updateSizes() {
@@ -1265,7 +1287,7 @@ const BookDetail: FC = () => {
       } else if (rightVisible && rightVocabVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
-          rightVocabWidth: window.innerWidth * 0.33,
+          rightVocabWidth: window.innerWidth * 0.3312,
           rightWidth: window.innerWidth * 0.33,
         });
       } else if (!rightVisible && !rightVocabVisible) {
@@ -1352,8 +1374,9 @@ const BookDetail: FC = () => {
                   orientation="vertical"
                   step={0.1}
                   style={{
-                    marginLeft: "95px",
-                    marginTop: "120px",
+                    marginLeft: "25px",
+                    marginRight: "5px",
+                    marginTop: "140px",
                     marginBottom: "-120px",
                   }}
                   inverted={true}
@@ -1368,7 +1391,11 @@ const BookDetail: FC = () => {
                 </Slider.Root>
                 <Resizable
                   size={{ width: sizes.centerWidth, height: "auto" }}
-                  style={{ transition: "all 0.5s", marginLeft: "30px" }}
+                  style={{
+                    transition: "all 0.5s",
+                    marginLeft: "32px",
+                    marginRight: "10px",
+                  }}
                   enable={{ right: true }}
                 >
                   {translateBoxContainer}
@@ -1408,19 +1435,18 @@ const BookDetail: FC = () => {
                   <Resizable
                     size={{
                       width: sizes.rightWidth,
-                      height: rightVisible ? "378px" : "0px",
-                    }} // Use dynamic or content-based heights as necessary
+                      height: rightVisible ? "360px" : "0px",
+                    }}
                     className={`${styles.resizableContainer} 
                     }`}
                     style={{
                       transition: "all 0.5s",
-                      marginLeft: "15px",
+                      marginLeft: "15.8px",
+                      borderTopLeftRadius: "15px",
+                      borderTopRightRadius: "15px",
                     }}
                     enable={{
                       left: true,
-                      top: false,
-                      right: true,
-                      bottom: true,
                     }}
                   >
                     {videoContainer}
@@ -1430,13 +1456,13 @@ const BookDetail: FC = () => {
                       width: sizes.rightVocabWidth,
                       height: rightVocabVisible ? "378" : "0px",
                     }} // Adjust accordingly
-                    className={`${styles.resizableContainer} ${
-                      !rightVocabVisible ? "hidden" : ""
+                    className={`${styles.resizableContainer} 
                     }`}
                     style={{
                       transition: "all 0.5s",
-
                       marginLeft: "15px",
+                      borderBottomLeftRadius: "15px",
+                      borderBottomRightRadius: "15px",
                     }}
                     enable={{
                       left: true,
