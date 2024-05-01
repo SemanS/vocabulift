@@ -60,7 +60,7 @@ interface TranslateWordProps {
     event: React.TouchEvent
   ) => void;
   selectedPartOfSpeech?: string;
-  sentenceWord: SentenceWordData
+  sentenceWord: SentenceWordData;
 }
 
 const TranslateWord: React.FC<TranslateWordProps> = (props) => {
@@ -337,8 +337,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
         >
           <Tippy
             content={props.sentenceTranslation}
-            visible={props.sentenceNumber === props.word?.}
-            //isHovered
+            visible={isHovered}
             placement="top"
           >
             {children}
