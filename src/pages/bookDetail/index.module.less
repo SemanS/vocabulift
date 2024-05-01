@@ -23,12 +23,7 @@
 }
 
 .my-video-container {
-  position: sticky;
-}
-
-.my-vocabulary-container {
-  position: sticky;
-  top: 0;
+  //position: sticky;
 }
 
 .fixedVideoAndVocabulary {
@@ -120,4 +115,49 @@
     outline: none;
     box-shadow: 0 0 0 5px black;
   }
+}
+
+.sticky-button {
+  margin-right: 20px;
+  position: fixed;
+  top: 11%;
+  right: 0;
+  transform: translateY(-50%) rotate(-90deg); /* rotate the button */
+  transform-origin: right; /* sets the point around which rotation happens */
+  z-index: 1000;
+}
+
+.video-sticky-button {
+  margin-right: 20px;
+  position: fixed;
+  top: 22%;
+  right: 0;
+  transform: translateY(-50%) rotate(-90deg); /* rotate the button */
+  transform-origin: right; /* sets the point around which rotation happens */
+  z-index: 1000;
+}
+
+.exercise-sticky-button {
+  margin-right: 20px;
+  position: fixed;
+  top: 38%;
+  right: 0;
+  transform: translateY(-50%) rotate(-90deg); /* rotate the button */
+  transform-origin: right; /* sets the point around which rotation happens */
+  z-index: 1000;
+}
+
+.resizable-container {
+  overflow: hidden;
+  transition: opacity 0.5s, height 0.5s ease, max-height 0.5s ease;
+  max-height: 500px; // Adjust based on typical max content height
+  opacity: 1;
+}
+
+.hidden {
+  opacity: 0;
+  max-height: 0; // Transition to 0 max-height smoothly
+  height: 0; // Make sure this transitions smoothly too
+  padding: 0 !important;
+  margin: 0 !important;
 }

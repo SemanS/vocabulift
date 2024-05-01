@@ -444,6 +444,28 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       setDuration(playerRef.current.getDuration());
     };
 
+    const initializeYouTubePlayer = () => {
+      if (playerDivRef.current && currentLibrary) {
+        playerRef.current = new YT.Player(playerDivRef.current, {
+          videoId: currentLibrary!.videoId,
+          playerVars: {
+            autoplay: 0,
+            //controls: 0,
+            rel: 0,
+            showinfo: 0,
+            start: 0,
+          },
+          events: {
+            onStateChange: handlePlayerStateChange,
+            onPlaybackRateChange: handlePlayerStateChange,
+            onError: (event) => {
+              console.error("YouTube Player Error", event);
+            },
+          },
+        });
+      }
+    };
+
     useEffect(() => {
       const fetchLibraryItemAndSetupPlayer = async () => {
         if (isInitRender) {
@@ -453,23 +475,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         }
         window.onYouTubeIframeAPIReady = () => {
           if (playerDivRef.current && !playerRef.current && currentLibrary) {
-            playerRef.current = new YT.Player(playerDivRef.current, {
-              videoId: currentLibrary!.videoId,
-              playerVars: {
-                autoplay: 0,
-                controls: 0, // Hide default controls
-                rel: 0,
-                showinfo: 0,
-                start: 0,
-              },
-              events: {
-                onStateChange: handlePlayerStateChange,
-                onPlaybackRateChange: handlePlayerStateChange,
-                onError: (event: any) => {
-                  console.error("YouTube Player Error", event);
-                },
-              },
-            });
+            initializeYouTubePlayer();
             playerRef.current.addEventListener("onReady", function () {
               handlePlayerReady();
               if (playerRef.current.seekTo) {
@@ -663,17 +669,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           </Slider.Root> */}
         </div>
         {/* <div style={{ paddingBottom: "56.25%", height: 0 }}> */}
-        <div
-          ref={playerDivRef}
-          style={{
-            /* position: "absolute",
-              top: 50,
-              left: 0, */
-            width: "0",
-            height: "0",
-            visibility: "hidden",
-          }}
-        />
+        <div ref={playerDivRef} className={`${styles.yt}`} />
         {/* </div> */}
       </>
     );

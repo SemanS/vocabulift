@@ -18,6 +18,7 @@ import {
   Modal,
   Typography,
   Select,
+  Button,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -59,6 +60,10 @@ import { useMount, useSetState } from "react-use";
 import { triggerState } from "@/stores/joyride";
 import { User } from "@models/user";
 import * as Slider from "@radix-ui/react-slider";
+import "react-modern-drawer/dist/index.css";
+import { Resizable } from "re-resizable";
+import { AwesomeButton } from "react-awesome-button";
+import "react-awesome-button/dist/styles.css";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -215,6 +220,12 @@ const BookDetail: FC = () => {
   const [user, setUser] = useRecoilState(userState);
   const videoPlayerRef = useRef<ExposedFunctions | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
+
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const toggleDrawer = () => {
+    setIsOpen((prevState) => !prevState);
+  };
 
   const partsOfSpeech = [
     "noun",
@@ -1061,95 +1072,96 @@ const BookDetail: FC = () => {
     }));
   }, [joyrideState.translateBoxSteps, joyrideState.vocabularyListSteps]);
 
+  const paginationControlsContainer = (
+    <Card
+      bodyStyle={{
+        paddingTop: "15px",
+        paddingBottom: "15px",
+      }}
+      style={{ marginBottom: 16 }}
+    >
+      <PaginationControls
+        currentPage={state.currentPage}
+        onShowSizeChange={onShowSizeChange}
+        handlePageChange={handlePageChange}
+        totalSentences={state.totalSentences}
+        sentencesPerPage={state.sentencesPerPage}
+      />
+    </Card>
+  );
+
   const translateBoxContainer = (
-    <div>
-      <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-          }}
-        >
-          <div>
-            <Typography.Title level={5}>{state.libraryTitle}</Typography.Title>
-            <Radio.Group
-              onChange={handleModeChange}
-              value={state.mode}
-              buttonStyle="solid"
-              style={{ paddingRight: 20, marginTop: 10 }}
-            >
-              <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
-                {intl.formatMessage({ id: "translate.box.sentences" })}
-              </Radio.Button>
-              <Radio.Button value="words" style={{ fontWeight: 500 }}>
-                {intl.formatMessage({ id: "translate.box.words" })}
-              </Radio.Button>
-              <Radio.Button value="all" style={{ fontWeight: 500 }}>
-                {intl.formatMessage({ id: "translate.box.all" })}
-              </Radio.Button>
-            </Radio.Group>
-            {/* Other components like Buttons if needed */}
-          </div>
-          <div>
-            <Select
-              value={state.selectedLanguageTo}
-              onChange={(value) => {
-                dispatch({
-                  type: "setSelectedLanguageTo",
-                  payload: value,
-                });
-                fetchVocabularyAndSetState(state.sentenceFrom, value);
-                fetchAndUpdate(state.sentenceFrom, value);
-                const url = new URL(window.location.href);
-                const params = new URLSearchParams(url.search);
-                params.set("targetLanguage", value);
-                window.history.replaceState(
-                  {},
-                  "",
-                  `${url.pathname}?${params}`
-                );
-              }}
-              style={{ marginLeft: 16, fontWeight: 500 }} // Adjust marginLeft if necessary
-            >
-              {languagesWithoutSource.map((language, index) => (
-                <Select.Option key={index} value={language}>
-                  <SvgIcon code={getFlagCode(language)} height="16" />
-                </Select.Option>
-              ))}
-            </Select>
-          </div>
-        </div>
-      </Card>
-      <Row>
-        <button
-          className={`${styles.myPlayButton}`}
-          onClick={handlePlayPause}
-          style={{ marginLeft: "-100px" }}
-        >
-          {state.isPlaying ? "❚❚" : "▶"}
-        </button>
-        <Col>
-          <Slider.Root
-            className={`${styles.sliderRoot}`}
-            value={[currentTime]}
-            onValueChange={handleSliderChange}
-            max={state.library?.duration}
-            orientation="vertical"
-            step={0.1}
-            style={{ marginLeft: "-40px" }}
-            inverted={true}
+    <>
+      <button
+        className={`${styles.myPlayButton}`}
+        onClick={handlePlayPause}
+        style={{ marginLeft: "-100px" }}
+      >
+        {state.isPlaying ? "❚❚" : "▶"}
+      </button>
+
+      <div>
+        <Card bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+            }}
           >
-            <Slider.Track className={`${styles.sliderTrack}`}>
-              <Slider.Range className={`${styles.sliderRange}`} />
-            </Slider.Track>
-            <Slider.Thumb
-              className={`${styles.sliderThumb}`}
-              aria-label="Volume"
-            />
-          </Slider.Root>
-        </Col>
-        <Col>
+            <div>
+              <Typography.Title level={5}>
+                {state.libraryTitle}
+              </Typography.Title>
+              <Radio.Group
+                onChange={handleModeChange}
+                value={state.mode}
+                buttonStyle="solid"
+                style={{ paddingRight: 20, marginTop: 10 }}
+              >
+                <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
+                  {intl.formatMessage({ id: "translate.box.sentences" })}
+                </Radio.Button>
+                <Radio.Button value="words" style={{ fontWeight: 500 }}>
+                  {intl.formatMessage({ id: "translate.box.words" })}
+                </Radio.Button>
+                <Radio.Button value="all" style={{ fontWeight: 500 }}>
+                  {intl.formatMessage({ id: "translate.box.all" })}
+                </Radio.Button>
+              </Radio.Group>
+              {/* Other components like Buttons if needed */}
+            </div>
+            <div>
+              <Select
+                value={state.selectedLanguageTo}
+                onChange={(value) => {
+                  dispatch({
+                    type: "setSelectedLanguageTo",
+                    payload: value,
+                  });
+                  fetchVocabularyAndSetState(state.sentenceFrom, value);
+                  fetchAndUpdate(state.sentenceFrom, value);
+                  const url = new URL(window.location.href);
+                  const params = new URLSearchParams(url.search);
+                  params.set("targetLanguage", value);
+                  window.history.replaceState(
+                    {},
+                    "",
+                    `${url.pathname}?${params}`
+                  );
+                }}
+                style={{ marginLeft: 16, fontWeight: 500 }} // Adjust marginLeft if necessary
+              >
+                {languagesWithoutSource.map((language, index) => (
+                  <Select.Option key={index} value={language}>
+                    <SvgIcon code={getFlagCode(language)} height="16" />
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+          </div>
+        </Card>
+        <div>
           <Card
             loading={state.loading || state.loadingFromFetch}
             className={styles.translateBoxScroll}
@@ -1180,13 +1192,14 @@ const BookDetail: FC = () => {
               partOfSpeech={state.partOfSpeech}
             />
           </Card>
-        </Col>
-      </Row>
-    </div>
+        </div>
+        {state.mode !== "quiz" && paginationControlsContainer}
+      </div>
+    </>
   );
 
   const phraseListContainer = (
-    <div className={styles.myVocabularyContainer} style={{ marginTop: "16px" }}>
+    <div className={styles.myVocabularyContainer}>
       {state.showVocabularyList &&
         state.vocabularyListUserPhrases?.length !== 0 &&
         state.vocabularyListUserPhrases && (
@@ -1218,29 +1231,74 @@ const BookDetail: FC = () => {
         )}
     </div>
   );
-  const paginationControlsContainer = (
-    <Card
-      bodyStyle={{
-        paddingTop: "15px",
-        paddingBottom: "15px",
-      }}
-      style={{ marginBottom: 16 }}
-    >
-      <PaginationControls
-        currentPage={state.currentPage}
-        onShowSizeChange={onShowSizeChange}
-        handlePageChange={handlePageChange}
-        totalSentences={state.totalSentences}
-        sentencesPerPage={state.sentencesPerPage}
-      />
-    </Card>
-  );
 
   const isMobile = window.innerWidth <= 600;
 
   const customLocale = {
     last: intl.formatMessage({ id: "joyride.last" }),
     next: intl.formatMessage({ id: "joyride.next" }),
+  };
+
+  const [rightVisible, setRightVisible] = useState(false);
+  const [rightVocabVisible, setRightVocabVisible] = useState(false);
+  const [sizes, setSizes] = useState({
+    centerWidth: window.innerWidth,
+    rightWidth: 0,
+    rightVocabWidth: 0,
+  });
+
+  // This effect handles the window resizing
+  useEffect(() => {
+    function updateSizes() {
+      if (rightVocabVisible && !rightVisible) {
+        setSizes({
+          centerWidth: window.innerWidth * 0.5,
+          rightVocabWidth: window.innerWidth * 0.33,
+          rightWidth: 0,
+        });
+      } else if (!rightVocabVisible && rightVisible) {
+        setSizes({
+          centerWidth: window.innerWidth * 0.5,
+          rightVocabWidth: 0,
+          rightWidth: window.innerWidth * 0.33,
+        });
+      } else if (rightVisible && rightVocabVisible) {
+        setSizes({
+          centerWidth: window.innerWidth * 0.5,
+          rightVocabWidth: window.innerWidth * 0.33,
+          rightWidth: window.innerWidth * 0.33,
+        });
+      } else if (!rightVisible && !rightVocabVisible) {
+        setSizes({
+          centerWidth: window.innerWidth * 0.7,
+          rightVocabWidth: 0,
+          rightWidth: 0,
+        });
+      } else {
+        setSizes({
+          centerWidth: window.innerWidth * 0.7,
+          rightWidth: 0,
+          rightVocabWidth: 0,
+        });
+      }
+    }
+
+    window.addEventListener("resize", updateSizes);
+
+    // Initial update when component mounts or rightVisible changes
+    updateSizes();
+
+    return () => {
+      window.removeEventListener("resize", updateSizes);
+    };
+  }, [rightVisible, rightVocabVisible]);
+
+  const toggleRightPanel = () => {
+    setRightVisible(!rightVisible);
+  };
+
+  const toggleRightVocabPanel = () => {
+    setRightVocabVisible(!rightVocabVisible);
   };
 
   return (
@@ -1279,25 +1337,124 @@ const BookDetail: FC = () => {
         <>
           {!isMobile ? (
             <Row>
-              <Col span={2}></Col>
-              <Col span={15}>
-                {videoContainer}
-                {translateBoxContainer}
-                {state.mode !== "quiz" && paginationControlsContainer}
-                {/* {phraseListContainer} */}
-                <div className={`${styles.myVideoContainer}`}>
-                  {(state.loadingFromWordMeaning || state.wordMeaningData) &&
-                    {
-                      /* <Card
-                    title={"Word meaning"}
-                    loading={state.loadingFromWordMeaning}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  height: "64vh",
+                }}
+              >
+                <Slider.Root
+                  className={`${styles.sliderRoot}`}
+                  value={[currentTime]}
+                  onValueChange={handleSliderChange}
+                  max={state.library?.duration}
+                  orientation="vertical"
+                  step={0.1}
+                  style={{
+                    marginLeft: "95px",
+                    marginTop: "120px",
+                    marginBottom: "-120px",
+                  }}
+                  inverted={true}
+                >
+                  <Slider.Track className={`${styles.sliderTrack}`}>
+                    <Slider.Range className={`${styles.sliderRange}`} />
+                  </Slider.Track>
+                  <Slider.Thumb
+                    className={`${styles.sliderThumb}`}
+                    aria-label="Volume"
+                  />
+                </Slider.Root>
+                <Resizable
+                  size={{ width: sizes.centerWidth, height: "auto" }}
+                  style={{ transition: "all 0.5s", marginLeft: "30px" }}
+                  enable={{ right: true }}
+                >
+                  {translateBoxContainer}
+                  <Button
+                    onClick={toggleRightVocabPanel}
+                    className={`${styles.videoStickyButton}`}
+                    type="primary"
+                    size="large"
                   >
-                    {state.wordMeaningData && state.wordMeaningData.data}
-                  </Card> */
+                    Vocabulary
+                  </Button>
+                  <Button
+                    onClick={toggleRightPanel}
+                    className={`${styles.stickyButton}`}
+                    type="primary"
+                    style={{ backgroundColor: "tomato" }}
+                    size="large"
+                  >
+                    Video
+                  </Button>
+                  <Button
+                    onClick={toggleRightPanel}
+                    className={`${styles.exerciseStickyButton}`}
+                    type="primary"
+                    style={{ backgroundColor: "Steelblue" }}
+                    size="large"
+                  >
+                    Exercise
+                  </Button>
+                </Resizable>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <Resizable
+                    size={{
+                      width: sizes.rightWidth,
+                      height: rightVisible ? "378px" : "0px",
+                    }} // Use dynamic or content-based heights as necessary
+                    className={`${styles.resizableContainer} ${
+                      !rightVisible ? "hidden" : ""
+                    }`}
+                    style={{
+                      transition:
+                        "opacity 0.5s, max-height 0.5s ease-in-out, height 0.5s ease-in-out",
+                      marginLeft: "15px",
                     }}
+                    enable={{
+                      left: true,
+                      top: false,
+                      right: false,
+                      bottom: true,
+                    }}
+                  >
+                    <div style={{ opacity: rightVisible ? 1 : 0 }}>
+                      {videoContainer}
+                    </div>
+                  </Resizable>
+                  <Resizable
+                    size={{
+                      width: sizes.rightVocabWidth,
+                      height: rightVocabVisible ? "auto" : "0px",
+                    }} // Adjust accordingly
+                    className={`${styles.resizableContainer} ${
+                      !rightVocabVisible ? "hidden" : ""
+                    }`}
+                    style={{
+                      transition:
+                        "opacity 0.5s, max-height 0.5s ease-in-out, height 0.5s ease-in-out",
+                      marginLeft: "15px",
+                    }}
+                    enable={{
+                      left: true,
+                      top: false,
+                      right: false,
+                      bottom: true,
+                    }}
+                  >
+                    <div style={{ opacity: rightVocabVisible ? 1 : 0 }}>
+                      {phraseListContainer}
+                    </div>
+                  </Resizable>
                 </div>
-              </Col>
-              <Col span={7}></Col>
+              </div>
             </Row>
           ) : (
             <Masonry
@@ -1305,20 +1462,12 @@ const BookDetail: FC = () => {
               className={styles.myMasonryGrid}
               columnClassName={styles.myMasonryGridColumn}
             >
-              {videoContainer}
-              {translateBoxContainer}
-              <div className={`${styles.myVideoContainer}`}>
+              <Row>
+                {videoContainer}
+                {translateBoxContainer}
+
                 {paginationControlsContainer}
-                {(state.loadingFromWordMeaning || state.wordMeaningData) &&
-                  {
-                    /* <Card
-                    title={"Word meaning"}
-                    loading={state.loadingFromWordMeaning}
-                  >
-                    {state.wordMeaningData && state.wordMeaningData.data}
-                  </Card> */
-                  }}
-              </div>
+              </Row>
               <button
                 className={`${styles.myFixedPlayButton}`}
                 onClick={handlePlayPause}
