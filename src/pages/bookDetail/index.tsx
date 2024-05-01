@@ -1410,48 +1410,42 @@ const BookDetail: FC = () => {
                       width: sizes.rightWidth,
                       height: rightVisible ? "378px" : "0px",
                     }} // Use dynamic or content-based heights as necessary
-                    className={`${styles.resizableContainer} ${
-                      !rightVisible ? "hidden" : ""
+                    className={`${styles.resizableContainer} 
                     }`}
                     style={{
-                      transition:
-                        "opacity 0.5s, max-height 0.5s ease-in-out, height 0.5s ease-in-out",
+                      transition: "all 0.5s",
                       marginLeft: "15px",
                     }}
                     enable={{
                       left: true,
                       top: false,
-                      right: false,
+                      right: true,
                       bottom: true,
                     }}
                   >
-                    <div style={{ opacity: rightVisible ? 1 : 0 }}>
-                      {videoContainer}
-                    </div>
+                    {videoContainer}
                   </Resizable>
                   <Resizable
                     size={{
                       width: sizes.rightVocabWidth,
-                      height: rightVocabVisible ? "auto" : "0px",
+                      height: rightVocabVisible ? "378" : "0px",
                     }} // Adjust accordingly
                     className={`${styles.resizableContainer} ${
                       !rightVocabVisible ? "hidden" : ""
                     }`}
                     style={{
-                      transition:
-                        "opacity 0.5s, max-height 0.5s ease-in-out, height 0.5s ease-in-out",
+                      transition: "all 0.5s",
+
                       marginLeft: "15px",
                     }}
                     enable={{
                       left: true,
                       top: false,
-                      right: false,
+                      right: true,
                       bottom: true,
                     }}
                   >
-                    <div style={{ opacity: rightVocabVisible ? 1 : 0 }}>
-                      {phraseListContainer}
-                    </div>
+                    {phraseListContainer}
                   </Resizable>
                 </div>
               </div>
