@@ -408,7 +408,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
         onChange={setActiveTab}
         tabBarStyle={{ paddingLeft: 25, paddingRight: 25 }}
         tabBarExtraContent={
-          <Select
+          {
+            /* <Select
             value={user.languageForMeaning || user.targetLanguage}
             onChange={(newValue) => handleLanguageChange(newValue)}
           >
@@ -417,7 +418,8 @@ const VocabularyList: FC<VocabularyListProps> = ({
                 <SvgIcon code={getFlagCode(language.code)} height="16" />
               </Select.Option>
             ))}
-          </Select>
+          </Select> */
+          }
         }
       >
         {filteredWords.length > 0 && (
@@ -740,6 +742,12 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                             backgroundColor: "olive",
                                             color: "white",
                                           }}
+                                          onClick={() =>
+                                            handleQuestionClick(
+                                              word.phrase.sourceText,
+                                              word.phrase.targetLanguage
+                                            )
+                                          }
                                         >
                                           {word.phrase.sourceText}
                                         </Radio.Button>
@@ -825,7 +833,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
                                           <CaretRightOutlined
                                             style={{ fontSize: "16px" }}
                                             onClick={(e) => {
-                                              e.stopPropagation(); // Prevent the radio button from toggling when the icon is clicked
+                                              e.stopPropagation();
                                               togglePlay();
                                               /* handlePlayClick(
                                                 phraseText,

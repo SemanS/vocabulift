@@ -9,7 +9,7 @@ import { UserSentence } from "@/models/userSentence.interface";
 import { addUserPhrase } from "@/services/userService";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import React from "react";
-import { SentenceData } from "@/models/sentences.interfaces";
+import { SentenceData, SentenceWordData } from "@/models/sentences.interfaces";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { SelectedWord } from "@/models/utils.interface";
 import { getPhraseIfNotInHighlighted, isSingleWord } from "@/utils/utilMethods";
@@ -17,6 +17,9 @@ import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
 import QuizComponent from "../Quiz/QuizComponent";
 import { useIntl } from "react-intl";
 import Select from "react-select";
+import Tippy from "@tippyjs/react";
+import styles from "./TranslateBox.module.less";
+import { Button } from "antd";
 
 interface TenseSelection {
   sentenceNumber: number;
@@ -41,7 +44,8 @@ interface TranslateBoxProps {
   onChangeMode: (mode: string) => void;
   magnifyingGlassRef: any;
   addSteps: any;
-  partOfSpeech: string;
+  partOfSpeech: string[];
+  isTenseVisible: boolean;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -63,6 +67,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   magnifyingGlassRef,
   addSteps,
   partOfSpeech,
+  isTenseVisible,
 }) => {
   const { libraryId } = useParams();
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
@@ -491,7 +496,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   };
 
-  function extractUniqueVerbs(sentences, partOfSpeechForExtract) {
+  function extractUniqueVerbs(sentences, partsOfSpeechForExtract: string[]) {
     let usedVerbs = new Set(); // Track verbs that have already been used
     let results = [];
 
@@ -510,31 +515,32 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       }
 
       // Filter words to find those with partOfSpeech marked as "verb"
-      let sentenceVerbs = sentence.sentenceWords
+      let matchingWords = sentence.sentenceWords
         .filter(
           (word) =>
             word.partOfSpeech &&
-            word.partOfSpeech.toLowerCase() === partOfSpeechForExtract
+            partsOfSpeechForExtract.includes(word.partOfSpeech.toLowerCase())
         )
         .map((word) => ({
-          text: word.wordText.toLowerCase(),
+          partOfSpeech: word.partOfSpeech,
+          text: word.wordText,
           position: word.position,
           sentenceNumber: sentence.sentenceNo,
         }));
 
       // Find the first unique verb not already used
-      let selectedVerb = sentenceVerbs.find(
+      let selectedWord = matchingWords.find(
         (verb) => !usedVerbs.has(verb.text)
       );
 
       // If all verbs in the sentence are already used, skip or handle specially
-      if (!selectedVerb && sentenceVerbs.length > 0) {
-        selectedVerb = sentenceVerbs[0]; // Optional: choose to use the first if all are used
+      if (!selectedWord && matchingWords.length > 0) {
+        selectedWord = matchingWords[0]; // Optional: choose to use the first if all are used
       }
 
-      if (selectedVerb) {
-        results.push(selectedVerb);
-        usedVerbs.add(selectedVerb.text);
+      if (selectedWord) {
+        results.push(selectedWord);
+        usedVerbs.add(selectedWord.text);
       } else {
         // Handle case where no verbs are found in the sentence
         results.push({
@@ -542,6 +548,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           sentenceNumber: sentence.sentenceNo,
         });
       }
+      results.push(...matchingWords);
     });
 
     return results;
@@ -685,6 +692,12 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   }, [highlightedWordIndex, highlightedSentenceIndex]);
 
+  const [isTippyVisible, setTippyVisible] = useState(false);
+
+  const toggleTippyVisibility = () => {
+    setTippyVisible((prevState) => !prevState);
+  };
+
   return (
     <>
       {isMobile && (
@@ -785,152 +798,182 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           );
         } else if (mode === "words" || mode === "all") {
           return (
-            <div key={index} style={{ whiteSpace: "pre-wrap" }}>
-              {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
-                const translation =
-                  targetSentence?.sentenceWords[wordIndex]?.wordText || "";
-                const isCurrentlyHighlighted =
-                  wordIndex === highlightedWordIndex &&
-                  index === highlightedSentenceIndex;
-                const preserveHighlight =
-                  wordIndex === lastHighlighted.wordIndex &&
-                  index === lastHighlighted.sentenceIndex;
+            <Tippy
+              content={targetSentence?.sentenceText}
+              visible={isTippyVisible && index === highlightedSentenceIndex}
+              arrow={false}
+              className={`${styles.tippy}`}
+              placement={index === 0 || index === 1 ? "bottom" : "top"}
+            >
+              <div key={index} style={{ whiteSpace: "pre-wrap" }}>
+                {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
+                  const translation =
+                    targetSentence?.sentenceWords[wordIndex]?.wordText || "";
+                  const isCurrentlyHighlighted =
+                    wordIndex === highlightedWordIndex &&
+                    index === highlightedSentenceIndex;
+                  const preserveHighlight =
+                    wordIndex === lastHighlighted.wordIndex &&
+                    index === lastHighlighted.sentenceIndex;
 
-                return (
-                  <TranslateWord
-                    key={`${index}-${wordIndex}`}
-                    id={`word-${index}-${wordIndex}`}
-                    data-highlight={
-                      wordIndex === 0 || wordIndex === 2 ? "true" : "false"
-                    }
-                    partOfSpeech={memoizedPartOfSpeech}
-                    selectedPartOfSpeech={partOfSpeech}
-                    word={sourceWord.wordText}
-                    translation={translation}
-                    sentenceNumber={sourceSentence.sentenceNo}
-                    sentenceText={sourceSentence.sentenceText}
-                    mode={mode}
-                    sentenceWord={sourceWord}
-                    onMouseDown={(
-                      word: string,
-                      sentenceNumber: number,
-                      sentenceText: string
-                    ) =>
-                      handleMouseEvent(
-                        "down",
-                        word,
-                        sentenceNumber,
-                        sentenceText,
-                        sourceWord.position
-                      )
-                    }
-                    onMouseEnter={(
-                      word: string,
-                      sentenceNumber: number,
-                      sentenceText: string
-                    ) =>
-                      handleMouseEvent(
-                        "enter",
-                        word,
-                        sentenceNumber,
-                        sentenceText,
-                        sourceWord.position
-                      )
-                    }
-                    onMouseUp={handleMouseUp}
-                    isHighlighted={isWordInHighlightedPhrase(
-                      userSentences,
-                      selectedWords,
-                      sourceWord.wordText,
-                      sourceWord.position,
-                      sourceSentence.sentenceNo
-                    )}
-                    isWordHighlightedFromVideo={
-                      /* wordIndex === highlightedWordIndex &&
+                  return (
+                    <TranslateWord
+                      key={`${index}-${wordIndex}`}
+                      id={`word-${index}-${wordIndex}`}
+                      data-highlight={
+                        wordIndex === 0 || wordIndex === 2 ? "true" : "false"
+                      }
+                      partOfSpeech={memoizedPartOfSpeech}
+                      selectedPartOfSpeech={partOfSpeech}
+                      word={sourceWord.punctuatedWordText}
+                      translation={translation}
+                      sentenceNumber={sourceSentence.sentenceNo}
+                      sentenceText={sourceSentence.sentenceText}
+                      mode={mode}
+                      sentenceWord={sourceWord}
+                      onMouseDown={(
+                        word: string,
+                        sentenceNumber: number,
+                        sentenceText: string
+                      ) =>
+                        handleMouseEvent(
+                          "down",
+                          word,
+                          sentenceNumber,
+                          sentenceText,
+                          sourceWord.position
+                        )
+                      }
+                      onMouseEnter={(
+                        word: string,
+                        sentenceNumber: number,
+                        sentenceText: string
+                      ) =>
+                        handleMouseEvent(
+                          "enter",
+                          word,
+                          sentenceNumber,
+                          sentenceText,
+                          sourceWord.position
+                        )
+                      }
+                      onMouseUp={handleMouseUp}
+                      isHighlighted={isWordInHighlightedPhrase(
+                        userSentences,
+                        selectedWords,
+                        sourceWord.wordText,
+                        sourceWord.position,
+                        sourceSentence.sentenceNo
+                      )}
+                      isWordHighlightedFromVideo={
+                        /* wordIndex === highlightedWordIndex &&
                       index === highlightedSentenceIndex  */
-                      isCurrentlyHighlighted ||
-                      (highlightedWordIndex === -1 && preserveHighlight)
-                    }
-                    isHighlightedFromVideo={index === highlightedSentenceIndex}
-                    wordIndex={wordIndex}
-                    isSelecting={mouseDown || (isMobile && touchActive.current)}
-                    //isSelecting={mouseDown}
-                    sentenceTranslation={targetSentence?.sentenceText || ""}
-                    vocabularyListUserPhrases={vocabularyListUserPhrases!}
-                    currentPage={currentPage}
-                    sentencesPerPage={sentencesPerPage}
-                    selectedLanguageTo={selectedLanguageTo}
-                    onTouchStart={(
-                      word: string,
-                      sentenceNumber: number,
-                      sentenceText: string,
-                      event: React.TouchEvent
-                    ) =>
-                      handleTouchEvent(
-                        "start",
-                        word,
-                        sentenceNumber,
-                        sentenceText,
-                        sourceWord.position,
-                        event
-                      )
-                    }
-                    onTouchMove={(
-                      word: string,
-                      sentenceNumber: number,
-                      sentenceText: string,
-                      event: React.TouchEvent
-                    ) =>
-                      handleTouchEvent(
-                        "move",
-                        word,
-                        sentenceNumber,
-                        sentenceText,
-                        sourceWord.position,
-                        event
-                      )
-                    }
-                    onTouchEnd={(
-                      word: string,
-                      sentenceNumber: number,
-                      translation: string,
-                      event: React.TouchEvent
-                    ) =>
-                      handleTouchEvent(
-                        "end",
-                        word,
-                        sentenceNumber,
-                        translation,
-                        sourceWord.position,
-                        event
-                      )
-                    }
-                  />
-                );
-              })}
-              <Select
-                options={tenseOptions}
-                value={
-                  selectedTenses.some((tense) => {
-                    return tense.sentenceNumber === sourceSentence.sentenceNo;
-                  })
-                    ? tenseOptions.find((option) => {
-                        const foundTense = selectedTenses.find(
-                          (tense) =>
-                            tense.sentenceNumber === sourceSentence.sentenceNo
+                        isCurrentlyHighlighted ||
+                        (highlightedWordIndex === -1 && preserveHighlight)
+                      }
+                      isHighlightedFromVideo={
+                        index === highlightedSentenceIndex
+                      }
+                      wordIndex={wordIndex}
+                      isSelecting={
+                        mouseDown || (isMobile && touchActive.current)
+                      }
+                      //isSelecting={mouseDown}
+                      sentenceTranslation={targetSentence?.sentenceText || ""}
+                      vocabularyListUserPhrases={vocabularyListUserPhrases!}
+                      currentPage={currentPage}
+                      sentencesPerPage={sentencesPerPage}
+                      selectedLanguageTo={selectedLanguageTo}
+                      onTouchStart={(
+                        word: string,
+                        sentenceNumber: number,
+                        sentenceText: string,
+                        event: React.TouchEvent
+                      ) =>
+                        handleTouchEvent(
+                          "start",
+                          word,
+                          sentenceNumber,
+                          sentenceText,
+                          sourceWord.position,
+                          event
+                        )
+                      }
+                      onTouchMove={(
+                        word: string,
+                        sentenceNumber: number,
+                        sentenceText: string,
+                        event: React.TouchEvent
+                      ) =>
+                        handleTouchEvent(
+                          "move",
+                          word,
+                          sentenceNumber,
+                          sentenceText,
+                          sourceWord.position,
+                          event
+                        )
+                      }
+                      onTouchEnd={(
+                        word: string,
+                        sentenceNumber: number,
+                        translation: string,
+                        event: React.TouchEvent
+                      ) =>
+                        handleTouchEvent(
+                          "end",
+                          word,
+                          sentenceNumber,
+                          translation,
+                          sourceWord.position,
+                          event
+                        )
+                      }
+                    />
+                  );
+                })}
+                {isTenseVisible && (
+                  <Select
+                    options={tenseOptions}
+                    value={
+                      selectedTenses.some((tense) => {
+                        return (
+                          tense.sentenceNumber === sourceSentence.sentenceNo
                         );
-                        return option.value === foundTense?.tense;
                       })
-                    : ""
-                }
-                onChange={(option) =>
-                  handleTenseChange(option, sourceSentence.sentenceNo)
-                }
-                styles={customStyles(sourceSentence.sentenceNo)}
-                placeholder="Select a tense"
-                menuShouldScrollIntoView={false}
-              />
-            </div>
+                        ? tenseOptions.find((option) => {
+                            const foundTense = selectedTenses.find(
+                              (tense) =>
+                                tense.sentenceNumber ===
+                                sourceSentence.sentenceNo
+                            );
+                            return option.value === foundTense?.tense;
+                          })
+                        : ""
+                    }
+                    onChange={(option) =>
+                      handleTenseChange(option, sourceSentence.sentenceNo)
+                    }
+                    styles={customStyles(sourceSentence.sentenceNo)}
+                    placeholder="Select a tense"
+                    menuShouldScrollIntoView={false}
+                  />
+                )}
+                <Button
+                  onClick={toggleTippyVisibility}
+                  className={`${styles.showHide}`}
+                  size={"large"}
+                  style={{
+                    borderRadius: "15px",
+                    backgroundColor: isTippyVisible && "#2C4E80",
+                    color: isTippyVisible && "white",
+                    height: "45px",
+                  }}
+                >
+                  Show titles
+                </Button>
+              </div>
+            </Tippy>
           );
         }
       })}

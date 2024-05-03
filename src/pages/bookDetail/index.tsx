@@ -226,6 +226,13 @@ const BookDetail: FC = () => {
   const [currentTime, setCurrentTime] = useState(0);
 
   const [isOpen, setIsOpen] = React.useState(false);
+  const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+
+  const [isTenseVisible, setIsTenseVisible] = useState(false);
+
+  const toggleIsTenseVisible = () => {
+    setIsTenseVisible((prevState) => !prevState);
+  };
 
   const toggleDrawer = () => {
     setIsOpen((prevState) => !prevState);
@@ -1075,6 +1082,21 @@ const BookDetail: FC = () => {
     rightExerciseWidth: 0,
   });
 
+  function formatTime(seconds) {
+    if (typeof seconds !== "number" || isNaN(seconds)) {
+      return "00:00"; // Default format if the input is not a number
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+
+    // Pad the minutes and seconds with leading zeros if they are less than 10
+    const paddedMinutes = String(minutes).padStart(2, "0");
+    const paddedSeconds = String(remainingSeconds).padStart(2, "0");
+
+    return `${paddedMinutes}:${paddedSeconds}`;
+  }
+
   const paginationControlsContainer = (
     <Card
       bodyStyle={{
@@ -1099,16 +1121,49 @@ const BookDetail: FC = () => {
 
   const translateBoxContainer = (
     <>
-      <button
-        className={`${styles.myPlayButton}`}
-        onClick={handlePlayPause}
-        style={{ marginLeft: "-100px" }}
+      <Radio.Group
+        style={{
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)", // Shadow applied here
+          borderRadius: "15px", // Rounded corners for the group
+
+          width: "auto",
+        }}
+        size="large"
+        className={`${styles.play}`}
       >
-        {state.isPlaying ? "❚❚" : "▶"}
-      </button>
+        <Radio.Button
+          style={{
+            pointerEvents: "none",
+            borderTopLeftRadius: "15px",
+            borderBottomLeftRadius: "15px",
+            width: "65px",
+            border: "none",
+          }}
+        >
+          <span style={{ marginLeft: "-3px" }}>
+            {formatTime(Math.floor(currentTime))}
+          </span>
+        </Radio.Button>
+        <Radio.Button
+          value={state.isPlaying}
+          onChange={handlePlayPause}
+          style={{
+            borderTopRightRadius: "15px",
+            borderBottomRightRadius: "15px",
+            backgroundColor: "tomato",
+            color: "white",
+            border: "none",
+          }}
+        >
+          {state.isPlaying ? <span>❚❚</span> : <span>▶</span>}
+        </Radio.Button>
+      </Radio.Group>
+      {/* <button className={`${styles.myPlayButton}`} onClick={handlePlayPause}>
+        
+      </button> */}
 
       <div>
-        <Card
+        {/* <Card
           bodyStyle={{ paddingTop: "20px", paddingBottom: "20px" }}
           style={{
             borderTopLeftRadius: "15px",
@@ -1126,23 +1181,6 @@ const BookDetail: FC = () => {
               <Typography.Title level={5}>
                 {state.libraryTitle}
               </Typography.Title>
-              <Radio.Group
-                onChange={handleModeChange}
-                value={state.mode}
-                buttonStyle="solid"
-                style={{ paddingRight: 20, marginTop: 10 }}
-              >
-                <Radio.Button value="sentences" style={{ fontWeight: 500 }}>
-                  {intl.formatMessage({ id: "translate.box.sentences" })}
-                </Radio.Button>
-                <Radio.Button value="words" style={{ fontWeight: 500 }}>
-                  {intl.formatMessage({ id: "translate.box.words" })}
-                </Radio.Button>
-                <Radio.Button value="all" style={{ fontWeight: 500 }}>
-                  {intl.formatMessage({ id: "translate.box.all" })}
-                </Radio.Button>
-              </Radio.Group>
-              {/* Other components like Buttons if needed */}
             </div>
             <div>
               <Select
@@ -1173,11 +1211,17 @@ const BookDetail: FC = () => {
               </Select>
             </div>
           </div>
-        </Card>
+        </Card> */}
         <div>
           <Card
             loading={state.loading || state.loadingFromFetch}
             className={styles.translateBoxScroll}
+            style={{
+              borderTopLeftRadius: "15px",
+              borderTopRightRadius: "15px",
+              paddingLeft: "40px",
+              paddingTop: "20px",
+            }}
           >
             <TranslateBox
               sourceLanguage={user.sourceLanguage}
@@ -1202,7 +1246,8 @@ const BookDetail: FC = () => {
               onChangeMode={setMode}
               magnifyingGlassRef={magnifyingGlassRef}
               addSteps={addTranslateBoxSteps}
-              partOfSpeech={state.partOfSpeech}
+              partOfSpeech={selectedTags}
+              isTenseVisible={isTenseVisible}
             />
           </Card>
         </div>
@@ -1263,6 +1308,9 @@ const BookDetail: FC = () => {
     next: intl.formatMessage({ id: "joyride.next" }),
   };
 
+  const [sliderMarginLeft, setSliderMarginLeft] = useState(0);
+  const [marginLeft, setMarginLeft] = useState(0);
+
   useEffect(() => {
     function updateSizes() {
       if (rightExerciseVisible) {
@@ -1311,12 +1359,21 @@ const BookDetail: FC = () => {
     }
 
     window.addEventListener("resize", updateSizes);
-
     updateSizes();
 
     return () => {
       window.removeEventListener("resize", updateSizes);
     };
+  }, [rightVisible, rightVocabVisible, rightExerciseVisible, marginLeft]);
+
+  useEffect(() => {
+    if (!rightVisible && !rightVocabVisible && !rightExerciseVisible) {
+      setMarginLeft(-30); // This could be dynamic based on other logic
+      setSliderMarginLeft(225);
+    } else {
+      setMarginLeft(-28);
+      setSliderMarginLeft(110);
+    }
   }, [rightVisible, rightVocabVisible, rightExerciseVisible]);
 
   const toggleRightPanel = () => {
@@ -1341,12 +1398,10 @@ const BookDetail: FC = () => {
     setRightExerciseVisible(!rightExerciseVisible);
   };
 
-  const [selectedTags, setSelectedTags] = React.useState<string[]>(["Movies"]);
   const handleChange = (tag: string, checked: boolean) => {
     const nextSelectedTags = checked
       ? [...selectedTags, tag]
       : selectedTags.filter((t) => t !== tag);
-    console.log("You are interested in: ", nextSelectedTags);
     setSelectedTags(nextSelectedTags);
   };
 
@@ -1379,6 +1434,31 @@ const BookDetail: FC = () => {
     "Conditional Perfect",
     "All",
   ];
+
+  const tensesCategory = {
+    "Present Tenses": [
+      "Simple Present",
+      "Present Continuous (Progressive)",
+      "Present Perfect",
+      "Present Perfect Continuous",
+      "All",
+    ],
+    "Past Tenses": [
+      "Simple Past",
+      "Past Continuous (Progressive)",
+      "Past Perfect",
+      "Past Perfect Continuous",
+      "All",
+    ],
+    "Future Tenses": [
+      "Simple Future",
+      "Future Continuous (Progressive)",
+      "Future Perfect",
+      "Future Perfect Continuous",
+      "All",
+    ],
+    "Conditional Tenses": ["Simple Conditional", "Conditional Perfect", "All"],
+  };
 
   return (
     <PageContainer title={false} className={styles.container}>
@@ -1420,7 +1500,7 @@ const BookDetail: FC = () => {
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  height: "64vh",
+                  height: "70.4vh",
                 }}
               >
                 <Slider.Root
@@ -1431,10 +1511,11 @@ const BookDetail: FC = () => {
                   orientation="vertical"
                   step={0.1}
                   style={{
-                    marginLeft: "25px",
-                    marginRight: "5px",
-                    marginTop: "140px",
+                    marginLeft: `${sliderMarginLeft}px`,
+                    marginRight: "0px",
+                    marginTop: "55px",
                     marginBottom: "-120px",
+                    zIndex: 88,
                   }}
                   inverted={true}
                 >
@@ -1450,7 +1531,7 @@ const BookDetail: FC = () => {
                   size={{ width: sizes.centerWidth, height: "auto" }}
                   style={{
                     transition: "all 0.5s",
-                    marginLeft: "32px",
+                    marginLeft: `${marginLeft}px`,
                     marginRight: "10px",
                   }}
                   enable={{ right: true }}
@@ -1488,7 +1569,7 @@ const BookDetail: FC = () => {
                   className={`${styles.resizableContainer}`}
                   style={{
                     transition: "all 0.5s",
-                    marginLeft: "32px",
+                    marginLeft: "15px",
                     marginRight: "10px",
                     borderTopLeftRadius: "15px",
                     borderTopRightRadius: "15px",
@@ -1496,18 +1577,18 @@ const BookDetail: FC = () => {
                   enable={{ right: true }}
                 >
                   <Card
-                    title="Choose exercise"
                     style={{
                       height: "690px",
                       borderBottomLeftRadius: "15px",
                       borderBottomRightRadius: "15px",
                     }}
                   >
-                    <Flex
-                      gap={10}
-                      wrap="wrap"
-                      align="center"
-                      style={{ transition: "none" }} // Directly apply to Flex, won't cascade to children
+                    <div
+                      style={{
+                        display: "flex", // Using flex to manage layout
+                        flexWrap: "wrap", // Allows wrapping to next line
+                        width: "460px", // Fixed width for the inner container, slightly less than the Card width to fit padding/margins
+                      }}
                     >
                       {partsOfSpeech.map((tag) => (
                         <Tag.CheckableTag
@@ -1515,43 +1596,79 @@ const BookDetail: FC = () => {
                           checked={selectedTags.includes(tag)}
                           onChange={(checked) => handleChange(tag, checked)}
                           style={{
+                            margin: "4px",
                             padding: "8px 15px",
                             fontSize: "16px",
                             borderRadius: "10px",
                             backgroundColor: selectedTags.includes(tag)
                               ? "#4CAF50"
                               : "Gainsboro",
+                            transition: "none", // No animations
                           }}
                         >
                           {tag}
                         </Tag.CheckableTag>
                       ))}
-                    </Flex>
+                    </div>
                     <Divider />
-                    <Flex
-                      gap={10}
-                      wrap="wrap"
-                      align="center"
-                      style={{ transition: "none" }} // Directly apply to Flex, won't cascade to children
+
+                    <Button
+                      onClick={toggleIsTenseVisible}
+                      size={"large"}
+                      style={{
+                        marginLeft: "5px",
+                        borderRadius: "10px",
+                        backgroundColor: isTenseVisible
+                          ? "#4CAF50"
+                          : "Gainsboro",
+                        color: isTenseVisible ? "white" : "black",
+                      }}
                     >
-                      {tenses.map((tag) => (
-                        <Tag.CheckableTag
-                          key={tag}
-                          checked={selectedTags.includes(tag)}
-                          onChange={(checked) => handleChange(tag, checked)}
-                          style={{
-                            padding: "8px 15px",
-                            fontSize: "16px",
-                            borderRadius: "10px",
-                            backgroundColor: selectedTags.includes(tag)
-                              ? "#4CAF50"
-                              : "Gainsboro",
-                          }}
-                        >
-                          {tag}
-                        </Tag.CheckableTag>
-                      ))}
-                    </Flex>
+                      Tense
+                    </Button>
+                    {/* <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      {Object.entries(tensesCategory).map(
+                        ([category, tenses]) => (
+                          <div
+                            key={category}
+                            style={{
+                              display: "flex", // Using flex to manage layout
+                              flexWrap: "wrap", // Allows wrapping to next line
+                              width: "460px", // Maintain fixed width for consistent non-responsive behavior
+                              marginBottom: "20px", // Space between categories
+                            }}
+                          >
+                            <h4>{category}</h4>
+                            {tenses.map((tag) => (
+                              <Tag.CheckableTag
+                                key={tag}
+                                checked={selectedTags.includes(tag)}
+                                onChange={(checked) =>
+                                  handleChange(tag, checked)
+                                }
+                                style={{
+                                  margin: "4px",
+                                  padding: "5px 7px",
+                                  fontSize: "14px",
+                                  borderRadius: "5px",
+                                  backgroundColor: selectedTags.includes(tag)
+                                    ? "#4CAF50"
+                                    : "Gainsboro",
+                                  transition: "none",
+                                }}
+                              >
+                                {tag}
+                              </Tag.CheckableTag>
+                            ))}
+                          </div>
+                        )
+                      )}
+                    </div> */}
                   </Card>
                 </Resizable>
                 <div
@@ -1569,7 +1686,7 @@ const BookDetail: FC = () => {
                     }`}
                     style={{
                       transition: "all 0.5s",
-                      marginLeft: "15.8px",
+                      marginLeft: "-15px",
                       borderTopLeftRadius: "15px",
                       borderTopRightRadius: "15px",
                     }}
@@ -1588,7 +1705,7 @@ const BookDetail: FC = () => {
                     }`}
                     style={{
                       transition: "all 0.5s",
-                      marginLeft: "15px",
+                      marginLeft: "-15px",
                       borderBottomLeftRadius: "15px",
                       borderBottomRightRadius: "15px",
                     }}

@@ -22,7 +22,7 @@ export interface SentenceData {
 }
 
 export interface SentenceWordData {
-  sentenceNo: number;
+  sentenceNumber: number;
   position: number;
   language: string;
   start: number;

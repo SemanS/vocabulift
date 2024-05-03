@@ -94,6 +94,7 @@ const LayoutPage: FC = () => {
 
   const [collapsed, setCollapsed] = useState(false);
   const layoutRef = useRef(null);
+  const [isDropdownActive, setDropdownActive] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -169,7 +170,12 @@ const LayoutPage: FC = () => {
         settingsDrawerVisible,
       }}
     >
-      <div ref={layoutRef} className={styles.proLayoutCustom}>
+      <div
+        ref={layoutRef}
+        className={`${styles.proLayoutCustom} ${
+          isDropdownActive && `${styles.blurred}`
+        }`}
+      >
         <ProLayout
           collapsed={collapsed}
           onCollapse={setCollapsed}
@@ -205,39 +211,7 @@ const LayoutPage: FC = () => {
           //footerRender={() => <Footer />}
         >
           <Outlet />
-          <SelectLang />
-          {/* <div
-            style={{
-              position: "absolute",
-              width: "100%",
-              top: 0,
-              zIndex: 1000,
-            }}
-          >
-            <Dropdown menu={{ items }} trigger={["click"]}>
-              <Button
-                onClick={(e) => e.preventDefault()}
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  margin: "-30px auto",
-                }}
-              >
-                <Space>
-                  Click me
-                  <DownOutlined />
-                </Space>
-              </Button>
-            </Dropdown>
-          </div> */}
-          {/* <FloatButton
-            style={{ insetBlockStart: "10px", insetInlineStart: "700px" }}
-            onClick={() => {
-              // Assuming you have a method or state to toggle visibility
-              // For example, if you manage state in the parent component:
-              setDropdownVisible((current) => !current); // Toggle the state that controls the dropdown
-            }}
-          ></FloatButton> */}
+          <SelectLang setDropdownActive={setDropdownActive} />
         </ProLayout>
       </div>
     </SettingsDrawerContext.Provider>

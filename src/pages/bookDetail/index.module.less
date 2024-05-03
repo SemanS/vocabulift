@@ -35,7 +35,7 @@
 .translateBoxScroll {
   position: relative;
   overflow-y: scroll;
-  height: calc(62vh);
+  height: calc(76.5vh);
 }
 
 .myFixedPlayButton {
@@ -58,6 +58,7 @@
   position: fixed;
   z-index: 9999;
   height: 50px;
+  left: 1%;
   width: 50px;
   border-radius: 50%; /* makes the button circular */
   background-color: #f00; /* change to desired color */
@@ -80,13 +81,13 @@
   position: relative;
   display: flex;
   align-items: center;
-  width: 15px;
-  height: 91%;
+  width: 10px;
+  height: 90%;
 }
 
 .sliderTrack {
   box-shadow: 0 0px 10px rgba(0, 0, 0, 0.552); /* Adjust shadow strength and spread as needed */
-  background-color: black;
+  background-color: rgb(38, 38, 38);
   position: relative;
   flex-grow: 1;
   transform: translateX(50%);
@@ -161,4 +162,13 @@
   height: 0; // Make sure this transitions smoothly too
   padding: 0 !important;
   margin: 0 !important;
+}
+
+.play {
+  position: fixed;
+  top: 11%;
+  left: 1%;
+  //transform: translateY(-50%) rotate(-90deg); /* rotate the button */
+  transform-origin: left; /* sets the point around which rotation happens */
+  z-index: 1000;
 }

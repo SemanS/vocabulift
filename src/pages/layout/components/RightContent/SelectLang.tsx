@@ -9,19 +9,25 @@ import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { DownOutlined } from "@ant-design/icons";
 
-const SelectLang = () => {
+const SelectLang = ({ setDropdownActive }) => {
   const [user, setUser] = useRecoilState(userState);
 
   const selectLocale = async ({ key }) => {
     await updateUser({ locale: key });
     setUser((prev) => ({ ...prev, locale: key }));
     localStorage.setItem("locale", key);
+    setDropdownActive(false); // Close dropdown and remove effect when selection is made
   };
 
   const items = localeConfig.map((lang) => ({
     key: lang.key,
     disabled: user.locale === lang.key,
-    label: lang.icon,
+    label: (
+      <>
+        {lang.icon}
+        <span style={{ marginLeft: "10px" }}>{lang.name}</span>
+      </>
+    ),
     onClick: () => selectLocale({ key: lang.key }),
   }));
 
@@ -38,15 +44,18 @@ const SelectLang = () => {
       }}
     >
       <Dropdown
+        onVisibleChange={setDropdownActive}
         overlay={<Menu items={items} />}
         trigger={["click"]}
         arrow={true}
         placement="bottom"
         overlayStyle={{
+          boxShadow: "0 2px 10px DimGrey",
           border: "1px solid #ccc",
           borderRadius: "10px",
           overflow: "hidden",
-        }} // Inline styles for Menu
+          zIndex: "10000",
+        }}
       >
         <Button
           size="large"
@@ -55,7 +64,7 @@ const SelectLang = () => {
           style={{
             borderRadius: "12px",
             boxShadow: "0 2px 5px DimGrey",
-            border: "none", // Optional: Removes the border for a cleaner look
+            border: "none",
           }}
         >
           <DownOutlined />

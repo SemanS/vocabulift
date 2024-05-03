@@ -7,6 +7,7 @@ import "tippy.js/dist/tippy.css";
 //import { Select } from "antd";
 import Select from "react-select";
 import { SentenceWordData } from "@/models/sentences.interfaces";
+import { WordData } from "@models/word.interface";
 
 interface TranslateWordProps {
   id?: string;
@@ -150,7 +151,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       });
     }
 
-    if (props.mode === "phrases") {
+    if (props.mode === "phrases" || props.mode === "words") {
       props.vocabularyListUserPhrases?.filter(({ phrase }) => {
         const inSentence = phrase.sentenceNo === props.sentenceNumber;
         const inPosition =
@@ -335,13 +336,13 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
           visible={isHovered}
           placement="bottom"
         >
-          <Tippy
+          {/* <Tippy
             content={props.sentenceTranslation}
             visible={isHovered}
             placement="top"
-          >
-            {children}
-          </Tippy>
+          > */}
+          {children}
+          {/* </Tippy> */}
         </Tippy>
       );
     }
@@ -469,9 +470,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   // Check if the current position and sentence number match the word's properties
   const isPositionAndSentenceMatch = props.partOfSpeech?.some(
-    (word) =>
-      word.position === props.wordIndex &&
-      word.sentenceNumber === props.sentenceNumber
+    (word: SentenceWordData) => {
+      return (
+        word.position === props.wordIndex &&
+        word.sentenceNumber === props.sentenceNumber
+      );
+    }
   );
 
   function shuffleArray(array) {
@@ -496,11 +500,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   const selectOptions = useMemo(() => {
     // Extract and shuffle partOfSpeech data if available
-    const options =
-      props.partOfSpeech?.map((wordObj) => ({
+    const options = props
+      .partOfSpeech!.filter(
+        (wordObj) =>
+          wordObj.partOfSpeech ===
+          props.sentenceWord?.partOfSpeech?.toLowerCase()
+      ) // Only use words that match the current part of speech
+      .map((wordObj) => ({
         label: wordObj.text?.replace(/[.,?]/g, ""),
         value: wordObj.text?.replace(/[.,?]/g, ""),
-      })) ?? [];
+      }));
 
     // Shuffle the options to randomize their order in the dropdown
     return shuffleArray(
@@ -562,7 +571,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       options={selectOptions}
       styles={customStyles}
       value={getSelectedValue(props.wordIndex)}
-      placeholder={"Select correct " + props.selectedPartOfSpeech}
+      //placeholder={"Select correct " + props.selectedPartOfSpeech}
+      placeholder={"__________"}
       menuShouldScrollIntoView={false}
     />
   ) : (
