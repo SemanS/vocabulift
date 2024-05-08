@@ -39,12 +39,7 @@ const QuizComponent: FC<QuizComponentProps> = (props) => {
   const handleSubmit = async () => {
     setLoading(true);
 
-    let quiz = await getQuiz(
-      props.sourceLanguage,
-      "sk",
-      props.libraryId!,
-      selectedTags
-    );
+    let quiz = await getQuiz(props.sourceLanguage, "sk", props.libraryId!);
 
     // Assuming the JSON starts with '{' for simplicity. Adjust if it could start with '['
     const indexOfJsonStart = quiz.indexOf("{");
@@ -218,26 +213,7 @@ const QuizComponent: FC<QuizComponentProps> = (props) => {
       <Col span={24}>
         {!submitted ? (
           <Form onFinish={handleSubmit}>
-            <Typography.Title level={4}>Select Quiz Topics:</Typography.Title>
-            <br />
-            {Object.entries(englishLearningAspects).map(([category, tags]) => (
-              <Form.Item key={category}>
-                <Typography.Text strong>
-                  {category.replace(/([A-Z])/g, " $1").trim()}:
-                </Typography.Text>
-                {tags.map((tag) => (
-                  <Tag.CheckableTag
-                    key={tag}
-                    checked={selectedTags.includes(`${category}: ${tag}`)}
-                    onChange={(checked) =>
-                      handleTagChange(category, tag, checked)
-                    }
-                  >
-                    {tag}
-                  </Tag.CheckableTag>
-                ))}
-              </Form.Item>
-            ))}
+            <Typography.Title level={4}>Take a VocabuQuiz</Typography.Title>
             <br />
             <Form.Item>
               <Button type="primary" htmlType="submit" loading={loading}>

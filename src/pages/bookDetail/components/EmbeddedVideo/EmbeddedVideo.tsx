@@ -209,6 +209,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               true,
               false
             );
+            console.log("ahoj1");
             onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
             onHighlightedWordIndexChange?.(newHighlightedWordIndex);
             setLoadingFromFetch(false);
@@ -336,7 +337,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               playerRef.current?.getPlayerState() !== YT.PlayerState.PAUSED &&
               playerRef.current?.getPlayerState() !== YT.PlayerState.ENDED
             ) {
-              props.onPause && props.onPause();
+              //props.onPause && props.onPause();
               socket.emit("video-playing", {
                 libraryId: libraryId,
                 currentTime: playerRef.current?.getCurrentTime(),
@@ -425,6 +426,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           onHighlightedWordIndexChange?.(newHighlightedWordIndex);
         }
 
+        console.log("ahoj2");
         // Ensure to update the page if the new index results in a new page
         if (newPage !== currentPageToUseRef.current) {
           handlePageChange(
@@ -440,7 +442,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     };
 
     const handlePlayerReady = (event) => {
-      playerRef.current.pauseVideo();
+      //playerRef.current.pauseVideo();
       setDuration(playerRef.current.getDuration());
     };
 
@@ -534,7 +536,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
                 currentTime < sentence.start! + sentence.duration! - 0.1
               );
             });
-
       if (
         newHighlightedIndex === null ||
         newHighlightedIndex === undefined ||
@@ -555,6 +556,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         const newPage = Math.ceil(
           snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
         );
+        console.log("ahoj4");
         if (!isNaN(newPage)) {
           handlePageChange(
             newPage,
@@ -592,11 +594,13 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           newHighlightedIndex !== undefined &&
           !isNaN(newHighlightedIndex)
         ) {
+          console.log("startIndexRef.current" + startIndexRef.current);
+          console.log("endIndexRef.current" + endIndexRef.current);
           if (
             startIndexRef.current === null ||
             endIndexRef.current === null ||
             newHighlightedIndex! < startIndexRef.current ||
-            newHighlightedIndex! > endIndexRef.current
+            newHighlightedIndex! >= endIndexRef.current
           ) {
             const newPage = calculatePage(
               newHighlightedIndex!,
@@ -612,6 +616,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
                 newPage * sentencesPerPageRef.current -
                   snapshotsRef.current![0].sentenceFrom
               );
+              console.log("ahoj3");
               handlePageChange(
                 newPage,
                 sentencesPerPageRef.current,

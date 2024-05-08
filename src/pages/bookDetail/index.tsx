@@ -68,6 +68,10 @@ import "react-modern-drawer/dist/index.css";
 import { Resizable } from "re-resizable";
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
+import QuizComponent from "./components/Quiz/QuizComponent";
+import { UnorderedListOutlined, YoutubeOutlined } from "@ant-design/icons";
+import { parseLocale } from "@/utils/stringUtils";
+import SelectLang from "@/pages/layout/components/RightContent/SelectLang";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -313,6 +317,8 @@ const BookDetail: FC = () => {
     { email: "info@englishlessonviaskype.com" },
   ];
 
+  const [isDropdownActive, setDropdownActive] = useState(false);
+
   const hasAccess = users.some(
     (existingUser) => existingUser.email === user.email
   );
@@ -451,7 +457,24 @@ const BookDetail: FC = () => {
     };
   }, []);
 
-  const handleAddWordDefinition = useCallback(async (word: string) => {
+  useEffect(() => {
+    const locale = parseLocale(user.locale);
+
+    dispatch({
+      type: "setSelectedLanguageTo",
+      payload: locale,
+    });
+
+    fetchVocabularyAndSetState(state.sentenceFrom, locale);
+    fetchAndUpdate(state.sentenceFrom, locale);
+
+    const url = new URL(window.location.href);
+    const params = new URLSearchParams(url.search);
+    params.set("targetLanguage", locale);
+    window.history.replaceState({}, "", `${url.pathname}?${params}`);
+  }, [dispatch, user.locale]);
+
+  /* const handleAddWordDefinition = useCallback(async (word: string) => {
     // Fetch word details from public API
     fetch(
       `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(
@@ -470,7 +493,7 @@ const BookDetail: FC = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, []); */
 
   const handleModeChange = useCallback((e: RadioChangeEvent) => {
     dispatch({ type: "setMode", payload: e.target.value });
@@ -561,7 +584,7 @@ const BookDetail: FC = () => {
           type: "setSelectedUserPhrase",
           payload: vocabularyListUserPhrase,
         });
-        handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
+        //handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
         const updateVocabularyListUserPhrases = [
           ...(state.vocabularyListUserPhrases || []),
           vocabularyListUserPhrase,
@@ -596,6 +619,9 @@ const BookDetail: FC = () => {
         dispatch({ type: "setUserSentences", payload: updateUserSentences });
       } catch (error) {
         console.error("Error adding user phrase:", error);
+      }
+      if (!rightVocabVisible) {
+        setRightVocabVisible(true);
       }
     },
     [state.userSentences, state.vocabularyListUserPhrases]
@@ -1075,11 +1101,13 @@ const BookDetail: FC = () => {
   const [rightVisible, setRightVisible] = useState(false);
   const [rightVocabVisible, setRightVocabVisible] = useState(false);
   const [rightExerciseVisible, setRightExerciseVisible] = useState(false);
+  const [rightQuizVisible, setRightQuizVisible] = useState(false);
   const [sizes, setSizes] = useState({
     centerWidth: window.innerWidth,
     rightWidth: 0,
     rightVocabWidth: 0,
     rightExerciseWidth: 0,
+    rightQuizWidth: 0,
   });
 
   function formatTime(seconds) {
@@ -1267,7 +1295,7 @@ const BookDetail: FC = () => {
               mode={"words"}
               phrases={state.vocabularyListUserPhrases!}
               onDeleteItem={handleDeleteUserPhrase}
-              onWordClick={handleAddWordDefinition}
+              onWordClick={() => {}}
               selectedUserPhrase={state.selectedUserPhrase}
               setSelectedUserPhrase={setSelectedUserPhrase}
               selectedLanguageTo={state.selectedLanguageTo}
@@ -1317,35 +1345,48 @@ const BookDetail: FC = () => {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightExerciseWidth: window.innerWidth * 0.33,
+          rightQuizWidth: 0,
           rightVocabWidth: 0,
           rightWidth: 0,
         });
-      } else if (rightVocabVisible && !rightVisible) {
+      } else if (rightVocabVisible && !rightVisible && !rightQuizVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightVocabWidth: window.innerWidth * 0.33,
+          rightQuizWidth: 0,
           rightExerciseWidth: 0,
           rightWidth: 0,
         });
-      } else if (!rightVocabVisible && rightVisible) {
+      } else if (!rightVocabVisible && rightVisible && !rightQuizVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightVocabWidth: 0,
           rightExerciseWidth: 0,
+          rightQuizWidth: 0,
           rightWidth: window.innerWidth * 0.33,
         });
-      } else if (rightVisible && rightVocabVisible) {
+      } else if (rightVisible && rightVocabVisible && !rightQuizVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
           rightVocabWidth: window.innerWidth * 0.3312,
           rightExerciseWidth: 0,
+          rightQuizWidth: 0,
           rightWidth: window.innerWidth * 0.33,
         });
-      } else if (!rightVisible && !rightVocabVisible) {
+      } else if (!rightVisible && !rightVocabVisible && !rightQuizVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.7,
           rightVocabWidth: 0,
           rightExerciseWidth: 0,
+          rightQuizWidth: 0,
+          rightWidth: 0,
+        });
+      } else if (rightQuizVisible) {
+        setSizes({
+          centerWidth: window.innerWidth * 0.5,
+          rightQuizWidth: window.innerWidth * 0.33,
+          rightExerciseWidth: 0,
+          rightVocabWidth: 0,
           rightWidth: 0,
         });
       } else {
@@ -1353,6 +1394,7 @@ const BookDetail: FC = () => {
           centerWidth: window.innerWidth * 0.7,
           rightWidth: 0,
           rightExerciseWidth: 0,
+          rightQuizWidth: 0,
           rightVocabWidth: 0,
         });
       }
@@ -1364,21 +1406,33 @@ const BookDetail: FC = () => {
     return () => {
       window.removeEventListener("resize", updateSizes);
     };
-  }, [rightVisible, rightVocabVisible, rightExerciseVisible, marginLeft]);
+  }, [
+    rightVisible,
+    rightVocabVisible,
+    rightExerciseVisible,
+    rightQuizVisible,
+    marginLeft,
+  ]);
 
   useEffect(() => {
-    if (!rightVisible && !rightVocabVisible && !rightExerciseVisible) {
+    if (
+      !rightVisible &&
+      !rightVocabVisible &&
+      !rightExerciseVisible &&
+      !rightQuizVisible
+    ) {
       setMarginLeft(-30); // This could be dynamic based on other logic
       setSliderMarginLeft(225);
     } else {
       setMarginLeft(-28);
       setSliderMarginLeft(110);
     }
-  }, [rightVisible, rightVocabVisible, rightExerciseVisible]);
+  }, [rightVisible, rightVocabVisible, rightExerciseVisible, rightQuizVisible]);
 
   const toggleRightPanel = () => {
     if (rightExerciseVisible) {
       setRightExerciseVisible(!rightExerciseVisible);
+      setRightQuizVisible(!rightQuizVisible);
       setRightVisible(!rightVisible);
     } else {
       setRightVisible(!rightVisible);
@@ -1386,8 +1440,11 @@ const BookDetail: FC = () => {
   };
 
   const toggleRightVocabPanel = () => {
+    setRightVocabVisible((prev) => !prev);
+
     if (rightExerciseVisible) {
       setRightExerciseVisible(!rightExerciseVisible);
+      setRightQuizVisible(!rightQuizVisible);
       setRightVocabVisible(!rightVocabVisible);
     } else {
       setRightVocabVisible(!rightVocabVisible);
@@ -1396,6 +1453,10 @@ const BookDetail: FC = () => {
 
   const toggleRightExercisePanel = () => {
     setRightExerciseVisible(!rightExerciseVisible);
+  };
+
+  const toggleRightQuizPanel = () => {
+    setRightQuizVisible(!rightQuizVisible);
   };
 
   const handleChange = (tag: string, checked: boolean) => {
@@ -1461,7 +1522,12 @@ const BookDetail: FC = () => {
   };
 
   return (
-    <PageContainer title={false} className={styles.container}>
+    <PageContainer
+      title={false}
+      className={`${styles.container} ${
+        isDropdownActive && `${styles.blurred}`
+      }`}
+    >
       {user.newUser && (
         <Joyride
           key={joyrideState.translateBoxSteps.length}
@@ -1537,15 +1603,79 @@ const BookDetail: FC = () => {
                   enable={{ right: true }}
                 >
                   {translateBoxContainer}
-                  <Button
-                    onClick={toggleRightVocabPanel}
-                    className={`${styles.videoStickyButton}`}
-                    type="primary"
-                    size="large"
+                  <FloatButton.Group
+                    shape="square"
+                    //style={{ right: 20, bottom: 580 }}
+                    style={{
+                      right: 20,
+                      bottom: `${
+                        state.vocabularyListUserPhrases?.length !== 0
+                          ? 580
+                          : 630
+                      }px`,
+                    }}
                   >
-                    Vocabulary
-                  </Button>
-                  <Button
+                    <FloatButton
+                      icon={<YoutubeOutlined />}
+                      type={rightVisible ? "primary" : "default"}
+                      onClick={() => {
+                        toggleRightPanel();
+                        setRightVocabVisible(false);
+                        setRightQuizVisible(false);
+                      }}
+                      style={{
+                        fontSize: "20px",
+                        padding: "10px 10px",
+                        width: "50px",
+                      }}
+                    />
+                    {state.vocabularyListUserPhrases?.length !== 0 && (
+                      <FloatButton
+                        icon={<UnorderedListOutlined />}
+                        type={rightVocabVisible ? "primary" : "default"}
+                        onClick={() => {
+                          toggleRightVocabPanel();
+                          setRightExerciseVisible(false);
+                          setRightQuizVisible(false);
+                        }}
+                        style={{
+                          fontSize: "20px",
+                          padding: "10px 10px",
+                          width: "50px",
+                        }}
+                      />
+                    )}
+                    <FloatButton
+                      type={rightExerciseVisible ? "primary" : "default"}
+                      onClick={() => {
+                        toggleRightExercisePanel();
+                        setRightVisible(false);
+                        setRightVocabVisible(false);
+                        setRightQuizVisible(false);
+                      }}
+                      style={{
+                        fontSize: "20px",
+                        padding: "10px 10px",
+                        width: "50px",
+                      }}
+                    />
+                    {/* <FloatButton
+                      type={rightQuizVisible ? "primary" : "default"}
+                      onClick={() => {
+                        toggleRightQuizPanel();
+                        setRightVisible(false);
+                        setRightVocabVisible(false);
+                        setRightExerciseVisible(false);
+                      }}
+                      style={{
+                        fontSize: "20px",
+                        padding: "10px 10px",
+                        width: "50px",
+                      }}
+                    /> */}
+                  </FloatButton.Group>
+
+                  {/* <Button
                     onClick={toggleRightPanel}
                     className={`${styles.stickyButton}`}
                     type="primary"
@@ -1554,6 +1684,17 @@ const BookDetail: FC = () => {
                   >
                     Video
                   </Button>
+                  {state.showVocabularyList &&
+                    state.vocabularyListUserPhrases?.length !== 0 && (
+                      <Button
+                        onClick={toggleRightVocabPanel}
+                        className={`${styles.videoStickyButton}`}
+                        type="primary"
+                        size="large"
+                      >
+                        Vocabulary
+                      </Button>
+                    )}
                   <Button
                     onClick={toggleRightExercisePanel}
                     className={`${styles.exerciseStickyButton}`}
@@ -1563,6 +1704,15 @@ const BookDetail: FC = () => {
                   >
                     Exercise
                   </Button>
+                  <Button
+                    onClick={toggleRightQuizPanel}
+                    className={`${styles.quizStickyButton}`}
+                    type="primary"
+                    style={{ backgroundColor: "Olive" }}
+                    size="large"
+                  >
+                    Quiz
+                  </Button> */}
                 </Resizable>
                 <Resizable
                   size={{ width: sizes.rightExerciseWidth, height: "720px" }}
@@ -1671,6 +1821,25 @@ const BookDetail: FC = () => {
                     </div> */}
                   </Card>
                 </Resizable>
+                <Resizable
+                  size={{ width: sizes.rightQuizWidth, height: "720px" }}
+                  className={`${styles.resizableContainer}`}
+                  style={{
+                    transition: "all 0.5s",
+                    marginLeft: "15px",
+                    marginRight: "10px",
+                    borderTopLeftRadius: "15px",
+                    borderTopRightRadius: "15px",
+                  }}
+                  enable={{ right: true }}
+                >
+                  <Card>
+                    <QuizComponent
+                      sourceLanguage={sourceLanguage}
+                      libraryId={libraryId}
+                    />
+                  </Card>
+                </Resizable>
                 <div
                   style={{
                     display: "flex",
@@ -1744,6 +1913,7 @@ const BookDetail: FC = () => {
           )}
         </>
       )}
+      <SelectLang setDropdownActive={setDropdownActive} />
     </PageContainer>
   );
 };

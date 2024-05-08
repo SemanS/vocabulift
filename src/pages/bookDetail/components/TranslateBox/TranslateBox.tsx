@@ -806,7 +806,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               placement={index === 0 || index === 1 ? "bottom" : "top"}
             >
               <div key={index} style={{ whiteSpace: "pre-wrap" }}>
-                {sourceSentence.sentenceWords.map((sourceWord, wordIndex) => {
+                {sourceSentence.sentenceWords?.map((sourceWord, wordIndex) => {
                   const translation =
                     targetSentence?.sentenceWords[wordIndex]?.wordText || "";
                   const isCurrentlyHighlighted =
@@ -866,8 +866,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                         sourceSentence.sentenceNo
                       )}
                       isWordHighlightedFromVideo={
-                        /* wordIndex === highlightedWordIndex &&
-                      index === highlightedSentenceIndex  */
                         isCurrentlyHighlighted ||
                         (highlightedWordIndex === -1 && preserveHighlight)
                       }

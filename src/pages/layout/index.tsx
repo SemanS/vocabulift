@@ -94,7 +94,6 @@ const LayoutPage: FC = () => {
 
   const [collapsed, setCollapsed] = useState(false);
   const layoutRef = useRef(null);
-  const [isDropdownActive, setDropdownActive] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -170,12 +169,7 @@ const LayoutPage: FC = () => {
         settingsDrawerVisible,
       }}
     >
-      <div
-        ref={layoutRef}
-        className={`${styles.proLayoutCustom} ${
-          isDropdownActive && `${styles.blurred}`
-        }`}
-      >
+      <div ref={layoutRef} className={`${styles.proLayoutCustom} `}>
         <ProLayout
           collapsed={collapsed}
           onCollapse={setCollapsed}
@@ -211,7 +205,6 @@ const LayoutPage: FC = () => {
           //footerRender={() => <Footer />}
         >
           <Outlet />
-          <SelectLang setDropdownActive={setDropdownActive} />
         </ProLayout>
       </div>
     </SettingsDrawerContext.Provider>

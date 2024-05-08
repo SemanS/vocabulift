@@ -35,8 +35,7 @@ export const getWorkSheet = async (
 export const getQuiz = async (
   sourceLanguage: string,
   targetLanguage: string,
-  libraryId: string,
-  tags: string[]
+  libraryId: string
 ) => {
   try {
     const response = await vocabuFetch(
@@ -51,7 +50,6 @@ export const getQuiz = async (
           libraryId,
           sourceLanguage,
           targetLanguage,
-          tags
         }),
       }
     );

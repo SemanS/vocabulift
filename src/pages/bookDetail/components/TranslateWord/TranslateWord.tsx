@@ -499,22 +499,28 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   }
 
   const selectOptions = useMemo(() => {
-    // Extract and shuffle partOfSpeech data if available
+    // Extract and filter partOfSpeech data if available
     const options = props
       .partOfSpeech!.filter(
         (wordObj) =>
-          wordObj.partOfSpeech ===
+          wordObj.partOfSpeech?.toLowerCase() ===
           props.sentenceWord?.partOfSpeech?.toLowerCase()
-      ) // Only use words that match the current part of speech
+      )
       .map((wordObj) => ({
         label: wordObj.text?.replace(/[.,?]/g, ""),
         value: wordObj.text?.replace(/[.,?]/g, ""),
       }));
 
-    // Shuffle the options to randomize their order in the dropdown
-    return shuffleArray(
-      options.filter((v, i, a) => a.findIndex((t) => t.label === v.label) === i)
+    // Filter out duplicates by converting labels to lower case for comparison
+    const uniqueOptions = options.filter(
+      (option, index, array) =>
+        array.findIndex(
+          (t) => t.label?.toLowerCase() === option.label?.toLowerCase()
+        ) === index
     );
+
+    // Shuffle the options to randomize their order in the dropdown
+    return shuffleArray(uniqueOptions);
   }, [props.partOfSpeech]);
 
   const getBackgroundColor = (wordIndex) => {
