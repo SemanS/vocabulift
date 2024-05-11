@@ -109,6 +109,17 @@ export const Card: React.FC<CardProps> = ({
     };
   }, [transitionState]);
 
+  function formatDuration(seconds) {
+    const minutes = Math.floor(seconds / 60); // Get the number of minutes
+    const remainingSeconds = seconds % 60; // Get the remaining seconds
+
+    // Format minutes and seconds to always show two digits
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = remainingSeconds.toString().padStart(2, "0");
+
+    return `${formattedMinutes}:${formattedSeconds}`;
+  }
+
   return (
     <div
       className={`${cardClassName} ${className}`}
@@ -290,29 +301,43 @@ export const Card: React.FC<CardProps> = ({
             }
             style={{ color: "inherit" }}
           >
-            <img
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              className={`${styles.cardImg}`}
-              src={itemData.videoThumbnail}
-              alt="card"
-              style={
-                isImgHovered
-                  ? {
-                      borderTopLeftRadius: "15px",
-                      borderTopRightRadius: "15px",
-                      borderBottomLeftRadius: "0px",
-                      borderBottomRightRadius: "0px",
-                      transition: "border-radius 0.9s ease",
-                      cursor: "pointer",
-                    }
-                  : {
-                      borderRadius: "15px",
-                      transition: "border-radius 0.9s ease",
-                      cursor: "pointer",
-                    }
-              }
-            />
+            <div
+              className={styles.cardContainer}
+              style={{
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.55)",
+                borderRadius: "10px",
+              }}
+            >
+              <img
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className={`${styles.cardImg}`}
+                src={itemData.videoThumbnail}
+                alt="card"
+                style={
+                  isImgHovered
+                    ? {
+                        borderTopLeftRadius: "15px",
+                        borderTopRightRadius: "15px",
+                        borderBottomLeftRadius: "0px",
+                        borderBottomRightRadius: "0px",
+                        transition: "border-radius 0.9s ease",
+                        cursor: "pointer",
+                      }
+                    : {
+                        borderRadius: "15px",
+                        transition: "border-radius 0.9s ease",
+                        cursor: "pointer",
+                      }
+                }
+              />
+              <div className={styles.level}>
+                {itemData.level[itemData.level.length - 1]}
+              </div>
+              <div className={styles.cardTime}>
+                {formatDuration(itemData.duration)}
+              </div>
+            </div>
           </Link>
         )}
         {itemData._id !== "temp-item" ? (
@@ -330,20 +355,21 @@ export const Card: React.FC<CardProps> = ({
               borderBottomRightRadius: "15px",
             }}
           >
-            <Row style={{ marginBottom: "20px" }}>
-              <Col span={4}>
+            <Row style={{ marginBottom: "5px" }}>
+              {/* <Col span={4}>
                 <PlayCircleOutlined
                   className={`${styles.playIcon} ${
                     isImgHovered ? styles.playIconHovered : ""
                   }`}
                 />
-              </Col>
-              <Col span={20}>
+              </Col> */}
+              <Col span={24}>
                 <Typography.Text strong style={{ fontSize: "11px" }}>
                   {itemData.title}
                 </Typography.Text>
               </Col>
             </Row>
+            <div className={styles.customDivider} />
             <Typography.Text
               className={styles.description}
               style={{ fontSize: "10px" }}
@@ -351,9 +377,9 @@ export const Card: React.FC<CardProps> = ({
               {itemData.description}
             </Typography.Text>
 
-            <div className={styles.customDivider} />
+            {/* <div className={styles.customDivider} /> */}
 
-            <Row justify="space-between">
+            {/* <Row justify="space-between">
               <Col>
                 <Typography.Text style={{ fontSize: "10px" }}>
                   Level: {itemData.level[itemData.level.length - 1]}
@@ -364,7 +390,7 @@ export const Card: React.FC<CardProps> = ({
                   Duration: {itemData.duration}
                 </Typography.Text>
               </Col>
-            </Row>
+            </Row> */}
           </div>
         ) : (
           ""

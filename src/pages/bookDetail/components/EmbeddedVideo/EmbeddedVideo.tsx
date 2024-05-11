@@ -114,7 +114,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       },
       seekTo(newTime, playAfterSeeking) {
         playerRef.current.seekTo(newTime, true);
-        // Logic to seek the video
       },
       updateHighlightedSubtitleAndPage,
       getCurrentTime: () => {
@@ -209,7 +208,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
               true,
               false
             );
-            console.log("ahoj1");
             onHighlightedSubtitleIndexChange?.(newHighlightedIndex);
             onHighlightedWordIndexChange?.(newHighlightedWordIndex);
             setLoadingFromFetch(false);
@@ -222,9 +220,9 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         shouldSetVideo === true
       ) {
         const sentenceStart =
-          snapshots![0].sentencesData[firstIndexAfterReset!].start!;
+          snapshots![0].sentencesData[firstIndexAfterReset!]?.start!;
         const sentenceWords =
-          snapshots![0].sentencesData[firstIndexAfterReset!].sentenceWords;
+          snapshots![0].sentencesData[firstIndexAfterReset!]?.sentenceWords;
         let newHighlightedWordIndex = 0;
 
         for (let i = 0; i < sentenceWords.length; i++) {
@@ -314,7 +312,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           event.data === YT.PlayerState.PLAYING &&
           !hasSeekToBeenCalledRef.current
         ) {
-          if (!hasSeekToBeenCalledRef.current) {
+          if (!hasSeekToBeenCalledRef.current && isInitRender) {
             playerRef.current.seekTo(0, true); // Force the player to start at 0
             /* playerRef.current?.seekTo(
               snapshotsRef.current![0].sentencesData[0].start!
@@ -414,20 +412,15 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           snapshotsRef.current![0].sentenceFrom
         );
 
-        console.log("newIndex" + newIndex);
-        console.log("currentTime" + currentTime);
         const newHighlightedWordIndex = getCurrentWordIndex(
           snapshotsRef.current!,
           newIndex,
           currentTime
         );
-        console.log("newHighlightedWordIndex" + newHighlightedWordIndex);
         if (newHighlightedWordIndex !== -1) {
           onHighlightedWordIndexChange?.(newHighlightedWordIndex);
         }
 
-        console.log("ahoj2");
-        // Ensure to update the page if the new index results in a new page
         if (newPage !== currentPageToUseRef.current) {
           handlePageChange(
             newPage,
@@ -556,7 +549,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
         const newPage = Math.ceil(
           snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
         );
-        console.log("ahoj4");
+
         if (!isNaN(newPage)) {
           handlePageChange(
             newPage,
@@ -594,13 +587,11 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
           newHighlightedIndex !== undefined &&
           !isNaN(newHighlightedIndex)
         ) {
-          console.log("startIndexRef.current" + startIndexRef.current);
-          console.log("endIndexRef.current" + endIndexRef.current);
           if (
             startIndexRef.current === null ||
             endIndexRef.current === null ||
             newHighlightedIndex! < startIndexRef.current ||
-            newHighlightedIndex! >= endIndexRef.current
+            newHighlightedIndex! > endIndexRef.current
           ) {
             const newPage = calculatePage(
               newHighlightedIndex!,
@@ -616,7 +607,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
                 newPage * sentencesPerPageRef.current -
                   snapshotsRef.current![0].sentenceFrom
               );
-              console.log("ahoj3");
+
               handlePageChange(
                 newPage,
                 sentencesPerPageRef.current,

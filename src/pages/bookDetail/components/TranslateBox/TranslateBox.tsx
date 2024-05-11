@@ -19,11 +19,12 @@ import { useIntl } from "react-intl";
 import Select from "react-select";
 import Tippy from "@tippyjs/react";
 import styles from "./TranslateBox.module.less";
-import { Button } from "antd";
+import { Button, Divider } from "antd";
+import { shuffleArray } from "@/utils/stringUtils";
 
 interface TenseSelection {
   sentenceNumber: number;
-  tense: string;
+  tense: string | string[];
 }
 
 interface TranslateBoxProps {
@@ -518,7 +519,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       let matchingWords = sentence.sentenceWords
         .filter(
           (word) =>
-            word.partOfSpeech &&
+            typeof word.partOfSpeech === "string" && // Ensure it's a string
             partsOfSpeechForExtract.includes(word.partOfSpeech.toLowerCase())
         )
         .map((word) => ({
@@ -614,11 +615,20 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       (tense) => sentenceNumber === tense.sentenceNumber
     );
 
+    const isTenseMatch = (tense, currentTense) => {
+      if (Array.isArray(currentTense)) {
+        return currentTense.includes(tense);
+      }
+      return tense === currentTense;
+    };
+
     const isCorrect =
-      isSelected &&
-      currentTenseInfo &&
-      selectedTenses.find((tense) => tense.sentenceNumber === sentenceNumber)
-        ?.tense === currentTenseInfo.tense;
+      selectedTenses.find((tense) => tense.sentenceNumber === sentenceNumber) &&
+      isTenseMatch(
+        selectedTenses.find((tense) => tense.sentenceNumber === sentenceNumber)
+          ?.tense,
+        currentTenseInfo.tense
+      );
 
     return {
       singleValue: (base) => ({
@@ -670,6 +680,45 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     { label: "Future Perfect Continuous", value: "Future Perfect Continuous" },
   ];
 
+  const options = (input) => {
+    // Ensure input is treated as a string
+    const inputTenses = Array.isArray(input) ? input.join(",") : String(input);
+    const tenses = inputTenses.split(",").map((t) => t.trim());
+
+    // Validate each provided tense
+    const validTenses = tenses.filter((t) =>
+      tenseOptions.some((option) => option.label === t)
+    );
+    if (validTenses.length === 0) {
+      throw new Error("Invalid tenses provided.");
+    }
+
+    // Start with the tense options that match the input tenses
+    const selected = validTenses.map((t) => ({ label: t, value: t }));
+
+    // Get other tenses, excluding the provided tenses
+    const otherOptions = tenseOptions.filter(
+      (option) => !validTenses.includes(option.label)
+    );
+
+    // Shuffle the array to randomize selection
+    for (let i = otherOptions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [otherOptions[i], otherOptions[j]] = [otherOptions[j], otherOptions[i]];
+    }
+
+    // Calculate how many more options to select to make up 4 in total
+    const moreOptionsNeeded = 4 - selected.length;
+    if (moreOptionsNeeded > 0 && otherOptions.length >= moreOptionsNeeded) {
+      selected.push(...otherOptions.slice(0, moreOptionsNeeded));
+    } else if (moreOptionsNeeded > 0) {
+      // In case there are not enough other options to fill up to 4
+      throw new Error("Not enough different tenses available to select from.");
+    }
+
+    return shuffleArray(selected);
+  };
+
   /*   const [selectedTenses, setSelectedTenses] = useState(() =>
     visibleSourceTexts.map((sentence) => ({
       sentenceNumber: sentence.sentenceNo,
@@ -692,12 +741,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   }, [highlightedWordIndex, highlightedSentenceIndex]);
 
-  const [isTippyVisible, setTippyVisible] = useState(false);
+  const [isTippyVisible, setTippyVisible] = useState(true);
 
   const toggleTippyVisibility = () => {
     setTippyVisible((prevState) => !prevState);
   };
 
+  console.log("visibleTargetTexts" + JSON.stringify(visibleTargetTexts));
   return (
     <>
       {isMobile && (
@@ -809,6 +859,13 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 {sourceSentence.sentenceWords?.map((sourceWord, wordIndex) => {
                   const translation =
                     targetSentence?.sentenceWords[wordIndex]?.wordText || "";
+                  console.log(
+                    "targetSentence?.sentenceWords" +
+                      targetSentence?.sentenceWords
+                  );
+                  console.log("wordIndex" + wordIndex);
+
+                  console.log("translation" + translation);
                   const isCurrentlyHighlighted =
                     wordIndex === highlightedWordIndex &&
                     index === highlightedSentenceIndex;
@@ -931,31 +988,34 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                   );
                 })}
                 {isTenseVisible && (
-                  <Select
-                    options={tenseOptions}
-                    value={
-                      selectedTenses.some((tense) => {
-                        return (
-                          tense.sentenceNumber === sourceSentence.sentenceNo
-                        );
-                      })
-                        ? tenseOptions.find((option) => {
-                            const foundTense = selectedTenses.find(
-                              (tense) =>
-                                tense.sentenceNumber ===
-                                sourceSentence.sentenceNo
-                            );
-                            return option.value === foundTense?.tense;
-                          })
-                        : ""
-                    }
-                    onChange={(option) =>
-                      handleTenseChange(option, sourceSentence.sentenceNo)
-                    }
-                    styles={customStyles(sourceSentence.sentenceNo)}
-                    placeholder="Select a tense"
-                    menuShouldScrollIntoView={false}
-                  />
+                  <>
+                    <Select
+                      options={options(sourceSentence.tense)}
+                      value={
+                        selectedTenses.some((tense) => {
+                          return (
+                            tense.sentenceNumber === sourceSentence.sentenceNo
+                          );
+                        })
+                          ? tenseOptions.find((option) => {
+                              const foundTense = selectedTenses.find(
+                                (tense) =>
+                                  tense.sentenceNumber ===
+                                  sourceSentence.sentenceNo
+                              );
+                              return option.value === foundTense?.tense;
+                            })
+                          : ""
+                      }
+                      onChange={(option) =>
+                        handleTenseChange(option, sourceSentence.sentenceNo)
+                      }
+                      styles={customStyles(sourceSentence.sentenceNo)}
+                      placeholder="Select a tense"
+                      menuShouldScrollIntoView={false}
+                    />
+                    <div className={styles.customDivider} />
+                  </>
                 )}
                 <Button
                   onClick={toggleTippyVisibility}

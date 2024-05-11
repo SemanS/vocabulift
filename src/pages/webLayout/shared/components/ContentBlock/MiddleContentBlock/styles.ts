@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const RightBlockContainer = styled.section`
   position: relative;
-  background-color: rgb(246, 216, 174);
+  background-color: rgb(254, 222, 185);
   //padding: 12rem 27rem 5rem 27rem;
   padding: 8rem 5rem 5rem 10rem;
 

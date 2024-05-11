@@ -57,7 +57,7 @@
 
 .customDivider {
   border-top: 1px solid #f0f0f0;
-  margin: 5px 0;
+  margin: 10px 0;
 }
 
 .cardContainer {
@@ -122,4 +122,44 @@
 .percentage {
   font-size: 1.3rem;
   font-weight: bold;
+}
+
+.cardContainer {
+  position: relative;
+  width: fit-content;
+}
+
+.cardImg {
+  display: block;
+}
+
+.cardTime {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 20%;
+  background-color: rgba(0, 0, 0, 1);
+  color: white;
+  text-align: center;
+  padding: 6px 0;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  border-radius: 10px; /* Example radius */
+  font-size: 11px; /* Smaller font size; adjust as needed */
+}
+
+.level {
+  position: absolute;
+  right: 5px; /* Adjusted with margin included */
+  top: 0px; /* Adjusted with margin included */
+  width: 20px; /* Fixed width for a perfect circle */
+  height: 20px; /* Fixed height, same as width to ensure a circle */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+  color: white;
+  display: flex;
+  align-items: center; /* Aligns items vertically in the center */
+  justify-content: center; /* Centers content horizontally */
+  border-radius: 50%; /* Ensures circular shape */
+  margin: 5px; /* Adds margin around the element */
+  font-size: 10px; /* Smaller font size; adjust as needed */
 }

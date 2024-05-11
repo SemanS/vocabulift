@@ -116,9 +116,9 @@ const WebLayoutPage: FC = () => {
         /> */}
         <ContentBlock
           type="right"
-          title={"Unleash Your Language Skills with AI"}
+          title={"First-of-its-Kind"}
           content={
-            "Embark on an immersive language adventure that harnesses the power of AI. Transform video texts into your personal linguistic playground, cultivating a rich vocabulary landscape as you traverse the world of languages."
+            "Turn YouTube videos into your personal language lab and speed up your learning—three times faster than Duolingo! Highlight any word or phrase for instant native explanations. Dive into quizzes, fill-in-the-blank exercises, and thought-provoking questions, all designed to enhance your mastery. This is language learning on turbo, transforming every video into a dynamic educational adventure."
           }
           button={"button"}
           icon="developer.webp"
@@ -128,7 +128,7 @@ const WebLayoutPage: FC = () => {
           //title={formatMessage({ id: "web.middleBlock.title" })}
           title={"Pioneering the Future of Language Learning with AI"}
           content={
-            "Embrace an innovative language learning path powered by leading-edge AI. Start for free."
+            "Embrace an innovative language learning path powered by leading-edge AI."
           }
           button={"GET STARTED FOR FREE"}
           direction="up"

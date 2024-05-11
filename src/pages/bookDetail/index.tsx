@@ -23,6 +23,7 @@ import {
   Flex,
   Tag,
   Divider,
+  List,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -72,6 +73,7 @@ import QuizComponent from "./components/Quiz/QuizComponent";
 import { UnorderedListOutlined, YoutubeOutlined } from "@ant-design/icons";
 import { parseLocale } from "@/utils/stringUtils";
 import SelectLang from "@/pages/layout/components/RightContent/SelectLang";
+import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -232,7 +234,7 @@ const BookDetail: FC = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
 
-  const [isTenseVisible, setIsTenseVisible] = useState(false);
+  const [isTenseVisible, setIsTenseVisible] = useState(true);
 
   const toggleIsTenseVisible = () => {
     setIsTenseVisible((prevState) => !prevState);
@@ -458,42 +460,21 @@ const BookDetail: FC = () => {
   }, []);
 
   useEffect(() => {
-    const locale = parseLocale(user.locale);
-
-    dispatch({
-      type: "setSelectedLanguageTo",
-      payload: locale,
-    });
-
-    fetchVocabularyAndSetState(state.sentenceFrom, locale);
-    fetchAndUpdate(state.sentenceFrom, locale);
-
-    const url = new URL(window.location.href);
-    const params = new URLSearchParams(url.search);
-    params.set("targetLanguage", locale);
-    window.history.replaceState({}, "", `${url.pathname}?${params}`);
-  }, [dispatch, user.locale]);
-
-  /* const handleAddWordDefinition = useCallback(async (word: string) => {
-    // Fetch word details from public API
-    fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(
-        word
-      )}`
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (data && data[0]) {
-          dispatch({ type: "setWordData", payload: data[0] });
-          dispatch({ type: "setShowWordDefinition", payload: true });
-        } else {
-          dispatch({ type: "setWordData", payload: null });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
+    const value = user.targetLanguage;
+    if (value) {
+      dispatch({
+        type: "setSelectedLanguageTo",
+        payload: value,
       });
-  }, []); */
+      fetchVocabularyAndSetState(state.sentenceFrom, value);
+      fetchAndUpdate(state.sentenceFrom, value);
+
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.search);
+      params.set("targetLanguage", value);
+      window.history.replaceState({}, "", `${url.pathname}?${params}`);
+    }
+  }, [user.targetLanguage, dispatch, state.sentenceFrom]);
 
   const handleModeChange = useCallback((e: RadioChangeEvent) => {
     dispatch({ type: "setMode", payload: e.target.value });
@@ -620,8 +601,9 @@ const BookDetail: FC = () => {
       } catch (error) {
         console.error("Error adding user phrase:", error);
       }
+
       if (!rightVocabVisible) {
-        setRightVocabVisible(true);
+        toggleRightVocabPanel();
       }
     },
     [state.userSentences, state.vocabularyListUserPhrases]
@@ -763,6 +745,10 @@ const BookDetail: FC = () => {
           });
           dispatch({ type: "setUserSentences", payload: updatedUserSentences });
         });
+
+        if (state.vocabularyListUserPhrases.length === 1) {
+          toggleRightVocabPanel();
+        }
 
         // Filter out the element with the specified startPosition and sentenceNo
       } catch (error) {
@@ -1098,7 +1084,7 @@ const BookDetail: FC = () => {
     }));
   }, [joyrideState.translateBoxSteps, joyrideState.vocabularyListSteps]);
 
-  const [rightVisible, setRightVisible] = useState(false);
+  const [rightVisible, setRightVisible] = useState(true);
   const [rightVocabVisible, setRightVocabVisible] = useState(false);
   const [rightExerciseVisible, setRightExerciseVisible] = useState(false);
   const [rightQuizVisible, setRightQuizVisible] = useState(false);
@@ -1475,51 +1461,7 @@ const BookDetail: FC = () => {
     "preposition",
     "conjunction",
     "interjection",
-    "all",
   ];
-
-  const tenses = [
-    "Simple Present",
-    "Present Continuous (Progressive)",
-    "Present Perfect",
-    "Present Perfect Continuous",
-    "Simple Past",
-    "Past Continuous (Progressive)",
-    "Past Perfect",
-    "Past Perfect Continuous",
-    "Simple Future",
-    "Future Continuous (Progressive)",
-    "Future Perfect",
-    "Future Perfect Continuous",
-    "Simple Conditional",
-    "Conditional Perfect",
-    "All",
-  ];
-
-  const tensesCategory = {
-    "Present Tenses": [
-      "Simple Present",
-      "Present Continuous (Progressive)",
-      "Present Perfect",
-      "Present Perfect Continuous",
-      "All",
-    ],
-    "Past Tenses": [
-      "Simple Past",
-      "Past Continuous (Progressive)",
-      "Past Perfect",
-      "Past Perfect Continuous",
-      "All",
-    ],
-    "Future Tenses": [
-      "Simple Future",
-      "Future Continuous (Progressive)",
-      "Future Perfect",
-      "Future Perfect Continuous",
-      "All",
-    ],
-    "Conditional Tenses": ["Simple Conditional", "Conditional Perfect", "All"],
-  };
 
   return (
     <PageContainer
@@ -1528,7 +1470,7 @@ const BookDetail: FC = () => {
         isDropdownActive && `${styles.blurred}`
       }`}
     >
-      {user.newUser && (
+      {/* {user.newUser && (
         <Joyride
           key={joyrideState.translateBoxSteps.length}
           continuous
@@ -1546,7 +1488,7 @@ const BookDetail: FC = () => {
           styles={joyrideStyles}
           locale={customLocale}
         />
-      )}
+      )} */}
       {state.isLimitExceeded && user.subscribed === false && !hasAccess ? (
         <Modal open={true} closable={true} footer={false} width="80%" centered>
           <center>
@@ -1729,6 +1671,7 @@ const BookDetail: FC = () => {
                   <Card
                     style={{
                       height: "690px",
+                      overflow: "auto",
                       borderBottomLeftRadius: "15px",
                       borderBottomRightRadius: "15px",
                     }}
@@ -1737,7 +1680,7 @@ const BookDetail: FC = () => {
                       style={{
                         display: "flex", // Using flex to manage layout
                         flexWrap: "wrap", // Allows wrapping to next line
-                        width: "460px", // Fixed width for the inner container, slightly less than the Card width to fit padding/margins
+                        width: "460px",
                       }}
                     >
                       {partsOfSpeech.map((tag) => (
@@ -1761,7 +1704,6 @@ const BookDetail: FC = () => {
                       ))}
                     </div>
                     <Divider />
-
                     <Button
                       onClick={toggleIsTenseVisible}
                       size={"large"}
@@ -1776,6 +1718,18 @@ const BookDetail: FC = () => {
                     >
                       Tense
                     </Button>
+                    <Divider />
+                    <List
+                      style={{ width: "460px" }}
+                      dataSource={state.library?.questions}
+                      renderItem={(item, index) => (
+                        <List.Item>
+                          <Typography.Text>
+                            Q{index + 1}: {item}
+                          </Typography.Text>
+                        </List.Item>
+                      )}
+                    />
                     {/* <div
                       style={{
                         display: "flex",
@@ -1913,7 +1867,10 @@ const BookDetail: FC = () => {
           )}
         </>
       )}
-      <SelectLang setDropdownActive={setDropdownActive} />
+      <SelectLang
+        setDropdownActive={setDropdownActive}
+        uniqueLanguages={uniqueLanguages}
+      />
     </PageContainer>
   );
 };

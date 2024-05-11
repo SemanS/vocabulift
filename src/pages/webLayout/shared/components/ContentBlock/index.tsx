@@ -9,7 +9,7 @@ const ContentBlock = (props: IContentBlockProps) => {
   if (props.type === "left") return <LeftContentBlock {...props} />;
   if (props.type === "right") return <RightContentBlock {...props} />;
   if (props.type === "middle") return <MiddleBlock {...props} />;
-  if (props.type === "browser") return <BrowserBlock {...props} />;
+  /* if (props.type === "browser") return <BrowserBlock {...props} />; */
   return null;
 };
 

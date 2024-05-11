@@ -47,7 +47,19 @@ const RightBlock = ({
           <Col lg={10} md={11} sm={11} xs={24}>
             <ContentWrapper>
               <h6>{title}</h6>
-              <Content>{content}</Content>
+              <Content>
+                <p>
+                  <br />
+                  Turn YouTube videos into your personal language lab and speed
+                  up your learning—three times faster than Duolingo! <br />
+                  <br />
+                  Highlight any word or phrase for instant native explanations.
+                  Dive into quizzes, fill-in-the-blank exercises, and
+                  thought-provoking questions, all designed to enhance your
+                  mastery. <br />
+                  <br />
+                </p>
+              </Content>
               {/* <ButtonWrapper> */}
               <Button
                 fixedWidth={true}
@@ -64,7 +76,12 @@ const RightBlock = ({
           <Col lg={14} md={11} sm={12} xs={24}>
             <img
               src={"img/svg/image_1.webp"}
-              style={{ width: "100%", height: "100%" }}
+              style={{
+                width: "110%",
+                height: "110%",
+                marginTop: "30px",
+                marginLeft: "30px",
+              }}
               alt="icon"
             />
             {/* <SvgIcon src={icon} width="100%" height="100%" /> */}

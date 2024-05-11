@@ -16,7 +16,6 @@ import {
 } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-layout";
 import { LabelType } from "@/models/sentences.interfaces";
-import { Option } from "@/models/utils.interface";
 import CustomSlider from "./components/CustomSlider";
 import LanguageSelector from "@/pages/bookDetail/components/LanguageSelector/LanguageSelector";
 import { ApiResponse } from "@/models/apiResponse.interface";
@@ -305,12 +304,7 @@ const Library: React.FC = () => {
     });
   };
 
-  const myLanguageOptions = [
-    { label: "English", value: "en" },
-    { label: "German", value: "de" },
-    { label: "French", value: "fr" },
-    { label: "Spanish", value: "es" },
-  ];
+  const myLanguageOptions = [{ label: "English", value: "en" }];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -695,7 +689,7 @@ const Library: React.FC = () => {
   return (
     <CustomSpinnerComponent spinning={loading}>
       <PageContainer title={false}>
-        {user.newUser && (
+        {/* {user.newUser && (
           <Joyride
             key={mainKey}
             continuous
@@ -709,7 +703,7 @@ const Library: React.FC = () => {
             callback={handleJoyrideCallback}
             locale={customLocale}
           />
-        )}
+        )} */}
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
           <div
             className={styles.drawerPushContent}

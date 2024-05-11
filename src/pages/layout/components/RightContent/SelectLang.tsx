@@ -8,30 +8,47 @@ import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { DownOutlined } from "@ant-design/icons";
+import { parseLocale } from "@/utils/stringUtils";
 
-const SelectLang = ({ setDropdownActive }) => {
+const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
   const [user, setUser] = useRecoilState(userState);
 
   const selectLocale = async ({ key }) => {
     await updateUser({ locale: key });
-    setUser((prev) => ({ ...prev, locale: key }));
+    setUser((prev) => ({
+      ...prev,
+      locale: key,
+      targetLanguage: parseLocale(key),
+    }));
     localStorage.setItem("locale", key);
-    setDropdownActive(false); // Close dropdown and remove effect when selection is made
+    setDropdownActive(false);
+
+    const newQueryParams = new URLSearchParams(window.location.search);
+    newQueryParams.set("targetLanguage", parseLocale(key));
+    window.history.pushState(null, "", "?" + newQueryParams.toString());
   };
 
-  const items = localeConfig.map((lang) => ({
-    key: lang.key,
-    disabled: user.locale === lang.key,
-    label: (
-      <>
-        {lang.icon}
-        <span style={{ marginLeft: "10px" }}>{lang.name}</span>
-      </>
-    ),
-    onClick: () => selectLocale({ key: lang.key }),
-  }));
+  const items = localeConfig
+    .filter(
+      (lang) =>
+        uniqueLanguages.includes(parseLocale(lang.key)) &&
+        parseLocale(lang.key) !== "en"
+    )
+    .map((lang) => ({
+      key: lang.key,
+      disabled: user.targetLanguage === parseLocale(lang.key),
+      label: (
+        <>
+          {lang.icon}
+          <span style={{ marginLeft: "10px" }}>{lang.name}</span>
+        </>
+      ),
+      onClick: () => selectLocale({ key: lang.key }),
+    }));
 
-  const currentLangIcon = localeConfig.find((lang) => lang.key === user.locale);
+  const currentLangIcon = localeConfig.find(
+    (lang) => parseLocale(lang.key) === user.targetLanguage
+  );
 
   return (
     <div

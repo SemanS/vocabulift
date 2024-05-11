@@ -125,7 +125,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
     <div
       className={styles.languageSelectorBox}
       onClick={() => setVisible(true)}
-      style={style}
+      style={{ ...style, borderRadius: "15px" }}
     >
       <Typography.Text
         style={{ fontSize: "16px" }}

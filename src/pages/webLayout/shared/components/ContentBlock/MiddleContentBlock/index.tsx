@@ -71,7 +71,7 @@ const MiddleBlock = ({
       >
         <Col span={1} />
         <Col lg={6} md={6} sm={6} xs={24}>
-          <video
+          {/* <video
             ref={videoRef}
             loop
             muted
@@ -80,32 +80,40 @@ const MiddleBlock = ({
             style={{ maxWidth: "250px" }}
           >
             <source src="img/svg/video_1.webm" type="video/webm" />
-          </video>
+          </video> */}
+          <img
+            src={"img/svg/image_3.webp"}
+            style={{ width: "110%", height: "110%" }}
+            alt="icon"
+          />
         </Col>
-        <Col lg={16} md={16} sm={16} xs={24}>
+        <Col span={2} />
+        <Col lg={14} md={14} sm={14} xs={22}>
           {/* <ContentWrapper> */}
           <h6>
-            <Fade direction="left" triggerOnce>
-              {"Experience the Power of Vocabulift"}
+            <Fade direction="left" style={{ marginTop: "0px" }} triggerOnce>
+              {"Unique functionality"}
             </Fade>
           </h6>
           <Content>
-            <Fade direction="left" triggerOnce>
+            <Fade direction="left" style={{ marginTop: "100px" }} triggerOnce>
               {
-                "Watch as our app smoothly highlights and translates words and phrases from subtitles in a foreign language."
+                "The platform includes a feature where users select a part of speech, and Vocabulift automatically generates tailored fill-in-the-blank exercises."
               }
             </Fade>
           </Content>
           <Content>
             <Fade direction="left" triggerOnce>
               {
-                "User interaction takes center stage as translations occur in real-time."
+                "Each video is accompanied by discussion questions, ready for use in educational or exercise settings."
               }
             </Fade>
           </Content>
           <Content>
             <Fade direction="left" triggerOnce>
-              {"Start your adventure with Vocabulift today!"}
+              {
+                "This tool streamlines content creation by automating exercise generation based on selected linguistic elements."
+              }
             </Fade>
           </Content>
           {/* </ContentWrapper> */}
