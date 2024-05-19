@@ -1,211 +1,70 @@
-import React, { useState, FC, useEffect } from "react";
-import { Form, Input, Button, Tag, Spin, Row, Col, Typography } from "antd";
+import React, { useState, useEffect, FC } from "react";
+import { Form, Button, Tag, Typography, Row, Col } from "antd";
 import Quiz from "react-quiz-component";
-import { getQuiz } from "@/services/aiService";
+import styles from "./QuizComponent.module.less";
 
 interface QuizComponentProps {
   sourceLanguage: string;
   libraryId?: string;
+  snapshot: any; // Ideally, you would define a more specific type for snapshot
 }
 
-const QuizComponent: FC<QuizComponentProps> = (props) => {
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState<string>("");
+const QuizComponent: FC<QuizComponentProps> = ({
+  sourceLanguage,
+  libraryId,
+  snapshot,
+}) => {
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [submitted, setSubmitted] = useState<boolean>(false);
-  const [quizData, setQuizData] = useState<any>();
+  const [quizData, setQuizData] = useState<any>(null);
+  const [quizTopics, setQuizTopics] = useState<string[]>([]);
+  const [currentQuiz, setCurrentQuiz] = useState<any>(null);
 
-  const [allAspects, setAllAspects] = useState<string[]>([]);
-
+  // On component mount, extract quiz topics from the snapshot
   useEffect(() => {
-    const aspectsArray: string[] = [];
-    Object.values(englishLearningAspects).forEach((category) => {
-      aspectsArray.push(...category);
-    });
-    setAllAspects(aspectsArray);
-  }, []);
+    if (snapshot?.quizzes) {
+      const topics = snapshot.quizzes.map((quiz: any) => quiz.quizTopic);
+      setQuizTopics(topics);
+    } else {
+      console.log(
+        "No quizzes found in snapshot or snapshot structure is not as expected"
+      );
+    }
+  }, [snapshot]);
 
-  const handleTagChange = (
-    aspectCategory: string,
-    tag: string,
-    checked: boolean
-  ): void => {
-    const nextSelectedTags = checked
-      ? [...selectedTags, `${aspectCategory}: ${tag}`]
-      : selectedTags.filter((t) => t !== `${aspectCategory}: ${tag}`);
-    setSelectedTags(nextSelectedTags);
+  // Handle selection of quiz topics
+  const handleTagChange = (tag: string, checked: boolean): void => {
+    if (checked) {
+      setSelectedTag(tag);
+      const quiz = snapshot.quizzes.find((q: any) => q.quizTopic === tag);
+      setCurrentQuiz(quiz);
+    } else {
+      setSelectedTag(null);
+      setCurrentQuiz(null);
+    }
   };
 
+  // Handle the submission to generate the quiz based on the selected topic
   const handleSubmit = async () => {
     setLoading(true);
 
-    let quiz = await getQuiz(props.sourceLanguage, "sk", props.libraryId!);
+    if (currentQuiz) {
+      const quizDataWithExtraInfo = {
+        quizTitle: currentQuiz.quizTopic || "Vocabu Quiz",
+        quizSynopsis:
+          "Welcome to the Vocabu Quiz! This engaging quiz is designed to test and expand your vocabulary knowledge across various levels of difficulty.",
+        nrOfQuestions: currentQuiz.quizQuestions.length.toString(),
+        questions: currentQuiz.quizQuestions,
+      };
 
-    // Assuming the JSON starts with '{' for simplicity. Adjust if it could start with '['
-    const indexOfJsonStart = quiz.indexOf("{");
-    const indexOfJsonEnd = quiz.lastIndexOf("}");
-
-    if (indexOfJsonStart === -1 || indexOfJsonEnd === -1) {
-      throw new Error("Valid JSON structure not found in quiz response");
+      setQuizData(quizDataWithExtraInfo);
+    } else {
+      console.error("No quiz data available for the selected topic.");
     }
 
-    const jsonString = quiz.substring(indexOfJsonStart, indexOfJsonEnd + 1);
-
-    console.log(jsonString);
-    const quizResponse = JSON.parse(jsonString);
-
-    const quizDataWithExtraInfo = {
-      quizTitle: "Vocabu Quiz",
-      quizSynopsis:
-        "Welcome to the Vocabu Quiz! This engaging quiz is designed to test and expand your vocabulary knowledge across various levels of difficulty.",
-      nrOfQuestions: quizResponse.questions
-        ? quizResponse.questions.length.toString()
-        : "0",
-      questions: quizResponse.questions,
-    };
-
-    setQuizData(quizDataWithExtraInfo);
     setLoading(false);
     setSubmitted(true);
-  };
-
-  const englishLearningAspects = {
-    Tenses: [
-      "Simple Present",
-      "Present Continuous (Progressive)",
-      "Present Perfect",
-      "Present Perfect Continuous",
-      "Simple Past",
-      "Past Continuous (Progressive)",
-      "Past Perfect",
-      "Past Perfect Continuous",
-      "Simple Future",
-      "Future Continuous (Progressive)",
-      "Future Perfect",
-      "Future Perfect Continuous",
-      "Simple Conditional",
-      "Conditional Perfect",
-    ],
-    /* Moods: [
-        'Imperative Mood', // Commands, requests
-        'Subjunctive Mood' // Wishes, hypotheticals, demands, and after certain expressions
-      ],
-      VerbForms: [
-        'Modal Verbs', // Can, could, may, might, must, shall, should, will, would
-        'Passive Voice', // Focus on the action rather than who performs it
-        'Gerunds and Infinitives', // Verbs acting as nouns, to + verb
-        'Regular and Irregular Verbs' // Patterns of past tense and past participle forms
-      ],
-      Speech: [
-        'Reported Speech', // Converting from direct to indirect speech
-        'Direct Speech' // Quoting the exact words spoken
-      ],
-      SentenceStructures: [
-        'Question Forms', // Different ways to form questions
-        'Negative Forms', // Constructing negative sentences
-        'Relative Clauses', // Clauses that provide extra information about a noun
-        'Direct and Indirect Objects', // Objects receiving the action of the verb
-        'Subject-Verb Agreement', // Matching the verb with the subject in number (singular/plural)
-        'Compound and Complex Sentences' // Using conjunctions to combine clauses
-      ],
-      PartsOfSpeech: [
-        'Prepositions', // Words that show relationships between nouns or pronouns and other words
-        'Phrasal Verbs', // Verbs combined with prepositions or adverbs
-        'Articles (a, an, the)', // Definite and indefinite articles
-        'Pronouns', // Words standing in for nouns
-        'Conjunctions', // Words that connect clauses, sentences, or words
-        'Adverbs', // Words that modify verbs, adjectives, or other adverbs
-        'Adjectives', // Words that describe nouns
-        'Nouns', // Person, place, thing, or idea
-        'Determiners', // Words that introduce nouns
-        'Interjections' // Words or phrases that express emotion or exclamation
-      ],
-      Comparison: [
-        'Comparatives and Superlatives' // Comparing two or more things or actions
-      ],
-      Punctuation: [
-        'Commas', 'Periods', 'Question Marks', 'Exclamation Points', 'Quotation Marks', 'Apostrophes', 'Colons', 'Semicolons', 'Dashes', 'Parentheses'
-      ], */
-  };
-
-  const quiz = {
-    quizTitle: "React Quiz Component Demo",
-    quizSynopsis:
-      "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim",
-    nrOfQuestions: "4",
-    questions: [
-      {
-        question: "What led the speaker to contemplate the meaning of life?",
-        questionType: "text",
-        answerSelectionType: "single",
-        answers: [
-          "An existential crisis during teenage years.",
-          "Reading religious texts.",
-          "Encountering philosophical ideas.",
-          "Reading German philosophers.",
-        ],
-        correctAnswer: "1",
-        messageForCorrectAnswer: "Correct answer. Good job.",
-        messageForIncorrectAnswer: "Incorrect answer. Please try again.",
-        explanation:
-          "The speaker mentioned having an existential crisis during their teenage years, which led them to contemplate the meaning of life.",
-        point: "20",
-      },
-      {
-        question:
-          "What book inspired the speaker's understanding of formulating questions about the universe?",
-        questionType: "text",
-        answerSelectionType: "single",
-        answers: [
-          "The Hitchhiker's Guide to the Galaxy.",
-          "A Brief History of Time.",
-          "The God Delusion.",
-          "Thus Spoke Zarathustra.",
-        ],
-        correctAnswer: "1",
-        messageForCorrectAnswer: "Correct answer. Good job.",
-        messageForIncorrectAnswer: "Incorrect answer. Please try again.",
-        explanation:
-          "The speaker mentioned that reading The Hitchhiker's Guide to the Galaxy inspired their understanding of formulating questions about the universe.",
-        point: "20",
-      },
-      {
-        question:
-          "What does the speaker believe expanding consciousness will help humanity achieve?",
-        questionType: "text",
-        answerSelectionType: "single",
-        answers: [
-          "A better understanding of the universe.",
-          "Advanced technology.",
-          "World peace.",
-          "Colonization of other planets.",
-        ],
-        correctAnswer: "1",
-        messageForCorrectAnswer: "Correct answer. Good job.",
-        messageForIncorrectAnswer: "Incorrect answer. Please try again.",
-        explanation:
-          "The speaker believes expanding consciousness will help humanity achieve a better understanding of the universe.",
-        point: "20",
-      },
-      {
-        question:
-          "According to the speaker, why is it important to ensure things are good on Earth?",
-        questionType: "text",
-        answerSelectionType: "single",
-        answers: [
-          "To sustain humanity.",
-          "To prevent despair.",
-          "To achieve sustainability.",
-          "To prepare for colonization.",
-        ],
-        correctAnswer: "2",
-        messageForCorrectAnswer: "Correct answer. Good job.",
-        messageForIncorrectAnswer: "Incorrect answer. Please try again.",
-        explanation:
-          "According to the speaker, it is important to ensure things are good on Earth to prevent despair.",
-        point: "20",
-      },
-    ],
   };
 
   return (
@@ -215,18 +74,59 @@ const QuizComponent: FC<QuizComponentProps> = (props) => {
           <Form onFinish={handleSubmit}>
             <Typography.Title level={4}>Take a VocabuQuiz</Typography.Title>
             <br />
-            <Form.Item>
-              <Button type="primary" htmlType="submit" loading={loading}>
-                Generate Quiz
-              </Button>
-            </Form.Item>
+            {quizTopics.map((tag) => (
+              <Tag.CheckableTag
+                key={tag}
+                checked={selectedTag === tag}
+                onChange={(checked) => handleTagChange(tag, checked)}
+                style={{
+                  margin: "4px",
+                  padding: "8px 15px",
+                  fontSize: "16px",
+                  borderRadius: "10px",
+                  backgroundColor:
+                    selectedTag === tag ? "#4CAF50" : "Gainsboro",
+                  transition: "none",
+                  //maxWidth: "440px", // Set the maximum width of each tag to 430px
+                  whiteSpace: "normal", // Allows text to wrap within the tag
+                  overflow: "hidden", // Prevents the content from overflowing the tag boundary
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {tag}
+              </Tag.CheckableTag>
+            ))}
+            <br />
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              disabled={!selectedTag}
+              style={{
+                borderRadius: "10px",
+                marginTop: "30px",
+                marginLeft: "5px",
+                padding: "8px 15px",
+                height: "40px",
+                backgroundColor: "#2C4E80",
+                color: "white",
+              }}
+            >
+              Show Quiz
+            </Button>
           </Form>
         ) : (
-          <Quiz
-            quiz={quizData}
-            showInstantFeedback={true}
-            continueTillCorrect={true}
-          />
+          <div className={styles.reactQuizContainer}>
+            <Quiz
+              quiz={quizData}
+              showInstantFeedback={true}
+              continueTillCorrect={false}
+              shuffle={true}
+              shuffleAnswer={true}
+              className={styles.reactQuizContainer}
+              disableSynopsis={true}
+            />
+          </div>
         )}
       </Col>
     </Row>

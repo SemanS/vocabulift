@@ -70,7 +70,11 @@ import { Resizable } from "re-resizable";
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
 import QuizComponent from "./components/Quiz/QuizComponent";
-import { UnorderedListOutlined, YoutubeOutlined } from "@ant-design/icons";
+import {
+  QuestionOutlined,
+  UnorderedListOutlined,
+  YoutubeOutlined,
+} from "@ant-design/icons";
 import { parseLocale } from "@/utils/stringUtils";
 import SelectLang from "@/pages/layout/components/RightContent/SelectLang";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
@@ -1370,7 +1374,7 @@ const BookDetail: FC = () => {
       } else if (rightQuizVisible) {
         setSizes({
           centerWidth: window.innerWidth * 0.5,
-          rightQuizWidth: window.innerWidth * 0.33,
+          rightQuizWidth: window.innerWidth * 0.3312,
           rightExerciseWidth: 0,
           rightVocabWidth: 0,
           rightWidth: 0,
@@ -1550,11 +1554,11 @@ const BookDetail: FC = () => {
                     //style={{ right: 20, bottom: 580 }}
                     style={{
                       right: 20,
-                      bottom: `${
+                      /* bottom: `${
                         state.vocabularyListUserPhrases?.length !== 0
                           ? 580
                           : 630
-                      }px`,
+                      }px`, */
                     }}
                   >
                     <FloatButton
@@ -1601,7 +1605,8 @@ const BookDetail: FC = () => {
                         width: "50px",
                       }}
                     />
-                    {/* <FloatButton
+                    <FloatButton
+                      icon={<QuestionOutlined />}
                       type={rightQuizVisible ? "primary" : "default"}
                       onClick={() => {
                         toggleRightQuizPanel();
@@ -1614,7 +1619,7 @@ const BookDetail: FC = () => {
                         padding: "10px 10px",
                         width: "50px",
                       }}
-                    /> */}
+                    />
                   </FloatButton.Group>
 
                   {/* <Button
@@ -1720,7 +1725,7 @@ const BookDetail: FC = () => {
                     </Button>
                     <Divider />
                     <List
-                      style={{ width: "460px" }}
+                      style={{ width: "430px" }}
                       dataSource={state.library?.questions}
                       renderItem={(item, index) => (
                         <List.Item>
@@ -1780,18 +1785,36 @@ const BookDetail: FC = () => {
                   className={`${styles.resizableContainer}`}
                   style={{
                     transition: "all 0.5s",
-                    marginLeft: "15px",
+                    marginLeft: "-10px",
                     marginRight: "10px",
                     borderTopLeftRadius: "15px",
                     borderTopRightRadius: "15px",
                   }}
                   enable={{ right: true }}
                 >
-                  <Card>
-                    <QuizComponent
-                      sourceLanguage={sourceLanguage}
-                      libraryId={libraryId}
-                    />
+                  <Card
+                    style={{
+                      overflowY: "auto",
+                      height: "calc(82.5vh)",
+                      borderBottomLeftRadius: "15px",
+                      borderBottomRightRadius: "15px",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex", // Using flex to manage layout
+                        flexWrap: "wrap", // Allows wrapping to next line
+                        width: "460px",
+                      }}
+                    >
+                      <QuizComponent
+                        sourceLanguage={sourceLanguage}
+                        libraryId={libraryId}
+                        snapshot={memoizedSnapshots?.find(
+                          (snapshot) => snapshot.language === "en"
+                        )}
+                      />
+                    </div>
                   </Card>
                 </Resizable>
                 <div
@@ -1809,7 +1832,7 @@ const BookDetail: FC = () => {
                     }`}
                     style={{
                       transition: "all 0.5s",
-                      marginLeft: "-15px",
+                      marginLeft: "-1px",
                       borderTopLeftRadius: "15px",
                       borderTopRightRadius: "15px",
                     }}
