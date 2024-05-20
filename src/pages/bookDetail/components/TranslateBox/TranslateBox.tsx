@@ -747,7 +747,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     setTippyVisible((prevState) => !prevState);
   };
 
-  console.log("visibleTargetTexts" + JSON.stringify(visibleTargetTexts));
   return (
     <>
       {isMobile && (
@@ -859,13 +858,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                 {sourceSentence.sentenceWords?.map((sourceWord, wordIndex) => {
                   const translation =
                     targetSentence?.sentenceWords[wordIndex]?.wordText || "";
-                  console.log(
-                    "targetSentence?.sentenceWords" +
-                      targetSentence?.sentenceWords
-                  );
-                  console.log("wordIndex" + wordIndex);
-
-                  console.log("translation" + translation);
                   const isCurrentlyHighlighted =
                     wordIndex === highlightedWordIndex &&
                     index === highlightedSentenceIndex;
