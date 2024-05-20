@@ -1851,7 +1851,7 @@ const BookDetail: FC = () => {
                     }`}
                     style={{
                       transition: "all 0.5s",
-                      marginLeft: "-15px",
+                      marginLeft: "-2px",
                       borderBottomLeftRadius: "15px",
                       borderBottomRightRadius: "15px",
                     }}
