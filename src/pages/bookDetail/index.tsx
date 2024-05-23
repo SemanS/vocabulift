@@ -1144,7 +1144,6 @@ const BookDetail: FC = () => {
         style={{
           boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)", // Shadow applied here
           borderRadius: "15px", // Rounded corners for the group
-
           width: "auto",
         }}
         size="large"
@@ -1157,6 +1156,7 @@ const BookDetail: FC = () => {
             borderBottomLeftRadius: "15px",
             width: "65px",
             border: "none",
+            color: "black",
           }}
         >
           <span style={{ marginLeft: "-3px" }}>
