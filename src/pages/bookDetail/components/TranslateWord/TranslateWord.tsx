@@ -351,15 +351,17 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     const title =
       props.mode === "words" || props.mode === "phrases"
         ? props.translation
-        : props.sentenceTranslation;
+        : props.sentenceText;
 
     return (
       <Tippy
         content={title}
         visible={
           isHovered ||
-          (props.isHighlightedFromVideo && props.mode === "sentences")
+          (props.isHighlightedFromVideo && props.mode === "sentences" && false)
         }
+        placement={"top"}
+        arrow={false}
       >
         {children}
       </Tippy>

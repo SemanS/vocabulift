@@ -274,8 +274,9 @@ const BookDetail: FC = () => {
     dispatch({ type: "setLoadingFromWordMeaning", payload: isLoading });
   const setShouldSetVideo = (shouldSetVideo: boolean) =>
     dispatch({ type: "setShouldSetVideo", payload: shouldSetVideo });
-  const setMode = (mode: string) =>
+  const setMode = (mode: string) => {
     dispatch({ type: "setMode", payload: mode });
+  };
   const setIsMobile = (isMobile: boolean) =>
     dispatch({ type: "isMobile", payload: isMobile });
   const setIsPlaying = (isPlaying: boolean) =>

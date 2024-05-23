@@ -19,8 +19,12 @@ import { useIntl } from "react-intl";
 import Select from "react-select";
 import Tippy from "@tippyjs/react";
 import styles from "./TranslateBox.module.less";
-import { Button, Divider } from "antd";
-import { shuffleArray } from "@/utils/stringUtils";
+import { Button, Divider, Radio } from "antd";
+import { parseLocale, shuffleArray } from "@/utils/stringUtils";
+import { targetLanguageState } from "@/stores/language";
+import { useRecoilState } from "recoil";
+import { userState } from "@/stores/user";
+import { localeConfig } from "@/config/locale";
 
 interface TenseSelection {
   sentenceNumber: number;
@@ -84,6 +88,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     null
   );
   const intl = useIntl();
+
+  const [user, setUser] = useRecoilState(userState);
 
   const [tenses, setTenses] = useState<any[]>([]);
 
@@ -747,6 +753,14 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     setTippyVisible((prevState) => !prevState);
   };
 
+  const targetLangIcon = localeConfig.find(
+    (lang) => parseLocale(lang.key) === user.targetLanguage
+  );
+
+  const sourceLangIcon = localeConfig.find(
+    (lang) => parseLocale(lang.key) === sourceLanguage
+  );
+
   return (
     <>
       {isMobile && (
@@ -762,88 +776,110 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         );
         if (mode === "sentences") {
           return (
-            <TranslateWord
-              key={index}
-              word={sourceSentence.sentenceText}
-              translation={targetSentence?.sentenceText || ""}
-              sentenceNumber={sourceSentence.sentenceNo}
-              sentenceText={sourceSentence.sentenceText}
-              mode={mode}
-              onMouseDown={(
-                word: string,
-                sentenceNumber: number,
-                sentenceText: string
-              ) =>
-                handleMouseEvent("down", word, sentenceNumber, sentenceText, 0)
-              }
-              onMouseEnter={(
-                word: string,
-                sentenceNumber: number,
-                sentenceText: string
-              ) =>
-                handleMouseEvent("enter", word, sentenceNumber, sentenceText, 0)
-              }
-              onMouseUp={handleMouseUp}
-              isHighlighted={isWordInHighlightedPhrase(
-                userSentences,
-                selectedWords,
-                sourceSentence.sentenceText,
-                0,
-                0
-              )}
-              isHighlightedFromVideo={index === highlightedSentenceIndex}
-              isSelecting={mouseDown}
-              sentenceTranslation={targetSentence?.sentenceText || ""}
-              vocabularyListUserPhrases={vocabularyListUserPhrases!}
-              currentPage={currentPage}
-              sentencesPerPage={sentencesPerPage}
-              selectedLanguageTo={selectedLanguageTo}
-              onTouchStart={(
-                word: string,
-                sentenceNumber: number,
-                sentenceText: string,
-                event: React.TouchEvent
-              ) =>
-                handleTouchEvent(
-                  "start",
-                  word,
-                  sentenceNumber,
-                  sentenceText,
-                  0,
-                  event
-                )
-              }
-              onTouchMove={(
-                word: string,
-                sentenceNumber: number,
-                sentenceText: string,
-                event: React.TouchEvent
-              ) =>
-                handleTouchEvent(
-                  "move",
-                  word,
-                  sentenceNumber,
-                  sentenceText,
-                  0,
-                  event
-                )
-              }
-              onTouchEnd={(
-                word: string,
-                sentenceNumber: number,
-                sentenceText: string,
-                event: React.TouchEvent
-              ) =>
-                handleTouchEvent(
-                  "end",
-                  word,
-                  sentenceNumber,
-                  sentenceText,
-                  0,
-                  event
-                )
-              }
-            />
+            <Tippy
+              content={sourceSentence?.sentenceText}
+              visible={isTippyVisible && index === highlightedSentenceIndex}
+              arrow={false}
+              className={`${styles.tippy}`}
+              placement={index === 0 || index === 1 ? "bottom" : "top"}
+            >
+              <div key={index} style={{ whiteSpace: "pre-wrap" }}>
+                <TranslateWord
+                  key={index}
+                  word={targetSentence?.sentenceText || ""}
+                  translation={sourceSentence.sentenceText}
+                  sentenceNumber={sourceSentence.sentenceNo}
+                  sentenceText={sourceSentence.sentenceText}
+                  mode={mode}
+                  onMouseDown={(
+                    word: string,
+                    sentenceNumber: number,
+                    sentenceText: string
+                  ) =>
+                    handleMouseEvent(
+                      "down",
+                      word,
+                      sentenceNumber,
+                      sentenceText,
+                      0
+                    )
+                  }
+                  onMouseEnter={(
+                    word: string,
+                    sentenceNumber: number,
+                    sentenceText: string
+                  ) =>
+                    handleMouseEvent(
+                      "enter",
+                      word,
+                      sentenceNumber,
+                      sentenceText,
+                      0
+                    )
+                  }
+                  onMouseUp={handleMouseUp}
+                  isHighlighted={isWordInHighlightedPhrase(
+                    userSentences,
+                    selectedWords,
+                    sourceSentence.sentenceText,
+                    0,
+                    0
+                  )}
+                  isHighlightedFromVideo={index === highlightedSentenceIndex}
+                  isSelecting={mouseDown}
+                  sentenceTranslation={targetSentence?.sentenceText || ""}
+                  vocabularyListUserPhrases={vocabularyListUserPhrases!}
+                  currentPage={currentPage}
+                  sentencesPerPage={sentencesPerPage}
+                  selectedLanguageTo={selectedLanguageTo}
+                  onTouchStart={(
+                    word: string,
+                    sentenceNumber: number,
+                    sentenceText: string,
+                    event: React.TouchEvent
+                  ) =>
+                    handleTouchEvent(
+                      "start",
+                      word,
+                      sentenceNumber,
+                      sentenceText,
+                      0,
+                      event
+                    )
+                  }
+                  onTouchMove={(
+                    word: string,
+                    sentenceNumber: number,
+                    sentenceText: string,
+                    event: React.TouchEvent
+                  ) =>
+                    handleTouchEvent(
+                      "move",
+                      word,
+                      sentenceNumber,
+                      sentenceText,
+                      0,
+                      event
+                    )
+                  }
+                  onTouchEnd={(
+                    word: string,
+                    sentenceNumber: number,
+                    sentenceText: string,
+                    event: React.TouchEvent
+                  ) =>
+                    handleTouchEvent(
+                      "end",
+                      word,
+                      sentenceNumber,
+                      sentenceText,
+                      0,
+                      event
+                    )
+                  }
+                />
+              </div>
+            </Tippy>
           );
         } else if (mode === "words" || mode === "all") {
           return (
@@ -1009,27 +1045,59 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     <div className={styles.customDivider} />
                   </>
                 )}
-                <Button
-                  onClick={toggleTippyVisibility}
-                  className={`${styles.showHide}`}
-                  size={"large"}
-                  style={{
-                    borderRadius: "15px",
-                    backgroundColor: isTippyVisible && "#2C4E80",
-                    color: isTippyVisible && "white",
-                    height: "45px",
-                  }}
-                >
-                  Show titles
-                </Button>
               </div>
             </Tippy>
           );
         }
       })}
-      {/* {mode === "quiz" && (
-        <QuizComponent sourceLanguage={sourceLanguage} libraryId={libraryId} />
-      )} */}
+      <Button
+        onClick={toggleTippyVisibility}
+        className={`${styles.showHide}`}
+        size={"large"}
+        style={{
+          borderRadius: "15px",
+          backgroundColor: isTippyVisible && "#2C4E80",
+          color: isTippyVisible && "white",
+          height: "45px",
+        }}
+      >
+        Show titles
+      </Button>
+      <Radio.Group
+        style={{
+          boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.05)",
+          borderRadius: "15px",
+          width: "auto",
+        }}
+        size="large"
+        value={mode}
+        onChange={(e) => onChangeMode(e.target.value)}
+        className={`${styles.languageSwitcher}`}
+      >
+        <Radio.Button
+          value="all"
+          style={{
+            borderTopLeftRadius: "15px",
+            borderBottomLeftRadius: "15px",
+            border: "none",
+            backgroundColor: mode === "all" ? "tomato" : "white",
+          }}
+        >
+          {sourceLangIcon?.icon}
+        </Radio.Button>
+        <Radio.Button
+          value="sentences"
+          style={{
+            borderTopRightRadius: "15px",
+            borderBottomRightRadius: "15px",
+            backgroundColor: mode === "sentences" ? "tomato" : "white",
+            color: "white",
+            border: "none",
+          }}
+        >
+          {targetLangIcon?.icon}
+        </Radio.Button>
+      </Radio.Group>
     </>
   );
 };

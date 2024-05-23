@@ -189,8 +189,8 @@ const App: React.FC = () => {
               borderRadiusSM: 0,
               borderRadiusLG: 0,
               borderRadius: 0,
-              colorPrimary: "#0D0C1D",
-              colorPrimaryHover: "#0D0C1D",
+              colorPrimary: "tomato",
+              colorPrimaryHover: "tomato",
             },
           },
         }}
