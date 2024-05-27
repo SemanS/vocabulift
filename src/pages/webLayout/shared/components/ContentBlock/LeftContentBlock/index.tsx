@@ -1,4 +1,4 @@
-import { Row, Col, Typography } from "antd";
+import { Row, Col, Typography, Carousel } from "antd";
 import { SvgIcon } from "../../../common/SvgIcon";
 import { IContentBlockProps } from "../types";
 import { Fade } from "react-awesome-reveal";
@@ -12,6 +12,12 @@ import {
 } from "./styles";
 import React, { useEffect, useState } from "react";
 import styles from "./index.module.less";
+import styled from "styled-components";
+
+const StyledCarouselContainer = styled.div`
+  background: #364d79; // Set the background color to match the Carousel
+  padding-top: 50px; // Add top padding to create space in the color of the Carousel
+`;
 
 const LeftContentBlock = ({
   icon,
@@ -26,74 +32,61 @@ const LeftContentBlock = ({
     setVisible(true);
   }, []);
 
+  const contentStyle: React.CSSProperties = {
+    height: "auto",
+    color: "#fff",
+    lineHeight: "1.5",
+    textAlign: "center",
+    background: "#364d79",
+    padding: "40px",
+  };
+
+  const testimonials = [
+    {
+      id: 1,
+      author: "Libor, Executive at a leading tech company",
+      position: "CEO",
+      company: "Innovatech",
+      quote:
+        "VocabuLift has prepared all the lessons, content, quizzes, and everything according to our needs. All content was created with our business focus in mind, so our employees get acquainted with the focus of our business exclusively through VocabuLift. We also use the entire platform as a tool for education in cooperation with instructors provided by VocabuLift.",
+      imageUrl: "https://example.com/path/to/image.jpg",
+    },
+    {
+      id: 2,
+      author: "Juan, Lector",
+      position: "Marketing Director",
+      company: "Creatix",
+      quote:
+        "In my role as a VocabuLift instructor, I deliver a curriculum that is precisely customized to reflect the goals and needs of each organization. The platform provides a comprehensive suite of educational tools that includes lessons, content, and quizzes, all designed to align closely with the company's core objectives. This approach ensures that the training is relevant and directly supports the business’s strategic initiatives, making it a pivotal element of their professional development framework.",
+      imageUrl: "https://example.com/path/to/image2.jpg",
+    },
+    {
+      id: 3,
+      author: "Joseph, User",
+      position: "Product Manager",
+      company: "TechAdventures",
+      quote:
+        "As a user, I found Duolingo's gamification appealing, yet its one-size-fits-all approach and gentle learning curve did not meet my personalized learning needs. In contrast, VocabuLift has proven to be a sophisticated tool that effectively leverages AI to tailor content specifically to my professional and personal learning objectives. This advanced customization facilitates a more rigorous and relevant educational experience, significantly enhancing my learning efficiency and engagement.",
+      imageUrl: "https://example.com/path/to/image3.jpg",
+    },
+  ];
+
   return (
-    <LeftContentSection>
+    <StyledCarouselContainer>
       <Fade direction="right" triggerOnce>
-        <Row justify="space-between" align="middle" id={id}>
-          <Col lg={1} md={1} sm={1} xs={2} />
-          <Col lg={5} md={5} sm={10} xs={20}>
-            {/* <SvgIcon src={"logo_custom.svg"} width="60%" height="100%" /> */}
-            {/* <ContentWrapper> */}
-            <Typography.Title level={2}>
-              {"Dynamic Subtitles & Translations"}
-            </Typography.Title>
-            <Content>
-              {
-                "Breeze through language learning with our AI-powered dynamic subtitles. Hover over words or phrases to see instant translations, organized into logical units for better comprehension. No more disjointed sentences like on YouTube - we ensure smooth, coherent learning for you."
-              }
-            </Content>
-            {/* </ContentWrapper> */}
-          </Col>
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={5} md={5} sm={10} xs={20}>
-            {/* <SvgIcon src={"logo_custom.svg"} width="60%" height="100%" /> */}
-            {/* <ContentWrapper> */}
-            <Typography.Title level={2}>
-              {"Interactive Language Learning Tool"}
-            </Typography.Title>
-            <Content>
-              {
-                "Make your language study interactive. Highlight words or phrases to see immediate translations. Click on any word to delve into detailed explanations in your native language. Our app turns passive watching into an active language learning journey."
-              }
-            </Content>
-            {/* </ContentWrapper> */}
-          </Col>
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={5} md={5} sm={10} xs={20}>
-            {/* <SvgIcon src={"logo_custom.svg"} width="60%" height="100%" /> */}
-            {/* <ContentWrapper> */}
-            <Typography.Title level={2}>
-              {"Customizable Worksheets & Study Aids"}
-            </Typography.Title>
-            <Content>
-              {
-                "Empower your teaching or self-study process with our customizable worksheet generation feature. Break down YouTube videos into digestible, easy-to-understand texts that facilitate better language comprehension and retention. Discover a new era of tailored learning."
-              }
-            </Content>
-            {/* </ContentWrapper> */}
-          </Col>
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={5} md={5} sm={10} xs={20}>
-            {/* <SvgIcon src={"logo_custom.svg"} width="60%" height="100%" /> */}
-            {/* <ContentWrapper> */}
-            <Typography.Title level={2}>
-              {"Personal Vocabulary Builder & Language Companion"}
-            </Typography.Title>
-            <Content>
-              {
-                "Create your unique vocabulary list by clicking on words while watching videos. Our app neatly organizes your vocabulary into an infinite scroll table, filterable by videos you've watched. Making a personalized language learning roadmap has never been easier."
-              }
-            </Content>
-            {/* </ContentWrapper> */}
-          </Col>
-          <Col lg={0} md={0} sm={0} xs={2} />
-          <Col lg={1} md={1} sm={1} xs={1} />
-        </Row>
+        <Carousel autoplay id={id} dotPosition="top">
+          {testimonials.map((testimonial, index) => (
+            <div key={index}>
+              <p style={contentStyle}>
+                {testimonial.quote}
+                <br />
+                <small>- {testimonial.author}</small>
+              </p>
+            </div>
+          ))}
+        </Carousel>
       </Fade>
-    </LeftContentSection>
+    </StyledCarouselContainer>
   );
 };
 

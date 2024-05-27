@@ -51,6 +51,7 @@ interface TranslateBoxProps {
   addSteps: any;
   partOfSpeech: string[];
   isTenseVisible: boolean;
+  isLanding: boolean;
 }
 
 const TranslateBox: React.FC<TranslateBoxProps> = ({
@@ -73,6 +74,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   addSteps,
   partOfSpeech,
   isTenseVisible,
+  isLanding,
 }) => {
   const { libraryId } = useParams();
   const [selectedWords, setSelectedWords] = useState<SelectedWord[]>([]);
@@ -90,8 +92,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   const intl = useIntl();
 
   const [user, setUser] = useRecoilState(userState);
-
-  const [tenses, setTenses] = useState<any[]>([]);
 
   useEffect(() => {
     const translateBoxSteps = [
@@ -645,6 +645,11 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         ...provided,
         display: "inline-block",
       }),
+      menu: (provided) => ({
+        ...provided,
+        position: "absolute", // This is usually the default, but ensure it's set
+        zIndex: 99999,
+      }),
       control: (provided) => ({
         ...provided,
         border: 0,
@@ -747,7 +752,15 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     }
   }, [highlightedWordIndex, highlightedSentenceIndex]);
 
-  const [isTippyVisible, setTippyVisible] = useState(true);
+  const [isTippyVisible, setTippyVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTippyVisible(true); // Set visibility to true after 1.5 seconds
+    }, 1500);
+
+    return () => clearTimeout(timer); // Clean up the timeout on component unmount
+  }, []);
 
   const toggleTippyVisibility = () => {
     setTippyVisible((prevState) => !prevState);
@@ -1050,54 +1063,58 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
           );
         }
       })}
-      <Button
-        onClick={toggleTippyVisibility}
-        className={`${styles.showHide}`}
-        size={"large"}
-        style={{
-          borderRadius: "15px",
-          backgroundColor: isTippyVisible && "#2C4E80",
-          color: isTippyVisible && "white",
-          height: "45px",
-        }}
-      >
-        Show titles
-      </Button>
-      <Radio.Group
-        style={{
-          boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.05)",
-          borderRadius: "15px",
-          width: "auto",
-        }}
-        size="large"
-        value={mode}
-        onChange={(e) => onChangeMode(e.target.value)}
-        className={`${styles.languageSwitcher}`}
-      >
-        <Radio.Button
-          value="all"
-          style={{
-            borderTopLeftRadius: "15px",
-            borderBottomLeftRadius: "15px",
-            border: "none",
-            backgroundColor: mode === "all" ? "tomato" : "white",
-          }}
-        >
-          {sourceLangIcon?.icon}
-        </Radio.Button>
-        <Radio.Button
-          value="sentences"
-          style={{
-            borderTopRightRadius: "15px",
-            borderBottomRightRadius: "15px",
-            backgroundColor: mode === "sentences" ? "tomato" : "white",
-            color: "white",
-            border: "none",
-          }}
-        >
-          {targetLangIcon?.icon}
-        </Radio.Button>
-      </Radio.Group>
+      {!isLanding && (
+        <>
+          <Button
+            onClick={toggleTippyVisibility}
+            className={`${styles.showHide}`}
+            size={"large"}
+            style={{
+              borderRadius: "15px",
+              backgroundColor: isTippyVisible && "#2C4E80",
+              color: isTippyVisible && "white",
+              height: "45px",
+            }}
+          >
+            Show titles
+          </Button>
+          <Radio.Group
+            style={{
+              boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.05)",
+              borderRadius: "15px",
+              width: "auto",
+            }}
+            size="large"
+            value={mode}
+            onChange={(e) => onChangeMode(e.target.value)}
+            className={`${styles.languageSwitcher}`}
+          >
+            <Radio.Button
+              value="all"
+              style={{
+                borderTopLeftRadius: "15px",
+                borderBottomLeftRadius: "15px",
+                border: "none",
+                backgroundColor: mode === "all" ? "#2c4e80" : "white",
+              }}
+            >
+              {sourceLangIcon?.icon}
+            </Radio.Button>
+            <Radio.Button
+              value="sentences"
+              style={{
+                borderTopRightRadius: "15px",
+                borderBottomRightRadius: "15px",
+                backgroundColor: mode === "sentences" ? "#2c4e80" : "white",
+                color: "white",
+                border: "none",
+              }}
+            >
+              {targetLangIcon?.icon}
+            </Radio.Button>
+          </Radio.Group>
+        </>
+      )}
     </>
   );
 };

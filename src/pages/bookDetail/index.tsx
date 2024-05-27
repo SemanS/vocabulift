@@ -1267,6 +1267,7 @@ const BookDetail: FC = () => {
               addSteps={addTranslateBoxSteps}
               partOfSpeech={selectedTags}
               isTenseVisible={isTenseVisible}
+              isLanding={false}
             />
           </Card>
         </div>

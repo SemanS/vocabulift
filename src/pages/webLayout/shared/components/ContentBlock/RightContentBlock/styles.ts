@@ -4,7 +4,7 @@ export const RightBlockContainer = styled.section`
   position: relative;
   background-color: rgb(253, 222, 184);
 
-  padding: 12rem 8rem 8rem 8rem;
+  padding: 8rem 8rem 8rem 8rem;
 
   /* @media only screen and (max-width: 1024px) {
     padding: 12rem 5rem 5rem 5rem;

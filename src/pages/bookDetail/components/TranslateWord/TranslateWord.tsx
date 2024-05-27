@@ -332,11 +332,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     if (props.mode === "all") {
       return (
-        <Tippy
-          content={props.translation}
-          visible={isHovered}
-          placement="bottom"
-        >
+        <Tippy content={props.translation} visible={isHovered} placement="top">
           {/* <Tippy
             content={props.sentenceTranslation}
             visible={isHovered}

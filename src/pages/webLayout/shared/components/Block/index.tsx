@@ -9,7 +9,7 @@ interface Props {
 export const Block = ({ title, content }: Props) => {
   return (
     <Container>
-      <h6>{title}</h6>
+      <div className="custom-heading">{title}</div>
       <TextWrapper>
         <Content>{content}</Content>
       </TextWrapper>

@@ -9,3 +9,8 @@ export const targetLanguageState = atom({
   key: "targetLanguageState",
   default: "sk",
 });
+
+export const menuLanguageState = atom({
+  key: "menuLanguageState",
+  default: "sk-SK",
+});

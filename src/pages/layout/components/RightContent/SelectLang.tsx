@@ -32,7 +32,7 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
     .filter(
       (lang) =>
         uniqueLanguages.includes(parseLocale(lang.key)) &&
-        parseLocale(lang.key) !== "en"
+        parseLocale(lang.key) !== "sk"
     )
     .map((lang) => ({
       key: lang.key,

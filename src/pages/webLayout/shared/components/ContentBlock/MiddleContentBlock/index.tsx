@@ -1,4 +1,4 @@
-import { Row, Col } from "antd";
+import { Row, Col, Card } from "antd";
 import { SvgIcon } from "../../../common/SvgIcon";
 import { Button } from "../../../common/Button";
 import { IContentBlockProps } from "../types";
@@ -11,6 +11,8 @@ import {
 } from "./styles";
 import React, { useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
+import snapshotDataEn from "./../../../../../../data/snapshot_en.json";
+import QuizComponent from "@/pages/bookDetail/components/Quiz/QuizComponent";
 
 const MiddleBlock = ({
   title,
@@ -69,32 +71,40 @@ const MiddleBlock = ({
         id={id}
         className={fadeVisible ? styles.visible : styles.notVisible}
       >
-        <Col span={1} />
-        <Col lg={6} md={6} sm={6} xs={24}>
-          {/* <video
-            ref={videoRef}
-            loop
-            muted
-            playsInline
-            width={"100%"}
-            style={{ maxWidth: "250px" }}
+        <Col lg={10} md={10} sm={24} xs={24}>
+          <Card
+            style={{
+              height: "600px",
+              //width: "550px",
+              overflowY: "auto",
+              borderTopLeftRadius: "15px",
+              borderTopRightRadius: "15px",
+              borderBottomLeftRadius: "15px",
+              borderBottomRightRadius: "15px",
+            }}
           >
-            <source src="img/svg/video_1.webm" type="video/webm" />
-          </video> */}
-          <img
-            src={"img/svg/image_3.webp"}
-            style={{ width: "110%", height: "110%" }}
-            alt="icon"
-          />
+            <div
+              style={{
+                display: "flex", // Using flex to manage layout
+                flexWrap: "wrap", // Allows wrapping to next line
+              }}
+            >
+              <QuizComponent
+                sourceLanguage={"en"}
+                libraryId={"1"}
+                snapshot={snapshotDataEn}
+              />
+            </div>
+          </Card>
         </Col>
-        <Col span={2} />
-        <Col lg={14} md={14} sm={14} xs={22}>
+        <Col lg={2} md={2} sm={0} xs={0}></Col>
+        <Col lg={12} md={12} sm={24} xs={24}>
           {/* <ContentWrapper> */}
-          <h6>
+          <span className="custom-heading">
             <Fade direction="left" style={{ marginTop: "0px" }} triggerOnce>
-              {"Unique functionality"}
+              {"Try our VocabuQuiz"}
             </Fade>
-          </h6>
+          </span>
           <Content>
             <Fade direction="left" style={{ marginTop: "100px" }} triggerOnce>
               {

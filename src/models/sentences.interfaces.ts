@@ -18,6 +18,7 @@ export interface SentenceData {
   sentenceWords: SentenceWordData[];
   start?: number;
   duration?: number;
+  libraryId?: string;
   tense?: string;
 }
 

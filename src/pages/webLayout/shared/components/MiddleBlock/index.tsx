@@ -28,7 +28,7 @@ export const MiddleBlock = ({
     <Row justify="center" align="middle">
       <ContentWrapper>
         <Col lg={24} md={24} sm={24} xs={24}>
-          <h6>{title}</h6>
+          <span className="custom-heading">{title}</span>
           <Content>{content}</Content>
           {button && (
             <Button name="submit" onClick={() => scrollTo("mission")}>

@@ -40,25 +40,25 @@ export const GlobalStyles = createGlobalStyle`
         }
     }
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
+    .custom-heading {
         color: #12111C;
         font-size: 65px;
         font-weight: 700;
         line-height: 1.18;
-
-        @media only screen and (max-width: 890px) {
-          font-size: 47px;
-        }
-      
-        @media only screen and (max-width: 414px) {
-          font-size: 32px;
+    }
+    
+    @media only screen and (max-width: 890px) {
+        .custom-heading {
+            font-size: 47px;
         }
     }
+    
+    @media only screen and (max-width: 414px) {
+        .custom-heading {
+            font-size: 32px;
+        }
+    }
+    
 
     p {
         color: #12111C;

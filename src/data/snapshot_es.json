@@ -1,0 +1,1054 @@
+{
+  "_id": {
+    "$oid": "663fa7543c6d43f7c0126d6a"
+  },
+  "sentencesData": [
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 1,
+          "position": 0,
+          "language": "en",
+          "start": 0.88,
+          "end": 1.38,
+          "duration": 0.4999999999999999,
+          "wordText": "tecnología",
+          "punctuatedWordText": "Technology",
+          "confidence": 0.98535156,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 1,
+          "position": 1,
+          "language": "en",
+          "start": 1.5999999,
+          "end": 1.92,
+          "duration": 0.3200000999999999,
+          "wordText": "es",
+          "punctuatedWordText": "is",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 1,
+          "position": 2,
+          "language": "en",
+          "start": 1.92,
+          "end": 2.42,
+          "duration": 0.5,
+          "wordText": "cambiando",
+          "punctuatedWordText": "changing",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 1,
+          "position": 3,
+          "language": "en",
+          "start": 2.48,
+          "end": 2.72,
+          "duration": 0.2400000000000002,
+          "wordText": "nuestro",
+          "punctuatedWordText": "our",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 1,
+          "position": 4,
+          "language": "en",
+          "start": 2.72,
+          "end": 3.22,
+          "duration": 0.5,
+          "wordText": "mundo",
+          "punctuatedWordText": "world.",
+          "confidence": 0.9909668,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7503c6d43f7c0126d54"
+      },
+      "language": "es",
+      "sentenceNo": 1,
+      "sentenceText": "La tecnología está cambiando nuestro mundo.",
+      "start": 0.88,
+      "end": 3.22,
+      "duration": 2.3400000000000003,
+      "libraryId": {
+        "$oid": "663fa7503c6d43f7c0126d54"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 2,
+          "position": 0,
+          "language": "en",
+          "start": 4,
+          "end": 4.3199997,
+          "duration": 0.31999970000000033,
+          "wordText": "nuestro",
+          "punctuatedWordText": "Our",
+          "confidence": 0.9892578,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 1,
+          "language": "en",
+          "start": 4.3199997,
+          "end": 4.8199997,
+          "duration": 0.5,
+          "wordText": "dispositivos",
+          "punctuatedWordText": "devices",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 2,
+          "language": "en",
+          "start": 5.6,
+          "end": 5.92,
+          "duration": 0.3200000000000003,
+          "wordText": "permitir",
+          "punctuatedWordText": "allow",
+          "confidence": 0.9951172,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 3,
+          "language": "en",
+          "start": 5.92,
+          "end": 6.16,
+          "duration": 0.2400000000000002,
+          "wordText": "a nosotros",
+          "punctuatedWordText": "us",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 4,
+          "language": "en",
+          "start": 6.16,
+          "end": 6.24,
+          "duration": 0.08000000000000007,
+          "wordText": "a",
+          "punctuatedWordText": "to",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 5,
+          "language": "en",
+          "start": 6.24,
+          "end": 6.48,
+          "duration": 0.2400000000000002,
+          "wordText": "hacer",
+          "punctuatedWordText": "do",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 6,
+          "language": "en",
+          "start": 6.48,
+          "end": 6.7999997,
+          "duration": 0.31999969999999944,
+          "wordText": "cosas",
+          "punctuatedWordText": "things",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 7,
+          "language": "en",
+          "start": 6.7999997,
+          "end": 6.96,
+          "duration": 0.1600003000000001,
+          "wordText": "eso",
+          "punctuatedWordText": "that",
+          "confidence": 0.9970703,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 8,
+          "language": "en",
+          "start": 6.96,
+          "end": 7.3599997,
+          "duration": 0.3999997000000004,
+          "wordText": "eran",
+          "punctuatedWordText": "were",
+          "confidence": 0.97998047,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 9,
+          "language": "en",
+          "start": 7.3599997,
+          "end": 7.855,
+          "duration": 0.49500030000000006,
+          "wordText": "anterior",
+          "punctuatedWordText": "previous",
+          "confidence": 0.53027344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 2,
+          "position": 10,
+          "language": "en",
+          "start": 8.815,
+          "end": 9.315,
+          "duration": 0.5,
+          "wordText": "no imaginable",
+          "punctuatedWordText": "unimaginable.",
+          "confidence": 0.5649414,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7503c6d43f7c0126d56"
+      },
+      "language": "es",
+      "sentenceNo": 2,
+      "sentenceText": "Nuestros dispositivos nos permiten hacer cosas que antes eran inimaginables.",
+      "start": 4,
+      "end": 9.315,
+      "duration": 5.3149999999999995,
+      "libraryId": {
+        "$oid": "663fa7503c6d43f7c0126d56"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 3,
+          "position": 0,
+          "language": "en",
+          "start": 10.575,
+          "end": 11.055,
+          "duration": 0.4800000000000004,
+          "wordText": "pero",
+          "punctuatedWordText": "But",
+          "confidence": 0.8178711,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 3,
+          "position": 1,
+          "language": "en",
+          "start": 11.055,
+          "end": 11.295,
+          "duration": 0.2400000000000002,
+          "wordText": "es",
+          "punctuatedWordText": "is",
+          "confidence": 0.92333984,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 3,
+          "position": 2,
+          "language": "en",
+          "start": 11.295,
+          "end": 11.455,
+          "duration": 0.16000000000000014,
+          "wordText": "eso",
+          "punctuatedWordText": "that",
+          "confidence": 0.9892578,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 3,
+          "position": 3,
+          "language": "en",
+          "start": 11.455,
+          "end": 11.535,
+          "duration": 0.08000000000000007,
+          "wordText": "a",
+          "punctuatedWordText": "a",
+          "confidence": 0.9716797,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 3,
+          "position": 4,
+          "language": "en",
+          "start": 11.535,
+          "end": 11.775,
+          "duration": 0.2400000000000002,
+          "wordText": "bien",
+          "punctuatedWordText": "good",
+          "confidence": 0.9941406,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 3,
+          "position": 5,
+          "language": "en",
+          "start": 11.775,
+          "end": 12.275,
+          "duration": 0.5,
+          "wordText": "cosa",
+          "punctuatedWordText": "thing?",
+          "confidence": 0.9748535,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7503c6d43f7c0126d58"
+      },
+      "language": "es",
+      "sentenceNo": 3,
+      "sentenceText": "¿Pero es eso algo bueno?",
+      "start": 10.575,
+      "end": 12.275,
+      "duration": 1.700000000000001,
+      "libraryId": {
+        "$oid": "663fa7503c6d43f7c0126d58"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 4,
+          "position": 0,
+          "language": "en",
+          "start": 12.415,
+          "end": 12.575,
+          "duration": 0.16000000000000014,
+          "wordText": "hacer",
+          "punctuatedWordText": "Do",
+          "confidence": 0.8886719,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 1,
+          "language": "en",
+          "start": 12.575,
+          "end": 12.735001,
+          "duration": 0.16000100000000117,
+          "wordText": "nuestro",
+          "punctuatedWordText": "our",
+          "confidence": 0.9560547,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 2,
+          "language": "en",
+          "start": 12.735001,
+          "end": 13.235001,
+          "duration": 0.5,
+          "wordText": "dispositivos",
+          "punctuatedWordText": "devices",
+          "confidence": 0.9951172,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 3,
+          "language": "en",
+          "start": 13.695,
+          "end": 14.014999,
+          "duration": 0.31999899999999926,
+          "wordText": "traer",
+          "punctuatedWordText": "bring",
+          "confidence": 0.95947266,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 4,
+          "language": "en",
+          "start": 14.014999,
+          "end": 14.254999,
+          "duration": 0.2400000000000002,
+          "wordText": "a nosotros",
+          "punctuatedWordText": "us",
+          "confidence": 0.7915039,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 5,
+          "language": "en",
+          "start": 14.254999,
+          "end": 14.735,
+          "duration": 0.4800009999999997,
+          "wordText": "juntos",
+          "punctuatedWordText": "together",
+          "confidence": 0.9741211,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 6,
+          "language": "en",
+          "start": 14.735,
+          "end": 15.135,
+          "duration": 0.40000000000000036,
+          "wordText": "o",
+          "punctuatedWordText": "or",
+          "confidence": 0.37280273,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 7,
+          "language": "en",
+          "start": 15.135,
+          "end": 15.295,
+          "duration": 0.16000000000000014,
+          "wordText": "son",
+          "punctuatedWordText": "are",
+          "confidence": 0.7583008,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 8,
+          "language": "en",
+          "start": 15.295,
+          "end": 15.455,
+          "duration": 0.16000000000000014,
+          "wordText": "ellos",
+          "punctuatedWordText": "they",
+          "confidence": 0.88134766,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 9,
+          "language": "en",
+          "start": 15.455,
+          "end": 15.6425,
+          "duration": 0.1875,
+          "wordText": "separando",
+          "punctuatedWordText": "separating",
+          "confidence": 0.66259766,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 4,
+          "position": 10,
+          "language": "en",
+          "start": 15.6425,
+          "end": 15.83,
+          "duration": 0.1875,
+          "wordText": "a nosotros",
+          "punctuatedWordText": "us?",
+          "confidence": 0.68408203,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7513c6d43f7c0126d5a"
+      },
+      "language": "es",
+      "sentenceNo": 4,
+      "sentenceText": "¿Nuestros dispositivos nos unen o nos separan?",
+      "start": 12.415,
+      "end": 15.83,
+      "duration": 3.415000000000001,
+      "libraryId": {
+        "$oid": "663fa7513c6d43f7c0126d5a"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 5,
+          "position": 0,
+          "language": "en",
+          "start": 22.95,
+          "end": 23.43,
+          "duration": 0.4800000000000004,
+          "wordText": "probable",
+          "punctuatedWordText": "Likely",
+          "confidence": 0.42358398,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 5,
+          "position": 1,
+          "language": "en",
+          "start": 23.43,
+          "end": 23.625,
+          "duration": 0.19500000000000028,
+          "wordText": "a",
+          "punctuatedWordText": "to",
+          "confidence": 0.6713867,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 5,
+          "position": 2,
+          "language": "en",
+          "start": 23.865,
+          "end": 24.365,
+          "duration": 0.5,
+          "wordText": "creer",
+          "punctuatedWordText": "believe",
+          "confidence": 0.9892578,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 5,
+          "position": 3,
+          "language": "en",
+          "start": 24.505,
+          "end": 25.005,
+          "duration": 0.5,
+          "wordText": "desinformación",
+          "punctuatedWordText": "misinformation?",
+          "confidence": 0.9838867,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7513c6d43f7c0126d5c"
+      },
+      "language": "es",
+      "sentenceNo": 5,
+      "sentenceText": "¿Es probable que crea en información errónea?",
+      "start": 22.95,
+      "end": 25.005,
+      "duration": 2.0549999999999997,
+      "libraryId": {
+        "$oid": "663fa7513c6d43f7c0126d5c"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 6,
+          "position": 0,
+          "language": "en",
+          "start": 25.545,
+          "end": 25.785,
+          "duration": 0.23999999999999844,
+          "wordText": "nosotros",
+          "punctuatedWordText": "We",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 1,
+          "language": "en",
+          "start": 25.785,
+          "end": 25.945,
+          "duration": 0.16000000000000014,
+          "wordText": "saber",
+          "punctuatedWordText": "know",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 2,
+          "language": "en",
+          "start": 25.945,
+          "end": 26.185,
+          "duration": 0.23999999999999844,
+          "wordText": "eso",
+          "punctuatedWordText": "that",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 3,
+          "language": "en",
+          "start": 26.185,
+          "end": 26.345,
+          "duration": 0.16000000000000014,
+          "wordText": "nuevo",
+          "punctuatedWordText": "new",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 4,
+          "language": "en",
+          "start": 26.345,
+          "end": 26.845,
+          "duration": 0.5,
+          "wordText": "tecnología",
+          "punctuatedWordText": "technology",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 5,
+          "language": "en",
+          "start": 26.985,
+          "end": 27.305,
+          "duration": 0.3200000000000003,
+          "wordText": "ayuda",
+          "punctuatedWordText": "helps",
+          "confidence": 0.9633789,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 6,
+          "language": "en",
+          "start": 27.305,
+          "end": 27.705,
+          "duration": 0.3999999999999986,
+          "wordText": "ahorrar",
+          "punctuatedWordText": "save",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 7,
+          "language": "en",
+          "start": 27.705,
+          "end": 28.105,
+          "duration": 0.40000000000000213,
+          "wordText": "vidas",
+          "punctuatedWordText": "lives,",
+          "confidence": 0.8864746,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 8,
+          "language": "en",
+          "start": 28.105,
+          "end": 28.605,
+          "duration": 0.5,
+          "wordText": "pero",
+          "punctuatedWordText": "but",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 9,
+          "language": "en",
+          "start": 28.985,
+          "end": 29.065,
+          "duration": 0.08000000000000185,
+          "wordText": "qué",
+          "punctuatedWordText": "what",
+          "confidence": 0.9921875,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 10,
+          "language": "en",
+          "start": 29.065,
+          "end": 29.305,
+          "duration": 0.23999999999999844,
+          "wordText": "acerca de",
+          "punctuatedWordText": "about",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 11,
+          "language": "en",
+          "start": 29.305,
+          "end": 29.465,
+          "duration": 0.16000000000000014,
+          "wordText": "el",
+          "punctuatedWordText": "the",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 12,
+          "language": "en",
+          "start": 29.465,
+          "end": 29.785,
+          "duration": 0.3200000000000003,
+          "wordText": "salud",
+          "punctuatedWordText": "health",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 13,
+          "language": "en",
+          "start": 29.785,
+          "end": 30.265,
+          "duration": 0.4800000000000004,
+          "wordText": "riesgos",
+          "punctuatedWordText": "risks",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 14,
+          "language": "en",
+          "start": 30.265,
+          "end": 30.585,
+          "duration": 0.3200000000000003,
+          "wordText": "de",
+          "punctuatedWordText": "from",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 15,
+          "language": "en",
+          "start": 30.585,
+          "end": 31.065,
+          "duration": 0.4800000000000004,
+          "wordText": "ser",
+          "punctuatedWordText": "being",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 16,
+          "language": "en",
+          "start": 31.065,
+          "end": 31.565,
+          "duration": 0.5,
+          "wordText": "entonces",
+          "punctuatedWordText": "so",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 6,
+          "position": 17,
+          "language": "en",
+          "start": 31.83,
+          "end": 32.33,
+          "duration": 0.5,
+          "wordText": "sedentario",
+          "punctuatedWordText": "sedentary?",
+          "confidence": 0.9863281,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7523c6d43f7c0126d5e"
+      },
+      "language": "es",
+      "sentenceNo": 6,
+      "sentenceText": "Sabemos que las nuevas tecnologías ayudan a salvar vidas, pero ¿qué pasa con los riesgos para la salud que supone ser tan sedentario?",
+      "start": 25.545,
+      "end": 32.33,
+      "duration": 6.784999999999997,
+      "libraryId": {
+        "$oid": "663fa7523c6d43f7c0126d5e"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 7,
+          "position": 0,
+          "language": "en",
+          "start": 32.47,
+          "end": 32.71,
+          "duration": 0.240000000000002,
+          "wordText": "son",
+          "punctuatedWordText": "Are",
+          "confidence": 0.9941406,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 1,
+          "language": "en",
+          "start": 32.71,
+          "end": 32.95,
+          "duration": 0.240000000000002,
+          "wordText": "nosotros",
+          "punctuatedWordText": "we",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 2,
+          "language": "en",
+          "start": 32.95,
+          "end": 33.35,
+          "duration": 0.3999999999999986,
+          "wordText": "más",
+          "punctuatedWordText": "more",
+          "confidence": 0.9951172,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 3,
+          "language": "en",
+          "start": 33.35,
+          "end": 33.85,
+          "duration": 0.5,
+          "wordText": "distraído",
+          "punctuatedWordText": "distracted",
+          "confidence": 1,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 4,
+          "language": "en",
+          "start": 33.91,
+          "end": 34.31,
+          "duration": 0.4000000000000057,
+          "wordText": "o",
+          "punctuatedWordText": "or",
+          "confidence": 0.59765625,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 5,
+          "language": "en",
+          "start": 34.31,
+          "end": 34.55,
+          "duration": 0.23999999999999488,
+          "wordText": "son",
+          "punctuatedWordText": "are",
+          "confidence": 0.9951172,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 6,
+          "language": "en",
+          "start": 34.55,
+          "end": 34.79,
+          "duration": 0.240000000000002,
+          "wordText": "nosotros",
+          "punctuatedWordText": "we",
+          "confidence": 0.9970703,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 7,
+          "language": "en",
+          "start": 34.79,
+          "end": 35.27,
+          "duration": 0.480000000000004,
+          "wordText": "más",
+          "punctuatedWordText": "more",
+          "confidence": 0.9941406,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 7,
+          "position": 8,
+          "language": "en",
+          "start": 35.27,
+          "end": 35.77,
+          "duration": 0.5,
+          "wordText": "comprometido",
+          "punctuatedWordText": "engaged?",
+          "confidence": 0.9970703,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7523c6d43f7c0126d60"
+      },
+      "language": "es",
+      "sentenceNo": 7,
+      "sentenceText": "¿Estamos más distraídos o estamos más comprometidos?",
+      "start": 32.47,
+      "end": 35.77,
+      "duration": 3.3000000000000043,
+      "libraryId": {
+        "$oid": "663fa7523c6d43f7c0126d60"
+      }
+    },
+    {
+      "sentenceWords": [
+        {
+          "sentenceNo": 8,
+          "position": 0,
+          "language": "en",
+          "start": 35.989998,
+          "end": 36.23,
+          "duration": 0.24000199999999694,
+          "wordText": "qué",
+          "punctuatedWordText": "What",
+          "confidence": 0.9604492,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 1,
+          "language": "en",
+          "start": 36.23,
+          "end": 36.31,
+          "duration": 0.0800000000000054,
+          "wordText": "son",
+          "punctuatedWordText": "are",
+          "confidence": 0.9970703,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 2,
+          "language": "en",
+          "start": 36.31,
+          "end": 36.47,
+          "duration": 0.1599999999999966,
+          "wordText": "el",
+          "punctuatedWordText": "the",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 3,
+          "language": "en",
+          "start": 36.47,
+          "end": 36.79,
+          "duration": 0.3200000000000003,
+          "wordText": "efectos",
+          "punctuatedWordText": "effects",
+          "confidence": 0.9902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 4,
+          "language": "en",
+          "start": 36.79,
+          "end": 37.03,
+          "duration": 0.240000000000002,
+          "wordText": "de",
+          "punctuatedWordText": "of",
+          "confidence": 0.99609375,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 5,
+          "language": "en",
+          "start": 37.03,
+          "end": 37.43,
+          "duration": 0.3999999999999986,
+          "wordText": "agregando",
+          "punctuatedWordText": "adding",
+          "confidence": 0.99902344,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 6,
+          "language": "en",
+          "start": 37.43,
+          "end": 37.93,
+          "duration": 0.5,
+          "wordText": "métrica",
+          "punctuatedWordText": "metrics",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 7,
+          "language": "en",
+          "start": 38.07,
+          "end": 38.31,
+          "duration": 0.240000000000002,
+          "wordText": "a",
+          "punctuatedWordText": "to",
+          "confidence": 0.9951172,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 8,
+          "language": "en",
+          "start": 38.31,
+          "end": 38.71,
+          "duration": 0.3999999999999986,
+          "wordText": "nuestro",
+          "punctuatedWordText": "our",
+          "confidence": 0.99609375,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 9,
+          "language": "en",
+          "start": 38.71,
+          "end": 39.21,
+          "duration": 0.5,
+          "wordText": "social",
+          "punctuatedWordText": "social",
+          "confidence": 0.9980469,
+          "libraryId": null
+        },
+        {
+          "sentenceNo": 8,
+          "position": 10,
+          "language": "en",
+          "start": 39.27,
+          "end": 39.755,
+          "duration": 0.48499999999999943,
+          "wordText": "interacciones",
+          "punctuatedWordText": "interactions?",
+          "confidence": 0.90722656,
+          "libraryId": null
+        }
+      ],
+      "_id": {
+        "$oid": "663fa7523c6d43f7c0126d62"
+      },
+      "language": "es",
+      "sentenceNo": 8,
+      "sentenceText": "¿Cuáles son los efectos de agregar métricas a nuestras interacciones sociales?",
+      "start": 35.989998,
+      "end": 39.755,
+      "duration": 3.7650020000000026,
+      "libraryId": {
+        "$oid": "663fa7523c6d43f7c0126d62"
+      }
+    }
+  ],
+  "libraryId": {
+    "$oid": "663fa74f3c6d43f7c0126d4f"
+  },
+  "sentenceFrom": 1,
+  "countOfSentences": 11,
+  "start": 0.88,
+  "end": 58.215,
+  "language": "es",
+  "videoId": "7rbDIx69ORE",
+  "title": "Is technology making life better or worse?",
+  "label": "video",
+  "targetLanguage": "es",
+  "createdAt": {
+    "$date": "2024-05-11T17:13:56.297Z"
+  },
+  "updatedAt": {
+    "$date": "2024-05-11T17:13:56.297Z"
+  },
+  "totalSentences": 11
+}

@@ -14,7 +14,6 @@ import { socket } from "@/messaging/socket";
 import { useCookies } from "react-cookie";
 import { getUser } from "@/services/userService";
 import { User } from "@/models/user";
-import * as Slider from "@radix-ui/react-slider";
 import styles from "./index.module.less";
 
 declare const YT: any;
@@ -25,7 +24,7 @@ declare global {
   }
 }
 
-interface ExposedFunctions {
+export interface ExposedFunctions {
   playVideo: () => void;
   pauseVideo: () => void;
 }
@@ -48,6 +47,7 @@ interface EmbeddedVideoProps {
   setLoadingFromFetch: (loadingFromFetch: boolean) => void;
   onPlay?: () => void;
   onPause?: () => void;
+  libraryItem?: any;
 }
 
 const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
@@ -64,6 +64,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
       setLoadingFromFetch,
       onPlay,
       onPause,
+      libraryItem,
     } = props;
 
     const { libraryId } = useParams();
@@ -464,8 +465,12 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     useEffect(() => {
       const fetchLibraryItemAndSetupPlayer = async () => {
         if (isInitRender) {
-          const library = await getLibraryItem(libraryId!);
-          setCurrentLibrary(library);
+          if (!libraryItem) {
+            const library = await getLibraryItem(libraryId!);
+            setCurrentLibrary(library);
+          } else {
+            setCurrentLibrary(libraryItem);
+          }
           handlePageChange(1, sentencesPerPageRef.current, false, false, false);
         }
         window.onYouTubeIframeAPIReady = () => {

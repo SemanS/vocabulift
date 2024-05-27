@@ -54,7 +54,7 @@ const PricingComponent = () => {
 
   return (
     <div className="container text-center" id="pricing">
-      <h6>Our Pricing</h6>
+      <div className="custom-heading">Our Pricing</div>
       <label className="pricing" onClick={toggleMonthly}>
         <span className="label">Monthly</span>
         <span className={`switch ${monthly ? "monthly" : ""}`}>

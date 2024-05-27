@@ -1,7 +1,7 @@
 export interface IContentBlockProps {
   icon: string;
   title: string;
-  content: string;
+  content: any;
   section?: any;
   button?: any;
   id: string;

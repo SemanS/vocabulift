@@ -1,38 +1,85 @@
 .visible {
-    opacity: 1;
-    transform: translateX(-30px);
-    transition: opacity 1s ease, transform 1s ease;
-  }
-  
-  .not-visible {
-    opacity: 0;
-    transform: translateX(0);
-  }
+  opacity: 1;
+  transform: translateX(-30px);
+  transition: opacity 1s ease, transform 1s ease;
+}
 
-  .main {
-    //width: 328px;
-    //margin: 0 auto;
-    @media screen and (max-width: 576px) {
+.not-visible {
+  opacity: 0;
+  transform: translateX(0);
+}
+
+.main {
+  //width: 328px;
+  //margin: 0 auto;
+  @media screen and (max-width: 576px) {
     //width: 95%;
     //  max-width: 328px;
-    }
-  
-    &-login-btn {
-  width: 110%;
-    }
   }
 
-  .flexContainer {
-    display: flex;
-    align-items: center; /* This will center the text and icon vertically */
-    justify-content: center; /* Optional: This will center the text and icon horizontally */
+  &-login-btn {
+    width: 110%;
   }
+}
 
-  .googleIcon {
-    //padding-left: 10px;
-    flex: none;
-    width: 24px;
-    height: 24px;
+.flexContainer {
+  display: flex;
+  align-items: center; /* This will center the text and icon vertically */
+  justify-content: center; /* Optional: This will center the text and icon horizontally */
+}
+
+.googleIcon {
+  //padding-left: 10px;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.sliderRoot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 10px;
+  height: 90%;
+}
+
+.sliderTrack {
+  box-shadow: 0 0px 10px rgba(0, 0, 0, 0.552); /* Adjust shadow strength and spread as needed */
+  background-color: rgb(38, 38, 38);
+  position: relative;
+  flex-grow: 1;
+  transform: translateX(50%);
+  border-radius: 9999px;
+  height: 3px;
+  height: 100%;
+}
+
+.sliderRange {
+  position: absolute;
+  background-color: white;
+  border-radius: 9999px;
+  width: 100%;
+}
+
+.sliderThumb {
+  display: block;
+  /* width: 30px;
+    height: 30px; */
+  background-color: white;
+  box-shadow: 0 2px 10px DimGrey;
+  border-radius: 10px;
+}
+.sliderThumb:hover {
+  background-color: rgb(246, 216, 174);
+  .sliderThumb:focus {
+    outline: none;
+    box-shadow: 0 0 0 5px DimGrey;
   }
-  
-  
+}
+
+.translateBoxScroll {
+  overflow-anchor: none;
+  scroll-behavior: auto;
+  position: relative;
+  height: calc(76.5vh);
+}
