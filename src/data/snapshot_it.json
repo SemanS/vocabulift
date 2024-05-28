@@ -1,7 +1,7 @@
 {
-  "_id": "663fa77c3c6d43f7c0126d84",
-  "createdAt": "2024-05-11T17:14:36.964Z",
-  "updatedAt": "2024-05-11T17:14:36.964Z",
+  "_id": "663fa7993c6d43f7c0126e0e",
+  "createdAt": "2024-05-11T17:15:05.893Z",
+  "updatedAt": "2024-05-11T17:15:05.893Z",
   "sentencesData": [
     {
       "sentenceWords": [
@@ -12,7 +12,7 @@
           "start": 0.88,
           "end": 1.38,
           "duration": 0.4999999999999999,
-          "wordText": "technológie",
+          "wordText": "tecnologia",
           "punctuatedWordText": "Technology",
           "confidence": 0.98535156,
           "libraryId": null
@@ -24,7 +24,7 @@
           "start": 1.5999999,
           "end": 1.92,
           "duration": 0.3200000999999999,
-          "wordText": "je",
+          "wordText": "È",
           "punctuatedWordText": "is",
           "confidence": 0.9980469,
           "libraryId": null
@@ -36,7 +36,7 @@
           "start": 1.92,
           "end": 2.42,
           "duration": 0.5,
-          "wordText": "meniace sa",
+          "wordText": "mutevole",
           "punctuatedWordText": "changing",
           "confidence": 0.99902344,
           "libraryId": null
@@ -48,7 +48,7 @@
           "start": 2.48,
           "end": 2.72,
           "duration": 0.2400000000000002,
-          "wordText": "náš",
+          "wordText": "Nostro",
           "punctuatedWordText": "our",
           "confidence": 0.9980469,
           "libraryId": null
@@ -60,20 +60,20 @@
           "start": 2.72,
           "end": 3.22,
           "duration": 0.5,
-          "wordText": "sveta",
+          "wordText": "mondo",
           "punctuatedWordText": "world.",
           "confidence": 0.9909668,
           "libraryId": null
         }
       ],
-      "_id": "663fa7793c6d43f7c0126d6f",
-      "language": "sk",
+      "_id": "663fa7963c6d43f7c0126df9",
+      "language": "it",
       "sentenceNo": 1,
-      "sentenceText": "Technológia mení náš svet.",
+      "sentenceText": "La tecnologia sta cambiando il nostro mondo.",
       "start": 0.88,
       "end": 3.22,
       "duration": 2.3400000000000003,
-      "libraryId": "663fa7793c6d43f7c0126d6f"
+      "libraryId": "663fa7963c6d43f7c0126df9"
     },
     {
       "sentenceWords": [
@@ -84,7 +84,7 @@
           "start": 4,
           "end": 4.3199997,
           "duration": 0.31999970000000033,
-          "wordText": "náš",
+          "wordText": "Nostro",
           "punctuatedWordText": "Our",
           "confidence": 0.9892578,
           "libraryId": null
@@ -96,7 +96,7 @@
           "start": 4.3199997,
           "end": 4.8199997,
           "duration": 0.5,
-          "wordText": "zariadení",
+          "wordText": "dispositivi",
           "punctuatedWordText": "devices",
           "confidence": 0.99902344,
           "libraryId": null
@@ -108,7 +108,7 @@
           "start": 5.6,
           "end": 5.92,
           "duration": 0.3200000000000003,
-          "wordText": "povoliť",
+          "wordText": "permettere",
           "punctuatedWordText": "allow",
           "confidence": 0.9951172,
           "libraryId": null
@@ -120,7 +120,7 @@
           "start": 5.92,
           "end": 6.16,
           "duration": 0.2400000000000002,
-          "wordText": "nás",
+          "wordText": "noi",
           "punctuatedWordText": "us",
           "confidence": 0.9980469,
           "libraryId": null
@@ -132,7 +132,7 @@
           "start": 6.16,
           "end": 6.24,
           "duration": 0.08000000000000007,
-          "wordText": "do",
+          "wordText": "A",
           "punctuatedWordText": "to",
           "confidence": 0.9980469,
           "libraryId": null
@@ -144,7 +144,7 @@
           "start": 6.24,
           "end": 6.48,
           "duration": 0.2400000000000002,
-          "wordText": "robiť",
+          "wordText": "Fare",
           "punctuatedWordText": "do",
           "confidence": 0.99902344,
           "libraryId": null
@@ -156,7 +156,7 @@
           "start": 6.48,
           "end": 6.7999997,
           "duration": 0.31999969999999944,
-          "wordText": "veci",
+          "wordText": "cose",
           "punctuatedWordText": "things",
           "confidence": 0.9980469,
           "libraryId": null
@@ -168,7 +168,7 @@
           "start": 6.7999997,
           "end": 6.96,
           "duration": 0.1600003000000001,
-          "wordText": "že",
+          "wordText": "Quello",
           "punctuatedWordText": "that",
           "confidence": 0.9970703,
           "libraryId": null
@@ -180,7 +180,7 @@
           "start": 6.96,
           "end": 7.3599997,
           "duration": 0.3999997000000004,
-          "wordText": "boli",
+          "wordText": "erano",
           "punctuatedWordText": "were",
           "confidence": 0.97998047,
           "libraryId": null
@@ -192,7 +192,7 @@
           "start": 7.3599997,
           "end": 7.855,
           "duration": 0.49500030000000006,
-          "wordText": "predchádzajúce",
+          "wordText": "precedente",
           "punctuatedWordText": "previous",
           "confidence": 0.53027344,
           "libraryId": null
@@ -204,20 +204,20 @@
           "start": 8.815,
           "end": 9.315,
           "duration": 0.5,
-          "wordText": "nepredstaviteľné",
+          "wordText": "inimmaginabile",
           "punctuatedWordText": "unimaginable.",
           "confidence": 0.5649414,
           "libraryId": null
         }
       ],
-      "_id": "663fa7793c6d43f7c0126d71",
-      "language": "sk",
+      "_id": "663fa7963c6d43f7c0126dfb",
+      "language": "it",
       "sentenceNo": 2,
-      "sentenceText": "Naše zariadenia nám umožňujú robiť veci, ktoré boli predtým nepredstaviteľné.",
+      "sentenceText": "I nostri dispositivi ci permettono di fare cose che prima erano inimmaginabili.",
       "start": 4,
       "end": 9.315,
       "duration": 5.3149999999999995,
-      "libraryId": "663fa7793c6d43f7c0126d71"
+      "libraryId": "663fa7963c6d43f7c0126dfb"
     },
     {
       "sentenceWords": [
@@ -228,7 +228,7 @@
           "start": 10.575,
           "end": 11.055,
           "duration": 0.4800000000000004,
-          "wordText": "ale",
+          "wordText": "Ma",
           "punctuatedWordText": "But",
           "confidence": 0.8178711,
           "libraryId": null
@@ -240,7 +240,7 @@
           "start": 11.055,
           "end": 11.295,
           "duration": 0.2400000000000002,
-          "wordText": "je",
+          "wordText": "È",
           "punctuatedWordText": "is",
           "confidence": 0.92333984,
           "libraryId": null
@@ -252,7 +252,7 @@
           "start": 11.295,
           "end": 11.455,
           "duration": 0.16000000000000014,
-          "wordText": "že",
+          "wordText": "Quello",
           "punctuatedWordText": "that",
           "confidence": 0.9892578,
           "libraryId": null
@@ -264,7 +264,7 @@
           "start": 11.455,
           "end": 11.535,
           "duration": 0.08000000000000007,
-          "wordText": "a",
+          "wordText": "UN",
           "punctuatedWordText": "a",
           "confidence": 0.9716797,
           "libraryId": null
@@ -276,7 +276,7 @@
           "start": 11.535,
           "end": 11.775,
           "duration": 0.2400000000000002,
-          "wordText": "dobre",
+          "wordText": "Bene",
           "punctuatedWordText": "good",
           "confidence": 0.9941406,
           "libraryId": null
@@ -288,20 +288,20 @@
           "start": 11.775,
           "end": 12.275,
           "duration": 0.5,
-          "wordText": "vec",
+          "wordText": "cosa",
           "punctuatedWordText": "thing?",
           "confidence": 0.9748535,
           "libraryId": null
         }
       ],
-      "_id": "663fa7793c6d43f7c0126d73",
-      "language": "sk",
+      "_id": "663fa7963c6d43f7c0126dfd",
+      "language": "it",
       "sentenceNo": 3,
-      "sentenceText": "Ale je to dobrá vec?",
+      "sentenceText": "Ma è una buona cosa?",
       "start": 10.575,
       "end": 12.275,
       "duration": 1.700000000000001,
-      "libraryId": "663fa7793c6d43f7c0126d73"
+      "libraryId": "663fa7963c6d43f7c0126dfd"
     },
     {
       "sentenceWords": [
@@ -312,7 +312,7 @@
           "start": 12.415,
           "end": 12.575,
           "duration": 0.16000000000000014,
-          "wordText": "robiť",
+          "wordText": "Fare",
           "punctuatedWordText": "Do",
           "confidence": 0.8886719,
           "libraryId": null
@@ -324,7 +324,7 @@
           "start": 12.575,
           "end": 12.735001,
           "duration": 0.16000100000000117,
-          "wordText": "náš",
+          "wordText": "Nostro",
           "punctuatedWordText": "our",
           "confidence": 0.9560547,
           "libraryId": null
@@ -336,7 +336,7 @@
           "start": 12.735001,
           "end": 13.235001,
           "duration": 0.5,
-          "wordText": "zariadení",
+          "wordText": "dispositivi",
           "punctuatedWordText": "devices",
           "confidence": 0.9951172,
           "libraryId": null
@@ -348,7 +348,7 @@
           "start": 13.695,
           "end": 14.014999,
           "duration": 0.31999899999999926,
-          "wordText": "priniesť",
+          "wordText": "Portare",
           "punctuatedWordText": "bring",
           "confidence": 0.95947266,
           "libraryId": null
@@ -360,7 +360,7 @@
           "start": 14.014999,
           "end": 14.254999,
           "duration": 0.2400000000000002,
-          "wordText": "nás",
+          "wordText": "noi",
           "punctuatedWordText": "us",
           "confidence": 0.7915039,
           "libraryId": null
@@ -372,7 +372,7 @@
           "start": 14.254999,
           "end": 14.735,
           "duration": 0.4800009999999997,
-          "wordText": "spolu",
+          "wordText": "insieme",
           "punctuatedWordText": "together",
           "confidence": 0.9741211,
           "libraryId": null
@@ -384,7 +384,7 @@
           "start": 14.735,
           "end": 15.135,
           "duration": 0.40000000000000036,
-          "wordText": "alebo",
+          "wordText": "O",
           "punctuatedWordText": "or",
           "confidence": 0.37280273,
           "libraryId": null
@@ -396,7 +396,7 @@
           "start": 15.135,
           "end": 15.295,
           "duration": 0.16000000000000014,
-          "wordText": "sú",
+          "wordText": "Sono",
           "punctuatedWordText": "are",
           "confidence": 0.7583008,
           "libraryId": null
@@ -408,7 +408,7 @@
           "start": 15.295,
           "end": 15.455,
           "duration": 0.16000000000000014,
-          "wordText": "oni",
+          "wordText": "Essi",
           "punctuatedWordText": "they",
           "confidence": 0.88134766,
           "libraryId": null
@@ -420,7 +420,7 @@
           "start": 15.455,
           "end": 15.6425,
           "duration": 0.1875,
-          "wordText": "oddeľovanie",
+          "wordText": "separando",
           "punctuatedWordText": "separating",
           "confidence": 0.66259766,
           "libraryId": null
@@ -432,20 +432,20 @@
           "start": 15.6425,
           "end": 15.83,
           "duration": 0.1875,
-          "wordText": "nás",
+          "wordText": "noi",
           "punctuatedWordText": "us?",
           "confidence": 0.68408203,
           "libraryId": null
         }
       ],
-      "_id": "663fa77a3c6d43f7c0126d75",
-      "language": "sk",
+      "_id": "663fa7973c6d43f7c0126dff",
+      "language": "it",
       "sentenceNo": 4,
-      "sentenceText": "Spájajú nás naše zariadenia alebo nás rozdeľujú?",
+      "sentenceText": "I nostri dispositivi ci uniscono o ci separano?",
       "start": 12.415,
       "end": 15.83,
       "duration": 3.415000000000001,
-      "libraryId": "663fa77a3c6d43f7c0126d75"
+      "libraryId": "663fa7973c6d43f7c0126dff"
     },
     {
       "sentenceWords": [
@@ -456,7 +456,7 @@
           "start": 22.95,
           "end": 23.43,
           "duration": 0.4800000000000004,
-          "wordText": "pravdepodobné",
+          "wordText": "probabile",
           "punctuatedWordText": "Likely",
           "confidence": 0.42358398,
           "libraryId": null
@@ -468,7 +468,7 @@
           "start": 23.43,
           "end": 23.625,
           "duration": 0.19500000000000028,
-          "wordText": "do",
+          "wordText": "A",
           "punctuatedWordText": "to",
           "confidence": 0.6713867,
           "libraryId": null
@@ -480,7 +480,7 @@
           "start": 23.865,
           "end": 24.365,
           "duration": 0.5,
-          "wordText": "veriť",
+          "wordText": "credere",
           "punctuatedWordText": "believe",
           "confidence": 0.9892578,
           "libraryId": null
@@ -492,20 +492,20 @@
           "start": 24.505,
           "end": 25.005,
           "duration": 0.5,
-          "wordText": "dezinformácie",
+          "wordText": "disinformazione",
           "punctuatedWordText": "misinformation?",
           "confidence": 0.9838867,
           "libraryId": null
         }
       ],
-      "_id": "663fa77a3c6d43f7c0126d77",
-      "language": "sk",
+      "_id": "663fa7973c6d43f7c0126e01",
+      "language": "it",
       "sentenceNo": 5,
-      "sentenceText": "Pravdepodobne veríte dezinformáciám?",
+      "sentenceText": "Probabile che creda alla disinformazione?",
       "start": 22.95,
       "end": 25.005,
       "duration": 2.0549999999999997,
-      "libraryId": "663fa77a3c6d43f7c0126d77"
+      "libraryId": "663fa7973c6d43f7c0126e01"
     },
     {
       "sentenceWords": [
@@ -516,7 +516,7 @@
           "start": 25.545,
           "end": 25.785,
           "duration": 0.23999999999999844,
-          "wordText": "my",
+          "wordText": "Noi",
           "punctuatedWordText": "We",
           "confidence": 0.99902344,
           "libraryId": null
@@ -528,7 +528,7 @@
           "start": 25.785,
           "end": 25.945,
           "duration": 0.16000000000000014,
-          "wordText": "vedieť",
+          "wordText": "Sapere",
           "punctuatedWordText": "know",
           "confidence": 1,
           "libraryId": null
@@ -540,7 +540,7 @@
           "start": 25.945,
           "end": 26.185,
           "duration": 0.23999999999999844,
-          "wordText": "že",
+          "wordText": "Quello",
           "punctuatedWordText": "that",
           "confidence": 0.99902344,
           "libraryId": null
@@ -552,7 +552,7 @@
           "start": 26.185,
           "end": 26.345,
           "duration": 0.16000000000000014,
-          "wordText": "Nový",
+          "wordText": "nuovo",
           "punctuatedWordText": "new",
           "confidence": 0.99902344,
           "libraryId": null
@@ -564,7 +564,7 @@
           "start": 26.345,
           "end": 26.845,
           "duration": 0.5,
-          "wordText": "technológie",
+          "wordText": "tecnologia",
           "punctuatedWordText": "technology",
           "confidence": 1,
           "libraryId": null
@@ -576,7 +576,7 @@
           "start": 26.985,
           "end": 27.305,
           "duration": 0.3200000000000003,
-          "wordText": "pomáha",
+          "wordText": "aiuta",
           "punctuatedWordText": "helps",
           "confidence": 0.9633789,
           "libraryId": null
@@ -588,7 +588,7 @@
           "start": 27.305,
           "end": 27.705,
           "duration": 0.3999999999999986,
-          "wordText": "uložiť",
+          "wordText": "salva",
           "punctuatedWordText": "save",
           "confidence": 0.9980469,
           "libraryId": null
@@ -600,7 +600,7 @@
           "start": 27.705,
           "end": 28.105,
           "duration": 0.40000000000000213,
-          "wordText": "životy",
+          "wordText": "vite",
           "punctuatedWordText": "lives,",
           "confidence": 0.8864746,
           "libraryId": null
@@ -612,7 +612,7 @@
           "start": 28.105,
           "end": 28.605,
           "duration": 0.5,
-          "wordText": "ale",
+          "wordText": "Ma",
           "punctuatedWordText": "but",
           "confidence": 1,
           "libraryId": null
@@ -624,7 +624,7 @@
           "start": 28.985,
           "end": 29.065,
           "duration": 0.08000000000000185,
-          "wordText": "čo",
+          "wordText": "Che cosa",
           "punctuatedWordText": "what",
           "confidence": 0.9921875,
           "libraryId": null
@@ -636,7 +636,7 @@
           "start": 29.065,
           "end": 29.305,
           "duration": 0.23999999999999844,
-          "wordText": "o",
+          "wordText": "Di",
           "punctuatedWordText": "about",
           "confidence": 1,
           "libraryId": null
@@ -648,7 +648,7 @@
           "start": 29.305,
           "end": 29.465,
           "duration": 0.16000000000000014,
-          "wordText": "a",
+          "wordText": "IL",
           "punctuatedWordText": "the",
           "confidence": 0.9980469,
           "libraryId": null
@@ -660,7 +660,7 @@
           "start": 29.465,
           "end": 29.785,
           "duration": 0.3200000000000003,
-          "wordText": "zdravie",
+          "wordText": "salute",
           "punctuatedWordText": "health",
           "confidence": 1,
           "libraryId": null
@@ -672,7 +672,7 @@
           "start": 29.785,
           "end": 30.265,
           "duration": 0.4800000000000004,
-          "wordText": "riziká",
+          "wordText": "rischi",
           "punctuatedWordText": "risks",
           "confidence": 0.99902344,
           "libraryId": null
@@ -684,7 +684,7 @@
           "start": 30.265,
           "end": 30.585,
           "duration": 0.3200000000000003,
-          "wordText": "od",
+          "wordText": "da",
           "punctuatedWordText": "from",
           "confidence": 1,
           "libraryId": null
@@ -696,7 +696,7 @@
           "start": 30.585,
           "end": 31.065,
           "duration": 0.4800000000000004,
-          "wordText": "bytie",
+          "wordText": "essendo",
           "punctuatedWordText": "being",
           "confidence": 1,
           "libraryId": null
@@ -708,7 +708,7 @@
           "start": 31.065,
           "end": 31.565,
           "duration": 0.5,
-          "wordText": "tak",
+          "wordText": "COSÌ",
           "punctuatedWordText": "so",
           "confidence": 0.99902344,
           "libraryId": null
@@ -720,20 +720,20 @@
           "start": 31.83,
           "end": 32.33,
           "duration": 0.5,
-          "wordText": "sedavý",
+          "wordText": "sedentario",
           "punctuatedWordText": "sedentary?",
           "confidence": 0.9863281,
           "libraryId": null
         }
       ],
-      "_id": "663fa77a3c6d43f7c0126d79",
-      "language": "sk",
+      "_id": "663fa7973c6d43f7c0126e03",
+      "language": "it",
       "sentenceNo": 6,
-      "sentenceText": "Vieme, že nové technológie pomáhajú zachraňovať životy, ale čo zdravotné riziká vyplývajúce z takej sedavosti?",
+      "sentenceText": "Sappiamo che la nuova tecnologia aiuta a salvare vite umane, ma che dire dei rischi per la salute derivanti da una vita così sedentaria?",
       "start": 25.545,
       "end": 32.33,
       "duration": 6.784999999999997,
-      "libraryId": "663fa77a3c6d43f7c0126d79"
+      "libraryId": "663fa7973c6d43f7c0126e03"
     },
     {
       "sentenceWords": [
@@ -744,7 +744,7 @@
           "start": 32.47,
           "end": 32.71,
           "duration": 0.240000000000002,
-          "wordText": "sú",
+          "wordText": "Sono",
           "punctuatedWordText": "Are",
           "confidence": 0.9941406,
           "libraryId": null
@@ -756,7 +756,7 @@
           "start": 32.71,
           "end": 32.95,
           "duration": 0.240000000000002,
-          "wordText": "my",
+          "wordText": "Noi",
           "punctuatedWordText": "we",
           "confidence": 0.99902344,
           "libraryId": null
@@ -768,7 +768,7 @@
           "start": 32.95,
           "end": 33.35,
           "duration": 0.3999999999999986,
-          "wordText": "viac",
+          "wordText": "Di più",
           "punctuatedWordText": "more",
           "confidence": 0.9951172,
           "libraryId": null
@@ -780,7 +780,7 @@
           "start": 33.35,
           "end": 33.85,
           "duration": 0.5,
-          "wordText": "roztržitý",
+          "wordText": "distratto",
           "punctuatedWordText": "distracted",
           "confidence": 1,
           "libraryId": null
@@ -792,7 +792,7 @@
           "start": 33.91,
           "end": 34.31,
           "duration": 0.4000000000000057,
-          "wordText": "alebo",
+          "wordText": "O",
           "punctuatedWordText": "or",
           "confidence": 0.59765625,
           "libraryId": null
@@ -804,7 +804,7 @@
           "start": 34.31,
           "end": 34.55,
           "duration": 0.23999999999999488,
-          "wordText": "sú",
+          "wordText": "Sono",
           "punctuatedWordText": "are",
           "confidence": 0.9951172,
           "libraryId": null
@@ -816,7 +816,7 @@
           "start": 34.55,
           "end": 34.79,
           "duration": 0.240000000000002,
-          "wordText": "my",
+          "wordText": "Noi",
           "punctuatedWordText": "we",
           "confidence": 0.9970703,
           "libraryId": null
@@ -828,7 +828,7 @@
           "start": 34.79,
           "end": 35.27,
           "duration": 0.480000000000004,
-          "wordText": "viac",
+          "wordText": "Di più",
           "punctuatedWordText": "more",
           "confidence": 0.9941406,
           "libraryId": null
@@ -840,20 +840,20 @@
           "start": 35.27,
           "end": 35.77,
           "duration": 0.5,
-          "wordText": "zasnúbený",
+          "wordText": "impegnato",
           "punctuatedWordText": "engaged?",
           "confidence": 0.9970703,
           "libraryId": null
         }
       ],
-      "_id": "663fa77b3c6d43f7c0126d7b",
-      "language": "sk",
+      "_id": "663fa7983c6d43f7c0126e05",
+      "language": "it",
       "sentenceNo": 7,
-      "sentenceText": "Sme viac rozptýlení alebo sme viac zaujatí?",
+      "sentenceText": "Siamo più distratti o siamo più coinvolti?",
       "start": 32.47,
       "end": 35.77,
       "duration": 3.3000000000000043,
-      "libraryId": "663fa77b3c6d43f7c0126d7b"
+      "libraryId": "663fa7983c6d43f7c0126e05"
     },
     {
       "sentenceWords": [
@@ -864,7 +864,7 @@
           "start": 35.989998,
           "end": 36.23,
           "duration": 0.24000199999999694,
-          "wordText": "čo",
+          "wordText": "Che cosa",
           "punctuatedWordText": "What",
           "confidence": 0.9604492,
           "libraryId": null
@@ -876,7 +876,7 @@
           "start": 36.23,
           "end": 36.31,
           "duration": 0.0800000000000054,
-          "wordText": "sú",
+          "wordText": "Sono",
           "punctuatedWordText": "are",
           "confidence": 0.9970703,
           "libraryId": null
@@ -888,7 +888,7 @@
           "start": 36.31,
           "end": 36.47,
           "duration": 0.1599999999999966,
-          "wordText": "a",
+          "wordText": "IL",
           "punctuatedWordText": "the",
           "confidence": 0.9980469,
           "libraryId": null
@@ -900,7 +900,7 @@
           "start": 36.47,
           "end": 36.79,
           "duration": 0.3200000000000003,
-          "wordText": "účinky",
+          "wordText": "effetti",
           "punctuatedWordText": "effects",
           "confidence": 0.9902344,
           "libraryId": null
@@ -912,7 +912,7 @@
           "start": 36.79,
           "end": 37.03,
           "duration": 0.240000000000002,
-          "wordText": "z",
+          "wordText": "Di",
           "punctuatedWordText": "of",
           "confidence": 0.99609375,
           "libraryId": null
@@ -924,7 +924,7 @@
           "start": 37.03,
           "end": 37.43,
           "duration": 0.3999999999999986,
-          "wordText": "pridávanie",
+          "wordText": "aggiungendo",
           "punctuatedWordText": "adding",
           "confidence": 0.99902344,
           "libraryId": null
@@ -936,7 +936,7 @@
           "start": 37.43,
           "end": 37.93,
           "duration": 0.5,
-          "wordText": "metriky",
+          "wordText": "metrica",
           "punctuatedWordText": "metrics",
           "confidence": 0.9980469,
           "libraryId": null
@@ -948,7 +948,7 @@
           "start": 38.07,
           "end": 38.31,
           "duration": 0.240000000000002,
-          "wordText": "do",
+          "wordText": "A",
           "punctuatedWordText": "to",
           "confidence": 0.9951172,
           "libraryId": null
@@ -960,7 +960,7 @@
           "start": 38.31,
           "end": 38.71,
           "duration": 0.3999999999999986,
-          "wordText": "náš",
+          "wordText": "Nostro",
           "punctuatedWordText": "our",
           "confidence": 0.99609375,
           "libraryId": null
@@ -972,7 +972,7 @@
           "start": 38.71,
           "end": 39.21,
           "duration": 0.5,
-          "wordText": "sociálna",
+          "wordText": "sociale",
           "punctuatedWordText": "social",
           "confidence": 0.9980469,
           "libraryId": null
@@ -984,20 +984,20 @@
           "start": 39.27,
           "end": 39.755,
           "duration": 0.48499999999999943,
-          "wordText": "interakcie",
+          "wordText": "interazioni",
           "punctuatedWordText": "interactions?",
           "confidence": 0.90722656,
           "libraryId": null
         }
       ],
-      "_id": "663fa77b3c6d43f7c0126d7d",
-      "language": "sk",
+      "_id": "663fa7983c6d43f7c0126e07",
+      "language": "it",
       "sentenceNo": 8,
-      "sentenceText": "Aké sú účinky pridávania metrík do našich sociálnych interakcií?",
+      "sentenceText": "Quali sono gli effetti dell’aggiunta di metriche alle nostre interazioni sociali?",
       "start": 35.989998,
       "end": 39.755,
       "duration": 3.7650020000000026,
-      "libraryId": "663fa77b3c6d43f7c0126d7d"
+      "libraryId": "663fa7983c6d43f7c0126e07"
     },
     {
       "sentenceWords": [
@@ -1008,7 +1008,7 @@
           "start": 40.635002,
           "end": 40.715,
           "duration": 0.07999800000000334,
-          "wordText": "a",
+          "wordText": "E",
           "punctuatedWordText": "And",
           "confidence": 0.7011719,
           "libraryId": null
@@ -1020,7 +1020,7 @@
           "start": 40.715,
           "end": 40.875,
           "duration": 0.1599999999999966,
-          "wordText": "čo",
+          "wordText": "Che cosa",
           "punctuatedWordText": "what",
           "confidence": 0.9135742,
           "libraryId": null
@@ -1032,7 +1032,7 @@
           "start": 40.875,
           "end": 41.035,
           "duration": 0.1599999999999966,
-          "wordText": "robí",
+          "wordText": "fa",
           "punctuatedWordText": "does",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1044,7 +1044,7 @@
           "start": 41.035,
           "end": 41.195,
           "duration": 0.1600000000000037,
-          "wordText": "to",
+          "wordText": "Esso",
           "punctuatedWordText": "it",
           "confidence": 0.9902344,
           "libraryId": null
@@ -1056,7 +1056,7 @@
           "start": 41.195,
           "end": 41.435,
           "duration": 0.240000000000002,
-          "wordText": "priemerný",
+          "wordText": "Significare",
           "punctuatedWordText": "mean",
           "confidence": 0.9980469,
           "libraryId": null
@@ -1068,7 +1068,7 @@
           "start": 41.435,
           "end": 41.595,
           "duration": 0.1599999999999966,
-          "wordText": "že",
+          "wordText": "Quello",
           "punctuatedWordText": "that",
           "confidence": 0.8989258,
           "libraryId": null
@@ -1080,7 +1080,7 @@
           "start": 41.595,
           "end": 41.755,
           "duration": 0.1600000000000037,
-          "wordText": "vy",
+          "wordText": "Voi",
           "punctuatedWordText": "you",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1092,7 +1092,7 @@
           "start": 41.755,
           "end": 41.995003,
           "duration": 0.24000299999999442,
-          "wordText": "môcť",
+          "wordText": "Potere",
           "punctuatedWordText": "can",
           "confidence": 0.9892578,
           "libraryId": null
@@ -1104,7 +1104,7 @@
           "start": 41.995003,
           "end": 42.495003,
           "duration": 0.5,
-          "wordText": "zverejniť",
+          "wordText": "pubblicare",
           "punctuatedWordText": "publish",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1116,7 +1116,7 @@
           "start": 42.555,
           "end": 43.055,
           "duration": 0.5,
-          "wordText": "kdekoľvek",
+          "wordText": "ovunque",
           "punctuatedWordText": "anywhere",
           "confidence": 0.99609375,
           "libraryId": null
@@ -1128,7 +1128,7 @@
           "start": 43.115,
           "end": 43.355,
           "duration": 0.23999999999999488,
-          "wordText": "pri",
+          "wordText": "A",
           "punctuatedWordText": "at",
           "confidence": 0.8769531,
           "libraryId": null
@@ -1140,7 +1140,7 @@
           "start": 43.355,
           "end": 43.675,
           "duration": 0.3200000000000003,
-          "wordText": "akýkoľvek",
+          "wordText": "Qualunque",
           "punctuatedWordText": "any",
           "confidence": 0.7260742,
           "libraryId": null
@@ -1152,7 +1152,7 @@
           "start": 43.675,
           "end": 44.175,
           "duration": 0.5,
-          "wordText": "čas",
+          "wordText": "tempo",
           "punctuatedWordText": "time",
           "confidence": 0.9970703,
           "libraryId": null
@@ -1164,7 +1164,7 @@
           "start": 44.395,
           "end": 44.795002,
           "duration": 0.40000199999999353,
-          "wordText": "a",
+          "wordText": "E",
           "punctuatedWordText": "and",
           "confidence": 0.88720703,
           "libraryId": null
@@ -1176,7 +1176,7 @@
           "start": 44.795002,
           "end": 45.195,
           "duration": 0.39999800000000363,
-          "wordText": "zdieľam",
+          "wordText": "condividere",
           "punctuatedWordText": "share",
           "confidence": 0.9921875,
           "libraryId": null
@@ -1188,7 +1188,7 @@
           "start": 45.195,
           "end": 45.515,
           "duration": 0.3200000000000003,
-          "wordText": "tvoj",
+          "wordText": "tuo",
           "punctuatedWordText": "your",
           "confidence": 0.9951172,
           "libraryId": null
@@ -1200,7 +1200,7 @@
           "start": 45.515,
           "end": 45.915,
           "duration": 0.3999999999999986,
-          "wordText": "hlas",
+          "wordText": "voce",
           "punctuatedWordText": "voice",
           "confidence": 0.9941406,
           "libraryId": null
@@ -1212,7 +1212,7 @@
           "start": 45.915,
           "end": 46.155,
           "duration": 0.240000000000002,
-          "wordText": "s",
+          "wordText": "con",
           "punctuatedWordText": "with",
           "confidence": 0.9941406,
           "libraryId": null
@@ -1224,7 +1224,7 @@
           "start": 46.155,
           "end": 46.315002,
           "duration": 0.16000199999999865,
-          "wordText": "a",
+          "wordText": "IL",
           "punctuatedWordText": "the",
           "confidence": 0.9951172,
           "libraryId": null
@@ -1236,20 +1236,20 @@
           "start": 46.315002,
           "end": 46.815002,
           "duration": 0.5,
-          "wordText": "sveta",
+          "wordText": "mondo",
           "punctuatedWordText": "world?",
           "confidence": 0.9904785,
           "libraryId": null
         }
       ],
-      "_id": "663fa77b3c6d43f7c0126d7f",
-      "language": "sk",
+      "_id": "663fa7983c6d43f7c0126e09",
+      "language": "it",
       "sentenceNo": 9,
-      "sentenceText": "A čo to znamená, že môžete publikovať kdekoľvek a kedykoľvek a zdieľať svoj hlas so svetom?",
+      "sentenceText": "E cosa significa che puoi pubblicare ovunque e in qualsiasi momento e condividere la tua voce con il mondo?",
       "start": 40.635002,
       "end": 46.815002,
       "duration": 6.18,
-      "libraryId": "663fa77b3c6d43f7c0126d7f"
+      "libraryId": "663fa7983c6d43f7c0126e09"
     },
     {
       "sentenceWords": [
@@ -1260,7 +1260,7 @@
           "start": 47.5,
           "end": 47.82,
           "duration": 0.3200000000000003,
-          "wordText": "preskúmať",
+          "wordText": "Esplorare",
           "punctuatedWordText": "Explore",
           "confidence": 0.9941406,
           "libraryId": null
@@ -1272,7 +1272,7 @@
           "start": 47.82,
           "end": 48.06,
           "duration": 0.240000000000002,
-          "wordText": "a",
+          "wordText": "IL",
           "punctuatedWordText": "the",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1284,7 +1284,7 @@
           "start": 48.06,
           "end": 48.38,
           "duration": 0.3200000000000003,
-          "wordText": "klady",
+          "wordText": "professionisti",
           "punctuatedWordText": "pros",
           "confidence": 0.97802734,
           "libraryId": null
@@ -1296,7 +1296,7 @@
           "start": 48.38,
           "end": 48.54,
           "duration": 0.1599999999999966,
-          "wordText": "a",
+          "wordText": "E",
           "punctuatedWordText": "and",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1308,7 +1308,7 @@
           "start": 48.54,
           "end": 48.86,
           "duration": 0.3200000000000003,
-          "wordText": "zápory",
+          "wordText": "contro",
           "punctuatedWordText": "cons",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1320,7 +1320,7 @@
           "start": 48.86,
           "end": 49.100002,
           "duration": 0.24000200000000405,
-          "wordText": "z",
+          "wordText": "Di",
           "punctuatedWordText": "of",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1332,7 +1332,7 @@
           "start": 49.100002,
           "end": 49.600002,
           "duration": 0.5,
-          "wordText": "technológie",
+          "wordText": "tecnologia",
           "punctuatedWordText": "technology",
           "confidence": 0.99121094,
           "libraryId": null
@@ -1344,7 +1344,7 @@
           "start": 49.9,
           "end": 50.06,
           "duration": 0.1600000000000037,
-          "wordText": "a",
+          "wordText": "E",
           "punctuatedWordText": "and",
           "confidence": 0.96777344,
           "libraryId": null
@@ -1356,7 +1356,7 @@
           "start": 50.06,
           "end": 50.46,
           "duration": 0.3999999999999986,
-          "wordText": "brániť",
+          "wordText": "difendere",
           "punctuatedWordText": "defend",
           "confidence": 0.9980469,
           "libraryId": null
@@ -1368,7 +1368,7 @@
           "start": 50.46,
           "end": 50.78,
           "duration": 0.3200000000000003,
-          "wordText": "či",
+          "wordText": "se",
           "punctuatedWordText": "whether",
           "confidence": 0.9970703,
           "libraryId": null
@@ -1380,7 +1380,7 @@
           "start": 50.78,
           "end": 51.02,
           "duration": 0.240000000000002,
-          "wordText": "to je",
+          "wordText": "suo",
           "punctuatedWordText": "it's",
           "confidence": 0.9824219,
           "libraryId": null
@@ -1392,7 +1392,7 @@
           "start": 51.02,
           "end": 51.420002,
           "duration": 0.40000199999999353,
-          "wordText": "tvorby",
+          "wordText": "fabbricazione",
           "punctuatedWordText": "making",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1404,7 +1404,7 @@
           "start": 51.420002,
           "end": 51.920002,
           "duration": 0.5,
-          "wordText": "života",
+          "wordText": "vita",
           "punctuatedWordText": "life",
           "confidence": 0.9951172,
           "libraryId": null
@@ -1416,7 +1416,7 @@
           "start": 51.98,
           "end": 52.3,
           "duration": 0.3200000000000003,
-          "wordText": "lepšie",
+          "wordText": "Meglio",
           "punctuatedWordText": "better",
           "confidence": 1,
           "libraryId": null
@@ -1428,7 +1428,7 @@
           "start": 52.3,
           "end": 52.62,
           "duration": 0.3200000000000003,
-          "wordText": "alebo",
+          "wordText": "O",
           "punctuatedWordText": "or",
           "confidence": 0.9970703,
           "libraryId": null
@@ -1440,7 +1440,7 @@
           "start": 52.62,
           "end": 53.12,
           "duration": 0.5,
-          "wordText": "horšie",
+          "wordText": "peggio",
           "punctuatedWordText": "worse",
           "confidence": 0.9970703,
           "libraryId": null
@@ -1452,7 +1452,7 @@
           "start": 53.5,
           "end": 53.82,
           "duration": 0.3200000000000003,
-          "wordText": "tu",
+          "wordText": "Qui",
           "punctuatedWordText": "here",
           "confidence": 0.95166016,
           "libraryId": null
@@ -1464,7 +1464,7 @@
           "start": 53.82,
           "end": 53.98,
           "duration": 0.1599999999999966,
-          "wordText": "na",
+          "wordText": "SU",
           "punctuatedWordText": "on",
           "confidence": 1,
           "libraryId": null
@@ -1476,20 +1476,20 @@
           "start": 53.98,
           "end": 54.48,
           "duration": 0.5,
-          "wordText": "zem",
+          "wordText": "terra",
           "punctuatedWordText": "earth.",
           "confidence": 0.8234863,
           "libraryId": null
         }
       ],
-      "_id": "663fa77c3c6d43f7c0126d81",
-      "language": "sk",
+      "_id": "663fa7993c6d43f7c0126e0b",
+      "language": "it",
       "sentenceNo": 10,
-      "sentenceText": "Preskúmajte výhody a nevýhody technológie a obhajujte, či robí život tu na zemi lepším alebo horším.",
+      "sentenceText": "Esplora i pro e i contro della tecnologia e difendi se sta migliorando o peggiorando la vita qui sulla terra.",
       "start": 47.5,
       "end": 54.48,
       "duration": 6.979999999999997,
-      "libraryId": "663fa77c3c6d43f7c0126d81"
+      "libraryId": "663fa7993c6d43f7c0126e0b"
     },
     {
       "sentenceWords": [
@@ -1500,7 +1500,7 @@
           "start": 54.835,
           "end": 54.995,
           "duration": 0.1599999999999966,
-          "wordText": "byť",
+          "wordText": "Essere",
           "punctuatedWordText": "Be",
           "confidence": 0.9970703,
           "libraryId": null
@@ -1512,7 +1512,7 @@
           "start": 54.995,
           "end": 55.235,
           "duration": 0.240000000000002,
-          "wordText": "samozrejme",
+          "wordText": "Sicuro",
           "punctuatedWordText": "sure",
           "confidence": 1,
           "libraryId": null
@@ -1524,7 +1524,7 @@
           "start": 55.235,
           "end": 55.635,
           "duration": 0.3999999999999986,
-          "wordText": "do",
+          "wordText": "A",
           "punctuatedWordText": "to",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1536,7 +1536,7 @@
           "start": 55.635,
           "end": 56.135,
           "duration": 0.5,
-          "wordText": "zahŕňajú",
+          "wordText": "includere",
           "punctuatedWordText": "include",
           "confidence": 0.99902344,
           "libraryId": null
@@ -1548,7 +1548,7 @@
           "start": 56.195,
           "end": 56.695,
           "duration": 0.5,
-          "wordText": "faktov",
+          "wordText": "fatti",
           "punctuatedWordText": "facts",
           "confidence": 0.99609375,
           "libraryId": null
@@ -1560,7 +1560,7 @@
           "start": 56.754997,
           "end": 57.235,
           "duration": 0.4800029999999964,
-          "wordText": "a",
+          "wordText": "E",
           "punctuatedWordText": "and",
           "confidence": 0.9892578,
           "libraryId": null
@@ -1572,7 +1572,7 @@
           "start": 57.235,
           "end": 57.715,
           "duration": 0.480000000000004,
-          "wordText": "hlboký",
+          "wordText": "profondo",
           "punctuatedWordText": "deep",
           "confidence": 0.9951172,
           "libraryId": null
@@ -1584,20 +1584,20 @@
           "start": 57.715,
           "end": 58.215,
           "duration": 0.5,
-          "wordText": "analýza",
+          "wordText": "analisi",
           "punctuatedWordText": "analysis.",
           "confidence": 0.9946289,
           "libraryId": null
         }
       ],
-      "_id": "663fa77c3c6d43f7c0126d83",
-      "language": "sk",
+      "_id": "663fa7993c6d43f7c0126e0d",
+      "language": "it",
       "sentenceNo": 11,
-      "sentenceText": "Nezabudnite uviesť fakty a hĺbkovú analýzu.",
+      "sentenceText": "Assicurati di includere fatti e analisi approfondite.",
       "start": 54.835,
       "end": 58.215,
       "duration": 3.3800000000000026,
-      "libraryId": "663fa77c3c6d43f7c0126d83"
+      "libraryId": "663fa7993c6d43f7c0126e0d"
     }
   ],
   "libraryId": "663fa74f3c6d43f7c0126d4f",
@@ -1605,8 +1605,8 @@
   "countOfSentences": 11,
   "start": 0.88,
   "end": 58.215,
-  "language": "sk",
-  "targetLanguage": "sk",
+  "language": "it",
+  "targetLanguage": "it",
   "videoId": "7rbDIx69ORE",
   "title": "Is technology making life better or worse?",
   "label": "video",

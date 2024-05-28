@@ -96,3 +96,17 @@ export const postLibraryVideo = async (
   );
   return response.json();
 };
+
+export const postPauseNotified = async () => {
+  const response = await vocabuFetch(
+    `${import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT}/notify-user`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+      },
+    }
+  );
+  return response.json();
+};

@@ -1,23 +1,7 @@
-import {
-  Row,
-  Col,
-  Button as AntdButton,
-  Typography,
-  Card,
-  Radio,
-  Dropdown,
-  Menu,
-} from "antd";
-import { SvgIcon } from "../../../common/SvgIcon";
-import { Button } from "../../../common/Button";
+import { Row, Col, Button as AntdButton, Card, Radio } from "antd";
 import { IContentBlockProps } from "../types";
 import { Fade } from "react-awesome-reveal";
-import {
-  RightBlockContainer,
-  Content,
-  ContentWrapper,
-  ButtonWrapper,
-} from "./styles";
+import { RightBlockContainer } from "./styles";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./index.module.less";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -27,13 +11,21 @@ import { useWindowWidth } from "@/utils/useWindowWidth";
 import TranslateBox from "@/pages/bookDetail/components/TranslateBox/TranslateBox";
 import EmbeddedVideo from "@/pages/bookDetail/components/EmbeddedVideo/EmbeddedVideo";
 import * as Slider from "@radix-ui/react-slider";
-import { DownOutlined } from "@ant-design/icons";
 import { useRecoilValue } from "recoil";
 import { menuLanguageState } from "@/stores/language";
 import snapshotDataSk from "./../../../../../../data/snapshot_sk.json";
 import snapshotDataEs from "./../../../../../../data/snapshot_es.json";
 import snapshotDataEn from "./../../../../../../data/snapshot_en.json";
+import snapshotDataFr from "./../../../../../../data/snapshot_fr.json";
+import snapshotDataDe from "./../../../../../../data/snapshot_de.json";
+import snapshotDataCs from "./../../../../../../data/snapshot_cs.json";
+import snapshotDataPl from "./../../../../../../data/snapshot_pl.json";
+import snapshotDataHu from "./../../../../../../data/snapshot_hu.json";
+import snapshotDataIt from "./../../../../../../data/snapshot_it.json";
+import snapshotDataZh from "./../../../../../../data/snapshot_zh.json";
+import snapshotDataUk from "./../../../../../../data/snapshot_uk.json";
 import { parseLocale } from "@/utils/stringUtils";
+import { postPauseNotified } from "@/services/libraryService";
 
 const RightBlock = ({
   title,
@@ -180,6 +172,15 @@ const RightBlock = ({
     ],
   };
 
+  const [emailSent, setEmailSent] = useState(false);
+
+  useEffect(() => {
+    if (isPlaying && !emailSent) {
+      postPauseNotified();
+      setEmailSent(true);
+    }
+  }, [isPlaying, emailSent]);
+
   const handlePlay = useCallback(() => {
     setIsPlaying(true);
   }, []);
@@ -256,6 +257,30 @@ const RightBlock = ({
         break;
       case "es":
         snapshots.push(snapshotDataEs);
+        break;
+      case "fr":
+        snapshots.push(snapshotDataFr);
+        break;
+      case "de":
+        snapshots.push(snapshotDataDe);
+        break;
+      case "cs":
+        snapshots.push(snapshotDataCs);
+        break;
+      case "pl":
+        snapshots.push(snapshotDataPl);
+        break;
+      case "hu":
+        snapshots.push(snapshotDataHu);
+        break;
+      case "it":
+        snapshots.push(snapshotDataIt);
+        break;
+      case "zh":
+        snapshots.push(snapshotDataZh);
+        break;
+      case "uk":
+        snapshots.push(snapshotDataUk);
         break;
       case "en":
         snapshots.push(snapshotDataEn);

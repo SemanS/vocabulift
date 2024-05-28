@@ -922,7 +922,7 @@ const BookDetail: FC = () => {
       videoPlayerRef.current.updateHighlightedSubtitleAndPage(newTime);
     }
   };
-
+  console.log("snapshots" + JSON.stringify(memoizedSnapshots));
   const videoContainer = (
     <div className={`${styles.myVideoContainer}`}>
       {state.label === LabelType.VIDEO && (

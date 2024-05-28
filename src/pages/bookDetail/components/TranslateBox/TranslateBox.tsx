@@ -641,6 +641,10 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         ...base,
         color: "white",
       }),
+      menuPortal: (provided) => ({
+        ...provided,
+        zIndex: "10",
+      }),
       container: (provided) => ({
         ...provided,
         display: "inline-block",
@@ -648,7 +652,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       menu: (provided) => ({
         ...provided,
         position: "absolute", // This is usually the default, but ensure it's set
-        zIndex: 99999,
+        zIndex: 10,
       }),
       control: (provided) => ({
         ...provided,
@@ -902,6 +906,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
               arrow={false}
               className={`${styles.tippy}`}
               placement={index === 0 || index === 1 ? "bottom" : "top"}
+              zIndex={0}
             >
               <div key={index} style={{ whiteSpace: "pre-wrap" }}>
                 {sourceSentence.sentenceWords?.map((sourceWord, wordIndex) => {
@@ -1051,6 +1056,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                       onChange={(option) =>
                         handleTenseChange(option, sourceSentence.sentenceNo)
                       }
+                      menuPortalTarget={document.body}
                       styles={customStyles(sourceSentence.sentenceNo)}
                       placeholder="Select a tense"
                       menuShouldScrollIntoView={false}

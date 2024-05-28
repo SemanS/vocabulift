@@ -91,8 +91,19 @@ const Header = () => {
     const items = localeConfig
       .filter(
         (lang) =>
-          ["en", "sk", "cs", "es"].includes(parseLocale(lang.key)) &&
-          parseLocale(lang.key) !== "en"
+          [
+            "en",
+            "sk",
+            "cs",
+            "es",
+            "fr",
+            "de",
+            "pl",
+            "hu",
+            "uk",
+            "it",
+            "zh",
+          ].includes(parseLocale(lang.key)) && parseLocale(lang.key) !== "en"
       )
       .map((lang) => ({
         key: lang.key,
@@ -171,10 +182,10 @@ const Header = () => {
               <Span>{"About"}</Span>
             </CustomNavLinkSmall>
             <CustomNavLinkSmall onClick={() => scrollTo("mission", 200)}>
-              <Span>{"Mission"}</Span>
+              <Span>{"Quizzes"}</Span>
             </CustomNavLinkSmall>
             <CustomNavLinkSmall onClick={() => scrollTo("product", 200)}>
-              <Span>{"Product"}</Span>
+              <Span>{"Testimonials"}</Span>
             </CustomNavLinkSmall>
             <CustomNavLinkSmall onClick={() => scrollTo("pricing", 50)}>
               <Span>{"Pricing"}</Span>

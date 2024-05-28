@@ -74,11 +74,13 @@ const LeftContentBlock = ({
   return (
     <StyledCarouselContainer>
       <Fade direction="right" triggerOnce>
-        <Carousel autoplay id={id} dotPosition="top">
+        <Carousel autoplay id={id} dotPosition="top" autoplaySpeed={5000}>
           {testimonials.map((testimonial, index) => (
             <div key={index}>
               <p style={contentStyle}>
                 {testimonial.quote}
+                <br />
+                <br />
                 <br />
                 <small>- {testimonial.author}</small>
               </p>

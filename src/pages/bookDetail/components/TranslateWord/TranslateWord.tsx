@@ -77,6 +77,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
   const [selectedValues, setSelectedValues] = useState({});
 
   const textRef = useRef<HTMLDivElement | null>(null);
+  const optionsRef = useRef([]);
 
   useEffect(() => {
     setIsHovered(false);
@@ -198,6 +199,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     props.currentPage,
     props.sentencesPerPage,
   ]);
+
+  function insertRandomly(shuffledArray, newItem) {
+    let slicedArray = shuffledArray.slice(0, 3);
+
+    const randomIndex = Math.floor(Math.random() * slicedArray.length);
+
+    slicedArray.splice(randomIndex, 0, newItem);
+
+    return slicedArray;
+  }
 
   const getClassName = () => {
     let classes = [styles.textbox];
@@ -332,7 +343,12 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     if (props.mode === "all") {
       return (
-        <Tippy content={props.translation} visible={isHovered} placement="top">
+        <Tippy
+          content={props.translation}
+          visible={isHovered}
+          placement="top"
+          appendTo={() => document.body}
+        >
           {/* <Tippy
             content={props.sentenceTranslation}
             visible={isHovered}
@@ -477,67 +493,77 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     }
   );
 
-  const selectOptions = useMemo(() => {
-    if (!props.partOfSpeech || !props.sentenceWord) {
-      return [];
-    }
+  const [options, setOptions] = useState([]);
 
-    const options = props.partOfSpeech
-      .filter(
-        (wordObj) =>
-          typeof wordObj.partOfSpeech === "string" &&
-          typeof props.sentenceWord.partOfSpeech === "string" &&
-          wordObj.partOfSpeech?.toLowerCase() ===
+  useEffect(() => {
+    const computeOptions = () => {
+      if (!props.partOfSpeech || !props.sentenceWord) {
+        return [{ label: "No Options", value: "" }];
+      }
+
+      const filteredOptions = props.partOfSpeech
+        .filter(
+          (wordObj) =>
+            wordObj.partOfSpeech?.toLowerCase() ===
             props.sentenceWord.partOfSpeech?.toLowerCase()
-      )
-      .map((wordObj) => ({
-        label: wordObj.text?.replace(/[.,?]/g, ""),
-        value: wordObj.text?.replace(/[.,?]/g, ""),
-      }));
+        )
+        .map((wordObj) => ({
+          label: wordObj.text.replace(/[.,?]/g, ""),
+          value: wordObj.text.replace(/[.,?]/g, ""),
+        }));
 
-    const uniqueOptions = options.filter(
-      (option, index, array) =>
-        array.findIndex(
-          (t) => t.label?.toLowerCase() === option.label?.toLowerCase()
-        ) === index
-    );
-
-    const matchingWord = props.partOfSpeech.find(
-      (word) =>
-        word.position === props.wordIndex &&
-        word.sentenceNumber === props.sentenceNumber
-    );
-
-    const correctText = matchingWord
-      ? matchingWord.text.replace(/[.,?]/g, "")
-      : null;
-
-    // Ensure correctText is included in options and marked
-    if (
-      correctText &&
-      !uniqueOptions.some((option) => option.value === correctText)
-    ) {
-      uniqueOptions.push({ label: correctText, value: correctText });
-    }
-
-    // Shuffle the options to randomize their order in the dropdown
-    let shuffledOptions = shuffleArray(uniqueOptions);
-
-    // Find and make sure the correct answer is included
-    if (correctText) {
-      const correctIndex = shuffledOptions.findIndex(
-        (option) => option.value === correctText
+      const uniqueOptions = filteredOptions.filter(
+        (option, index, self) =>
+          index ===
+          self.findIndex(
+            (t) => t.label.toLowerCase() === option.label.toLowerCase()
+          )
       );
 
-      if (correctIndex > 0) {
-        // If not already the first, swap with the first element
-        const temp = shuffledOptions[0];
-        shuffledOptions[0] = shuffledOptions[correctIndex];
-        shuffledOptions[correctIndex] = temp;
-      }
-    }
+      const matchingWord = props.partOfSpeech.find(
+        (word) =>
+          word.position === props.wordIndex &&
+          word.sentenceNumber === props.sentenceNumber
+      );
 
-    return shuffleArray(shuffledOptions.slice(0, 4));
+      const correctText = matchingWord
+        ? matchingWord.text.replace(/[.,?]/g, "")
+        : null;
+      let shuffledOptions = shuffleArray(uniqueOptions);
+
+      if (correctText) {
+        const isCorrectOptionIncluded = shuffledOptions.find(
+          (option) => option.value === correctText
+        );
+
+        if (isCorrectOptionIncluded) {
+          const correctIndex = shuffledOptions.findIndex(
+            (option) => option.value === correctText
+          );
+
+          const [correctOption] = shuffledOptions.splice(correctIndex, 1);
+
+          shuffledOptions.unshift(correctOption);
+        } else {
+          const randomIndex = Math.floor(
+            Math.random() * (shuffledOptions.length + 1)
+          );
+          shuffledOptions.splice(randomIndex, 0, {
+            label: correctText,
+            value: correctText,
+          });
+        }
+      }
+
+      return shuffleArray(shuffledOptions.slice(0, 4));
+    };
+
+    if (!options.length) {
+      // Ensuring options are recomputed only if they are empty
+      const newOptions = computeOptions();
+      optionsRef.current = newOptions;
+      setOptions(newOptions);
+    }
   }, [
     props.partOfSpeech,
     props.sentenceWord,
@@ -596,8 +622,9 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     <Select
       onChange={(value) => handleSelectChange(value, props.wordIndex)}
       className="nonInteractiveSelect"
-      options={selectOptions}
+      options={options}
       styles={customStyles}
+      menuPortalTarget={document.body}
       value={getSelectedValue(props.wordIndex)}
       placeholder={"__________"}
       menuShouldScrollIntoView={false}

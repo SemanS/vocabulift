@@ -12,5 +12,5 @@ export const targetLanguageState = atom({
 
 export const menuLanguageState = atom({
   key: "menuLanguageState",
-  default: "sk-SK",
+  default: navigator.language || "sk-SK",
 });
