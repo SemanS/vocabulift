@@ -1,7 +1,7 @@
 {
-  "_id": "663fa7543c6d43f7c0126d69",
-  "createdAt": "2024-05-11T17:13:56.057Z",
-  "updatedAt": "2024-05-19T17:55:23.597Z",
+  "_id": "663fa7813c6d43f7c0126d9b",
+  "createdAt": "2024-05-11T17:14:41.614Z",
+  "updatedAt": "2024-05-11T17:14:41.614Z",
   "sentencesData": [
     {
       "sentenceWords": [
@@ -11,25 +11,23 @@
           "language": "en",
           "start": 0.88,
           "end": 1.38,
-          "duration": 0.5,
-          "wordText": "technology",
+          "duration": 0.4999999999999999,
+          "wordText": "Technologie",
           "punctuatedWordText": "Technology",
           "confidence": 0.98535156,
-          "libraryId": null,
-          "partOfSpeech": "Noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 1,
           "position": 1,
           "language": "en",
-          "start": 1.6,
+          "start": 1.5999999,
           "end": 1.92,
-          "duration": 0.32,
-          "wordText": "is",
+          "duration": 0.3200000999999999,
+          "wordText": "Ist",
           "punctuatedWordText": "is",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "Verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 1,
@@ -38,11 +36,10 @@
           "start": 1.92,
           "end": 2.42,
           "duration": 0.5,
-          "wordText": "changing",
+          "wordText": "Ändern",
           "punctuatedWordText": "changing",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "Verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 1,
@@ -50,12 +47,11 @@
           "language": "en",
           "start": 2.48,
           "end": 2.72,
-          "duration": 0.24,
-          "wordText": "our",
+          "duration": 0.2400000000000002,
+          "wordText": "unser",
           "punctuatedWordText": "our",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "Pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 1,
@@ -64,22 +60,20 @@
           "start": 2.72,
           "end": 3.22,
           "duration": 0.5,
-          "wordText": "world",
+          "wordText": "Welt",
           "punctuatedWordText": "world.",
           "confidence": 0.9909668,
-          "libraryId": null,
-          "partOfSpeech": "Noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7503c6d43f7c0126d53",
-      "language": "en",
+      "_id": "663fa77d3c6d43f7c0126d86",
+      "language": "de",
       "sentenceNo": 1,
-      "sentenceText": "Technology is changing our world.",
+      "sentenceText": "Technologie verändert unsere Welt.",
       "start": 0.88,
       "end": 3.22,
-      "duration": 2.34,
-      "libraryId": "663fa7503c6d43f7c0126d53",
-      "tense": "Present Continuous"
+      "duration": 2.3400000000000003,
+      "libraryId": "663fa77d3c6d43f7c0126d86"
     },
     {
       "sentenceWords": [
@@ -90,11 +84,10 @@
           "start": 4,
           "end": 4.3199997,
           "duration": 0.31999970000000033,
-          "wordText": "our",
+          "wordText": "unser",
           "punctuatedWordText": "Our",
           "confidence": 0.9892578,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -103,11 +96,10 @@
           "start": 4.3199997,
           "end": 4.8199997,
           "duration": 0.5,
-          "wordText": "devices",
+          "wordText": "Geräte",
           "punctuatedWordText": "devices",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -116,11 +108,10 @@
           "start": 5.6,
           "end": 5.92,
           "duration": 0.3200000000000003,
-          "wordText": "allow",
+          "wordText": "erlauben",
           "punctuatedWordText": "allow",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -129,11 +120,10 @@
           "start": 5.92,
           "end": 6.16,
           "duration": 0.2400000000000002,
-          "wordText": "us",
+          "wordText": "uns",
           "punctuatedWordText": "us",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -142,11 +132,10 @@
           "start": 6.16,
           "end": 6.24,
           "duration": 0.08000000000000007,
-          "wordText": "to",
+          "wordText": "Zu",
           "punctuatedWordText": "to",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -155,11 +144,10 @@
           "start": 6.24,
           "end": 6.48,
           "duration": 0.2400000000000002,
-          "wordText": "do",
+          "wordText": "Tun",
           "punctuatedWordText": "do",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -168,11 +156,10 @@
           "start": 6.48,
           "end": 6.7999997,
           "duration": 0.31999969999999944,
-          "wordText": "things",
+          "wordText": "Dinge",
           "punctuatedWordText": "things",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -181,11 +168,10 @@
           "start": 6.7999997,
           "end": 6.96,
           "duration": 0.1600003000000001,
-          "wordText": "that",
+          "wordText": "Das",
           "punctuatedWordText": "that",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -194,11 +180,10 @@
           "start": 6.96,
           "end": 7.3599997,
           "duration": 0.3999997000000004,
-          "wordText": "were",
+          "wordText": "war",
           "punctuatedWordText": "were",
           "confidence": 0.97998047,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -207,11 +192,10 @@
           "start": 7.3599997,
           "end": 7.855,
           "duration": 0.49500030000000006,
-          "wordText": "previous",
+          "wordText": "vorherige",
           "punctuatedWordText": "previous",
           "confidence": 0.53027344,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 2,
@@ -220,22 +204,20 @@
           "start": 8.815,
           "end": 9.315,
           "duration": 0.5,
-          "wordText": "unimaginable",
+          "wordText": "unvorstellbar",
           "punctuatedWordText": "unimaginable.",
           "confidence": 0.5649414,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7503c6d43f7c0126d55",
-      "language": "en",
+      "_id": "663fa77e3c6d43f7c0126d88",
+      "language": "de",
       "sentenceNo": 2,
-      "sentenceText": "Our devices allow us to do things that were previous unimaginable.",
+      "sentenceText": "Unsere Geräte ermöglichen uns Dinge, die vorher undenkbar waren.",
       "start": 4,
       "end": 9.315,
       "duration": 5.3149999999999995,
-      "libraryId": "663fa7503c6d43f7c0126d55",
-      "tense": "Simple Past"
+      "libraryId": "663fa77e3c6d43f7c0126d88"
     },
     {
       "sentenceWords": [
@@ -245,12 +227,11 @@
           "language": "en",
           "start": 10.575,
           "end": 11.055,
-          "duration": 0.48,
-          "wordText": "but",
+          "duration": 0.4800000000000004,
+          "wordText": "Aber",
           "punctuatedWordText": "But",
           "confidence": 0.8178711,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 3,
@@ -258,12 +239,11 @@
           "language": "en",
           "start": 11.055,
           "end": 11.295,
-          "duration": 0.24,
-          "wordText": "is",
+          "duration": 0.2400000000000002,
+          "wordText": "Ist",
           "punctuatedWordText": "is",
           "confidence": 0.92333984,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 3,
@@ -271,12 +251,11 @@
           "language": "en",
           "start": 11.295,
           "end": 11.455,
-          "duration": 0.16,
-          "wordText": "that",
+          "duration": 0.16000000000000014,
+          "wordText": "Das",
           "punctuatedWordText": "that",
           "confidence": 0.9892578,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 3,
@@ -284,12 +263,11 @@
           "language": "en",
           "start": 11.455,
           "end": 11.535,
-          "duration": 0.08,
-          "wordText": "a",
+          "duration": 0.08000000000000007,
+          "wordText": "A",
           "punctuatedWordText": "a",
           "confidence": 0.9716797,
-          "libraryId": null,
-          "partOfSpeech": "article"
+          "libraryId": null
         },
         {
           "sentenceNo": 3,
@@ -297,12 +275,11 @@
           "language": "en",
           "start": 11.535,
           "end": 11.775,
-          "duration": 0.24,
-          "wordText": "good",
+          "duration": 0.2400000000000002,
+          "wordText": "Gut",
           "punctuatedWordText": "good",
           "confidence": 0.9941406,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 3,
@@ -311,22 +288,20 @@
           "start": 11.775,
           "end": 12.275,
           "duration": 0.5,
-          "wordText": "thing",
+          "wordText": "Ding",
           "punctuatedWordText": "thing?",
           "confidence": 0.9748535,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7503c6d43f7c0126d57",
-      "language": "en",
+      "_id": "663fa77e3c6d43f7c0126d8a",
+      "language": "de",
       "sentenceNo": 3,
-      "sentenceText": "But is that a good thing?",
+      "sentenceText": "Aber ist das eine gute Sache?",
       "start": 10.575,
       "end": 12.275,
       "duration": 1.700000000000001,
-      "libraryId": "663fa7503c6d43f7c0126d57",
-      "tense": "Simple Present"
+      "libraryId": "663fa77e3c6d43f7c0126d8a"
     },
     {
       "sentenceWords": [
@@ -337,11 +312,10 @@
           "start": 12.415,
           "end": 12.575,
           "duration": 0.16000000000000014,
-          "wordText": "do",
+          "wordText": "Tun",
           "punctuatedWordText": "Do",
           "confidence": 0.8886719,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -350,11 +324,10 @@
           "start": 12.575,
           "end": 12.735001,
           "duration": 0.16000100000000117,
-          "wordText": "our",
+          "wordText": "unser",
           "punctuatedWordText": "our",
           "confidence": 0.9560547,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -363,11 +336,10 @@
           "start": 12.735001,
           "end": 13.235001,
           "duration": 0.5,
-          "wordText": "devices",
+          "wordText": "Geräte",
           "punctuatedWordText": "devices",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -376,11 +348,10 @@
           "start": 13.695,
           "end": 14.014999,
           "duration": 0.31999899999999926,
-          "wordText": "bring",
+          "wordText": "bringen",
           "punctuatedWordText": "bring",
           "confidence": 0.95947266,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -389,11 +360,10 @@
           "start": 14.014999,
           "end": 14.254999,
           "duration": 0.2400000000000002,
-          "wordText": "us",
+          "wordText": "uns",
           "punctuatedWordText": "us",
           "confidence": 0.7915039,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -405,8 +375,7 @@
           "wordText": "together",
           "punctuatedWordText": "together",
           "confidence": 0.9741211,
-          "libraryId": null,
-          "partOfSpeech": "adverb"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -418,8 +387,7 @@
           "wordText": "or",
           "punctuatedWordText": "or",
           "confidence": 0.37280273,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -428,11 +396,10 @@
           "start": 15.135,
           "end": 15.295,
           "duration": 0.16000000000000014,
-          "wordText": "are",
+          "wordText": "Sind",
           "punctuatedWordText": "are",
           "confidence": 0.7583008,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -441,11 +408,10 @@
           "start": 15.295,
           "end": 15.455,
           "duration": 0.16000000000000014,
-          "wordText": "they",
+          "wordText": "Sie",
           "punctuatedWordText": "they",
           "confidence": 0.88134766,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -454,11 +420,10 @@
           "start": 15.455,
           "end": 15.6425,
           "duration": 0.1875,
-          "wordText": "separating",
+          "wordText": "Trennung",
           "punctuatedWordText": "separating",
           "confidence": 0.66259766,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 4,
@@ -467,22 +432,20 @@
           "start": 15.6425,
           "end": 15.83,
           "duration": 0.1875,
-          "wordText": "us",
+          "wordText": "uns",
           "punctuatedWordText": "us?",
           "confidence": 0.68408203,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7513c6d43f7c0126d59",
-      "language": "en",
+      "_id": "663fa77e3c6d43f7c0126d8c",
+      "language": "de",
       "sentenceNo": 4,
-      "sentenceText": "Do our devices bring us together or are they separating us?",
+      "sentenceText": "Bringen uns unsere Geräte zusammen oder trennen sie uns?",
       "start": 12.415,
       "end": 15.83,
       "duration": 3.415000000000001,
-      "libraryId": "663fa7513c6d43f7c0126d59",
-      "tense": "Present Continuous"
+      "libraryId": "663fa77e3c6d43f7c0126d8c"
     },
     {
       "sentenceWords": [
@@ -492,12 +455,11 @@
           "language": "en",
           "start": 22.95,
           "end": 23.43,
-          "duration": 0.48,
-          "wordText": "likely",
+          "duration": 0.4800000000000004,
+          "wordText": "wahrscheinlich",
           "punctuatedWordText": "Likely",
           "confidence": 0.42358398,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 5,
@@ -505,12 +467,11 @@
           "language": "en",
           "start": 23.43,
           "end": 23.625,
-          "duration": 0.195,
-          "wordText": "to",
+          "duration": 0.19500000000000028,
+          "wordText": "Zu",
           "punctuatedWordText": "to",
           "confidence": 0.6713867,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 5,
@@ -519,11 +480,10 @@
           "start": 23.865,
           "end": 24.365,
           "duration": 0.5,
-          "wordText": "believe",
+          "wordText": "glauben",
           "punctuatedWordText": "believe",
           "confidence": 0.9892578,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 5,
@@ -532,22 +492,20 @@
           "start": 24.505,
           "end": 25.005,
           "duration": 0.5,
-          "wordText": "misinformation",
+          "wordText": "Fehlinformationen",
           "punctuatedWordText": "misinformation?",
           "confidence": 0.9838867,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7513c6d43f7c0126d5b",
-      "language": "en",
+      "_id": "663fa77f3c6d43f7c0126d8e",
+      "language": "de",
       "sentenceNo": 5,
-      "sentenceText": "Likely to believe misinformation?",
+      "sentenceText": "Glauben Sie wahrscheinlich Fehlinformationen?",
       "start": 22.95,
       "end": 25.005,
-      "duration": 2.055,
-      "libraryId": "663fa7513c6d43f7c0126d5b",
-      "tense": "Simple Present"
+      "duration": 2.0549999999999997,
+      "libraryId": "663fa77f3c6d43f7c0126d8e"
     },
     {
       "sentenceWords": [
@@ -557,12 +515,11 @@
           "language": "en",
           "start": 25.545,
           "end": 25.785,
-          "duration": 0.24,
-          "wordText": "we",
+          "duration": 0.23999999999999844,
+          "wordText": "Wir",
           "punctuatedWordText": "We",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -570,12 +527,11 @@
           "language": "en",
           "start": 25.785,
           "end": 25.945,
-          "duration": 0.16,
-          "wordText": "know",
+          "duration": 0.16000000000000014,
+          "wordText": "wissen",
           "punctuatedWordText": "know",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -583,12 +539,11 @@
           "language": "en",
           "start": 25.945,
           "end": 26.185,
-          "duration": 0.24,
-          "wordText": "that",
+          "duration": 0.23999999999999844,
+          "wordText": "Das",
           "punctuatedWordText": "that",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -596,12 +551,11 @@
           "language": "en",
           "start": 26.185,
           "end": 26.345,
-          "duration": 0.16,
-          "wordText": "new",
+          "duration": 0.16000000000000014,
+          "wordText": "neu",
           "punctuatedWordText": "new",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -610,11 +564,10 @@
           "start": 26.345,
           "end": 26.845,
           "duration": 0.5,
-          "wordText": "technology",
+          "wordText": "Technologie",
           "punctuatedWordText": "technology",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -622,12 +575,11 @@
           "language": "en",
           "start": 26.985,
           "end": 27.305,
-          "duration": 0.32,
-          "wordText": "helps",
+          "duration": 0.3200000000000003,
+          "wordText": "hilft",
           "punctuatedWordText": "helps",
           "confidence": 0.9633789,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -635,12 +587,11 @@
           "language": "en",
           "start": 27.305,
           "end": 27.705,
-          "duration": 0.4,
-          "wordText": "save",
+          "duration": 0.3999999999999986,
+          "wordText": "speichern",
           "punctuatedWordText": "save",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -648,12 +599,11 @@
           "language": "en",
           "start": 27.705,
           "end": 28.105,
-          "duration": 0.4,
-          "wordText": "lives",
+          "duration": 0.40000000000000213,
+          "wordText": "Leben",
           "punctuatedWordText": "lives,",
           "confidence": 0.8864746,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -662,11 +612,10 @@
           "start": 28.105,
           "end": 28.605,
           "duration": 0.5,
-          "wordText": "but",
+          "wordText": "Aber",
           "punctuatedWordText": "but",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -674,12 +623,11 @@
           "language": "en",
           "start": 28.985,
           "end": 29.065,
-          "duration": 0.08,
-          "wordText": "what",
+          "duration": 0.08000000000000185,
+          "wordText": "Was",
           "punctuatedWordText": "what",
           "confidence": 0.9921875,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -687,12 +635,11 @@
           "language": "en",
           "start": 29.065,
           "end": 29.305,
-          "duration": 0.24,
-          "wordText": "about",
+          "duration": 0.23999999999999844,
+          "wordText": "um",
           "punctuatedWordText": "about",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -700,12 +647,11 @@
           "language": "en",
           "start": 29.305,
           "end": 29.465,
-          "duration": 0.16,
-          "wordText": "the",
+          "duration": 0.16000000000000014,
+          "wordText": "Die",
           "punctuatedWordText": "the",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "article"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -713,12 +659,11 @@
           "language": "en",
           "start": 29.465,
           "end": 29.785,
-          "duration": 0.32,
-          "wordText": "health",
+          "duration": 0.3200000000000003,
+          "wordText": "Gesundheit",
           "punctuatedWordText": "health",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -726,12 +671,11 @@
           "language": "en",
           "start": 29.785,
           "end": 30.265,
-          "duration": 0.48,
-          "wordText": "risks",
+          "duration": 0.4800000000000004,
+          "wordText": "Risiken",
           "punctuatedWordText": "risks",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -739,12 +683,11 @@
           "language": "en",
           "start": 30.265,
           "end": 30.585,
-          "duration": 0.32,
-          "wordText": "from",
+          "duration": 0.3200000000000003,
+          "wordText": "aus",
           "punctuatedWordText": "from",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -752,12 +695,11 @@
           "language": "en",
           "start": 30.585,
           "end": 31.065,
-          "duration": 0.48,
-          "wordText": "being",
+          "duration": 0.4800000000000004,
+          "wordText": "Sein",
           "punctuatedWordText": "being",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -766,11 +708,10 @@
           "start": 31.065,
           "end": 31.565,
           "duration": 0.5,
-          "wordText": "so",
+          "wordText": "Also",
           "punctuatedWordText": "so",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "adverb"
+          "libraryId": null
         },
         {
           "sentenceNo": 6,
@@ -779,22 +720,20 @@
           "start": 31.83,
           "end": 32.33,
           "duration": 0.5,
-          "wordText": "sedentary",
+          "wordText": "sitzend",
           "punctuatedWordText": "sedentary?",
           "confidence": 0.9863281,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7513c6d43f7c0126d5d",
-      "language": "en",
+      "_id": "663fa77f3c6d43f7c0126d90",
+      "language": "de",
       "sentenceNo": 6,
-      "sentenceText": "We know that new technology helps save lives, but what about the health risks from being so sedentary?",
+      "sentenceText": "Wir wissen, dass neue Technologien dabei helfen, Leben zu retten. Doch wie steht es mit den gesundheitlichen Risiken, die eine so sitzende Tätigkeit mit sich bringt?",
       "start": 25.545,
       "end": 32.33,
-      "duration": 6.785,
-      "libraryId": "663fa7513c6d43f7c0126d5d",
-      "tense": "Simple Present"
+      "duration": 6.784999999999997,
+      "libraryId": "663fa77f3c6d43f7c0126d90"
     },
     {
       "sentenceWords": [
@@ -804,12 +743,11 @@
           "language": "en",
           "start": 32.47,
           "end": 32.71,
-          "duration": 0.24,
-          "wordText": "are",
+          "duration": 0.240000000000002,
+          "wordText": "Sind",
           "punctuatedWordText": "Are",
           "confidence": 0.9941406,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -817,12 +755,11 @@
           "language": "en",
           "start": 32.71,
           "end": 32.95,
-          "duration": 0.24,
-          "wordText": "we",
+          "duration": 0.240000000000002,
+          "wordText": "Wir",
           "punctuatedWordText": "we",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -830,12 +767,11 @@
           "language": "en",
           "start": 32.95,
           "end": 33.35,
-          "duration": 0.4,
-          "wordText": "more",
+          "duration": 0.3999999999999986,
+          "wordText": "mehr",
           "punctuatedWordText": "more",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "adverb"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -844,11 +780,10 @@
           "start": 33.35,
           "end": 33.85,
           "duration": 0.5,
-          "wordText": "distracted",
+          "wordText": "abgelenkt",
           "punctuatedWordText": "distracted",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -856,12 +791,11 @@
           "language": "en",
           "start": 33.91,
           "end": 34.31,
-          "duration": 0.4,
-          "wordText": "or",
+          "duration": 0.4000000000000057,
+          "wordText": "oder",
           "punctuatedWordText": "or",
           "confidence": 0.59765625,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -869,12 +803,11 @@
           "language": "en",
           "start": 34.31,
           "end": 34.55,
-          "duration": 0.24,
-          "wordText": "are",
+          "duration": 0.23999999999999488,
+          "wordText": "Sind",
           "punctuatedWordText": "are",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -882,12 +815,11 @@
           "language": "en",
           "start": 34.55,
           "end": 34.79,
-          "duration": 0.24,
-          "wordText": "we",
+          "duration": 0.240000000000002,
+          "wordText": "Wir",
           "punctuatedWordText": "we",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -895,12 +827,11 @@
           "language": "en",
           "start": 34.79,
           "end": 35.27,
-          "duration": 0.48,
-          "wordText": "more",
+          "duration": 0.480000000000004,
+          "wordText": "mehr",
           "punctuatedWordText": "more",
           "confidence": 0.9941406,
-          "libraryId": null,
-          "partOfSpeech": "adverb"
+          "libraryId": null
         },
         {
           "sentenceNo": 7,
@@ -909,22 +840,20 @@
           "start": 35.27,
           "end": 35.77,
           "duration": 0.5,
-          "wordText": "engaged",
+          "wordText": "beschäftigt",
           "punctuatedWordText": "engaged?",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7523c6d43f7c0126d5f",
-      "language": "en",
+      "_id": "663fa77f3c6d43f7c0126d92",
+      "language": "de",
       "sentenceNo": 7,
-      "sentenceText": "Are we more distracted or are we more engaged?",
+      "sentenceText": "Sind wir eher abgelenkt oder engagierter?",
       "start": 32.47,
       "end": 35.77,
       "duration": 3.3000000000000043,
-      "libraryId": "663fa7523c6d43f7c0126d5f",
-      "tense": "Present Continuous"
+      "libraryId": "663fa77f3c6d43f7c0126d92"
     },
     {
       "sentenceWords": [
@@ -935,11 +864,10 @@
           "start": 35.989998,
           "end": 36.23,
           "duration": 0.24000199999999694,
-          "wordText": "what",
+          "wordText": "Was",
           "punctuatedWordText": "What",
           "confidence": 0.9604492,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -948,11 +876,10 @@
           "start": 36.23,
           "end": 36.31,
           "duration": 0.0800000000000054,
-          "wordText": "are",
+          "wordText": "Sind",
           "punctuatedWordText": "are",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -961,11 +888,10 @@
           "start": 36.31,
           "end": 36.47,
           "duration": 0.1599999999999966,
-          "wordText": "the",
+          "wordText": "Die",
           "punctuatedWordText": "the",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "determiner"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -974,11 +900,10 @@
           "start": 36.47,
           "end": 36.79,
           "duration": 0.3200000000000003,
-          "wordText": "effects",
+          "wordText": "Auswirkungen",
           "punctuatedWordText": "effects",
           "confidence": 0.9902344,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -987,11 +912,10 @@
           "start": 36.79,
           "end": 37.03,
           "duration": 0.240000000000002,
-          "wordText": "of",
+          "wordText": "von",
           "punctuatedWordText": "of",
           "confidence": 0.99609375,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -1000,11 +924,10 @@
           "start": 37.03,
           "end": 37.43,
           "duration": 0.3999999999999986,
-          "wordText": "adding",
+          "wordText": "Hinzufügen",
           "punctuatedWordText": "adding",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -1013,11 +936,10 @@
           "start": 37.43,
           "end": 37.93,
           "duration": 0.5,
-          "wordText": "metrics",
+          "wordText": "Metriken",
           "punctuatedWordText": "metrics",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -1026,11 +948,10 @@
           "start": 38.07,
           "end": 38.31,
           "duration": 0.240000000000002,
-          "wordText": "to",
+          "wordText": "Zu",
           "punctuatedWordText": "to",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -1039,11 +960,10 @@
           "start": 38.31,
           "end": 38.71,
           "duration": 0.3999999999999986,
-          "wordText": "our",
+          "wordText": "unser",
           "punctuatedWordText": "our",
           "confidence": 0.99609375,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -1052,11 +972,10 @@
           "start": 38.71,
           "end": 39.21,
           "duration": 0.5,
-          "wordText": "social",
+          "wordText": "Sozial",
           "punctuatedWordText": "social",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 8,
@@ -1065,22 +984,20 @@
           "start": 39.27,
           "end": 39.755,
           "duration": 0.48499999999999943,
-          "wordText": "interactions",
+          "wordText": "Wechselwirkungen",
           "punctuatedWordText": "interactions?",
           "confidence": 0.90722656,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7523c6d43f7c0126d61",
-      "language": "en",
+      "_id": "663fa7803c6d43f7c0126d94",
+      "language": "de",
       "sentenceNo": 8,
-      "sentenceText": "What are the effects of adding metrics to our social interactions?",
+      "sentenceText": "Welche Auswirkungen hat das Hinzufügen von Metriken zu unseren sozialen Interaktionen?",
       "start": 35.989998,
       "end": 39.755,
       "duration": 3.7650020000000026,
-      "libraryId": "663fa7523c6d43f7c0126d61",
-      "tense": "Simple Present"
+      "libraryId": "663fa7803c6d43f7c0126d94"
     },
     {
       "sentenceWords": [
@@ -1091,11 +1008,10 @@
           "start": 40.635002,
           "end": 40.715,
           "duration": 0.07999800000000334,
-          "wordText": "and",
+          "wordText": "Und",
           "punctuatedWordText": "And",
           "confidence": 0.7011719,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1104,11 +1020,10 @@
           "start": 40.715,
           "end": 40.875,
           "duration": 0.1599999999999966,
-          "wordText": "what",
+          "wordText": "Was",
           "punctuatedWordText": "what",
           "confidence": 0.9135742,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1117,11 +1032,10 @@
           "start": 40.875,
           "end": 41.035,
           "duration": 0.1599999999999966,
-          "wordText": "does",
+          "wordText": "tut",
           "punctuatedWordText": "does",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1130,11 +1044,10 @@
           "start": 41.035,
           "end": 41.195,
           "duration": 0.1600000000000037,
-          "wordText": "it",
+          "wordText": "Es",
           "punctuatedWordText": "it",
           "confidence": 0.9902344,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1143,11 +1056,10 @@
           "start": 41.195,
           "end": 41.435,
           "duration": 0.240000000000002,
-          "wordText": "mean",
+          "wordText": "bedeuten",
           "punctuatedWordText": "mean",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1156,11 +1068,10 @@
           "start": 41.435,
           "end": 41.595,
           "duration": 0.1599999999999966,
-          "wordText": "that",
+          "wordText": "Das",
           "punctuatedWordText": "that",
           "confidence": 0.8989258,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1169,11 +1080,10 @@
           "start": 41.595,
           "end": 41.755,
           "duration": 0.1600000000000037,
-          "wordText": "you",
+          "wordText": "Du",
           "punctuatedWordText": "you",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1182,11 +1092,10 @@
           "start": 41.755,
           "end": 41.995003,
           "duration": 0.24000299999999442,
-          "wordText": "can",
+          "wordText": "dürfen",
           "punctuatedWordText": "can",
           "confidence": 0.9892578,
-          "libraryId": null,
-          "partOfSpeech": "modal verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1195,11 +1104,10 @@
           "start": 41.995003,
           "end": 42.495003,
           "duration": 0.5,
-          "wordText": "publish",
+          "wordText": "veröffentlichen",
           "punctuatedWordText": "publish",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1208,11 +1116,10 @@
           "start": 42.555,
           "end": 43.055,
           "duration": 0.5,
-          "wordText": "anywhere",
+          "wordText": "überall",
           "punctuatedWordText": "anywhere",
           "confidence": 0.99609375,
-          "libraryId": null,
-          "partOfSpeech": "adverb"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1221,11 +1128,10 @@
           "start": 43.115,
           "end": 43.355,
           "duration": 0.23999999999999488,
-          "wordText": "at",
+          "wordText": "bei",
           "punctuatedWordText": "at",
           "confidence": 0.8769531,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1234,11 +1140,10 @@
           "start": 43.355,
           "end": 43.675,
           "duration": 0.3200000000000003,
-          "wordText": "any",
+          "wordText": "beliebig",
           "punctuatedWordText": "any",
           "confidence": 0.7260742,
-          "libraryId": null,
-          "partOfSpeech": "determiner"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1247,11 +1152,10 @@
           "start": 43.675,
           "end": 44.175,
           "duration": 0.5,
-          "wordText": "time",
+          "wordText": "Zeit",
           "punctuatedWordText": "time",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1260,11 +1164,10 @@
           "start": 44.395,
           "end": 44.795002,
           "duration": 0.40000199999999353,
-          "wordText": "and",
+          "wordText": "Und",
           "punctuatedWordText": "and",
           "confidence": 0.88720703,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1273,11 +1176,10 @@
           "start": 44.795002,
           "end": 45.195,
           "duration": 0.39999800000000363,
-          "wordText": "share",
+          "wordText": "Aktie",
           "punctuatedWordText": "share",
           "confidence": 0.9921875,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1286,11 +1188,10 @@
           "start": 45.195,
           "end": 45.515,
           "duration": 0.3200000000000003,
-          "wordText": "your",
+          "wordText": "dein",
           "punctuatedWordText": "your",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1299,11 +1200,10 @@
           "start": 45.515,
           "end": 45.915,
           "duration": 0.3999999999999986,
-          "wordText": "voice",
+          "wordText": "Stimme",
           "punctuatedWordText": "voice",
           "confidence": 0.9941406,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1312,11 +1212,10 @@
           "start": 45.915,
           "end": 46.155,
           "duration": 0.240000000000002,
-          "wordText": "with",
+          "wordText": "mit",
           "punctuatedWordText": "with",
           "confidence": 0.9941406,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1325,11 +1224,10 @@
           "start": 46.155,
           "end": 46.315002,
           "duration": 0.16000199999999865,
-          "wordText": "the",
+          "wordText": "Die",
           "punctuatedWordText": "the",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "determiner"
+          "libraryId": null
         },
         {
           "sentenceNo": 9,
@@ -1338,22 +1236,20 @@
           "start": 46.315002,
           "end": 46.815002,
           "duration": 0.5,
-          "wordText": "world?",
+          "wordText": "Welt",
           "punctuatedWordText": "world?",
           "confidence": 0.9904785,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7533c6d43f7c0126d63",
-      "language": "en",
+      "_id": "663fa7803c6d43f7c0126d96",
+      "language": "de",
       "sentenceNo": 9,
-      "sentenceText": "And what does it mean that you can publish anywhere at any time and share your voice with the world?",
+      "sentenceText": "Und was bedeutet es, dass Sie jederzeit und überall veröffentlichen und Ihre Stimme mit der Welt teilen können?",
       "start": 40.635002,
       "end": 46.815002,
       "duration": 6.18,
-      "libraryId": "663fa7533c6d43f7c0126d63",
-      "tense": "Simple Present"
+      "libraryId": "663fa7803c6d43f7c0126d96"
     },
     {
       "sentenceWords": [
@@ -1364,11 +1260,10 @@
           "start": 47.5,
           "end": 47.82,
           "duration": 0.3200000000000003,
-          "wordText": "explore",
+          "wordText": "erkunden",
           "punctuatedWordText": "Explore",
           "confidence": 0.9941406,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1377,11 +1272,10 @@
           "start": 47.82,
           "end": 48.06,
           "duration": 0.240000000000002,
-          "wordText": "the",
+          "wordText": "Die",
           "punctuatedWordText": "the",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "determiner"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1390,11 +1284,10 @@
           "start": 48.06,
           "end": 48.38,
           "duration": 0.3200000000000003,
-          "wordText": "pros",
+          "wordText": "Profis",
           "punctuatedWordText": "pros",
           "confidence": 0.97802734,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1403,11 +1296,10 @@
           "start": 48.38,
           "end": 48.54,
           "duration": 0.1599999999999966,
-          "wordText": "and",
+          "wordText": "Und",
           "punctuatedWordText": "and",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1416,11 +1308,10 @@
           "start": 48.54,
           "end": 48.86,
           "duration": 0.3200000000000003,
-          "wordText": "cons",
+          "wordText": "Nachteile",
           "punctuatedWordText": "cons",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1429,11 +1320,10 @@
           "start": 48.86,
           "end": 49.100002,
           "duration": 0.24000200000000405,
-          "wordText": "of",
+          "wordText": "von",
           "punctuatedWordText": "of",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1442,11 +1332,10 @@
           "start": 49.100002,
           "end": 49.600002,
           "duration": 0.5,
-          "wordText": "technology",
+          "wordText": "Technologie",
           "punctuatedWordText": "technology",
           "confidence": 0.99121094,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1455,11 +1344,10 @@
           "start": 49.9,
           "end": 50.06,
           "duration": 0.1600000000000037,
-          "wordText": "and",
+          "wordText": "Und",
           "punctuatedWordText": "and",
           "confidence": 0.96777344,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1468,11 +1356,10 @@
           "start": 50.06,
           "end": 50.46,
           "duration": 0.3999999999999986,
-          "wordText": "defend",
+          "wordText": "verteidigen",
           "punctuatedWordText": "defend",
           "confidence": 0.9980469,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1481,11 +1368,10 @@
           "start": 50.46,
           "end": 50.78,
           "duration": 0.3200000000000003,
-          "wordText": "whether",
+          "wordText": "ob",
           "punctuatedWordText": "whether",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1494,11 +1380,10 @@
           "start": 50.78,
           "end": 51.02,
           "duration": 0.240000000000002,
-          "wordText": "it's",
+          "wordText": "es ist",
           "punctuatedWordText": "it's",
           "confidence": 0.9824219,
-          "libraryId": null,
-          "partOfSpeech": "pronoun"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1507,11 +1392,10 @@
           "start": 51.02,
           "end": 51.420002,
           "duration": 0.40000199999999353,
-          "wordText": "making",
+          "wordText": "Herstellung",
           "punctuatedWordText": "making",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1520,11 +1404,10 @@
           "start": 51.420002,
           "end": 51.920002,
           "duration": 0.5,
-          "wordText": "life",
+          "wordText": "Leben",
           "punctuatedWordText": "life",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1533,11 +1416,10 @@
           "start": 51.98,
           "end": 52.3,
           "duration": 0.3200000000000003,
-          "wordText": "better",
+          "wordText": "besser",
           "punctuatedWordText": "better",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1546,11 +1428,10 @@
           "start": 52.3,
           "end": 52.62,
           "duration": 0.3200000000000003,
-          "wordText": "or",
+          "wordText": "oder",
           "punctuatedWordText": "or",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1559,11 +1440,10 @@
           "start": 52.62,
           "end": 53.12,
           "duration": 0.5,
-          "wordText": "worse",
+          "wordText": "schlechter",
           "punctuatedWordText": "worse",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1572,11 +1452,10 @@
           "start": 53.5,
           "end": 53.82,
           "duration": 0.3200000000000003,
-          "wordText": "here",
+          "wordText": "Hier",
           "punctuatedWordText": "here",
           "confidence": 0.95166016,
-          "libraryId": null,
-          "partOfSpeech": "adverb"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1585,11 +1464,10 @@
           "start": 53.82,
           "end": 53.98,
           "duration": 0.1599999999999966,
-          "wordText": "on",
+          "wordText": "An",
           "punctuatedWordText": "on",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 10,
@@ -1598,22 +1476,20 @@
           "start": 53.98,
           "end": 54.48,
           "duration": 0.5,
-          "wordText": "earth",
+          "wordText": "Erde",
           "punctuatedWordText": "earth.",
           "confidence": 0.8234863,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7533c6d43f7c0126d65",
-      "language": "en",
+      "_id": "663fa7803c6d43f7c0126d98",
+      "language": "de",
       "sentenceNo": 10,
-      "sentenceText": "Explore the pros and cons of technology and defend whether it's making life better or worse here on earth.",
+      "sentenceText": "Erkunden Sie die Vor- und Nachteile der Technologie und begründen Sie, ob sie das Leben hier auf der Erde besser oder schlechter macht.",
       "start": 47.5,
       "end": 54.48,
       "duration": 6.979999999999997,
-      "libraryId": "663fa7533c6d43f7c0126d65",
-      "tense": "Simple Present"
+      "libraryId": "663fa7803c6d43f7c0126d98"
     },
     {
       "sentenceWords": [
@@ -1623,12 +1499,11 @@
           "language": "en",
           "start": 54.835,
           "end": 54.995,
-          "duration": 0.16,
-          "wordText": "be",
+          "duration": 0.1599999999999966,
+          "wordText": "Sei",
           "punctuatedWordText": "Be",
           "confidence": 0.9970703,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
@@ -1636,12 +1511,11 @@
           "language": "en",
           "start": 54.995,
           "end": 55.235,
-          "duration": 0.24,
-          "wordText": "sure",
+          "duration": 0.240000000000002,
+          "wordText": "Sicher",
           "punctuatedWordText": "sure",
           "confidence": 1,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
@@ -1649,12 +1523,11 @@
           "language": "en",
           "start": 55.235,
           "end": 55.635,
-          "duration": 0.4,
-          "wordText": "to",
+          "duration": 0.3999999999999986,
+          "wordText": "Zu",
           "punctuatedWordText": "to",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "preposition"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
@@ -1663,11 +1536,10 @@
           "start": 55.635,
           "end": 56.135,
           "duration": 0.5,
-          "wordText": "include",
+          "wordText": "enthalten",
           "punctuatedWordText": "include",
           "confidence": 0.99902344,
-          "libraryId": null,
-          "partOfSpeech": "verb"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
@@ -1676,24 +1548,22 @@
           "start": 56.195,
           "end": 56.695,
           "duration": 0.5,
-          "wordText": "facts",
+          "wordText": "Fakten",
           "punctuatedWordText": "facts",
           "confidence": 0.99609375,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
           "position": 5,
           "language": "en",
-          "start": 56.755,
+          "start": 56.754997,
           "end": 57.235,
-          "duration": 0.48,
-          "wordText": "and",
+          "duration": 0.4800029999999964,
+          "wordText": "Und",
           "punctuatedWordText": "and",
           "confidence": 0.9892578,
-          "libraryId": null,
-          "partOfSpeech": "conjunction"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
@@ -1701,12 +1571,11 @@
           "language": "en",
           "start": 57.235,
           "end": 57.715,
-          "duration": 0.48,
-          "wordText": "deep",
+          "duration": 0.480000000000004,
+          "wordText": "tief",
           "punctuatedWordText": "deep",
           "confidence": 0.9951172,
-          "libraryId": null,
-          "partOfSpeech": "adjective"
+          "libraryId": null
         },
         {
           "sentenceNo": 11,
@@ -1715,22 +1584,20 @@
           "start": 57.715,
           "end": 58.215,
           "duration": 0.5,
-          "wordText": "analysis",
+          "wordText": "Analyse",
           "punctuatedWordText": "analysis.",
           "confidence": 0.9946289,
-          "libraryId": null,
-          "partOfSpeech": "noun"
+          "libraryId": null
         }
       ],
-      "_id": "663fa7533c6d43f7c0126d67",
-      "language": "en",
+      "_id": "663fa7813c6d43f7c0126d9a",
+      "language": "de",
       "sentenceNo": 11,
-      "sentenceText": "Be sure to include facts and deep analysis.",
+      "sentenceText": "Achten Sie darauf, Fakten und gründliche Analysen einzubeziehen.",
       "start": 54.835,
       "end": 58.215,
-      "duration": 3.38,
-      "libraryId": "663fa7533c6d43f7c0126d67",
-      "tense": "Simple Present"
+      "duration": 3.3800000000000026,
+      "libraryId": "663fa7813c6d43f7c0126d9a"
     }
   ],
   "libraryId": "663fa74f3c6d43f7c0126d4f",
@@ -1738,349 +1605,10 @@
   "countOfSentences": 11,
   "start": 0.88,
   "end": 58.215,
-  "language": "en",
-  "targetLanguage": "es",
+  "language": "de",
+  "targetLanguage": "de",
   "videoId": "7rbDIx69ORE",
   "title": "Is technology making life better or worse?",
   "label": "video",
-  "totalSentences": 11,
-  "processed": true,
-  "quizzes": [
-    {
-      "quizTopic": "Reading Comprehension: Understanding the Main Ideas",
-      "quizQuestions": [
-        {
-          "question": "What is one potential negative effect of technology on social interactions?",
-          "questionType": "text",
-          "answers": [
-            "It brings people closer together.",
-            "It can lead to increased misinformation.",
-            "It makes people more sedentary.",
-            "It allows people to publish their voice anytime."
-          ],
-          "correctAnswer": "2",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "Technology can lead to increased misinformation, which is a potential negative effect on social interactions.",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following are considered benefits of new technology?",
-          "questionType": "text",
-          "answers": [
-            "Saving lives",
-            "Allowing people to publish their voice anytime",
-            "Increasing sedentary behavior",
-            "Bringing people together"
-          ],
-          "correctAnswer": [1, 2, 4],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "New technology is beneficial in saving lives, allowing people to publish their voice anytime, and bringing people together.",
-          "point": "20"
-        },
-        {
-          "question": "What is a potential health risk associated with new technology?",
-          "questionType": "text",
-          "answers": [
-            "Increased engagement",
-            "Increased sedentary behavior",
-            "Ability to publish anytime",
-            "Enhanced social metrics"
-          ],
-          "correctAnswer": "2",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "Increased sedentary behavior is a potential health risk associated with new technology.",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following are potential negative effects of technology?",
-          "questionType": "text",
-          "answers": [
-            "Increased misinformation",
-            "Enhanced social metrics",
-            "Increased sedentary behavior",
-            "Increased engagement"
-          ],
-          "correctAnswer": [1, 3],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "Increased misinformation and increased sedentary behavior are potential negative effects of technology.",
-          "point": "20"
-        },
-        {
-          "question": "What does the ability to publish anywhere at any time mean for individuals?",
-          "questionType": "text",
-          "answers": [
-            "It increases sedentary behavior.",
-            "It allows individuals to share their voice with the world.",
-            "It enhances social metrics.",
-            "It leads to increased misinformation."
-          ],
-          "correctAnswer": "2",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The ability to publish anywhere at any time allows individuals to share their voice with the world.",
-          "point": "20"
-        }
-      ]
-    },
-    {
-      "quizTopic": "Grammar Focus: Understanding Sentence Structure",
-      "quizQuestions": [
-        {
-          "question": "What is the main clause in the following sentence: 'Although it was raining, we decided to go for a walk'?",
-          "questionType": "text",
-          "answers": [
-            "Although it was raining",
-            "we decided to go for a walk",
-            "it was raining",
-            "to go for a walk"
-          ],
-          "correctAnswer": "2",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The main clause is 'we decided to go for a walk' because it can stand alone as a complete sentence.",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following are types of dependent clauses?",
-          "questionType": "text",
-          "answers": [
-            "Noun clause",
-            "Adjective clause",
-            "Adverb clause",
-            "Independent clause"
-          ],
-          "correctAnswer": [1, 2, 3],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "Noun clauses, adjective clauses, and adverb clauses are all types of dependent clauses, while an independent clause can stand alone as a sentence.",
-          "point": "20"
-        },
-        {
-          "question": "Identify the subject in the following sentence: 'The quick brown fox jumps over the lazy dog.'",
-          "questionType": "text",
-          "answers": [
-            "The quick brown fox",
-            "jumps",
-            "over the lazy dog",
-            "the lazy dog"
-          ],
-          "correctAnswer": "1",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The subject of the sentence is 'The quick brown fox' as it is the noun phrase that performs the action.",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following sentences contain a compound predicate?",
-          "questionType": "text",
-          "answers": [
-            "She danced gracefully and sang beautifully.",
-            "He went to the store and bought some milk.",
-            "The cat slept on the mat.",
-            "They studied hard for the exam."
-          ],
-          "correctAnswer": [1, 2],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "A compound predicate contains two or more verbs or verb phrases that share the same subject. 'She danced gracefully and sang beautifully' and 'He went to the store and bought some milk' both have compound predicates.",
-          "point": "20"
-        },
-        {
-          "question": "What is the function of a coordinating conjunction in a sentence?",
-          "questionType": "text",
-          "answers": [
-            "To connect words, phrases, or clauses of equal importance",
-            "To introduce a dependent clause",
-            "To show possession",
-            "To modify a noun"
-          ],
-          "correctAnswer": "1",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "A coordinating conjunction connects words, phrases, or clauses of equal importance, such as 'and', 'but', 'or', 'nor', 'for', 'so', and 'yet'.",
-          "point": "20"
-        }
-      ]
-    },
-    {
-      "quizTopic": "Grammar Check: Identifying Errors",
-      "quizQuestions": [
-        {
-          "question": "Which of the following sentences contains a grammatical error?",
-          "questionType": "text",
-          "answers": [
-            "She don't like apples.",
-            "He doesn't like apples.",
-            "They like apples."
-          ],
-          "correctAnswer": "1",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The correct sentence should be 'She doesn't like apples.'",
-          "point": "20"
-        },
-        {
-          "question": "Identify the error in the following sentence: 'Each of the students have their own book.'",
-          "questionType": "text",
-          "answers": [
-            "Subject-verb agreement",
-            "Pronoun-antecedent agreement",
-            "Tense consistency"
-          ],
-          "correctAnswer": "1",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The correct sentence should be 'Each of the students has their own book.'",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following sentences is grammatically correct?",
-          "questionType": "text",
-          "answers": [
-            "She and him went to the store.",
-            "She and he went to the store.",
-            "Him and her went to the store.",
-            "He and she went to the store."
-          ],
-          "correctAnswer": [2, 4],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The correct sentences are 'She and he went to the store.' and 'He and she went to the store.'",
-          "point": "20"
-        },
-        {
-          "question": "What is the error in the following sentence: 'The team are winning the game.'?",
-          "questionType": "text",
-          "answers": [
-            "Subject-verb agreement",
-            "Pronoun-antecedent agreement",
-            "Tense consistency"
-          ],
-          "correctAnswer": "1",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The correct sentence should be 'The team is winning the game.'",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following sentences contains a misplaced modifier?",
-          "questionType": "text",
-          "answers": [
-            "Running quickly, the dog caught the ball.",
-            "The dog caught the ball running quickly.",
-            "The ball was caught by the dog running quickly."
-          ],
-          "correctAnswer": "2",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The correct sentence should be 'Running quickly, the dog caught the ball.'",
-          "point": "20"
-        }
-      ]
-    },
-    {
-      "quizTopic": "Reading Comprehension: Analyzing Dialogue",
-      "quizQuestions": [
-        {
-          "question": "What is the main theme discussed in the dialogue about technology?",
-          "questionType": "text",
-          "answers": [
-            "The benefits of technology",
-            "The potential negative effects of technology",
-            "The overall impact of technology on life",
-            "The health risks associated with technology"
-          ],
-          "correctAnswer": "3",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The main theme discussed in the dialogue is the overall impact of technology on life, including both its benefits and potential negative effects.",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following statements from the dialogue suggests that technology can have a negative impact on social interactions?",
-          "questionType": "text",
-          "answers": [
-            "Our devices allow us to do things that were previously unimaginable.",
-            "Do our devices bring us together or are they separating us?",
-            "We know that new technology helps save lives.",
-            "What are the effects of adding metrics to our social interactions?"
-          ],
-          "correctAnswer": [2, 4],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The statements 'Do our devices bring us together or are they separating us?' and 'What are the effects of adding metrics to our social interactions?' suggest that technology can have a negative impact on social interactions.",
-          "point": "20"
-        },
-        {
-          "question": "What question does the dialogue raise about the health risks associated with technology?",
-          "questionType": "text",
-          "answers": [
-            "Are we more distracted or are we more engaged?",
-            "What are the effects of adding metrics to our social interactions?",
-            "Are we more likely to believe misinformation?",
-            "What about the health risks from being so sedentary?"
-          ],
-          "correctAnswer": "4",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The dialogue raises the question 'What about the health risks from being so sedentary?' to discuss the health risks associated with technology.",
-          "point": "20"
-        },
-        {
-          "question": "Which of the following are potential benefits of technology mentioned in the dialogue?",
-          "questionType": "text",
-          "answers": [
-            "Devices allow us to do things that were previously unimaginable.",
-            "Technology helps save lives.",
-            "Technology makes us more sedentary.",
-            "Technology can lead to misinformation."
-          ],
-          "correctAnswer": [1, 2],
-          "answerSelectionType": "multiple",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The potential benefits of technology mentioned in the dialogue include that devices allow us to do things that were previously unimaginable and that technology helps save lives.",
-          "point": "20"
-        },
-        {
-          "question": "What does the dialogue suggest about the ability to publish anywhere at any time?",
-          "questionType": "text",
-          "answers": [
-            "It can lead to misinformation.",
-            "It allows individuals to share their voice with the world.",
-            "It makes people more sedentary.",
-            "It adds metrics to social interactions."
-          ],
-          "correctAnswer": "2",
-          "answerSelectionType": "single",
-          "messageForCorrectAnswer": "Correct answer. Good job.",
-          "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-          "explanation": "The dialogue suggests that the ability to publish anywhere at any time allows individuals to share their voice with the world.",
-          "point": "20"
-        }
-      ]
-    }
-  ]
+  "totalSentences": 0
 }
