@@ -176,7 +176,7 @@ const RightBlock = ({
 
   useEffect(() => {
     if (isPlaying && !emailSent) {
-      postPauseNotified();
+      //postPauseNotified();
       setEmailSent(true);
     }
   }, [isPlaying, emailSent]);
