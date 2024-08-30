@@ -78,7 +78,6 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     const endIndexRef = useRef<number | null>(null);
     const intervalId = React.useRef<NodeJS.Timeout>();
     const [hasVideoPaused, setHasVideoPaused] = useState(true);
-    const [isPlayerReady, setIsPlayerReady] = useState(false);
     const hasSeekHappenedRef = useRef(false);
     const isMounted = useRef(true); // Set to true initially
 
@@ -511,6 +510,10 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
 
       const currentTime = playerRef.current.getCurrentTime();
       const startIndex = getCurrentIndex(snapshotsRef.current!, currentTime);
+
+      if (startIndex === -1) {
+        return;
+      }
 
       const pageNumber = calculatePage(
         startIndex,
