@@ -48,7 +48,7 @@ import { currentPageState } from "@/stores/library";
 import { pageSizeState } from "@/stores/library";
 import styles from "./index.module.less";
 import { Snapshot } from "@/models/snapshot.interfaces";
-import { getSnapshots } from "@/services/snapshotService";
+import { getPageNumber, getSnapshots } from "@/services/snapshotService";
 import { userState } from "@/stores/user";
 import EmbeddedVideo from "./components/EmbeddedVideo/EmbeddedVideo";
 import PricingComponent from "@/pages/webLayout/shared/components/Pricing/PricingComponent";
@@ -336,15 +336,23 @@ const BookDetail: FC = () => {
       pageSize: number,
       changeTriggeredByHighlightChange: boolean = false,
       changeTriggeredFromVideo: boolean = false,
-      changeTriggeredFromVideoFetch: boolean = false
+      changeTriggeredFromVideoFetch: boolean = false,
+      time?: number
     ) => {
       const newQueryParams = new URLSearchParams(location.search);
       newQueryParams.set("currentPage", page.toString());
       newQueryParams.set("pageSize", pageSize.toString());
       let localSentenceFrom;
 
+      /* if (time) {
+        localSentenceFrom = (page - 1) * pageSize + 1;
+        await fetchAndUpdate(localSentenceFrom);
+        const newPageNumber = await getPageNumber(libraryId!, time);
+        dispatch({ type: "setCurrentPage", payload: newPageNumber });
+      } */
+
       if (changeTriggeredFromVideo) {
-        if (changeTriggeredFromVideoFetch) {
+        if (changeTriggeredFromVideoFetch && time) {
           localSentenceFrom = (page - 1) * pageSize + 1;
           await fetchAndUpdate(localSentenceFrom);
           dispatch({ type: "setSentenceFrom", payload: localSentenceFrom });
@@ -357,6 +365,7 @@ const BookDetail: FC = () => {
       } else {
         await updateReadingProgress(libraryId, page, pageSize);
         if (state.initState) {
+          console.log("VLAAM");
           localSentenceFrom = changeTriggeredFromVideo
             ? (page - 1) * state.pageSizeFromQuery + 1
             : (state.currentPageFromQuery - 1) * state.pageSizeFromQuery + 1;
@@ -479,7 +488,7 @@ const BookDetail: FC = () => {
       params.set("targetLanguage", value);
       window.history.replaceState({}, "", `${url.pathname}?${params}`);
     }
-  }, [user.targetLanguage, dispatch, state.sentenceFrom]);
+  }, [user.targetLanguage]);
 
   const handleModeChange = useCallback((e: RadioChangeEvent) => {
     dispatch({ type: "setMode", payload: e.target.value });
@@ -520,7 +529,7 @@ const BookDetail: FC = () => {
       );
 
       if (!isLanguageInSnapshots && snapshots.length > 0) {
-        language = snapshots[1].language;
+        //language = snapshots[1].language;
         dispatch({
           type: "setSelectedLanguageTo",
           payload: language,
@@ -922,7 +931,7 @@ const BookDetail: FC = () => {
       videoPlayerRef.current.updateHighlightedSubtitleAndPage(newTime);
     }
   };
-  console.log("snapshots" + JSON.stringify(memoizedSnapshots));
+
   const videoContainer = (
     <div className={`${styles.myVideoContainer}`}>
       {state.label === LabelType.VIDEO && (

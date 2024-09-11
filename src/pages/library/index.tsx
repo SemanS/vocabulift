@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Col, Row, Typography, Space, Tooltip, Button } from "antd";
+import { Col, Row, Typography, Space, Tooltip, Button, Select } from "antd";
 
 import { useRecoilState } from "recoil";
 import {
@@ -686,6 +686,19 @@ const Library: React.FC = () => {
     next: intl.formatMessage({ id: "joyride.next" }),
   };
 
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const handleSelectChange = (value) => {
+    setSelectedOption(value);
+    console.log("Selected:", value);
+  };
+
+  const myOptions = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" },
+  ];
+
   return (
     <CustomSpinnerComponent spinning={loading}>
       <PageContainer title={false}>
@@ -705,22 +718,22 @@ const Library: React.FC = () => {
           />
         )} */}
         <div className={styles.drawerContainer} style={{ overflow: "hidden" }}>
-          <div
+          {/* <div
             className={styles.drawerPushContent}
             style={{ maxHeight: drawerHeight }}
           >
             {renderSettingsDrawerContent()}
-          </div>
+          </div> */}
           <div className={styles.redBackground}>
             <div className={styles.fullWidthWhiteBackground}>
-              <span
+              {/* <span
                 onClick={() => {
                   toggleSettingsDrawer();
                   handleWalkthrough();
                 }}
                 className={styles.box}
-              >
-                <span
+              > */}
+              {/* <span
                   style={{
                     display: "flex",
                     justifyContent: "center",
@@ -755,9 +768,47 @@ const Library: React.FC = () => {
                   >
                     {intl.formatMessage({ id: "menu.settings" })}
                   </Typography.Title>
-                </span>
-              </span>
+                </span> */}
+              {/* </span> */}
+              <Row gutter={[16, 16]} justify="center"></Row>
             </div>
+            <Row>
+              <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
+                <LanguageSelector
+                  options={myLanguageOptions}
+                  useRecoil={true}
+                  languageProp="sourceLanguage"
+                  disabledLanguage={user.targetLanguage}
+                  text={intl.formatMessage({ id: "translate.from" }) + " "}
+                  style={{ marginBottom: "20px" }}
+                />
+              </Col>
+              <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
+                <Select
+                  style={{ width: "100%" }}
+                  placeholder="Select option"
+                  onChange={handleSelectChange}
+                >
+                  {myOptions.map((option) => (
+                    <Select.Option key={option.value} value={option.value}>
+                      {option.label}
+                    </Select.Option>
+                  ))}
+                  <Select.Option key="all" value="all">
+                    All
+                  </Select.Option>
+                </Select>
+              </Col>
+            </Row>
+            <Row
+              gutter={[16, 16]}
+              justify="center"
+              style={{ marginTop: "10px" }}
+            >
+              <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
+                <LevelSlider handleChange={handleChange} />
+              </Col>
+            </Row>
             <div
               style={{
                 paddingInline: "48px",

@@ -38,7 +38,8 @@ interface EmbeddedVideoProps {
     pageSize: number,
     changeTriggeredByHighlightChange?: boolean,
     changeTriggeredFromVideo?: boolean,
-    changeTriggeredFromVideoFetch?: boolean
+    changeTriggeredFromVideoFetch?: boolean,
+    time?: number
   ) => void;
   snapshots: Snapshot[] | null | undefined;
   shouldSetVideo: boolean;
@@ -79,7 +80,7 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     const intervalId = React.useRef<NodeJS.Timeout>();
     const [hasVideoPaused, setHasVideoPaused] = useState(true);
     const hasSeekHappenedRef = useRef(false);
-    const isMounted = useRef(true); // Set to true initially
+    const isMounted = useRef(true);
 
     const [cookies] = useCookies(["access_token"]);
     let timeoutId: number | null = null;
@@ -403,6 +404,28 @@ const EmbeddedVideo = React.forwardRef<ExposedFunctions, EmbeddedVideoProps>(
     const updateHighlightedSubtitleAndPage = (currentTime) => {
       const newIndex = getCurrentIndex(snapshotsRef.current!, currentTime);
 
+      if (
+        currentTime > snapshotsRef.current![0].end ||
+        currentTime < snapshotsRef.current![0].start
+      ) {
+        const snapshotInfo = findSnapshotWithCurrentTime(
+          currentLibrary!,
+          currentTime
+        );
+        const newPage = Math.ceil(
+          snapshotInfo?.sentenceFrom! / sentencesPerPageRef.current
+        );
+
+        handlePageChange(
+          newPage,
+          sentencesPerPageRef.current,
+          false,
+          true,
+          true,
+          currentTime
+        );
+      }
+
       if (newIndex !== -1) {
         onHighlightedSubtitleIndexChange?.(newIndex);
 
@@ -712,8 +735,8 @@ const getCurrentWordIndex = (snapshots, sentenceIndex, currentTime) => {
   for (let i = 0; i < sentence.sentenceWords.length; i++) {
     const word = sentence.sentenceWords[i];
     if (currentTime >= word.start && currentTime < word.start + word.duration) {
-      return i; // Return the index of the word that is currently active
+      return i;
     }
   }
-  return -1; // Default to the first word if no specific match is found
+  return -1;
 };

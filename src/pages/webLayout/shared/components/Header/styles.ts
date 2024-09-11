@@ -59,7 +59,7 @@ export const ContactWrapper = styled.div<any>`
 `;
 
 export const Burger = styled.div`
-  @media only screen and (max-width: 890px) {
+  @media only screen and (max-width: 1350px) {
     display: block;
   }
 
@@ -71,7 +71,7 @@ export const Burger = styled.div`
 `;
 
 export const NotHidden = styled.div`
-  @media only screen and (max-width: 890px) {
+  @media only screen and (max-width: 1350px) {
     display: none;
   }
 `;

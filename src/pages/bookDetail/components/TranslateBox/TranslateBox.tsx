@@ -1033,37 +1033,39 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                     />
                   );
                 })}
-                {isTenseVisible && (
-                  <>
-                    <Select
-                      options={options(sourceSentence.tense)}
-                      value={
-                        selectedTenses.some((tense) => {
-                          return (
-                            tense.sentenceNumber === sourceSentence.sentenceNo
-                          );
-                        })
-                          ? tenseOptions.find((option) => {
-                              const foundTense = selectedTenses.find(
-                                (tense) =>
-                                  tense.sentenceNumber ===
-                                  sourceSentence.sentenceNo
-                              );
-                              return option.value === foundTense?.tense;
-                            })
-                          : ""
-                      }
-                      onChange={(option) =>
-                        handleTenseChange(option, sourceSentence.sentenceNo)
-                      }
-                      menuPortalTarget={document.body}
-                      styles={customStyles(sourceSentence.sentenceNo)}
-                      placeholder="Select a tense"
-                      menuShouldScrollIntoView={false}
-                    />
-                    <div className={styles.customDivider} />
-                  </>
-                )}
+                {sourceSentence.tense !== "" &&
+                  sourceSentence.tense &&
+                  isTenseVisible && (
+                    <>
+                      <Select
+                        options={options(sourceSentence.tense)}
+                        value={
+                          selectedTenses.some((tense) => {
+                            return (
+                              tense.sentenceNumber === sourceSentence.sentenceNo
+                            );
+                          })
+                            ? tenseOptions.find((option) => {
+                                const foundTense = selectedTenses.find(
+                                  (tense) =>
+                                    tense.sentenceNumber ===
+                                    sourceSentence.sentenceNo
+                                );
+                                return option.value === foundTense?.tense;
+                              })
+                            : ""
+                        }
+                        onChange={(option) =>
+                          handleTenseChange(option, sourceSentence.sentenceNo)
+                        }
+                        menuPortalTarget={document.body}
+                        styles={customStyles(sourceSentence.sentenceNo)}
+                        placeholder="Select a tense"
+                        menuShouldScrollIntoView={false}
+                      />
+                      <div className={styles.customDivider} />
+                    </>
+                  )}
               </div>
             </Tippy>
           );

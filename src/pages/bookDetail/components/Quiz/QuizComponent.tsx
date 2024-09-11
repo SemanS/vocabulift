@@ -22,7 +22,7 @@ const QuizComponent: FC<QuizComponentProps> = ({
   const [currentQuiz, setCurrentQuiz] = useState<any>(null);
 
   // On component mount, extract quiz topics from the snapshot
-  useEffect(() => {
+  /* useEffect(() => {
     if (snapshot?.quizzes) {
       const topics = snapshot.quizzes.map((quiz: any) => quiz.quizTopic);
       setQuizTopics(topics);
@@ -31,7 +31,7 @@ const QuizComponent: FC<QuizComponentProps> = ({
         "No quizzes found in snapshot or snapshot structure is not as expected"
       );
     }
-  }, [snapshot]);
+  }, [snapshot]); */
 
   // Handle selection of quiz topics
   const handleTagChange = (tag: string, checked: boolean): void => {

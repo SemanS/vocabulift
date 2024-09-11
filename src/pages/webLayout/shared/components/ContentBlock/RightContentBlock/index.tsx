@@ -304,167 +304,178 @@ const RightBlock = ({
   const snapshots = getSnapshotDataArray(selectedLanguageTo);
 
   return (
-    <RightBlockContainer>
+    <RightBlockContainer
+      style={{
+        display: "flex",
+        justifyContent: "centerer",
+        alignItems: "center",
+        minHeight: "100vh",
+        flexDirection: "column",
+      }}
+    >
       <Fade direction="right" triggerOnce>
         <Row
-          justify="center"
-          align="middle"
           id={id}
           className={fadeVisible ? styles.visible : styles.notVisible}
+          gutter={[16, 16]}
         >
-          <Row>
-            <Col>
-              <Radio.Group
+          <Col xs={24} sm={24} md={5} lg={5} xl={5}>
+            <Radio.Group
+              style={{
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                borderRadius: "15px",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                borderBottomLeftRadius: "15px",
+                width: "65px",
+                border: "none",
+                color: "black",
+              }}
+              size="large"
+              className={`${styles.play}`}
+            >
+              <Radio.Button
                 style={{
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-                  borderRadius: "15px",
-                  width: "auto",
-                  marginRight: "20px",
-                  marginLeft: "25px",
-                }}
-                size="large"
-                className={`${styles.play}`}
-              >
-                <Radio.Button
-                  style={{
-                    pointerEvents: "none",
-                    borderTopLeftRadius: "15px",
-                    borderBottomLeftRadius: "15px",
-                    width: "65px",
-                    border: "none",
-                    color: "black",
-                  }}
-                >
-                  <span style={{ marginLeft: "-3px" }}>
-                    {formatTime(Math.floor(currentTime))}
-                  </span>
-                </Radio.Button>
-                <Radio.Button
-                  value={isPlaying}
-                  onChange={handlePlayPause}
-                  style={{
-                    borderTopRightRadius: "15px",
-                    borderBottomRightRadius: "15px",
-                    backgroundColor: "tomato",
-                    color: "white",
-                    border: "none",
-                  }}
-                >
-                  {isPlaying ? <span>❚❚</span> : <span>▶</span>}
-                </Radio.Button>
-              </Radio.Group>
-            </Col>
-            <Col>
-              <Radio.Group
-                value={selectedTag}
-                size="large"
-                style={{
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-                  borderRadius: "15px",
-                  width: "auto",
-                  display: "inline-flex",
-                  marginBottom: "20px",
-                }}
-                className={`${styles.play}`}
-              >
-                {partsOfSpeech.map((part, index) => (
-                  <Radio.Button
-                    key={part}
-                    value={part}
-                    onClick={() => handleButtonClick(part)} // Using onClick to force handling
-                    style={{
-                      pointerEvents: "auto",
-                      borderRadius:
-                        index === 0
-                          ? "15px 0 0 15px"
-                          : index === partsOfSpeech.length - 1
-                          ? "0 15px 15px 0"
-                          : "0",
-                      minWidth: "80px",
-                      border: "none",
-                      backgroundColor:
-                        selectedTag === part ? "tomato" : "white",
-                      color: selectedTag === part ? "white" : "black",
-                    }}
-                  >
-                    {part.charAt(0).toUpperCase() + part.slice(1)}
-                  </Radio.Button>
-                ))}
-              </Radio.Group>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs={3} sm={3} md={3} lg={3} xl={3}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  height: "75.4vh",
-                }}
-              >
-                <Slider.Root
-                  className={`${styles.sliderRoot}`}
-                  value={[currentTime]}
-                  onValueChange={handleSliderChange}
-                  max={60}
-                  orientation="vertical"
-                  step={0.1}
-                  style={{
-                    marginTop: "50px",
-                  }}
-                  inverted={true}
-                >
-                  <Slider.Track className={`${styles.sliderTrack}`}>
-                    <Slider.Range className={`${styles.sliderRange}`} />
-                  </Slider.Track>
-                  <Slider.Thumb
-                    className={`${styles.sliderThumb}`}
-                    aria-label="Volume"
-                  />
-                </Slider.Root>
-              </div>
-            </Col>
-            <Col xs={21} sm={21} md={21} lg={21} xl={21}>
-              <Card
-                loading={false}
-                className={styles.translateBoxScroll}
-                style={{
-                  borderTopLeftRadius: "15px",
-                  borderTopRightRadius: "15px",
                   borderBottomLeftRadius: "15px",
-                  borderBottomRightRadius: "15px",
-                  paddingLeft: "40px",
-                  paddingTop: "20px",
-                  height: "100%",
-                  width: "100%", // Use full width of the column
-                  maxWidth: "1000px", // Max width set to 1000px
+                  borderTopLeftRadius: "15px",
+                  pointerEvents: "none",
+                  borderColor: "white",
                 }}
               >
-                <TranslateBox
-                  sourceLanguage={"en"}
-                  currentTextIndex={currentTextIndex}
-                  sentenceFrom={1}
-                  sentencesPerPage={10}
-                  currentPage={1}
-                  libraryTitle={"ahoj"}
-                  mode={"all"}
-                  snapshots={snapshots}
-                  userSentences={[]}
-                  onAddUserPhrase={() => {}}
-                  vocabularyListUserPhrases={[]}
-                  highlightedSentenceIndex={highlightedSubtitleIndex}
-                  highlightedWordIndex={highlightedWordIndex}
-                  selectedLanguageTo={parseLocale(selectedLanguageTo)}
-                  onChangeMode={() => {}}
-                  magnifyingGlassRef={undefined}
-                  addSteps={() => {}}
-                  partOfSpeech={selectedTag ? [selectedTag] : []}
-                  isTenseVisible={true}
-                  isLanding={true}
+                <span style={{ marginLeft: "-3px" }}>
+                  {formatTime(Math.floor(currentTime))}
+                </span>
+              </Radio.Button>
+              <Radio.Button
+                value={isPlaying}
+                onChange={handlePlayPause}
+                style={{
+                  borderTopRightRadius: "15px",
+                  borderBottomRightRadius: "15px",
+                  backgroundColor: "tomato",
+                  color: "white",
+                  border: "none",
+                }}
+              >
+                {isPlaying ? <span>❚❚</span> : <span>▶</span>}
+              </Radio.Button>
+            </Radio.Group>
+          </Col>
+          <Col xs={24} sm={24} md={19} lg={19} xl={19}>
+            <Radio.Group
+              value={selectedTag}
+              size="large"
+              style={{
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                borderRadius: "15px",
+                width: "auto",
+                display: "inline-flex",
+                marginBottom: "20px",
+              }}
+              className={`${styles.play}`}
+            >
+              {partsOfSpeech.map((part, index) => (
+                <Radio.Button
+                  key={part}
+                  value={part}
+                  onClick={() => handleButtonClick(part)} // Using onClick to force handling
+                  style={{
+                    pointerEvents: "auto",
+                    borderRadius:
+                      index === 0
+                        ? "15px 0 0 15px"
+                        : index === partsOfSpeech.length - 1
+                        ? "0 15px 15px 0"
+                        : "0",
+                    minWidth: "80px",
+                    border: "none",
+                    backgroundColor: selectedTag === part ? "tomato" : "white",
+                    color: selectedTag === part ? "white" : "black",
+                  }}
+                >
+                  {part.charAt(0).toUpperCase() + part.slice(1)}
+                </Radio.Button>
+              ))}
+            </Radio.Group>
+          </Col>
+        </Row>
+        <Row
+          id={id}
+          className={fadeVisible ? styles.visible : styles.notVisible}
+          gutter={[16, 16]}
+        >
+          <Col xs={3} sm={3} md={3} lg={3} xl={3}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                height: "75.4vh",
+              }}
+            >
+              <Slider.Root
+                className={`${styles.sliderRoot}`}
+                value={[currentTime]}
+                onValueChange={handleSliderChange}
+                max={60}
+                orientation="vertical"
+                step={0.1}
+                style={{
+                  marginTop: "50px",
+                }}
+                inverted={true}
+              >
+                <Slider.Track className={`${styles.sliderTrack}`}>
+                  <Slider.Range className={`${styles.sliderRange}`} />
+                </Slider.Track>
+                <Slider.Thumb
+                  className={`${styles.sliderThumb}`}
+                  aria-label="Volume"
                 />
-              </Card>
-            </Col>
-          </Row>
+              </Slider.Root>
+            </div>
+          </Col>
+          <Col xs={21} sm={21} md={21} lg={21} xl={21}>
+            <Card
+              loading={false}
+              className={styles.translateBoxScroll}
+              style={{
+                borderTopLeftRadius: "15px",
+                borderTopRightRadius: "15px",
+                borderBottomLeftRadius: "15px",
+                borderBottomRightRadius: "15px",
+                paddingLeft: "40px",
+                paddingTop: "20px",
+                height: "100%",
+                width: "100%", // Use full width of the column
+                maxWidth: "1000px", // Max width set to 1000px
+              }}
+            >
+              <TranslateBox
+                sourceLanguage={"en"}
+                currentTextIndex={currentTextIndex}
+                sentenceFrom={1}
+                sentencesPerPage={10}
+                currentPage={1}
+                libraryTitle={"ahoj"}
+                mode={"all"}
+                snapshots={snapshots}
+                userSentences={[]}
+                onAddUserPhrase={() => {}}
+                vocabularyListUserPhrases={[]}
+                highlightedSentenceIndex={highlightedSubtitleIndex}
+                highlightedWordIndex={highlightedWordIndex}
+                selectedLanguageTo={parseLocale(selectedLanguageTo)}
+                onChangeMode={() => {}}
+                magnifyingGlassRef={undefined}
+                addSteps={() => {}}
+                partOfSpeech={selectedTag ? [selectedTag] : []}
+                isTenseVisible={true}
+                isLanding={true}
+              />
+            </Card>
+          </Col>
+
           <div style={{ visibility: "hidden", height: "0px", width: "0px" }}>
             <EmbeddedVideo
               ref={videoPlayerRef}

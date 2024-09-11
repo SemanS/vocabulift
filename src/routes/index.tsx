@@ -14,6 +14,7 @@ const BookDetail = lazy(() => import("@/pages/bookDetail"));
 const NotFound = lazy(() => import("@/pages/404"));
 const Library = lazy(() => import("@/pages/library"));
 const Vocabulary = lazy(() => import("@/pages/vocabulary"));
+const Speaker = lazy(() => import("@/pages/speaker"));
 
 const WebLayoutPage = lazy(() => import("@/pages/webLayout"));
 const routeList: RouteObject[] = [
@@ -37,6 +38,14 @@ const routeList: RouteObject[] = [
         element: (
           <WrapperRouteComponent auth={true}>
             <BookDetail />
+          </WrapperRouteComponent>
+        ),
+      },
+      {
+        path: "/speakers",
+        element: (
+          <WrapperRouteComponent auth={true}>
+            <Speaker />
           </WrapperRouteComponent>
         ),
       },
