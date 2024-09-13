@@ -772,7 +772,7 @@ const Library: React.FC = () => {
               {/* </span> */}
               <Row gutter={[16, 16]} justify="center"></Row>
             </div>
-            <Row>
+            {/*  <Row>
               <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
                 <LanguageSelector
                   options={myLanguageOptions}
@@ -799,7 +799,7 @@ const Library: React.FC = () => {
                   </Select.Option>
                 </Select>
               </Col>
-            </Row>
+            </Row> */}
             <Row
               gutter={[16, 16]}
               justify="center"

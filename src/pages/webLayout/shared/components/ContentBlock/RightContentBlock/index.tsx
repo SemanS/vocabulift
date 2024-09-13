@@ -1,4 +1,13 @@
-import { Row, Col, Button as AntdButton, Card, Radio } from "antd";
+import {
+  Row,
+  Col,
+  Button as AntdButton,
+  Card,
+  Radio,
+  FloatButton,
+  Tooltip,
+  Button,
+} from "antd";
 import { IContentBlockProps } from "../types";
 import { Fade } from "react-awesome-reveal";
 import { RightBlockContainer } from "./styles";
@@ -26,6 +35,7 @@ import snapshotDataZh from "./../../../../../../data/snapshot_zh.json";
 import snapshotDataUk from "./../../../../../../data/snapshot_uk.json";
 import { parseLocale } from "@/utils/stringUtils";
 import { postPauseNotified } from "@/services/libraryService";
+import styled from "styled-components";
 
 const RightBlock = ({
   title,
@@ -238,7 +248,7 @@ const RightBlock = ({
       videoPlayerRef.current.updateHighlightedSubtitleAndPage(newTime);
     }
   };
-  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [selectedTag, setSelectedTag] = useState<string>("noun");
 
   const handleButtonClick = (part) => {
     setSelectedTag((prevSelectedTag) => {
@@ -303,14 +313,44 @@ const RightBlock = ({
   const selectedLanguageTo = useRecoilValue(menuLanguageState);
   const snapshots = getSnapshotDataArray(selectedLanguageTo);
 
+  const PartsOfSpeechWrapper = styled.div`
+    /* left: 50%; */
+    /* bottom: 24px; */
+
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: center; */
+    gap: 8px;
+
+    @media (max-width: 500px) {
+      width: calc(100% - 16px);
+      max-width: 450px;
+    }
+
+    @media (min-width: 501px) and (max-width: 768px) {
+      width: calc(90% - 16px);
+      max-width: 650px;
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      width: calc(80% - 16px);
+      max-width: 850px;
+    }
+
+    @media (min-width: 1025px) {
+      /* width: calc(70% - 16px);
+      max-width: 1000px; */
+    }
+  `;
+
   return (
     <RightBlockContainer
       style={{
-        display: "flex",
-        justifyContent: "centerer",
-        alignItems: "center",
+        /* display: "flex",
+        justifyContent: "center", */
+        /* alignItems: "center", */
         minHeight: "100vh",
-        flexDirection: "column",
+        //flexDirection: "column",
       }}
     >
       <Fade direction="right" triggerOnce>
@@ -319,98 +359,14 @@ const RightBlock = ({
           className={fadeVisible ? styles.visible : styles.notVisible}
           gutter={[16, 16]}
         >
-          <Col xs={24} sm={24} md={5} lg={5} xl={5}>
-            <Radio.Group
-              style={{
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-                borderRadius: "15px",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                borderBottomLeftRadius: "15px",
-                width: "65px",
-                border: "none",
-                color: "black",
-              }}
-              size="large"
-              className={`${styles.play}`}
-            >
-              <Radio.Button
-                style={{
-                  borderBottomLeftRadius: "15px",
-                  borderTopLeftRadius: "15px",
-                  pointerEvents: "none",
-                  borderColor: "white",
-                }}
-              >
-                <span style={{ marginLeft: "-3px" }}>
-                  {formatTime(Math.floor(currentTime))}
-                </span>
-              </Radio.Button>
-              <Radio.Button
-                value={isPlaying}
-                onChange={handlePlayPause}
-                style={{
-                  borderTopRightRadius: "15px",
-                  borderBottomRightRadius: "15px",
-                  backgroundColor: "tomato",
-                  color: "white",
-                  border: "none",
-                }}
-              >
-                {isPlaying ? <span>❚❚</span> : <span>▶</span>}
-              </Radio.Button>
-            </Radio.Group>
-          </Col>
-          <Col xs={24} sm={24} md={19} lg={19} xl={19}>
-            <Radio.Group
-              value={selectedTag}
-              size="large"
-              style={{
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
-                borderRadius: "15px",
-                width: "auto",
-                display: "inline-flex",
-                marginBottom: "20px",
-              }}
-              className={`${styles.play}`}
-            >
-              {partsOfSpeech.map((part, index) => (
-                <Radio.Button
-                  key={part}
-                  value={part}
-                  onClick={() => handleButtonClick(part)} // Using onClick to force handling
-                  style={{
-                    pointerEvents: "auto",
-                    borderRadius:
-                      index === 0
-                        ? "15px 0 0 15px"
-                        : index === partsOfSpeech.length - 1
-                        ? "0 15px 15px 0"
-                        : "0",
-                    minWidth: "80px",
-                    border: "none",
-                    backgroundColor: selectedTag === part ? "tomato" : "white",
-                    color: selectedTag === part ? "white" : "black",
-                  }}
-                >
-                  {part.charAt(0).toUpperCase() + part.slice(1)}
-                </Radio.Button>
-              ))}
-            </Radio.Group>
-          </Col>
-        </Row>
-        <Row
-          id={id}
-          className={fadeVisible ? styles.visible : styles.notVisible}
-          gutter={[16, 16]}
-        >
-          <Col xs={3} sm={3} md={3} lg={3} xl={3}>
+          <Col xs={0} sm={3} md={3} lg={3} xl={3}>
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 height: "75.4vh",
+                paddingTop: "50px",
+                paddingLeft: "50px",
               }}
             >
               <Slider.Root
@@ -435,7 +391,83 @@ const RightBlock = ({
               </Slider.Root>
             </div>
           </Col>
-          <Col xs={21} sm={21} md={21} lg={21} xl={21}>
+          <Col xs={24} sm={21} md={21} lg={21} xl={21}>
+            <Row
+              id={id}
+              className={fadeVisible ? styles.visible : styles.notVisible}
+              gutter={[16, 16]}
+              style={{ marginBottom: "40px" }}
+            >
+              <Col xs={24} sm={24} md={5} lg={5} xl={5}>
+                <Radio.Group
+                  style={{
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)",
+                    borderRadius: "15px",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    borderBottomLeftRadius: "15px",
+                    width: "65px",
+                    border: "none",
+                    color: "black",
+                  }}
+                  size="large"
+                  className={`${styles.play}`}
+                >
+                  <Radio.Button
+                    style={{
+                      borderBottomLeftRadius: "15px",
+                      borderTopLeftRadius: "15px",
+                      pointerEvents: "none",
+                      borderColor: "white",
+                    }}
+                  >
+                    <span style={{ marginLeft: "-3px" }}>
+                      {formatTime(Math.floor(currentTime))}
+                    </span>
+                  </Radio.Button>
+                  <Radio.Button
+                    value={isPlaying}
+                    onClick={handlePlayPause}
+                    style={{
+                      borderTopRightRadius: "15px",
+                      borderBottomRightRadius: "15px",
+                      backgroundColor: "tomato",
+                      color: "white",
+                      border: "none",
+                    }}
+                  >
+                    {isPlaying ? <span>❚❚</span> : <span>▶</span>}
+                  </Radio.Button>
+                </Radio.Group>
+              </Col>
+              <Col xs={24} sm={24} md={19} lg={19} xl={19}>
+                <PartsOfSpeechWrapper>
+                  {partsOfSpeech.map((part, index) => (
+                    <Tooltip
+                      title={part.charAt(0).toUpperCase() + part.slice(1)}
+                      key={part}
+                    >
+                      <Button
+                        onClick={() => handleButtonClick(part)}
+                        style={{
+                          display: "inline-block",
+                          backgroundColor:
+                            selectedTag === part ? "tomato" : "white",
+                          color: selectedTag === part ? "white" : "black",
+                          borderRadius: "15px",
+                          border: "1px solid #d9d9d9",
+                          //margin: "0",
+                          minWidth: "80px",
+                        }}
+                      >
+                        {part.charAt(0).toUpperCase() + part.slice(1)}
+                      </Button>
+                    </Tooltip>
+                  ))}
+                </PartsOfSpeechWrapper>
+              </Col>
+            </Row>
             <Card
               loading={false}
               className={styles.translateBoxScroll}
@@ -444,9 +476,7 @@ const RightBlock = ({
                 borderTopRightRadius: "15px",
                 borderBottomLeftRadius: "15px",
                 borderBottomRightRadius: "15px",
-                paddingLeft: "40px",
                 paddingTop: "20px",
-                height: "100%",
                 width: "100%", // Use full width of the column
                 maxWidth: "1000px", // Max width set to 1000px
               }}

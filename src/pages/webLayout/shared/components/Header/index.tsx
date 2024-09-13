@@ -181,9 +181,9 @@ const Header = () => {
             <CustomNavLinkSmall onClick={() => scrollTo("intro", 200)}>
               <Span>{"About"}</Span>
             </CustomNavLinkSmall>
-            <CustomNavLinkSmall onClick={() => scrollTo("mission", 200)}>
+            {/* <CustomNavLinkSmall onClick={() => scrollTo("mission", 200)}>
               <Span>{"Quizzes"}</Span>
-            </CustomNavLinkSmall>
+            </CustomNavLinkSmall> */}
             <CustomNavLinkSmall onClick={() => scrollTo("product", 200)}>
               <Span>{"Testimonials"}</Span>
             </CustomNavLinkSmall>
@@ -212,10 +212,7 @@ const Header = () => {
             )}
           </Span>
         </CustomNavLinkSmall>
-        <CustomNavLinkSmall
-          style={{ width: "240px" }}
-          onClick={() => scrollTo("contact")}
-        >
+        <CustomNavLinkSmall onClick={() => scrollTo("contact")}>
           <ButtonWrapper>
             {cookies.access_token ? (
               <Button
@@ -260,7 +257,7 @@ const Header = () => {
           <NotHidden>
             <MenuItem />
           </NotHidden>
-          <Burger onClick={showDrawer}>
+          <Burger onClick={showDrawer} style={{ marginRight: "40px" }}>
             <Outline />
           </Burger>
         </Row>

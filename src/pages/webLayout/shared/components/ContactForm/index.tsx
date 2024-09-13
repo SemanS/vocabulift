@@ -1,4 +1,4 @@
-import { Row, Col } from "antd";
+import { Row, Col, Card } from "antd";
 import { Slide, Zoom } from "react-awesome-reveal";
 import { IContactProps, IValidationTypeProps } from "./types";
 import { useForm } from "../../common/utils/useForm";
@@ -62,65 +62,69 @@ const Contact = ({ title, content, id }: IContactProps) => {
 
   return (
     <ContactContainer id={id}>
-      <Row gutter={[24, 24]} justify="space-between" align="middle">
-        <Col lg={2} md={2} sm={2} xs={2} />
-        <Col lg={8} md={8} sm={20} xs={20}>
-          <Slide direction="left" triggerOnce>
-            <Block
-              title={"Proudly crafted in Slovakia"}
-              content={
-                "Your thoughts and feedback fuel our innovation. Whether it's a question, suggestion, or just a hello, we're excited to hear from you."
-              }
-            />
-          </Slide>
-        </Col>
-        <Col lg={2} md={2} sm={2} xs={2} />
-        <Col lg={2} md={2} sm={2} xs={2} />
-        <Col lg={8} md={8} sm={20} xs={20}>
-          <Slide direction="right" triggerOnce>
-            <FormGroup autoComplete="off" onSubmit={handleSubmit}>
-              <Row>
-                <Col span={24}>
-                  <Input
-                    type="text"
-                    name="name"
-                    placeholder="Your Name"
-                    value={values.name || ""}
-                    onChange={handleChange}
-                  />
-                  <ValidationType type="name" />
-                </Col>
-                <Col span={24}>
-                  <Input
-                    type="text"
-                    name="email"
-                    placeholder="Your Email"
-                    value={values.email || ""}
-                    onChange={handleChange}
-                  />
-                  <ValidationType type="email" />
-                </Col>
-                <Col span={24}>
-                  <TextArea
-                    placeholder="Your Message"
-                    value={values.message || ""}
-                    name="message"
-                    onChange={handleChange}
-                  />
-                  <ValidationType type="message" />
-                </Col>
+      <Card style={{ borderRadius: "15px" }}>
+        <Row gutter={[24, 24]} style={{ marginTop: "25px" }}>
+          <Col lg={2} md={2} sm={2} xs={2} />
+          <Col lg={8} md={8} sm={20} xs={20}>
+            <Slide direction="left" triggerOnce>
+              <Block
+                title={"Crafted in Slovakia"}
+                content={
+                  "Your thoughts and feedback fuel our innovation. Whether it's a question, suggestion, or just a hello, we're excited to hear from you."
+                }
+              />
+            </Slide>
+          </Col>
+          <Col lg={2} md={2} sm={2} xs={2} />
+          <Col lg={2} md={2} sm={2} xs={2} />
+          <Col lg={8} md={8} sm={20} xs={20}>
+            <Slide direction="right" triggerOnce>
+              <FormGroup autoComplete="off" onSubmit={handleSubmit}>
+                <Row>
+                  <Col span={24}>
+                    <Input
+                      type="text"
+                      name="name"
+                      placeholder="Your Name"
+                      value={values.name || ""}
+                      onChange={handleChange}
+                    />
+                    <ValidationType type="name" />
+                  </Col>
+                  <Col span={24}>
+                    <Input
+                      type="text"
+                      name="email"
+                      placeholder="Your Email"
+                      value={values.email || ""}
+                      onChange={handleChange}
+                    />
+                    <ValidationType type="email" />
+                  </Col>
+                  <Col span={24}>
+                    <TextArea
+                      placeholder="Your Message"
+                      value={values.message || ""}
+                      name="message"
+                      onChange={handleChange}
+                    />
+                    <ValidationType type="message" />
+                  </Col>
 
-                <Col span={24}>
-                  <ButtonContainer>
-                    <Button name="submit">{"Submit"}</Button>
-                  </ButtonContainer>
-                </Col>
-              </Row>
-            </FormGroup>
-          </Slide>
-        </Col>
-        <Col lg={2} md={2} sm={2} xs={2} />
-      </Row>
+                  <Col span={24}>
+                    <ButtonContainer
+                      style={{ marginTop: "15px", marginBottom: "10px" }}
+                    >
+                      <Button name="submit">{"Submit"}</Button>
+                    </ButtonContainer>
+                  </Col>
+                </Row>
+              </FormGroup>
+            </Slide>
+          </Col>
+          <Col lg={2} md={2} sm={2} xs={2} />
+        </Row>
+      </Card>
     </ContactContainer>
   );
 };

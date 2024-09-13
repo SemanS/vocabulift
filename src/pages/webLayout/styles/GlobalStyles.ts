@@ -29,9 +29,9 @@ export const GlobalStyles = createGlobalStyle`
         border-radius: 4px;
         border: 0;
         background: rgb(241, 242, 243);
-        transition: all 0.3s ease-in-out;  
+        transition: all 0.3s ease-in-out;
         outline: none;
-        width: 100%;  
+        width: 100%;
         padding: 1rem 1.25rem;
 
         :focus-within {

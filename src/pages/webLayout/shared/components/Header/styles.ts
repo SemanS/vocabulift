@@ -29,6 +29,10 @@ export const HeaderSection = styled.header`
 export const LogoContainer = styled(Link)`
   display: flex;
   padding-left: 60px;
+
+  @media (max-width: 500px) {
+    padding-left: 15px;
+  }
 `;
 
 export const NavLink = styled.div`
@@ -120,16 +124,20 @@ export const Span = styled.span`
 `;
 
 export const ButtonWrapper = styled.div`
-  display: flex;
-  align-items: center; // Add this line
-  justify-content: space-between;
-  max-width: 100%;
-
-  @media screen and (min-width: 1024px) {
+  @media screen and (min-width: 1350px) {
     max-width: 80%;
-  }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 100%;
 
-  button:last-child {
-    margin-left: 20px;
+    button:first-child {
+      margin-right: 20px;
+    }
+  }
+  @media screen and (max-width: 1350px) {
+    button:first-child {
+      margin-bottom: 20px;
+    }
   }
 `;

@@ -7,5 +7,7 @@ export const Container = styled.div`
 `;
 
 export const StyledInput = styled.input`
+  background-color: white;
   font-size: 0.875rem;
+  border: 1px solid #ccc;
 `;

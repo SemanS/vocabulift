@@ -1,6 +1,6 @@
 .visible {
   opacity: 1;
-  transform: translateX(-30px);
+  //transform: translateX(-30px);
   transition: opacity 1s ease, transform 1s ease;
 }
 
@@ -81,5 +81,12 @@
   overflow-anchor: none;
   scroll-behavior: auto;
   position: relative;
-  height: calc(76.5vh);
+  margin-bottom: 40px;
+  //height: calc(76.5vh);
+  //height: 100%;
+}
+@media (min-width: 768px) {
+  .translateBoxScroll {
+    padding-left: 40px;
+  }
 }

@@ -1,11 +1,10 @@
 import styled from "styled-components";
 
 export const ContactContainer = styled("div")`
-  padding: 5rem 0;
-  background-color: rgb(253, 222, 184);
-
+  padding: 0rem 0;
+  /* background-color: hsl(240, 78%, 98%); */
   @media only screen and (max-width: 1024px) {
-    padding: 3rem 0;
+    padding: 0rem 0;
   }
 `;
 

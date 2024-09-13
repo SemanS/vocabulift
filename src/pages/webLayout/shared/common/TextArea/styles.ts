@@ -5,12 +5,15 @@ export const StyledContainer = styled.div`
   width: 100%;
   padding: 10px 5px;
   margin-bottom: -0.625rem;
+  background-color: white;
 `;
 
 export const StyledTextArea = styled.textarea`
   resize: none;
   font-size: 0.875rem;
   height: 185px;
+  background-color: white;
+  border: 1px solid #ccc;
 `;
 
 export const Label = styled.label`
