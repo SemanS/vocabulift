@@ -1073,7 +1073,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       })}
       {!isLanding && (
         <>
-          <Button
+          {/* <Button
             onClick={toggleTippyVisibility}
             className={`${styles.showHide}`}
             size={"large"}
@@ -1085,8 +1085,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
             }}
           >
             Show titles
-          </Button>
-          <Radio.Group
+          </Button> */}
+          {/* <Radio.Group
             style={{
               boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.05)",
               borderRadius: "15px",
@@ -1120,7 +1120,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
             >
               {targetLangIcon?.icon}
             </Radio.Button>
-          </Radio.Group>
+          </Radio.Group> */}
         </>
       )}
     </>

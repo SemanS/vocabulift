@@ -52,13 +52,13 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
 
   return (
     <div
-      style={{
+    /* style={{
         position: "fixed",
         top: "22px",
         left: "49.6%",
         transform: "translateX(-50%)",
         zIndex: 1001,
-      }}
+      }} */
     >
       <Dropdown
         onVisibleChange={setDropdownActive}
@@ -71,7 +71,6 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
           border: "1px solid #ccc",
           borderRadius: "10px",
           overflow: "hidden",
-          zIndex: "10000",
         }}
       >
         <Button

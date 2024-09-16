@@ -42,7 +42,11 @@ import { UserSentence } from "@/models/userSentence.interface";
 import { VocabularyListUserPhrase } from "@/models/VocabularyListUserPhrase";
 import { mapUserSentencesToVocabularyListUserPhrases } from "@/utils/mapUserSentencesToVocabularyListUserPhrases";
 import FilteredVocabularyList from "./components/VocabularyList/FilteredVocabularyList";
-import { sourceLanguageState, targetLanguageState } from "@/stores/language";
+import {
+  sourceLanguageState,
+  targetLanguageState,
+  uniqueLanguagesState,
+} from "@/stores/language";
 import { libraryIdState } from "@/stores/library";
 import { currentPageState } from "@/stores/library";
 import { pageSizeState } from "@/stores/library";
@@ -70,7 +74,7 @@ import { Resizable } from "re-resizable";
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
 import QuizComponent from "./components/Quiz/QuizComponent";
-import {
+import lib, {
   QuestionOutlined,
   UnorderedListOutlined,
   YoutubeOutlined,
@@ -78,6 +82,10 @@ import {
 import { parseLocale } from "@/utils/stringUtils";
 import SelectLang from "@/pages/layout/components/RightContent/SelectLang";
 import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
+import { WordTriple } from "@/pages/webLayout/shared/common/types";
+import ReactECharts from "echarts-for-react";
+import { getTriples } from "@/services/analyticService";
+import "echarts-wordcloud";
 
 const initialReducerState = (targetLanguageFromQuery: string) => ({
   currentPage: 1,
@@ -240,6 +248,8 @@ const BookDetail: FC = () => {
 
   const [isTenseVisible, setIsTenseVisible] = useState(true);
 
+  const chartRef1 = useRef<ReactECharts>(null);
+
   const toggleIsTenseVisible = () => {
     setIsTenseVisible((prevState) => !prevState);
   };
@@ -354,6 +364,7 @@ const BookDetail: FC = () => {
       if (changeTriggeredFromVideo) {
         if (changeTriggeredFromVideoFetch && time) {
           localSentenceFrom = (page - 1) * pageSize + 1;
+          console.log("FETCH3");
           await fetchAndUpdate(localSentenceFrom);
           dispatch({ type: "setSentenceFrom", payload: localSentenceFrom });
           dispatch({
@@ -364,11 +375,11 @@ const BookDetail: FC = () => {
         }
       } else {
         await updateReadingProgress(libraryId, page, pageSize);
-        if (state.initState) {
-          console.log("VLAAM");
+        if (!initialFetchDone.current) {
           localSentenceFrom = changeTriggeredFromVideo
             ? (page - 1) * state.pageSizeFromQuery + 1
             : (state.currentPageFromQuery - 1) * state.pageSizeFromQuery + 1;
+          console.log("FETCH4");
           await fetchAndUpdate(localSentenceFrom);
           dispatch({ type: "setInitState", payload: false });
         } else if (
@@ -377,6 +388,7 @@ const BookDetail: FC = () => {
           page * pageSize < state.sentenceFrom
         ) {
           localSentenceFrom = (page - 1) * pageSize + 1;
+          console.log("FETCH5");
           await fetchAndUpdate(localSentenceFrom);
           dispatch({
             type: "setFirstIndexAfterReset",
@@ -437,55 +449,51 @@ const BookDetail: FC = () => {
     dispatch({ type: "setIsPlaying", payload: !state.isPlaying });
   };
 
+  const initialFetchDone = useRef(false);
+
   useEffect(() => {
-    if (
-      user.isLimitExceeded === true &&
-      user.subscribed === false &&
-      !hasAccess
-    ) {
-      dispatch({ type: "setIsLimitExceeded", payload: true });
-    } else {
-      if (pageSizeFromQuery) {
-        dispatch({ type: "setSentencesPerPage", payload: pageSizeFromQuery });
-      }
-      if (currentPageFromQuery) {
-        dispatch({ type: "setCurrentPage", payload: currentPageFromQuery });
-      }
-      handlePageChange(
-        currentPageFromQuery,
-        pageSizeFromQuery,
-        false,
-        false,
-        false
-      );
-      setRecoilLibraryId(libraryId!);
-      setRecoilCurrentPage(currentPageFromQuery);
-      setRecoilPageSize(pageSizeFromQuery);
-    }
+    const initializeData = async () => {
+      if (initialFetchDone.current) return;
 
-    const handleResize = () => {
-      dispatch({ type: "setIsMobile", payload: window.innerWidth <= 750 });
+      if (
+        user.isLimitExceeded === true &&
+        user.subscribed === false &&
+        !hasAccess
+      ) {
+        dispatch({ type: "setIsLimitExceeded", payload: true });
+      } else {
+        const localSentenceFrom =
+          (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+        console.log("FETCH1");
+        await fetchAndUpdate(localSentenceFrom, targetLanguageFromQuery);
+
+        setRecoilLibraryId(libraryId!);
+        setRecoilCurrentPage(currentPageFromQuery);
+        setRecoilPageSize(pageSizeFromQuery);
+
+        dispatch({ type: "setInitState", payload: false });
+        initialFetchDone.current = true;
+      }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    initializeData();
   }, []);
 
   useEffect(() => {
-    const value = user.targetLanguage;
-    if (value) {
+    if (
+      user.targetLanguage &&
+      user.targetLanguage !== state.selectedLanguageTo
+    ) {
       dispatch({
         type: "setSelectedLanguageTo",
-        payload: value,
+        payload: user.targetLanguage,
       });
-      fetchVocabularyAndSetState(state.sentenceFrom, value);
-      fetchAndUpdate(state.sentenceFrom, value);
+      console.log("FETCH2");
+      fetchAndUpdate(state.sentenceFrom, user.targetLanguage);
 
       const url = new URL(window.location.href);
       const params = new URLSearchParams(url.search);
-      params.set("targetLanguage", value);
+      params.set("targetLanguage", user.targetLanguage);
       window.history.replaceState({}, "", `${url.pathname}?${params}`);
     }
   }, [user.targetLanguage]);
@@ -809,15 +817,27 @@ const BookDetail: FC = () => {
   const fetchAndUpdate = useCallback(
     async (localSentenceFrom: number, targetLanguage?: string) => {
       dispatch({ type: "setLoadingFromFetch", payload: true });
-      const library = await getLibraryItem(libraryId!);
-      dispatch({ type: "setLibrary", payload: library });
-      await fetchDataAndUpdateState(
-        getRangeNumber(localSentenceFrom),
-        targetLanguage
-      );
-      dispatch({ type: "setLoadingFromFetch", payload: false });
+      try {
+        const [library, snapshots] = await Promise.all([
+          getLibraryItem(libraryId!),
+          getSnapshots(
+            libraryId!,
+            user.sourceLanguage,
+            targetLanguage ? [targetLanguage] : [user.targetLanguage],
+            undefined,
+            localSentenceFrom
+          ),
+        ]);
+
+        dispatch({ type: "setLibrary", payload: library });
+        await updateSentencesState(snapshots, localSentenceFrom);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        dispatch({ type: "setLoadingFromFetch", payload: false });
+      }
     },
-    [fetchDataAndUpdateState]
+    [libraryId, user.sourceLanguage, user.targetLanguage, updateSentencesState]
   );
 
   const onCheckboxChange = useCallback(
@@ -965,9 +985,27 @@ const BookDetail: FC = () => {
     };
   }, []);
 
-  const uniqueLanguages = Array.from(
-    new Set(state.library?.snapshotsInfo?.map((snapshot) => snapshot.language))
-  );
+  const [uniqueLanguages, setUniqueLanguages] = useState<string[]>([]);
+
+  const [uniqueLanguagesRecoil, setUniqueLanguagesRecoil] =
+    useRecoilState(uniqueLanguagesState);
+
+  useEffect(() => {
+    if (state.library?.snapshotsInfo) {
+      const languages = Array.from(
+        new Set(
+          state.library.snapshotsInfo.map((snapshot) => snapshot.language)
+        )
+      );
+      setUniqueLanguages(languages);
+    }
+  }, [state.library?.snapshotsInfo]);
+
+  useEffect(() => {
+    if (uniqueLanguages.length > 0) {
+      setUniqueLanguagesRecoil(uniqueLanguages);
+    }
+  }, [uniqueLanguages, setUniqueLanguagesRecoil]);
 
   const languagesWithoutSource = uniqueLanguages.filter(
     (lang) => lang !== user.sourceLanguage
@@ -1149,7 +1187,7 @@ const BookDetail: FC = () => {
 
   const translateBoxContainer = (
     <>
-      <Radio.Group
+      {/* <Radio.Group
         style={{
           boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15)", // Shadow applied here
           borderRadius: "15px", // Rounded corners for the group
@@ -1185,7 +1223,7 @@ const BookDetail: FC = () => {
         >
           {state.isPlaying ? <span>❚❚</span> : <span>▶</span>}
         </Radio.Button>
-      </Radio.Group>
+      </Radio.Group> */}
       {/* <button className={`${styles.myPlayButton}`} onClick={handlePlayPause}>
         
       </button> */}
@@ -1422,11 +1460,11 @@ const BookDetail: FC = () => {
       !rightExerciseVisible &&
       !rightQuizVisible
     ) {
-      setMarginLeft(-30); // This could be dynamic based on other logic
+      setMarginLeft(-30);
       setSliderMarginLeft(225);
     } else {
       setMarginLeft(-28);
-      setSliderMarginLeft(110);
+      setSliderMarginLeft(80);
     }
   }, [rightVisible, rightVocabVisible, rightExerciseVisible, rightQuizVisible]);
 
@@ -1466,6 +1504,75 @@ const BookDetail: FC = () => {
       : selectedTags.filter((t) => t !== tag);
     setSelectedTags(nextSelectedTags);
   };
+
+  const libraryIdsMusk = [
+    { libraryId: "66d8865b20c573b77399f733", speaker: 1 },
+    { libraryId: "66d8868020c573b77399fa7f", speaker: 1 },
+    { libraryId: "66d8cd1da32ca5da2044c52d", speaker: 1 },
+    { libraryId: "66d8cfe3a81ebf0bbdb995b4", speaker: 0 },
+    { libraryId: "66d98c1a6df3038aa08e2e37", speaker: 0 },
+  ];
+
+  const [wordTriplesMusk, setWordTriplesMusk] = useState<WordTriple[]>([]);
+
+  const getWordCloudOptions = useCallback(
+    (wordTriples: WordTriple[]) => ({
+      tooltip: {},
+      series: [
+        {
+          type: "wordCloud",
+          gridSize: 2,
+          sizeRange: [12, 50],
+          rotationRange: [-90, 90],
+          shape: "circle",
+          width: "100%",
+          height: "100%",
+          textStyle: {
+            normal: {
+              color: () =>
+                `rgb(${[
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                ].join(",")})`,
+            },
+          },
+          data: wordTriples.map((triple) => ({
+            name: triple.wordTriple, // Triple text
+            value: triple.count, // Triple count
+          })),
+        },
+      ],
+    }),
+    [libraryId]
+  );
+
+  const memoizedWordCloudOptions = useMemo(
+    () => getWordCloudOptions(wordTriplesMusk),
+    [wordTriplesMusk, getWordCloudOptions]
+  );
+
+  useEffect(() => {
+    const fetchTriples = async () => {
+      try {
+        // Fetch Musk triples
+        const dataMusk = await getTriples([
+          { libraryId: "663f4c63746b77af97f93edf", speaker: 1 },
+        ]);
+        const parsedDataMusk = JSON.parse(dataMusk);
+        setWordTriplesMusk(parsedDataMusk);
+      } catch (err: any) {}
+    };
+
+    fetchTriples();
+  }, []);
+
+  useEffect(() => {
+    if (chartRef1.current) {
+      const chart = chartRef1.current.getEchartsInstance();
+      chart.setOption(memoizedWordCloudOptions);
+    }
+  }, [memoizedWordCloudOptions]);
 
   const partsOfSpeech = [
     "noun",
@@ -1692,10 +1799,47 @@ const BookDetail: FC = () => {
                       borderBottomRightRadius: "15px",
                     }}
                   >
+                    <Radio.Group
+                      style={{
+                        boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.15",
+                        borderRadius: "15px",
+                        width: "auto",
+                      }}
+                      size="large"
+                    >
+                      <Radio.Button
+                        style={{
+                          pointerEvents: "none",
+                          borderTopLeftRadius: "15px",
+                          borderBottomLeftRadius: "15px",
+                          width: "65px",
+                          border: "none",
+                          color: "black",
+                        }}
+                      >
+                        <span style={{ marginLeft: "-3px" }}>
+                          {formatTime(Math.floor(currentTime))}
+                        </span>
+                      </Radio.Button>
+                      <Radio.Button
+                        value={state.isPlaying}
+                        onChange={handlePlayPause}
+                        style={{
+                          borderTopRightRadius: "15px",
+                          borderBottomRightRadius: "15px",
+                          backgroundColor: "tomato",
+                          color: "white",
+                          border: "none",
+                        }}
+                      >
+                        {state.isPlaying ? <span>❚❚</span> : <span>▶</span>}
+                      </Radio.Button>
+                    </Radio.Group>
+                    <Divider />
                     <div
                       style={{
-                        display: "flex", // Using flex to manage layout
-                        flexWrap: "wrap", // Allows wrapping to next line
+                        display: "flex",
+                        flexWrap: "wrap",
                         width: "460px",
                       }}
                     >
@@ -1712,7 +1856,7 @@ const BookDetail: FC = () => {
                             backgroundColor: selectedTags.includes(tag)
                               ? "#4CAF50"
                               : "Gainsboro",
-                            transition: "none", // No animations
+                            transition: "none",
                           }}
                         >
                           {tag}
@@ -1735,7 +1879,17 @@ const BookDetail: FC = () => {
                       Tense
                     </Button>
                     <Divider />
-                    <List
+                    <Row gutter={[16, 16]}>
+                      <Col span={12}>
+                        <h4>Musk</h4>
+                        <ReactECharts
+                          ref={chartRef1}
+                          option={memoizedWordCloudOptions}
+                          style={{ width: "200%" }}
+                        />
+                      </Col>
+                    </Row>
+                    {/* <List
                       style={{ width: "430px" }}
                       dataSource={state.library?.questions}
                       renderItem={(item, index) => (
@@ -1745,7 +1899,7 @@ const BookDetail: FC = () => {
                           </Typography.Text>
                         </List.Item>
                       )}
-                    />
+                    /> */}
                     {/* <div
                       style={{
                         display: "flex",
@@ -1901,10 +2055,10 @@ const BookDetail: FC = () => {
           )}
         </>
       )}
-      <SelectLang
-        setDropdownActive={setDropdownActive}
+      {/* <SelectLang
+        //setDropdownActive={setDropdownActive}
         uniqueLanguages={uniqueLanguages}
-      />
+      /> */}
     </PageContainer>
   );
 };

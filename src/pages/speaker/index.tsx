@@ -3,11 +3,7 @@ import { Row, Col } from "antd";
 import ReactECharts from "echarts-for-react";
 import "echarts-wordcloud";
 import { getTriples } from "@/services/analyticService";
-
-interface WordTriple {
-  wordTriple: string;
-  count: number;
-}
+import { WordTriple } from "@/pages/webLayout/shared/common/types";
 
 const Speaker: React.FC = () => {
   const [wordTriplesMusk, setWordTriplesMusk] = useState<WordTriple[]>([]);

@@ -1,3 +1,5 @@
+import { FeatureType } from "@/pages/webLayout/shared/common/types";
+
 export interface LibraryItem {
   eventId: string | null;
   _id: string;
@@ -13,6 +15,7 @@ export interface LibraryItem {
   snapshotsInfo: SnapshotInfo[];
   duration: string;
   worksheet: string;
+  enrichedFeatures: FeatureType[];
 }
 
 export interface SnapshotInfo {

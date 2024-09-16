@@ -19,15 +19,13 @@ import { useLocale } from "@/locales";
 import RightContent from "./components/RightContent";
 import { ReactComponent as LogoSvg } from "@/assets/logo/vocabulift_logo.svg";
 import styles from "./index.module.less";
-import Footer from "./components/Footer";
-import { Button, Dropdown, FloatButton, Space } from "antd";
 import {
   libraryIdState,
   currentPageState,
   pageSizeState,
 } from "@/stores/library";
 import { MenuItemLink } from "./components/MenuItemLink/MenuItemLink";
-import styled from "styled-components";
+import { uniqueLanguagesState } from "@/stores/language";
 import SelectLang from "./components/RightContent/SelectLang";
 
 const IconMap: { [key: string]: React.ReactNode } = {
@@ -49,6 +47,7 @@ const LayoutPage: FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { formatMessage } = useLocale();
+  const uniqueLanguages = useRecoilValue(uniqueLanguagesState);
 
   const libraryId = useRecoilValue(libraryIdState);
   const currentPage = useRecoilValue(currentPageState);
@@ -190,7 +189,7 @@ const LayoutPage: FC = () => {
               return defaultDom;
             }
             return (
-              <>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <MenuItemLink
                   menuItemProps={menuItemProps}
                   defaultDom={defaultDom}
@@ -198,10 +197,16 @@ const LayoutPage: FC = () => {
                     menuItemProps.key?.replace("/", "") || ""
                   )}
                 />
-              </>
+                {/* Render SelectLang on the same line if it's the last menu item */}
+                {menuItemProps.key === "last-video" && (
+                  <div style={{ marginLeft: "36px" }}>
+                    <SelectLang uniqueLanguages={uniqueLanguages} />
+                  </div>
+                )}
+              </div>
             );
           }}
-          actionsRender={() => <RightContent></RightContent>}
+
           //footerRender={() => <Footer />}
         >
           <Outlet />

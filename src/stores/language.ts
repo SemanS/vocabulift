@@ -14,3 +14,8 @@ export const menuLanguageState = atom({
   key: "menuLanguageState",
   default: navigator.language || "sk-SK",
 });
+
+export const uniqueLanguagesState = atom<string[]>({
+  key: "uniqueLanguagesState",
+  default: [],
+});

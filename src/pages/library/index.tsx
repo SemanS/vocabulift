@@ -39,6 +39,8 @@ import Joyride, {
 } from "react-joyride";
 import { useMount, useSetState } from "react-use";
 import { useNavigate } from "react-router-dom";
+import { FeatureType } from "@/pages/webLayout/shared/common/types";
+import styled from "styled-components";
 
 interface State {
   run: boolean;
@@ -84,6 +86,7 @@ const Library: React.FC = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(isDisabled());
   const [settingsDrawerWasOpen, setSettingsDrawerWasOpen] = useState(false);
   const navigate = useNavigate();
+  const [selectedFeatures, setSelectedFeatures] = useState<FeatureType[]>([]);
 
   const intl = useIntl();
 
@@ -483,15 +486,21 @@ const Library: React.FC = () => {
   );
 
   const filteredLibraryItems = filteredByLabelType.filter((item) => {
-    // Find the highest level of the item
-    const highestLevelIndex = item.level.reduce((highestIndex, level) => {
-      const levelIndex = customRange.indexOf(level.toUpperCase());
-      return levelIndex > highestIndex ? levelIndex : highestIndex;
-    }, -1);
-    // Check if the highest level is within the slider range
-    return (
-      highestLevelIndex >= sliderValue[0] && highestLevelIndex <= sliderValue[1]
+    const levelFilter = item.level.some(
+      (level) =>
+        customRange.indexOf(level.toUpperCase()) >= sliderValue[0] &&
+        customRange.indexOf(level.toUpperCase()) <= sliderValue[1]
     );
+
+    const featureFilter =
+      selectedFeatures.length === 0 ||
+      (item.enrichedFeatures &&
+        Array.isArray(item.enrichedFeatures) &&
+        selectedFeatures.every((feature) =>
+          item.enrichedFeatures.includes(feature)
+        ));
+
+    return levelFilter && featureFilter;
   });
 
   const categorizedItems = groupedItemsByCategory(filteredLibraryItems);
@@ -686,18 +695,45 @@ const Library: React.FC = () => {
     next: intl.formatMessage({ id: "joyride.next" }),
   };
 
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const handleSelectChange = (value) => {
-    setSelectedOption(value);
-    console.log("Selected:", value);
+  const handleFeatureButtonClick = (feature: FeatureType) => {
+    setSelectedFeatures((prevFeatures) => {
+      if (prevFeatures.includes(feature)) {
+        return prevFeatures.filter((f) => f !== feature);
+      } else {
+        return [...prevFeatures, feature];
+      }
+    });
   };
 
-  const myOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-  ];
+  const FeatureWrapper = styled.div`
+    /* left: 50%; */
+    /* bottom: 24px; */
+
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: center; */
+    gap: 8px;
+
+    @media (max-width: 500px) {
+      width: calc(100% - 16px);
+      max-width: 450px;
+    }
+
+    @media (min-width: 501px) and (max-width: 768px) {
+      width: calc(90% - 16px);
+      max-width: 650px;
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+      width: calc(80% - 16px);
+      max-width: 850px;
+    }
+
+    @media (min-width: 1025px) {
+      /* width: calc(70% - 16px);
+      max-width: 1000px; */
+    }
+  `;
 
   return (
     <CustomSpinnerComponent spinning={loading}>
@@ -772,34 +808,46 @@ const Library: React.FC = () => {
               {/* </span> */}
               <Row gutter={[16, 16]} justify="center"></Row>
             </div>
-            {/*  <Row>
-              <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
+            <Row style={{ marginTop: "20px" }}>
+              <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}></Col>
+              <Col xs={20} sm={20} md={16} lg={4} xl={4} xxl={4}>
                 <LanguageSelector
                   options={myLanguageOptions}
                   useRecoil={true}
                   languageProp="sourceLanguage"
                   disabledLanguage={user.targetLanguage}
-                  text={intl.formatMessage({ id: "translate.from" }) + " "}
                   style={{ marginBottom: "20px" }}
                 />
               </Col>
-              <Col xs={20} sm={20} md={16} lg={8} xl={8} xxl={8}>
-                <Select
-                  style={{ width: "100%" }}
-                  placeholder="Select option"
-                  onChange={handleSelectChange}
-                >
-                  {myOptions.map((option) => (
-                    <Select.Option key={option.value} value={option.value}>
-                      {option.label}
-                    </Select.Option>
+              <Col xs={20} sm={20} md={16} lg={4} xl={4} xxl={4}>
+                <FeatureWrapper>
+                  {Object.values(FeatureType).map((feature) => (
+                    <Tooltip
+                      title={feature.charAt(0).toUpperCase() + feature.slice(1)}
+                      key={feature}
+                    >
+                      <Button
+                        onClick={() => handleFeatureButtonClick(feature)}
+                        style={{
+                          display: "inline-block",
+                          backgroundColor: selectedFeatures.includes(feature)
+                            ? "tomato"
+                            : "white",
+                          color: selectedFeatures.includes(feature)
+                            ? "white"
+                            : "black",
+                          borderRadius: "15px",
+                          border: "1px solid #d9d9d9",
+                          minWidth: "80px",
+                        }}
+                      >
+                        {feature.charAt(0).toUpperCase() + feature.slice(1)}
+                      </Button>
+                    </Tooltip>
                   ))}
-                  <Select.Option key="all" value="all">
-                    All
-                  </Select.Option>
-                </Select>
+                </FeatureWrapper>
               </Col>
-            </Row> */}
+            </Row>
             <Row
               gutter={[16, 16]}
               justify="center"

@@ -5,6 +5,7 @@ import { Alert, Col, Progress, Row, Spin, Typography } from "antd";
 import { CheckCircleOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import classNames from "classnames";
+import { FeatureType } from "@/pages/webLayout/shared/common/types";
 
 interface CardProps {
   itemData: LibraryItem;
@@ -333,6 +334,25 @@ export const Card: React.FC<CardProps> = ({
               />
               <div className={styles.level}>
                 {itemData.level[itemData.level.length - 1]}
+              </div>
+              <div className={styles.featuresContainer}>
+                {itemData.enrichedFeatures &&
+                  itemData.enrichedFeatures.map(
+                    (feature: FeatureType, index) => (
+                      <div key={index} className={styles.featureBubble}>
+                        {feature === FeatureType.TENSES && (
+                          <span className={styles.featureWord}>Tenses</span>
+                        )}
+                        {feature === FeatureType.PART_OF_SPEECH && (
+                          <>
+                            <span className={styles.featureWord}>Part</span>
+                            <span className={styles.featureWord}>of</span>
+                            <span className={styles.featureWord}>Speech</span>
+                          </>
+                        )}
+                      </div>
+                    )
+                  )}
               </div>
               <div className={styles.cardTime}>
                 {formatDuration(itemData.duration)}

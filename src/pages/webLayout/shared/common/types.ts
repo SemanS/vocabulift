@@ -3,6 +3,11 @@ export interface IContainerProps {
   children: React.ReactNode;
 }
 
+export interface WordTriple {
+  wordTriple: string;
+  count: number;
+}
+
 export interface IButtonProps {
   color?: string;
   fixedWidth?: boolean;
@@ -38,4 +43,9 @@ export interface IValidateProps {
   name: string;
   message: string;
   email: string;
+}
+
+export enum FeatureType {
+  TENSES = "tenses",
+  PART_OF_SPEECH = "partOfSpeech",
 }
