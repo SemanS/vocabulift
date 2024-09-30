@@ -487,7 +487,7 @@ const Vocabulary: React.FC = () => {
             style={{ marginTop: "30px" }}
           >
             <Row gutter={[16, 16]} justify="center">
-              <Col span={10}>
+              {/* <Col span={10}>
                 <LanguageSelector
                   useRecoil={true}
                   languageProp="sourceLanguage"
@@ -511,7 +511,7 @@ const Vocabulary: React.FC = () => {
                   disabledLanguage={user.sourceLanguage}
                   text={intl.formatMessage({ id: "translate.to" }) + " "}
                 />
-              </Col>
+              </Col> */}
             </Row>
           </Col>
         </Row>

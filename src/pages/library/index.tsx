@@ -307,7 +307,12 @@ const Library: React.FC = () => {
     });
   };
 
-  const myLanguageOptions = [{ label: "English", value: "en" }];
+  const myLanguageOptions = [
+    { label: "English", value: "en" },
+    { label: "Slovak", value: "sk" },
+    { label: "Czech", value: "cs" },
+    { label: "French", value: "fr" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -633,13 +638,13 @@ const Library: React.FC = () => {
           >
             <Row gutter={[16, 16]} justify="center">
               <Col span={10} ref={addMenuRef}>
-                <LanguageSelector
+                {/* <LanguageSelector
                   options={myLanguageOptions}
-                  useRecoil={true}
+                  useRecoil={false}
                   languageProp="sourceLanguage"
                   disabledLanguage={user.targetLanguage}
                   text={intl.formatMessage({ id: "translate.from" }) + " "}
-                />
+                /> */}
               </Col>
               <Col
                 span={4}
@@ -651,12 +656,12 @@ const Library: React.FC = () => {
                 />
               </Col>
               <Col span={10} ref={targetLanguageRef}>
-                <LanguageSelector
+                {/* <LanguageSelector
                   useRecoil={true}
                   languageProp="targetLanguage"
                   disabledLanguage={user.sourceLanguage}
                   text={intl.formatMessage({ id: "translate.to" }) + " "}
-                />
+                /> */}
               </Col>
             </Row>
           </Col>

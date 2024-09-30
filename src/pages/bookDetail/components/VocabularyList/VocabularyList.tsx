@@ -197,7 +197,7 @@ const VocabularyList: FC<VocabularyListProps> = ({
       dispatch({ type: "setLoadingFromWordMeaning", payload: true });
       const meaning = await getPhraseMeaning(
         phrase,
-        user.languageForMeaning,
+        user.targetLanguage,
         languageTo
       );
       dispatch({ type: "setLoadingFromWordMeaning", payload: false });

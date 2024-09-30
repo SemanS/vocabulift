@@ -24,6 +24,7 @@ import {
   Tag,
   Divider,
   List,
+  Tabs,
 } from "antd";
 import { PageContainer } from "@ant-design/pro-layout";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
@@ -364,7 +365,6 @@ const BookDetail: FC = () => {
       if (changeTriggeredFromVideo) {
         if (changeTriggeredFromVideoFetch && time) {
           localSentenceFrom = (page - 1) * pageSize + 1;
-          console.log("FETCH3");
           await fetchAndUpdate(localSentenceFrom);
           dispatch({ type: "setSentenceFrom", payload: localSentenceFrom });
           dispatch({
@@ -379,7 +379,6 @@ const BookDetail: FC = () => {
           localSentenceFrom = changeTriggeredFromVideo
             ? (page - 1) * state.pageSizeFromQuery + 1
             : (state.currentPageFromQuery - 1) * state.pageSizeFromQuery + 1;
-          console.log("FETCH4");
           await fetchAndUpdate(localSentenceFrom);
           dispatch({ type: "setInitState", payload: false });
         } else if (
@@ -388,7 +387,6 @@ const BookDetail: FC = () => {
           page * pageSize < state.sentenceFrom
         ) {
           localSentenceFrom = (page - 1) * pageSize + 1;
-          console.log("FETCH5");
           await fetchAndUpdate(localSentenceFrom);
           dispatch({
             type: "setFirstIndexAfterReset",
@@ -464,7 +462,6 @@ const BookDetail: FC = () => {
       } else {
         const localSentenceFrom =
           (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-        console.log("FETCH1");
         await fetchAndUpdate(localSentenceFrom, targetLanguageFromQuery);
 
         setRecoilLibraryId(libraryId!);
@@ -488,7 +485,6 @@ const BookDetail: FC = () => {
         type: "setSelectedLanguageTo",
         payload: user.targetLanguage,
       });
-      console.log("FETCH2");
       fetchAndUpdate(state.sentenceFrom, user.targetLanguage);
 
       const url = new URL(window.location.href);
@@ -538,10 +534,20 @@ const BookDetail: FC = () => {
 
       if (!isLanguageInSnapshots && snapshots.length > 0) {
         //language = snapshots[1].language;
-        dispatch({
-          type: "setSelectedLanguageTo",
-          payload: language,
-        });
+        const languageIndex = snapshots.length > 1 ? 1 : 0;
+
+        const language = snapshots[languageIndex]?.language;
+
+        if (language) {
+          dispatch({
+            type: "setSelectedLanguageTo",
+            payload: language,
+          });
+        } else {
+          console.warn(
+            `Language is undefined for snapshots[${languageIndex}].language`
+          );
+        }
       }
 
       const userSentencesData: UserSentence[] = await getUserSentences({
@@ -818,18 +824,15 @@ const BookDetail: FC = () => {
     async (localSentenceFrom: number, targetLanguage?: string) => {
       dispatch({ type: "setLoadingFromFetch", payload: true });
       try {
-        const [library, snapshots] = await Promise.all([
-          getLibraryItem(libraryId!),
-          getSnapshots(
-            libraryId!,
-            user.sourceLanguage,
-            targetLanguage ? [targetLanguage] : [user.targetLanguage],
-            undefined,
-            localSentenceFrom
-          ),
-        ]);
-
+        const library = await getLibraryItem(libraryId!);
         dispatch({ type: "setLibrary", payload: library });
+        const snapshots = await getSnapshots(
+          libraryId!,
+          library.sourceLanguage, // Use the fetched library's sourceLanguage
+          targetLanguage ? [targetLanguage] : [user.targetLanguage],
+          undefined,
+          localSentenceFrom
+        );
         await updateSentencesState(snapshots, localSentenceFrom);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -992,14 +995,19 @@ const BookDetail: FC = () => {
 
   useEffect(() => {
     if (state.library?.snapshotsInfo) {
+      const sourceLanguage = state.library?.sourceLanguage ?? "";
+
       const languages = Array.from(
         new Set(
-          state.library.snapshotsInfo.map((snapshot) => snapshot.language)
+          state.library.snapshotsInfo
+            .map((snapshot) => snapshot.language)
+            .filter((language) => language && language !== sourceLanguage)
         )
       );
+
       setUniqueLanguages(languages);
     }
-  }, [state.library?.snapshotsInfo]);
+  }, [state.library?.snapshotsInfo, state.library?.sourceLanguage]);
 
   useEffect(() => {
     if (uniqueLanguages.length > 0) {
@@ -1108,6 +1116,51 @@ const BookDetail: FC = () => {
         });
       }
     }
+  };
+
+  const tabList = [
+    {
+      key: "youtube",
+      tab: (
+        <span>
+          <YoutubeOutlined style={{ marginRight: 8 }} /> Video
+        </span>
+      ),
+    },
+    ...(state.vocabularyListUserPhrases?.length !== 0
+      ? [
+          {
+            key: "vocabulary",
+            tab: (
+              <span>
+                <UnorderedListOutlined style={{ marginRight: 8 }} /> Vocabulary
+              </span>
+            ),
+          },
+        ]
+      : []),
+    {
+      key: "exercise",
+      tab: (
+        <span>
+          <QuestionOutlined style={{ marginRight: 8 }} /> Exercise
+        </span>
+      ),
+    },
+    /* {
+      key: "quiz",
+      tab: <QuestionOutlined />,
+    }, */
+  ];
+
+  const [activeTabKey, setActiveTabKey] = useState<string>("youtube");
+
+  const onTabChange = (key: string) => {
+    setActiveTabKey(key);
+    setRightVisible(key === "youtube");
+    setRightVocabVisible(key === "vocabulary");
+    setRightExerciseVisible(key === "exercise");
+    setRightQuizVisible(key === "quiz");
   };
 
   const addTranslateBoxSteps = useCallback((newSteps: StepType[]) => {
@@ -1288,9 +1341,44 @@ const BookDetail: FC = () => {
               paddingLeft: "40px",
               paddingTop: "20px",
             }}
+            title={
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Typography.Title level={5} style={{ margin: 0 }}>
+                  {state.libraryTitle}
+                </Typography.Title>
+              </div>
+            }
+            tabList={tabList}
+            activeTabKey={activeTabKey}
+            onTabChange={onTabChange}
+            /* title={
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <Typography.Title level={5} style={{ margin: 0 }}>
+                  {state.libraryTitle}
+                </Typography.Title>
+                <Tabs
+                  activeKey={activeTab}
+                  onChange={handleTabChange}
+                  size="small"
+                  style={{ width: "250px" }}
+                >
+                  <Tabs.TabPane tab="Video" key="youtube" />
+                  {state.vocabularyListUserPhrases?.length !== 0 && (
+                    <Tabs.TabPane tab={<UnorderedListOutlined />} key="vocabulary" />
+                  )}
+                  <Tabs.TabPane tab="Exercise" key="exercise" />
+                </Tabs>
+              </div>
+            } */
           >
             <TranslateBox
-              sourceLanguage={user.sourceLanguage}
+              sourceLanguage={state.library?.sourceLanguage}
               currentTextIndex={state.currentTextIndex}
               sentenceFrom={state.sentenceFrom}
               sentencesPerPage={state.sentencesPerPage}
@@ -1555,9 +1643,8 @@ const BookDetail: FC = () => {
   useEffect(() => {
     const fetchTriples = async () => {
       try {
-        // Fetch Musk triples
         const dataMusk = await getTriples([
-          { libraryId: "663f4c63746b77af97f93edf", speaker: 1 },
+          { libraryId: libraryId?.toString()!, speaker: 1 },
         ]);
         const parsedDataMusk = JSON.parse(dataMusk);
         setWordTriplesMusk(parsedDataMusk);
@@ -1573,6 +1660,170 @@ const BookDetail: FC = () => {
       chart.setOption(memoizedWordCloudOptions);
     }
   }, [memoizedWordCloudOptions]);
+
+  const partsOfSpeechByLanguage: { [key: string]: string[] } = {
+    en: [
+      "noun",
+      "verb",
+      "adjective",
+      "adverb",
+      "pronoun",
+      "preposition",
+      "conjunction",
+      "interjection",
+      "article",
+      "particle",
+      "determiner",
+      "numeral",
+    ],
+    es: [
+      "sustantivo",
+      "verbo",
+      "adjetivo",
+      "adverbio",
+      "pronombre",
+      "preposición",
+      "conjunción",
+      "interjección",
+      "artículo",
+      "partícula",
+      "determinante",
+      "numeral",
+    ],
+    fr: [
+      "nom",
+      "verbe",
+      "adjectif",
+      "adverbe",
+      "pronom",
+      "préposition",
+      "conjonction",
+      "interjection",
+      "article",
+      "particule",
+      "déterminant",
+      "numéral",
+    ],
+    sk: [
+      "podstatné meno",
+      "sloveso",
+      "prídavné meno",
+      "príslovka",
+      "zámeno",
+      "predložka",
+      "spojka",
+      "citoslovce",
+      "článok",
+      "častica",
+      "determinant",
+      "číslovka",
+    ],
+    de: [
+      "Substantiv",
+      "Verb",
+      "Adjektiv",
+      "Adverb",
+      "Pronomen",
+      "Präposition",
+      "Konjunktion",
+      "Interjektion",
+      "Artikel",
+      "Partikel",
+      "Determinativ",
+      "Numerale",
+    ],
+    cs: [
+      "podstatné jméno",
+      "sloveso",
+      "přídavné jméno",
+      "příslovce",
+      "zájmeno",
+      "předložka",
+      "spojka",
+      "citoslovce",
+      "článek",
+      "částice",
+      "determinant",
+      "číslovka",
+    ],
+    pl: [
+      "rzeczownik",
+      "czasownik",
+      "przymiotnik",
+      "przysłówek",
+      "zaimek",
+      "przyimek",
+      "spójnik",
+      "wykrzyknik",
+      "rodzajnik",
+      "partykuła",
+      "określnik",
+      "liczebnik",
+    ],
+    hu: [
+      "főnév",
+      "ige",
+      "melléknév",
+      "határozószó",
+      "névmás",
+      "elöljárószó",
+      "kötőszó",
+      "indulatszó",
+      "névelő",
+      "partikula",
+      "determináns",
+      "számnév",
+    ],
+    it: [
+      "sostantivo",
+      "verbo",
+      "aggettivo",
+      "avverbio",
+      "pronome",
+      "preposizione",
+      "congiunzione",
+      "interiezione",
+      "articolo",
+      "particella",
+      "determinante",
+      "numerale",
+    ],
+    zh: [
+      "名词",
+      "动词",
+      "形容词",
+      "副词",
+      "代词",
+      "介词",
+      "连词",
+      "感叹词",
+      "冠词",
+      "助词",
+      "限定词",
+      "数词",
+    ],
+    uk: [
+      "іменник",
+      "дієслово",
+      "прикметник",
+      "прислівник",
+      "займенник",
+      "прийменник",
+      "сполучник",
+      "вигук",
+      "артикль",
+      "частка",
+      "детермінант",
+      "числівник",
+    ],
+  };
+
+  const currentPartsOfSpeech = useMemo(() => {
+    return (
+      partsOfSpeechByLanguage[state.library?.sourceLanguage] ||
+      partsOfSpeechByLanguage["en"]
+    );
+  }, [state.library]);
 
   const partsOfSpeech = [
     "noun",
@@ -1667,78 +1918,6 @@ const BookDetail: FC = () => {
                   enable={{ right: true }}
                 >
                   {translateBoxContainer}
-                  <FloatButton.Group
-                    shape="square"
-                    //style={{ right: 20, bottom: 580 }}
-                    style={{
-                      right: 20,
-                      /* bottom: `${
-                        state.vocabularyListUserPhrases?.length !== 0
-                          ? 580
-                          : 630
-                      }px`, */
-                    }}
-                  >
-                    <FloatButton
-                      icon={<YoutubeOutlined />}
-                      type={rightVisible ? "primary" : "default"}
-                      onClick={() => {
-                        toggleRightPanel();
-                        setRightVocabVisible(false);
-                        setRightQuizVisible(false);
-                      }}
-                      style={{
-                        fontSize: "20px",
-                        padding: "10px 10px",
-                        width: "50px",
-                      }}
-                    />
-                    {state.vocabularyListUserPhrases?.length !== 0 && (
-                      <FloatButton
-                        icon={<UnorderedListOutlined />}
-                        type={rightVocabVisible ? "primary" : "default"}
-                        onClick={() => {
-                          toggleRightVocabPanel();
-                          setRightExerciseVisible(false);
-                          setRightQuizVisible(false);
-                        }}
-                        style={{
-                          fontSize: "20px",
-                          padding: "10px 10px",
-                          width: "50px",
-                        }}
-                      />
-                    )}
-                    <FloatButton
-                      type={rightExerciseVisible ? "primary" : "default"}
-                      onClick={() => {
-                        toggleRightExercisePanel();
-                        setRightVisible(false);
-                        setRightVocabVisible(false);
-                        setRightQuizVisible(false);
-                      }}
-                      style={{
-                        fontSize: "20px",
-                        padding: "10px 10px",
-                        width: "50px",
-                      }}
-                    />
-                    <FloatButton
-                      icon={<QuestionOutlined />}
-                      type={rightQuizVisible ? "primary" : "default"}
-                      onClick={() => {
-                        toggleRightQuizPanel();
-                        setRightVisible(false);
-                        setRightVocabVisible(false);
-                        setRightExerciseVisible(false);
-                      }}
-                      style={{
-                        fontSize: "20px",
-                        padding: "10px 10px",
-                        width: "50px",
-                      }}
-                    />
-                  </FloatButton.Group>
 
                   {/* <Button
                     onClick={toggleRightPanel}
@@ -1843,7 +2022,7 @@ const BookDetail: FC = () => {
                         width: "460px",
                       }}
                     >
-                      {partsOfSpeech.map((tag) => (
+                      {currentPartsOfSpeech.map((tag) => (
                         <Tag.CheckableTag
                           key={tag}
                           checked={selectedTags.includes(tag)}
@@ -1881,7 +2060,6 @@ const BookDetail: FC = () => {
                     <Divider />
                     <Row gutter={[16, 16]}>
                       <Col span={12}>
-                        <h4>Musk</h4>
                         <ReactECharts
                           ref={chartRef1}
                           option={memoizedWordCloudOptions}

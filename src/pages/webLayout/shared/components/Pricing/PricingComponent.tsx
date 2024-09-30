@@ -9,6 +9,20 @@ const PricingComponent = () => {
 
   const pricingData = [
     {
+      title: "FREE",
+      monthlyPrice: 0,
+      annualPrice: 0,
+      annualPriceId: "",
+      monthlyPriceId: "",
+      features: [
+        "Access to all videos",
+        "Unlimited translation of words/phrases",
+        "Access to all worksheets",
+        "Unlimited meaning lookups",
+        "Unlimited alternatives for words/phrases",
+      ],
+    },
+    /* {
       title: "Explorer",
       monthlyPrice: 0,
       annualPrice: 0,
@@ -49,7 +63,7 @@ const PricingComponent = () => {
         "Unlimited words/phrases meaning",
         "Unlimited words/phrases alternatives",
       ],
-    },
+    }, */
   ];
 
   return (

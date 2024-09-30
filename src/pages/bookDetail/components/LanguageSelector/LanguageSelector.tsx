@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Popover, Input, Typography } from "antd";
-import Flag from "react-world-flags";
 import styles from "./index.module.less";
 import { useRecoilState } from "recoil";
 import { Option } from "@/models/utils.interface";
@@ -77,11 +76,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
 
       await updateUser(updatedUserEntity);
 
-      setUser((prevUser) => ({
+      /* setUser((prevUser) => ({
         ...prevUser,
         sourceLanguage: user.targetLanguage,
         targetLanguage: previousSourceLanguage,
-      }));
+      })); */
     }
     setSelectedLanguage(country.code);
     if (!useRecoil && onLanguageChange) onLanguageChange(country.code);
@@ -179,11 +178,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = (props) => {
         onOpenChange={(isVisible) => setVisible(isVisible)}
       >
         <span
-          style={{
+        /* style={{
             cursor: "pointer",
             opacity:
               selectedCountry?.code === disabledLanguage && useRecoil ? 0.5 : 1,
-          }}
+          }} */
         >
           {selectedCountry && (
             <SvgIcon

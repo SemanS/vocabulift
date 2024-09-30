@@ -500,7 +500,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       if (!props.partOfSpeech || !props.sentenceWord) {
         return [{ label: "No Options", value: "" }];
       }
-  
+
       const filteredOptions = props.partOfSpeech
         .filter(
           (wordObj) =>
@@ -514,40 +514,41 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
             value: text || "No Text",
           };
         });
-  
+
       const uniqueOptions = filteredOptions.filter(
         (option, index, self) =>
           option.label && // Ensure the label is defined
           index ===
-          self.findIndex(
-            (t) => t.label && t.label.toLowerCase() === option.label.toLowerCase()
-          )
+            self.findIndex(
+              (t) =>
+                t.label && t.label.toLowerCase() === option.label.toLowerCase()
+            )
       );
-  
+
       const matchingWord = props.partOfSpeech.find(
         (word) =>
           word.position === props.wordIndex &&
           word.sentenceNumber === props.sentenceNumber
       );
-  
+
       const correctText = matchingWord
         ? matchingWord.text?.replace(/[.,?]/g, "")
         : null;
-  
+
       let shuffledOptions = shuffleArray(uniqueOptions);
-  
+
       if (correctText) {
         const isCorrectOptionIncluded = shuffledOptions.find(
           (option) => option.value === correctText
         );
-  
+
         if (isCorrectOptionIncluded) {
           const correctIndex = shuffledOptions.findIndex(
             (option) => option.value === correctText
           );
-  
+
           const [correctOption] = shuffledOptions.splice(correctIndex, 1);
-  
+
           shuffledOptions.unshift(correctOption);
         } else {
           const randomIndex = Math.floor(
@@ -559,10 +560,10 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
           });
         }
       }
-  
+
       return shuffleArray(shuffledOptions.slice(0, 4));
     };
-  
+
     if (!options.length) {
       // Ensuring options are recomputed only if they are empty
       const newOptions = computeOptions();
@@ -575,7 +576,6 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
     props.wordIndex,
     props.sentenceNumber,
   ]);
-  
 
   const getBackgroundColor = (wordIndex) => {
     const currentPageKey = `${props.currentPage}_${wordIndex}`;

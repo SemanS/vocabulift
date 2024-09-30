@@ -305,7 +305,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                     label={intl.formatMessage({ id: "translate.to" })}
                     name="language"
                   >
-                    <LanguageSelector
+                    {/* <LanguageSelector
                       useRecoil={false}
                       disabledLanguage={selectedLanguageFrom}
                       onLanguageChange={(language) => {
@@ -314,7 +314,7 @@ const AddItemModal: React.FC<AddItemModalProps> = ({
                       text={""}
                       languageProp="targetLanguage"
                       style={{ marginTop: "-10px" }}
-                    />
+                    /> */}
                   </Form.Item>
                 }
               </Form>

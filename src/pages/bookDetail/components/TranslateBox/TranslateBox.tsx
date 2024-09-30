@@ -506,7 +506,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   function extractUniqueVerbs(sentences, partsOfSpeechForExtract: string[]) {
     let usedVerbs = new Set(); // Track verbs that have already been used
     let results = [];
-
     sentences.forEach((sentence, index) => {
       if (
         !sentence ||
@@ -520,7 +519,6 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         results.push({ error: "No valid words", index }); // Optionally handle no words scenario
         return;
       }
-
       // Filter words to find those with partOfSpeech marked as "verb"
       let matchingWords = sentence.sentenceWords
         .filter(
@@ -584,6 +582,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     () => extractTenseAndSentenceNumber(visibleSourceTexts),
     [visibleSourceTexts]
   );
+
+  //console.log("partOfSpeech" + JSON.stringify(visibleSourceTexts));
 
   const memoizedPartOfSpeech = useMemo(
     () => extractUniqueVerbs(visibleSourceTexts, partOfSpeech),
@@ -705,7 +705,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       tenseOptions.some((option) => option.label === t)
     );
     if (validTenses.length === 0) {
-      throw new Error("Invalid tenses provided.");
+      //throw new Error("Invalid tenses provided.");
     }
 
     // Start with the tense options that match the input tenses

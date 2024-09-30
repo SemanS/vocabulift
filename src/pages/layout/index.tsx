@@ -198,14 +198,20 @@ const LayoutPage: FC = () => {
                   )}
                 />
                 {/* Render SelectLang on the same line if it's the last menu item */}
-                {menuItemProps.key === "last-video" && (
+                {/* {menuItemProps.key === "last-video" && (
                   <div style={{ marginLeft: "36px" }}>
                     <SelectLang uniqueLanguages={uniqueLanguages} />
                   </div>
-                )}
+                )} */}
               </div>
             );
           }}
+          actionsRender={() => (
+            <>
+              <SelectLang uniqueLanguages={uniqueLanguages} />
+              <RightContent></RightContent>
+            </>
+          )}
 
           //footerRender={() => <Footer />}
         >

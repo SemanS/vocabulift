@@ -13,6 +13,27 @@ import { parseLocale } from "@/utils/stringUtils";
 const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
   const [user, setUser] = useRecoilState(userState);
 
+  const defaultLanguageOptions = [
+    "en",
+    "es",
+    "sk",
+    "de",
+    "fr",
+    "cs",
+    "pl",
+    "hu",
+    "it",
+    "zh",
+    "uk",
+  ];
+
+  const shouldUseUniqueLanguages =
+    window.location.pathname === "/library" && uniqueLanguages.length === 0;
+
+  const usedLanguages = shouldUseUniqueLanguages
+    ? defaultLanguageOptions
+    : uniqueLanguages;
+
   const selectLocale = async ({ key }) => {
     await updateUser({ locale: key });
     setUser((prev) => ({
@@ -29,11 +50,7 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
   };
 
   const items = localeConfig
-    .filter(
-      (lang) =>
-        uniqueLanguages.includes(parseLocale(lang.key)) &&
-        parseLocale(lang.key) !== "sk"
-    )
+    .filter((lang) => usedLanguages.includes(parseLocale(lang.key)))
     .map((lang) => ({
       key: lang.key,
       disabled: user.targetLanguage === parseLocale(lang.key),
@@ -51,15 +68,7 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
   );
 
   return (
-    <div
-    /* style={{
-        position: "fixed",
-        top: "22px",
-        left: "49.6%",
-        transform: "translateX(-50%)",
-        zIndex: 1001,
-      }} */
-    >
+    <div>
       <Dropdown
         onVisibleChange={setDropdownActive}
         overlay={<Menu items={items} />}
@@ -75,7 +84,6 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
       >
         <Button
           size="large"
-          //shape="round"
           className={classes.actionButton}
           style={{
             borderRadius: "12px",
