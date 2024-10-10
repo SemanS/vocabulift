@@ -309,9 +309,10 @@ const Library: React.FC = () => {
 
   const myLanguageOptions = [
     { label: "English", value: "en" },
-    { label: "Slovak", value: "sk" },
-    { label: "Czech", value: "cs" },
+    /* { label: "Slovak", value: "sk" },
+    { label: "Czech", value: "cs" }, */
     { label: "French", value: "fr" },
+    { label: "Spanish", value: "es" },
   ];
 
   useEffect(() => {

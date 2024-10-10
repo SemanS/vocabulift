@@ -453,24 +453,24 @@ const BookDetail: FC = () => {
     const initializeData = async () => {
       if (initialFetchDone.current) return;
 
-      if (
+      /* if (
         user.isLimitExceeded === true &&
         user.subscribed === false &&
         !hasAccess
       ) {
         dispatch({ type: "setIsLimitExceeded", payload: true });
-      } else {
-        const localSentenceFrom =
-          (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
-        await fetchAndUpdate(localSentenceFrom, targetLanguageFromQuery);
+      } else { */
+      const localSentenceFrom =
+        (currentPageFromQuery - 1) * pageSizeFromQuery + 1;
+      await fetchAndUpdate(localSentenceFrom, targetLanguageFromQuery);
 
-        setRecoilLibraryId(libraryId!);
-        setRecoilCurrentPage(currentPageFromQuery);
-        setRecoilPageSize(pageSizeFromQuery);
+      setRecoilLibraryId(libraryId!);
+      setRecoilCurrentPage(currentPageFromQuery);
+      setRecoilPageSize(pageSizeFromQuery);
 
-        dispatch({ type: "setInitState", payload: false });
-        initialFetchDone.current = true;
-      }
+      dispatch({ type: "setInitState", payload: false });
+      initialFetchDone.current = true;
+      /* } */
     };
 
     initializeData();
@@ -1643,10 +1643,10 @@ const BookDetail: FC = () => {
   useEffect(() => {
     const fetchTriples = async () => {
       try {
-        const dataMusk = await getTriples([
+        const data = await getTriples([
           { libraryId: libraryId?.toString()!, speaker: 1 },
         ]);
-        const parsedDataMusk = JSON.parse(dataMusk);
+        const parsedDataMusk = JSON.parse(data);
         setWordTriplesMusk(parsedDataMusk);
       } catch (err: any) {}
     };

@@ -27,8 +27,7 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
     "uk",
   ];
 
-  const shouldUseUniqueLanguages =
-    window.location.pathname === "/library" && uniqueLanguages.length === 0;
+  const shouldUseUniqueLanguages = window.location.pathname === "/library";
 
   const usedLanguages = shouldUseUniqueLanguages
     ? defaultLanguageOptions

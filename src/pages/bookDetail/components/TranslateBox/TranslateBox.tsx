@@ -695,40 +695,249 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     { label: "Future Perfect Continuous", value: "Future Perfect Continuous" },
   ];
 
-  const options = (input) => {
-    // Ensure input is treated as a string
-    const inputTenses = Array.isArray(input) ? input.join(",") : String(input);
-    const tenses = inputTenses.split(",").map((t) => t.trim());
+  const tensesByLanguage = {
+    en: {
+      "Present Tense": [
+        "Simple Present",
+        "Present Continuous",
+        "Present Perfect",
+        "Present Perfect Continuous",
+      ],
+      "Past Tense": [
+        "Simple Past",
+        "Past Continuous",
+        "Past Perfect",
+        "Past Perfect Continuous",
+      ],
+      "Future Tense": [
+        "Simple Future",
+        "Future Continuous",
+        "Future Perfect",
+        "Future Perfect Continuous",
+      ],
+    },
+    es: {
+      Presente: [
+        "Presente Simple",
+        "Presente Continuo",
+        "Pretérito Perfecto Compuesto",
+        "Presente Perfecto Continuo",
+      ],
+      Pasado: [
+        "Pretérito Indefinido",
+        "Pretérito Imperfecto",
+        "Pretérito Pluscuamperfecto",
+        "Pretérito Perfecto Continuo",
+      ],
+      Futuro: [
+        "Futuro Simple",
+        "Futuro Próximo",
+        "Futuro Perfecto",
+        "Futuro Perfecto Continuo",
+      ],
+    },
+    fr: {
+      Présent: [
+        "Présent Simple",
+        "Présent Continu",
+        "Passé Composé",
+        "Présent Parfait Continu",
+      ],
+      Passé: ["Passé Simple", "Imparfait", "Plus-que-parfait", "Passé Continu"],
+      Futur: [
+        "Futur Simple",
+        "Futur Proche",
+        "Futur Antérieur",
+        "Futur Continu",
+      ],
+    },
+    sk: {
+      "Prítomný čas": [
+        "Jednoduchý prítomný čas",
+        "Prítomný priebehový čas",
+        "Predprítomný čas",
+        "Predprítomný priebehový čas",
+      ],
+      "Minulý čas": [
+        "Jednoduchý minulý čas",
+        "Minulý priebehový čas",
+        "Predminulý čas",
+        "Predminulý priebehový čas",
+      ],
+      "Budúci čas": [
+        "Jednoduchý budúci čas",
+        "Budúci priebehový čas",
+        "Predbudúci čas",
+        "Predbudúci priebehový čas",
+      ],
+    },
+    de: {
+      Gegenwart: [
+        "Präsens",
+        "Präsens Verlaufsform",
+        "Perfekt",
+        "Perfekt Verlaufsform",
+      ],
+      Vergangenheit: [
+        "Präteritum",
+        "Präteritum Verlaufsform",
+        "Plusquamperfekt",
+        "Plusquamperfekt Verlaufsform",
+      ],
+      Zukunft: [
+        "Futur I",
+        "Futur I Verlaufsform",
+        "Futur II",
+        "Futur II Verlaufsform",
+      ],
+    },
+    cs: {
+      "Přítomný čas": [
+        "Přítomný prostý čas",
+        "Přítomný průběhový čas",
+        "Předpřítomný čas",
+        "Předpřítomný průběhový čas",
+      ],
+      "Minulý čas": [
+        "Minulý prostý čas",
+        "Minulý průběhový čas",
+        "Předminulý čas",
+        "Předminulý průběhový čas",
+      ],
+      "Budoucí čas": [
+        "Budoucí prostý čas",
+        "Budoucí průběhový čas",
+        "Budoucí dokonavý čas",
+        "Budoucí dokonavý průběhový čas",
+      ],
+    },
+    pl: {
+      "Czas teraźniejszy": [
+        "Czas teraźniejszy prosty",
+        "Czas teraźniejszy ciągły",
+        "Czas teraźniejszy perfekcyjny",
+        "Czas teraźniejszy perfekcyjny ciągły",
+      ],
+      "Czas przeszły": [
+        "Czas przeszły prosty",
+        "Czas przeszły ciągły",
+        "Czas zaprzeszły",
+        "Czas zaprzeszły ciągły",
+      ],
+      "Czas przyszły": [
+        "Czas przyszły prosty",
+        "Czas przyszły ciągły",
+        "Czas przyszły dokonany",
+        "Czas przyszły dokonany ciągły",
+      ],
+    },
+    hu: {
+      "Jelen idő": [
+        "Egyszerű jelen",
+        "Folyamatos jelen",
+        "Befejezett jelen",
+        "Befejezett folyamatos jelen",
+      ],
+      "Múlt idő": [
+        "Egyszerű múlt",
+        "Folyamatos múlt",
+        "Befejezett múlt",
+        "Befejezett folyamatos múlt",
+      ],
+      "Jövő idő": [
+        "Egyszerű jövő",
+        "Folyamatos jövő",
+        "Befejezett jövő",
+        "Befejezett folyamatos jövő",
+      ],
+    },
+    it: {
+      Presente: [
+        "Presente Semplice",
+        "Presente Continuo",
+        "Passato Prossimo",
+        "Presente Perfetto Continuo",
+      ],
+      Passato: [
+        "Imperfetto",
+        "Passato Remoto",
+        "Trapassato Prossimo",
+        "Passato Continuo",
+      ],
+      Futuro: [
+        "Futuro Semplice",
+        "Futuro Anteriore",
+        "Futuro Continuo",
+        "Futuro Perfetto",
+      ],
+    },
+    zh: {
+      现在时: ["一般现在时", "现在进行时", "现在完成时", "现在完成进行时"],
+      过去时: ["一般过去时", "过去进行时", "过去完成时", "过去完成进行时"],
+      将来时: ["一般将来时", "将来进行时", "将来完成时", "将来完成进行时"],
+    },
+    uk: {
+      "Теперішній час": [
+        "Простий теперішній",
+        "Теперішній тривалий",
+        "Теперішній доконаний",
+        "Теперішній доконаний тривалий",
+      ],
+      "Минулий час": [
+        "Простий минулий",
+        "Минулий тривалий",
+        "Давно минулий",
+        "Давно минулий тривалий",
+      ],
+      "Майбутній час": [
+        "Простий майбутній",
+        "Майбутній тривалий",
+        "Майбутній доконаний",
+        "Майбутній доконаний тривалий",
+      ],
+    },
+  };
 
-    // Validate each provided tense
-    const validTenses = tenses.filter((t) =>
-      tenseOptions.some((option) => option.label === t)
-    );
-    if (validTenses.length === 0) {
-      //throw new Error("Invalid tenses provided.");
+  const tenseOptionsByLanguage = {};
+  Object.entries(tensesByLanguage).forEach(([languageCode, tenses]) => {
+    const options = [];
+    Object.values(tenses).forEach((tenseArray) => {
+      tenseArray.forEach((tense) => {
+        options.push({ label: tense, value: tense });
+      });
+    });
+    tenseOptionsByLanguage[languageCode] = options;
+  });
+
+  // The options function with additional checks
+  const options = (input, language) => {
+    const tenseOptions = Array.isArray(tenseOptionsByLanguage[language])
+      ? tenseOptionsByLanguage[language]
+      : [];
+
+    if (!input) {
+      console.error("Input is undefined or null.");
+      return [];
     }
 
-    // Start with the tense options that match the input tenses
-    const selected = validTenses.map((t) => ({ label: t, value: t }));
+    const inputTenses = Array.isArray(input) ? input : [input];
+    const validTenses = inputTenses.filter((t) =>
+      tenseOptions.some((option) => option.label === t)
+    );
 
-    // Get other tenses, excluding the provided tenses
+    if (validTenses.length === 0) {
+      console.warn("No valid tenses provided.");
+      return [];
+    }
+
+    const selected = validTenses.map((t) => ({ label: t, value: t }));
     const otherOptions = tenseOptions.filter(
       (option) => !validTenses.includes(option.label)
     );
-
-    // Shuffle the array to randomize selection
-    for (let i = otherOptions.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [otherOptions[i], otherOptions[j]] = [otherOptions[j], otherOptions[i]];
-    }
-
-    // Calculate how many more options to select to make up 4 in total
+    const shuffledOtherOptions = shuffleArray(otherOptions);
     const moreOptionsNeeded = 4 - selected.length;
-    if (moreOptionsNeeded > 0 && otherOptions.length >= moreOptionsNeeded) {
-      selected.push(...otherOptions.slice(0, moreOptionsNeeded));
-    } else if (moreOptionsNeeded > 0) {
-      // In case there are not enough other options to fill up to 4
-      throw new Error("Not enough different tenses available to select from.");
+    if (moreOptionsNeeded > 0) {
+      selected.push(...shuffledOtherOptions.slice(0, moreOptionsNeeded));
     }
 
     return shuffleArray(selected);
@@ -1038,7 +1247,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
                   isTenseVisible && (
                     <>
                       <Select
-                        options={options(sourceSentence.tense)}
+                        options={options(sourceSentence.tense, sourceLanguage)}
                         value={
                           selectedTenses.some((tense) => {
                             return (
