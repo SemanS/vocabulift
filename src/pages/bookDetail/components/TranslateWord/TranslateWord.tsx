@@ -212,9 +212,8 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
   const getClassName = () => {
     let classes = [styles.textbox];
-    if (props.isWordHighlightedFromVideo)
-      classes.push(styles.fadeIn, styles.bubbleWordHovered);
-    if (props.isHighlightedFromVideo) classes.push(styles.bubbleVideoHovered);
+
+    // Manual overrides should take priority
     if (isHovered || props.isHighlighted) {
       if (!isLastInPhrase) {
         classes.push(styles.bubbleHovered, styles.noMarginRight); // Add no margin right if not the last in phrase
@@ -223,6 +222,7 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
       }
     }
 
+    // Highlight if word matches user-defined words or phrases
     if (isWord && (props.mode === "words" || props.mode === "all")) {
       classes.push(styles.bubbleWord);
     }
@@ -233,6 +233,16 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
 
     if (isWordPhrase && props.mode === "all") {
       classes.push(styles.bubbleWordPhrase);
+    }
+
+    // Apply video-related highlighting only if no manual overrides
+    if (!isHovered && !props.isHighlighted) {
+      if (props.isWordHighlightedFromVideo) {
+        classes.push(styles.fadeIn, styles.bubbleWordHovered);
+      }
+      if (props.isHighlightedFromVideo) {
+        classes.push(styles.bubbleVideoHovered);
+      }
     }
 
     if (isLastInPhrase) {

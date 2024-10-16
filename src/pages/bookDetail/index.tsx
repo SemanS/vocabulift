@@ -1888,6 +1888,7 @@ const BookDetail: FC = () => {
                   className={`${styles.sliderRoot}`}
                   value={[currentTime]}
                   onValueChange={handleSliderChange}
+                  min={state.library?.snapshotsInfo[0].start}
                   max={state.library?.duration}
                   orientation="vertical"
                   step={0.1}

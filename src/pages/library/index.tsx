@@ -313,6 +313,7 @@ const Library: React.FC = () => {
     { label: "Czech", value: "cs" }, */
     { label: "French", value: "fr" },
     { label: "Spanish", value: "es" },
+    { label: "Chinese", value: "zh" },
   ];
 
   useEffect(() => {
@@ -825,7 +826,7 @@ const Library: React.FC = () => {
                   style={{ marginBottom: "20px" }}
                 />
               </Col>
-              <Col xs={20} sm={20} md={16} lg={4} xl={4} xxl={4}>
+              {/* <Col xs={20} sm={20} md={16} lg={4} xl={4} xxl={4}>
                 <FeatureWrapper>
                   {Object.values(FeatureType).map((feature) => (
                     <Tooltip
@@ -852,7 +853,7 @@ const Library: React.FC = () => {
                     </Tooltip>
                   ))}
                 </FeatureWrapper>
-              </Col>
+              </Col> */}
             </Row>
             <Row
               gutter={[16, 16]}
