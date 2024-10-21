@@ -506,6 +506,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   function extractUniqueVerbs(sentences, partsOfSpeechForExtract: string[]) {
     let usedVerbs = new Set(); // Track verbs that have already been used
     let results = [];
+    console.log("sentences" + JSON.stringify(sentences));
     sentences.forEach((sentence, index) => {
       if (
         !sentence ||

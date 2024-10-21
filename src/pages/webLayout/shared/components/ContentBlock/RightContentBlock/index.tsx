@@ -212,7 +212,7 @@ const RightBlock = ({
 
   const [highlightedSubtitleIndex, setHighlightedSubtitleIndex] = useState<
     number | null
-  >(0);
+  >(null);
   const [highlightedWordIndex, setHighlightedWordIndex] = useState<
     number | null
   >(0);

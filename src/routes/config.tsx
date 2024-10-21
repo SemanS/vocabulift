@@ -32,6 +32,16 @@ const WrapperRouteComponent: FC<WrapperRouteProps> = ({ auth, children }) => {
         isLogged: true,
         menuList: [
           {
+            path: "/skills",
+            name: "Skills Lab",
+            label: {
+              zh_CN: "图书",
+              en_US: "library",
+            },
+            icon: "library",
+            key: "skills",
+          },
+          {
             path: "/library",
             name: "library",
             label: {

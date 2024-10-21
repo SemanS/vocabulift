@@ -2,6 +2,7 @@ import React, { lazy, FC } from "react";
 import Dashboard from "@/pages/dashboard";
 import { useRoutes, RouteObject } from "react-router-dom";
 import { GlobalStyles } from "@/pages/webLayout/styles/GlobalStyles";
+
 //import Academy from "@/pages/webLayout/academy";
 const LoginPage = lazy(() => import("@/pages/login"));
 const CookiePolicy = lazy(() => import("@/pages/cookie-policy"));
@@ -15,6 +16,7 @@ const NotFound = lazy(() => import("@/pages/404"));
 const Library = lazy(() => import("@/pages/library"));
 const Vocabulary = lazy(() => import("@/pages/vocabulary"));
 const Speaker = lazy(() => import("@/pages/speaker"));
+const New = lazy(() => import("@/pages/new"));
 
 const WebLayoutPage = lazy(() => import("@/pages/webLayout"));
 const routeList: RouteObject[] = [
@@ -62,6 +64,14 @@ const routeList: RouteObject[] = [
         element: (
           <WrapperRouteComponent auth={true}>
             <Vocabulary />
+          </WrapperRouteComponent>
+        ),
+      },
+      {
+        path: "/skills",
+        element: (
+          <WrapperRouteComponent auth={true}>
+            <New />
           </WrapperRouteComponent>
         ),
       },
