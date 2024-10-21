@@ -38,6 +38,7 @@ const CenteredDiv = styled.div<{ centered: boolean }>`
 
 const LanguageSelect = styled(Select)`
   width: 100px;
+
   .ant-select-selector {
     border: none !important;
     background: transparent !important;
@@ -46,6 +47,7 @@ const LanguageSelect = styled(Select)`
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-left: 15px;
   }
 `;
 
@@ -56,8 +58,9 @@ const SubmitButton = styled.button<{ disabled: boolean }>`
   border: none;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   background-color: transparent;
-  margin-right: 8px;
+  margin-right: 5px;
   transition: background-color 0.3s, box-shadow 0.3s;
+  padding: 4px 8px; /* Increased horizontal padding */
 
   svg {
     width: 20px;
@@ -133,6 +136,10 @@ const New: React.FC = () => {
     }
   `;
 
+  const spacing = ({ menu }) => (
+    <div style={{ marginLeft: "-15px" }}>{menu}</div>
+  );
+
   const partsOfSpeech = [
     "noun",
     "pronoun",
@@ -183,7 +190,10 @@ const New: React.FC = () => {
       return newTag;
     });
   };
-
+  const dropdownAlign = {
+    points: ["tl", "bl"], // aligns the top-left of the dropdown with the bottom-left of the select
+    offset: [-5, 15], // moves the dropdown 15px to the left and 10px down
+  };
   return (
     <PageContainer title={false}>
       <CenteredDiv centered={!snapshots.length}>
@@ -196,29 +206,31 @@ const New: React.FC = () => {
           <LanguageSelect
             defaultValue={selectedLanguage}
             onChange={handleLanguageChange}
+            dropdownAlign={dropdownAlign}
+            dropdownStyle={{ width: "80px" }} // Squeeze width by 10px
           >
             <Option value="en">
               <SvgIcon
                 className={styles.flag}
                 code={getFlagCode("en")}
-                height="24"
-                width="32"
+                height="34"
+                width="42"
               />
             </Option>
             <Option value="es">
               <SvgIcon
                 className={styles.flag}
                 code={getFlagCode("es")}
-                height="24"
-                width="32"
+                height="34"
+                width="42"
               />
             </Option>
             <Option value="fr">
               <SvgIcon
                 className={styles.flag}
                 code={getFlagCode("sk")}
-                height="32"
-                width="48"
+                height="34"
+                width="42"
               />
             </Option>
           </LanguageSelect>

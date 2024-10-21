@@ -115,6 +115,7 @@ export const updateUser = async (userEntity: Partial<User>): Promise<any> => {
       body: JSON.stringify(requestBody),
     }
   );
+  console.log(requestBody);
 
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`);

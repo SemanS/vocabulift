@@ -27,14 +27,15 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
     "uk",
   ];
 
-  const shouldUseUniqueLanguages = window.location.pathname === "/library";
+  const shouldUseUniqueLanguages =
+    window.location.pathname === "/library" || "/skills";
 
   const usedLanguages = shouldUseUniqueLanguages
     ? defaultLanguageOptions
     : uniqueLanguages;
 
   const selectLocale = async ({ key }) => {
-    await updateUser({ locale: key });
+    await updateUser({ locale: key, targetLanguage: parseLocale(key) });
     setUser((prev) => ({
       ...prev,
       locale: key,
