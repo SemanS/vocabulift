@@ -359,13 +359,13 @@ const TranslateWord: React.FC<TranslateWordProps> = (props) => {
           placement="top"
           appendTo={() => document.body}
         >
-          {/* <Tippy
+          <Tippy
             content={props.sentenceTranslation}
             visible={isHovered}
-            placement="top"
-          > */}
-          {children}
-          {/* </Tippy> */}
+            placement="bottom"
+          >
+            {children}
+          </Tippy>
         </Tippy>
       );
     }

@@ -68,7 +68,7 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
   );
 
   return (
-    <div>
+    <div style={{ marginRight: "15px" }}>
       <Dropdown
         onVisibleChange={setDropdownActive}
         overlay={<Menu items={items} />}
@@ -76,8 +76,8 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
         arrow={true}
         placement="bottom"
         overlayStyle={{
-          boxShadow: "0 2px 10px DimGrey",
           border: "1px solid #ccc",
+          //boxShadow: "0px 1px 6px rgba(32, 33, 36, 0.28)",
           borderRadius: "10px",
           overflow: "hidden",
         }}
@@ -87,7 +87,7 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
           className={classes.actionButton}
           style={{
             borderRadius: "12px",
-            boxShadow: "0 2px 5px DimGrey",
+            boxShadow: "0px 1px 6px rgba(32, 33, 36, 0.28)",
             border: "none",
           }}
         >

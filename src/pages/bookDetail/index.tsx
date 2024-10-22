@@ -593,7 +593,6 @@ const BookDetail: FC = () => {
           type: "setSelectedUserPhrase",
           payload: vocabularyListUserPhrase,
         });
-        //handleAddWordDefinition(vocabularyListUserPhrase.phrase.sourceText);
         const updateVocabularyListUserPhrases = [
           ...(state.vocabularyListUserPhrases || []),
           vocabularyListUserPhrase,
