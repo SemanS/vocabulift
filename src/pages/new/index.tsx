@@ -486,12 +486,12 @@ const New: React.FC = () => {
             placeholder="Type something..."
             value={inputValue}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
           />
 
           <SubmitButton
             onClick={handleSubmit}
             disabled={!inputValue || loading}
-            onKeyDown={handleKeyDown}
           >
             {loading ? (
               <CustomSpinnerComponent
