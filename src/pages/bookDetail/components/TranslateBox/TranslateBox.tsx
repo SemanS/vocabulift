@@ -12,14 +12,18 @@ import React from "react";
 import { SentenceData, SentenceWordData } from "@/models/sentences.interfaces";
 import { Snapshot } from "@/models/snapshot.interfaces";
 import { SelectedWord } from "@/models/utils.interface";
-import { getPhraseIfNotInHighlighted, isSingleWord } from "@/utils/utilMethods";
+import {
+  getPhraseIfNotInHighlighted,
+  isSingleWord,
+  isWordInVocabularyList,
+} from "@/utils/utilMethods";
 import MagnifyingGlass from "../MagnifyingGlass/MagnifyingGlass";
 import QuizComponent from "../Quiz/QuizComponent";
 import { useIntl } from "react-intl";
 import Select from "react-select";
 import Tippy from "@tippyjs/react";
 import styles from "./TranslateBox.module.less";
-import { Button, Divider, Radio } from "antd";
+import { Button, Divider, Radio, notification } from "antd";
 import { parseLocale, shuffleArray } from "@/utils/stringUtils";
 import { targetLanguageState } from "@/stores/language";
 import { useRecoilState } from "recoil";
@@ -319,7 +323,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       blockMode = "all";
     }
 
-    /* if (
+    if (
       isWordInVocabularyList(
         blockMode,
         selectedWords,
@@ -331,7 +335,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
         description: "The selected word is in the vocabulary list.",
         type: "info",
       });
-    } */
+    }
 
     setMouseDown(false);
     setSentenceNo(sentenceNumber);
@@ -504,9 +508,8 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
   };
 
   function extractUniqueVerbs(sentences, partsOfSpeechForExtract: string[]) {
-    let usedVerbs = new Set(); // Track verbs that have already been used
+    let usedVerbs = new Set();
     let results = [];
-    console.log("sentences" + JSON.stringify(sentences));
     sentences.forEach((sentence, index) => {
       if (
         !sentence ||
@@ -696,7 +699,7 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
     { label: "Future Perfect Continuous", value: "Future Perfect Continuous" },
   ];
 
-  const tensesByLanguage = {
+  const tensesByLanguage: any = {
     en: {
       "Present Tense": [
         "Simple Present",
@@ -718,192 +721,72 @@ const TranslateBox: React.FC<TranslateBoxProps> = ({
       ],
     },
     es: {
-      Presente: [
-        "Presente Simple",
-        "Presente Continuo",
-        "Pretérito Perfecto Compuesto",
-        "Presente Perfecto Continuo",
-      ],
+      Presente: ["Presente de Indicativo", "Presente Progresivo"],
       Pasado: [
         "Pretérito Indefinido",
         "Pretérito Imperfecto",
         "Pretérito Pluscuamperfecto",
-        "Pretérito Perfecto Continuo",
+        "Pretérito Perfecto Compuesto",
       ],
-      Futuro: [
-        "Futuro Simple",
-        "Futuro Próximo",
-        "Futuro Perfecto",
-        "Futuro Perfecto Continuo",
-      ],
+      Futuro: ["Futuro Simple", "Futuro Perfecto"],
     },
     fr: {
-      Présent: [
-        "Présent Simple",
-        "Présent Continu",
-        "Passé Composé",
-        "Présent Parfait Continu",
-      ],
-      Passé: ["Passé Simple", "Imparfait", "Plus-que-parfait", "Passé Continu"],
-      Futur: [
-        "Futur Simple",
-        "Futur Proche",
-        "Futur Antérieur",
-        "Futur Continu",
-      ],
+      Présent: ["Présent de l'Indicatif", "Présent Progressif"],
+      Passé: ["Passé Composé", "Passé Simple", "Imparfait", "Plus-que-parfait"],
+      Futur: ["Futur Simple", "Futur Antérieur", "Futur Proche"],
     },
     sk: {
-      "Prítomný čas": [
-        "Jednoduchý prítomný čas",
-        "Prítomný priebehový čas",
-        "Predprítomný čas",
-        "Predprítomný priebehový čas",
-      ],
-      "Minulý čas": [
-        "Jednoduchý minulý čas",
-        "Minulý priebehový čas",
-        "Predminulý čas",
-        "Predminulý priebehový čas",
-      ],
-      "Budúci čas": [
-        "Jednoduchý budúci čas",
-        "Budúci priebehový čas",
-        "Predbudúci čas",
-        "Predbudúci priebehový čas",
-      ],
+      "Prítomný čas": ["Prítomný čas"],
+      "Minulý čas": ["Minulý čas"],
+      "Budúci čas": ["Budúci čas"],
     },
     de: {
-      Gegenwart: [
-        "Präsens",
-        "Präsens Verlaufsform",
-        "Perfekt",
-        "Perfekt Verlaufsform",
-      ],
-      Vergangenheit: [
-        "Präteritum",
-        "Präteritum Verlaufsform",
-        "Plusquamperfekt",
-        "Plusquamperfekt Verlaufsform",
-      ],
-      Zukunft: [
-        "Futur I",
-        "Futur I Verlaufsform",
-        "Futur II",
-        "Futur II Verlaufsform",
-      ],
+      Gegenwart: ["Präsens"],
+      Vergangenheit: ["Präteritum", "Perfekt", "Plusquamperfekt"],
+      Zukunft: ["Futur I", "Futur II"],
     },
     cs: {
-      "Přítomný čas": [
-        "Přítomný prostý čas",
-        "Přítomný průběhový čas",
-        "Předpřítomný čas",
-        "Předpřítomný průběhový čas",
-      ],
-      "Minulý čas": [
-        "Minulý prostý čas",
-        "Minulý průběhový čas",
-        "Předminulý čas",
-        "Předminulý průběhový čas",
-      ],
-      "Budoucí čas": [
-        "Budoucí prostý čas",
-        "Budoucí průběhový čas",
-        "Budoucí dokonavý čas",
-        "Budoucí dokonavý průběhový čas",
-      ],
+      "Přítomný čas": ["Přítomný čas"],
+      "Minulý čas": ["Minulý čas"],
+      "Budoucí čas": ["Budoucí čas"],
     },
     pl: {
-      "Czas teraźniejszy": [
-        "Czas teraźniejszy prosty",
-        "Czas teraźniejszy ciągły",
-        "Czas teraźniejszy perfekcyjny",
-        "Czas teraźniejszy perfekcyjny ciągły",
-      ],
-      "Czas przeszły": [
-        "Czas przeszły prosty",
-        "Czas przeszły ciągły",
-        "Czas zaprzeszły",
-        "Czas zaprzeszły ciągły",
-      ],
-      "Czas przyszły": [
-        "Czas przyszły prosty",
-        "Czas przyszły ciągły",
-        "Czas przyszły dokonany",
-        "Czas przyszły dokonany ciągły",
-      ],
+      "Czas teraźniejszy": ["Czas teraźniejszy"],
+      "Czas przeszły": ["Czas przeszły"],
+      "Czas przyszły": ["Czas przyszły złożony", "Czas przyszły prosty"],
     },
     hu: {
-      "Jelen idő": [
-        "Egyszerű jelen",
-        "Folyamatos jelen",
-        "Befejezett jelen",
-        "Befejezett folyamatos jelen",
-      ],
-      "Múlt idő": [
-        "Egyszerű múlt",
-        "Folyamatos múlt",
-        "Befejezett múlt",
-        "Befejezett folyamatos múlt",
-      ],
-      "Jövő idő": [
-        "Egyszerű jövő",
-        "Folyamatos jövő",
-        "Befejezett jövő",
-        "Befejezett folyamatos jövő",
-      ],
+      "Jelen idő": ["Jelen idő"],
+      "Múlt idő": ["Múlt idő"],
+      "Jövő idő": ["Jövő idő"],
     },
     it: {
-      Presente: [
-        "Presente Semplice",
-        "Presente Continuo",
-        "Passato Prossimo",
-        "Presente Perfetto Continuo",
-      ],
+      Presente: ["Presente"],
       Passato: [
         "Imperfetto",
+        "Passato Prossimo",
         "Passato Remoto",
         "Trapassato Prossimo",
-        "Passato Continuo",
       ],
-      Futuro: [
-        "Futuro Semplice",
-        "Futuro Anteriore",
-        "Futuro Continuo",
-        "Futuro Perfetto",
-      ],
+      Futuro: ["Futuro Semplice", "Futuro Anteriore"],
     },
     zh: {
-      现在时: ["一般现在时", "现在进行时", "现在完成时", "现在完成进行时"],
-      过去时: ["一般过去时", "过去进行时", "过去完成时", "过去完成进行时"],
-      将来时: ["一般将来时", "将来进行时", "将来完成时", "将来完成进行时"],
+      现在时: ["现在时"],
+      过去时: ["过去时"],
+      将来时: ["将来时"],
     },
     uk: {
-      "Теперішній час": [
-        "Простий теперішній",
-        "Теперішній тривалий",
-        "Теперішній доконаний",
-        "Теперішній доконаний тривалий",
-      ],
-      "Минулий час": [
-        "Простий минулий",
-        "Минулий тривалий",
-        "Давно минулий",
-        "Давно минулий тривалий",
-      ],
-      "Майбутній час": [
-        "Простий майбутній",
-        "Майбутній тривалий",
-        "Майбутній доконаний",
-        "Майбутній доконаний тривалий",
-      ],
+      "Теперішній час": ["Простий теперішній"],
+      "Минулий час": ["Простий минулий"],
+      "Майбутній час": ["Простий майбутній", "Складений майбутній"],
     },
   };
 
-  const tenseOptionsByLanguage = {};
+  const tenseOptionsByLanguage: any = {};
   Object.entries(tensesByLanguage).forEach(([languageCode, tenses]) => {
-    const options = [];
-    Object.values(tenses).forEach((tenseArray) => {
-      tenseArray.forEach((tense) => {
+    const options: any = [];
+    Object.values(tenses).forEach((tenseArray: any) => {
+      tenseArray.forEach((tense: any) => {
         options.push({ label: tense, value: tense });
       });
     });

@@ -12,8 +12,6 @@ import PricingComponent from "./shared/components/Pricing/PricingComponent";
 import CookieConsent from "react-cookie-consent";
 import { Button, Col, notification, Row } from "antd";
 import Footer from "./shared/components/Footer";
-import { getFlagCode } from "@/utils/utilMethods";
-import { SvgIcon } from "./shared/common/SvgIcon";
 
 const WebLayoutPage: FC = () => {
   const Contact = lazy(() => import("./shared/components/ContactForm"));
@@ -114,36 +112,36 @@ const WebLayoutPage: FC = () => {
             </>
           }
         /> */}
-        <Row>
-          <Col
+
+        {/* <Col
             xs={2}
             sm={2}
             md={24}
             lg={24}
             xl={4}
             style={{ backgroundColor: "rgb(253, 222, 184)" }}
-          ></Col>
-          <Col xs={20} sm={20} md={24} lg={24} xl={16}>
-            <ContentBlock
-              type="right"
-              title={"First-of-its-Kind"}
-              content={
-                "Turn YouTube videos into your personal language lab and speed up your learning—three times faster than Duolingo! Highlight any word or phrase for instant native explanations. Dive into quizzes, fill-in-the-blank exercises, and thought-provoking questions, all designed to enhance your mastery. This is language learning on turbo, transforming every video into a dynamic educational adventure."
-              }
-              button={"button"}
-              icon="developer.webp"
-              id="intro"
-            />
-          </Col>
-          <Col
+          ></Col> */}
+
+        <ContentBlock
+          type="right"
+          title={"First-of-its-Kind"}
+          content={
+            "Turn YouTube videos into your personal language lab and speed up your learning—three times faster than Duolingo! Highlight any word or phrase for instant native explanations. Dive into quizzes, fill-in-the-blank exercises, and thought-provoking questions, all designed to enhance your mastery. This is language learning on turbo, transforming every video into a dynamic educational adventure."
+          }
+          button={"button"}
+          icon="developer.webp"
+          id="intro"
+        />
+
+        {/* <Col
             xs={2}
             sm={2}
             md={24}
             lg={24}
             xl={4}
             style={{ backgroundColor: "rgb(253, 222, 184)" }}
-          ></Col>
-        </Row>
+          ></Col> */}
+
         <MiddleBlock
           //title={formatMessage({ id: "web.middleBlock.title" })}
           title={"Pioneering the Future of Language Learning with AI"}

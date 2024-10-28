@@ -28,14 +28,12 @@ export const GlobalStyles = createGlobalStyle`
     textarea {
         border-radius: 4px;
         border: 0;
-        background: rgb(241, 242, 243);
         transition: all 0.3s ease-in-out;
         outline: none;
         width: 100%;
         padding: 1rem 1.25rem;
 
         :focus-within {
-            background: none;
             box-shadow: #2e186a 0px 0px 0px 1px;
         }
     }
