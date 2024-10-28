@@ -41,6 +41,7 @@ const CenteredDiv = styled.div<{ centered: boolean }>`
   align-items: center;
   justify-content: ${(props) => (props.centered ? "center" : "flex-start")};
   height: ${(props) => (props.centered ? "60vh" : "auto")};
+  background-color: rgb(253, 222, 184);
   padding-top: ${(props) => (props.centered ? "0" : "20px")};
   transition: all 0.6s ease-in-out;
 `;
