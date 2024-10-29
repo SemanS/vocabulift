@@ -33,11 +33,12 @@ import CustomSpinnerComponent from "@/pages/spinner/CustomSpinnerComponent";
 import { getFlagCode } from "@/utils/utilMethods";
 import { userState } from "@/stores/user";
 import { PageContainer } from "@ant-design/pro-layout";
+import { Locale } from "@models/user";
 
 const CenteredDiv = styled.div<{ centered: boolean }>`
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   align-items: center;
   justify-content: ${(props) => (props.centered ? "center" : "flex-start")};
   height: ${(props) => (props.centered ? "60vh" : "auto")};
@@ -320,6 +321,7 @@ const RightBlock = ({
   const [activePartOfSpeechTags, setActivePartOfSpeechTags] = useState(
     partsOfSpeechByLanguage[selectedLanguage]
   );
+
   const [user, setUser] = useRecoilState(userState);
 
   const handleAddUserPhrase = useCallback(
@@ -347,13 +349,25 @@ const RightBlock = ({
     }
   };
 
+  const [selectedLanguageRecoil, setSelectedLanguageRecoil] =
+    useRecoilState(menuLanguageState);
+
+  const [emailSent, setEmailSent] = useState(false);
+
+  useEffect(() => {
+    if (!emailSent && isNewData) {
+      postPauseNotified();
+      setEmailSent(true);
+    }
+  }, [emailSent, isNewData]);
+
   const handleSubmit = async () => {
     setLoading(true);
     setIsNewData(false);
     try {
       const snapshotsData = await getSnapshots(
         selectedLanguage,
-        user.targetLanguage,
+        parseLocale(selectedLanguageRecoil as Locale),
         inputValue
       );
       setSnapshots(snapshotsData);
@@ -515,7 +529,7 @@ const RightBlock = ({
         </StyledInputContainer>
       </CenteredDiv>
 
-      <Row>
+      <Row style={{ backgroundColor: "rgb(253, 222, 184)" }}>
         <Col xs={0} sm={0} md={4} lg={4} xl={4} />
         <Col
           xs={24}

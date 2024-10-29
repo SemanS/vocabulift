@@ -24,6 +24,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { localeConfig } from "@/config/locale";
 import { parseLocale } from "@/utils/stringUtils";
 import { menuLanguageState } from "@/stores/language";
+import { getLocaleFromLanguage } from "@/utils/utilMethods";
 
 const Header = () => {
   const [visible, setVisibility] = useState(false);
@@ -116,6 +117,7 @@ const Header = () => {
         ),
         onClick: () => handleLanguageChange(lang.key),
       }));
+
     return (
       <>
         {location.pathname === "/" && (
