@@ -977,7 +977,7 @@ const BookDetail: FC = () => {
 
   const magnifyingGlassRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const magnifyingGlass = document.createElement("div");
     magnifyingGlass.className = "magnifying-glass";
     document.body.appendChild(magnifyingGlass);
@@ -985,7 +985,7 @@ const BookDetail: FC = () => {
     return () => {
       document.body.removeChild(magnifyingGlass);
     };
-  }, []);
+  }, []); */
 
   const [uniqueLanguages, setUniqueLanguages] = useState<string[]>([]);
 

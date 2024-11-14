@@ -28,7 +28,7 @@ export const HeaderSection = styled.header`
 
 export const LogoContainer = styled(Link)`
   display: flex;
-  padding-left: 60px;
+  padding-left: 15px;
 
   @media (max-width: 500px) {
     padding-left: 15px;

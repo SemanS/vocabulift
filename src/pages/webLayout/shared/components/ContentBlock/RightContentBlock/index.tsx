@@ -86,7 +86,8 @@ const StyledInputContainer = styled.div`
   border-radius: 24px;
   background-color: white;
   box-shadow: 0px 1px 6px rgba(32, 33, 36, 0.28);
-  width: 600px;
+  width: 100%;
+  max-width: 600px; /* Maximum width for larger screens */
   height: 44px;
   overflow: hidden;
 
@@ -104,6 +105,11 @@ const StyledInputContainer = styled.div`
   &:hover,
   &:focus-within {
     border-color: #a0a0a0;
+  }
+
+  /* Responsive styling for smaller screens */
+  @media (max-width: 500px) {
+    max-width: 90%; /* Adjusts width on screens smaller than 411px */
   }
 `;
 

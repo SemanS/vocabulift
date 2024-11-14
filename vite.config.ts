@@ -1,9 +1,6 @@
-import type { UserConfigExport, ConfigEnv } from "vite";
-import { loadEnv } from "vite";
 import { viteMockServe } from "vite-plugin-mock";
 import { resolve } from "path";
 import svgr from "vite-plugin-svgr";
-import styleImport from "vite-plugin-style-import";
 import react from "@vitejs/plugin-react";
 import { theme } from "antd/lib";
 import { convertLegacyToken } from "@ant-design/compatible/lib";
@@ -18,19 +15,15 @@ function pathResolve(dir: string) {
   return resolve(__dirname, ".", dir);
 }
 
-// https://vitejs.dev/config/
 export default ({ command }: { command: string }) => {
   return {
     resolve: {
-      // alias: aliases,
       alias: [
         {
-          // /@/xxxx  =>  src/xxx
           find: /^~/,
           replacement: pathResolve("node_modules") + "/",
         },
         {
-          // /@/xxxx  =>  src/xxx
           find: /@\//,
           replacement: pathResolve("src") + "/",
         },
@@ -39,15 +32,6 @@ export default ({ command }: { command: string }) => {
     optimizeDeps: {
       include: ["@ant-design/colors", "@ant-design/icons"],
     },
-    // server: {
-    //   proxy: {
-    //     '/api': {
-    //       target: 'http://127.0.0.1:7770',
-    //       changeOrigin: true,
-    //       rewrite: path => path.replace(/^\/api/, '')
-    //     }
-    //   },
-    // },
     plugins: [
       react(),
       svgr(),
@@ -59,17 +43,6 @@ export default ({ command }: { command: string }) => {
         logger: true,
       }),
       visualizer(),
-      // styleImport({
-      //   libs: [
-      //     {
-      //       libraryName: 'antd',
-      //       esModule: true,
-      //       resolveStyle: (name) => {
-      //         return `antd/es/${name}/style/index`;
-      //       },
-      //     },
-      //   ],
-      // }),
     ],
     css: {
       modules: {
