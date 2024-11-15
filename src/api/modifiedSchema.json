@@ -1,0 +1,440 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Documentation",
+    "version": "1.0.0",
+    "description": "API documentation for the application"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/library/{libraryId}": {
+      "post": {
+        "summary": "Retrieve library details by library ID",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "libraryId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the library to retrieve"
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved library details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "library": {
+                      "$ref": "#/components/schemas/Library"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized, no token or invalid token"
+          },
+          "404": {
+            "description": "Library not found"
+          }
+        },
+        "tags": [
+          "library"
+        ]
+      }
+    },
+    "/user/create": {
+      "get": {
+        "summary": "Create a new user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User created"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "401": {
+            "description": "Unauthorized, no token or invalid token"
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
+    },
+    "/user/current": {
+      "get": {
+        "summary": "Get current user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful retrieval of current user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized, no token or invalid token"
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BookMetadata": {
+        "type": "object",
+        "properties": {
+          "author": {
+            "type": "string",
+            "description": "The author of the book"
+          },
+          "title": {
+            "type": "string",
+            "description": "The title of the book"
+          },
+          "year": {
+            "type": "integer",
+            "description": "Publication year of the book"
+          }
+        }
+      },
+      "SnapshotInfo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The ID of the snapshot"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Creation timestamp of the snapshot"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the snapshot"
+          }
+        }
+      },
+      "Library": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "description": "The title of the library"
+          },
+          "label": {
+            "type": "string",
+            "enum": [
+              "TEXT",
+              "OTHER_ENUM_VALUES"
+            ],
+            "description": "The label type"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true,
+            "description": "The user ID associated with the library"
+          },
+          "visibility": {
+            "type": "string",
+            "enum": [
+              "private",
+              "public"
+            ],
+            "description": "The visibility status of the library"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL of the library image"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "A brief description of the library"
+          },
+          "category": {
+            "type": "string",
+            "nullable": true,
+            "description": "The category of the library"
+          },
+          "level": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of levels associated with the library"
+          },
+          "videoId": {
+            "type": "string",
+            "nullable": true,
+            "description": "ID of the associated video"
+          },
+          "videoThumbnail": {
+            "type": "string",
+            "nullable": true,
+            "description": "Thumbnail URL of the associated video"
+          },
+          "totalSentences": {
+            "type": "integer",
+            "description": "The total number of sentences in the library"
+          },
+          "sourceLanguage": {
+            "type": "string",
+            "description": "The source language of the library"
+          },
+          "targetLanguages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of target languages for the library"
+          },
+          "eventId": {
+            "type": "string",
+            "description": "The ID of the associated event"
+          },
+          "bookMetadata": {
+            "$ref": "#/components/schemas/BookMetadata"
+          },
+          "snapshotsInfo": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotInfo"
+            }
+          },
+          "duration": {
+            "type": "string",
+            "description": "Total duration of the library content"
+          },
+          "worksheet": {
+            "type": "string",
+            "description": "Worksheet content"
+          },
+          "transcript": {
+            "type": "string",
+            "description": "Transcript content"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of questions associated with the library"
+          },
+          "enrichedFeatures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Enriched features of the library"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "The user's email address"
+          },
+          "password": {
+            "type": "string",
+            "description": "The user's password (hashed)"
+          },
+          "username": {
+            "type": "string",
+            "description": "The user's username"
+          },
+          "menuList": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "locale": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "List of available menus"
+          },
+          "locale": {
+            "type": "string",
+            "description": "The user's locale setting"
+          },
+          "sourceLanguage": {
+            "type": "string",
+            "description": "The user's source language"
+          },
+          "targetLanguage": {
+            "type": "string",
+            "description": "The user's target language"
+          },
+          "languageForMeaning": {
+            "type": "string",
+            "description": "Language for meanings or translations"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the user's email is verified"
+          },
+          "activated": {
+            "type": "boolean",
+            "description": "Whether the user's account is activated"
+          },
+          "isLimitExceeded": {
+            "type": "boolean",
+            "description": "Whether the usage limits are exceeded"
+          },
+          "isAddVideoExceeded": {
+            "type": "boolean",
+            "description": "Whether the video addition limit is exceeded"
+          },
+          "exceededAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time when limits were exceeded"
+          },
+          "watched": {
+            "type": "integer",
+            "description": "Number of watched videos or content"
+          },
+          "meanings": {
+            "type": "integer",
+            "description": "Number of meanings learned or stored"
+          },
+          "alternatives": {
+            "type": "integer",
+            "description": "Number of language alternatives used"
+          },
+          "code": {
+            "type": "string",
+            "description": "Unique code associated with the user"
+          },
+          "picture": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL for the user's profile picture"
+          },
+          "userLibraries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "libraryId": {
+                  "type": "string"
+                },
+                "timeStamp": {
+                  "type": "integer"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "description": "Libraries associated with the user"
+          },
+          "subscribed": {
+            "type": "boolean",
+            "description": "Subscription status of the user"
+          },
+          "subscriptionId": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identifier for the user's subscription, if any"
+          },
+          "newUser": {
+            "type": "boolean",
+            "description": "Indicator for new user status"
+          },
+          "partnerCode": {
+            "type": "string",
+            "description": "Code for partnered users or affiliations"
+          },
+          "subscriptionType": {
+            "type": "string",
+            "enum": [
+              "Free",
+              "Linguist",
+              "Polyglot",
+              "Fail"
+            ],
+            "description": "Type of subscription the user has"
+          },
+          "subscriptionPeriod": {
+            "type": "string",
+            "enum": [
+              "Monthly",
+              "Annual"
+            ],
+            "nullable": true,
+            "description": "Subscription billing period"
+          }
+        },
+        "required": [
+          "email",
+          "username",
+          "password",
+          "verified",
+          "activated"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

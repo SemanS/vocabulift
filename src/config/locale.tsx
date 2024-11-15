@@ -1,18 +1,18 @@
 import React from "react";
 
-import enUS from "@/locales/en-us";
-import skSK from "@/locales/sk-sk";
-import esES from "@/locales/es-es";
-import frFR from "@/locales/fr-fr";
-import deDE from "@/locales/de-de";
-import csCZ from "@/locales/cs-cz";
-import plPL from "@/locales/pl-pl";
-import huHU from "@/locales/hu-hu";
-import itIT from "@/locales/it-it";
-import zhCN from "@/locales/zh-cn";
-import ukUA from "@/locales/uk-ua";
-import { getFlagCode } from "@/utils/utilMethods";
-import { SvgIcon } from "@/pages/webLayout/shared/common/SvgIcon";
+import enUS from "../locales/en-us";
+import skSK from "../locales/sk-sk";
+import esES from "../locales/es-es";
+import frFR from "../locales/fr-fr";
+import deDE from "../locales/de-de";
+import csCZ from "../locales/cs-cz";
+import plPL from "../locales/pl-pl";
+import huHU from "../locales/hu-hu";
+import itIT from "../locales/it-it";
+import zhCN from "../locales/zh-cn";
+import ukUA from "../locales/uk-ua";
+import { getFlagCode } from "../utils/utilMethods";
+import { SvgIcon } from "../pages/webLayout/shared/common/SvgIcon";
 
 export const localeConfig = [
   {

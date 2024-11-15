@@ -1,7 +1,8 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { reactEndpoint } from "config/config";
 
 const customBaseQuery = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_BASE_URL,
+  baseUrl: reactEndpoint,
   credentials: "include",
 });
 

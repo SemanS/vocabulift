@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { IntlProvider } from "react-intl";
-import { localeConfig } from "@/config/locale";
+import { localeConfig } from "./config/locale";
 import { ConfigProvider } from "antd";
 import enUS from "antd/es/locale/en_US";
 import skSK from "antd/es/locale/sk_SK";

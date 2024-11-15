@@ -2,21 +2,17 @@ import { createContext, ReactNode } from "react";
 import Axios, { AxiosInstance } from "axios";
 import { notification } from "antd";
 import { useContext } from "react";
-import { createBrowserHistory } from "history";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import qs from "qs";
 
-const history = createBrowserHistory();
-
 const axios = Axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL + "",
+  baseURL: `${import.meta.env.VITE_BASE_URL}`,
   timeout: 1000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// response interceptor
 axios.interceptors.response.use(
   (response) => {
     const data = response.data;

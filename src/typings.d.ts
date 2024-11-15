@@ -6,7 +6,12 @@ declare module "*.svg" {
   >;
 }
 
-declare module 'react-quiz-component' {
+declare module "*.less" {
+  const classes: { [key: string]: string };
+  export default classes;
+}
+
+declare module "react-quiz-component" {
   const Quiz: any;
   export default Quiz;
 }
