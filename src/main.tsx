@@ -9,6 +9,8 @@ import { ErrorBoundary } from "react-error-boundary";
 import SuspendFallbackLoading from "./pages/layout/suspendFallbackLoading";
 import { RecoilRoot } from "recoil";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Provider } from "react-redux";
+import store from "./store";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,9 +64,13 @@ const recoilState = {
 };
 
 root.render(
-  <AxiosProvider>
-    <QueryClientProvider client={queryClient}>
-      <RecoilRoot {...recoilState} />
-    </QueryClientProvider>
-  </AxiosProvider>
+  <Provider store={store}>
+    {" "}
+    {/* Add Provider wrapping the entire application */}
+    <AxiosProvider>
+      <QueryClientProvider client={queryClient}>
+        <RecoilRoot {...recoilState} />
+      </QueryClientProvider>
+    </AxiosProvider>
+  </Provider>
 );

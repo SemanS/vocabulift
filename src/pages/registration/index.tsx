@@ -11,7 +11,6 @@ import {
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LoginParams } from "@/models/login";
-import { useRegistration } from "@/api";
 import styles from "./index.module.less";
 import { ReactComponent as LogoSvg } from "@/assets/logo/logo_tooltip.svg";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
@@ -19,7 +18,6 @@ import { getGoogleUrl } from "@/utils/getGoogleUrl";
 import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
 
 const RegistrationForm: FC = () => {
-  const loginMutation = useRegistration();
   const navigate = useNavigate();
   const location = useLocation();
 

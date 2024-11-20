@@ -36,7 +36,6 @@ import { calculateFirstIndex, getRangeNumber } from "@/utils/stringUtils";
 import {
   deleteUserPhrases,
   getUserSentences,
-  updateReadingProgress,
   updateUser,
 } from "@/services/userService";
 import { UserSentence } from "@/models/userSentence.interface";
@@ -374,7 +373,6 @@ const BookDetail: FC = () => {
           dispatch({ type: "setLoadingFromFetch", payload: true });
         }
       } else {
-        await updateReadingProgress(libraryId, page, pageSize);
         if (!initialFetchDone.current) {
           localSentenceFrom = changeTriggeredFromVideo
             ? (page - 1) * state.pageSizeFromQuery + 1

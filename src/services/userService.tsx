@@ -263,31 +263,6 @@ export const getPhraseAlternatives = async (
   }
 };
 
-export const updateReadingProgress = async (
-  book: string | undefined,
-  page: number,
-  pageSize: number
-) => {
-  // Update the book state in the backend
-  /* await fetch(
-    `${
-      import.meta.env.VITE_REACT_APP_SERVER_ENDPOINT
-    }/user/update-reading-progress`,
-    {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-      },
-      body: JSON.stringify({
-        book,
-        page,
-        pageSize,
-      }),
-    }
-  ); */
-};
-
 export const getUser = async (
   accessToken: string
 ): Promise<User | undefined> => {

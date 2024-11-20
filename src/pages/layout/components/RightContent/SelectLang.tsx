@@ -1,17 +1,17 @@
 import React from "react";
 import { Button, Dropdown, Menu } from "antd";
-import { ReactComponent as LanguageSvg } from "@/assets/header/language.svg";
 import classes from "./index.module.less";
 import { localeConfig } from "@/config/locale";
-import { useLocale } from "@/locales";
 import { useRecoilState } from "recoil";
 import { userState } from "@/stores/user";
 import { updateUser } from "@/services/userService";
 import { DownOutlined } from "@ant-design/icons";
 import { parseLocale } from "@/utils/stringUtils";
+import { usePostUserUpdateMutation } from "@/user/rtkApi";
 
 const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
   const [user, setUser] = useRecoilState(userState);
+  const [postUserUpdate] = usePostUserUpdateMutation();
 
   const defaultLanguageOptions = [
     "en",
@@ -35,18 +35,32 @@ const SelectLang = ({ setDropdownActive, uniqueLanguages }) => {
     : uniqueLanguages;
 
   const selectLocale = async ({ key }) => {
-    await updateUser({ locale: key, targetLanguage: parseLocale(key) });
-    setUser((prev) => ({
-      ...prev,
-      locale: key,
-      targetLanguage: parseLocale(key),
-    }));
-    localStorage.setItem("locale", key);
-    setDropdownActive(false);
+    try {
+      await postUserUpdate({
+        body: {
+          userEntity: {
+            //...user,
+            locale: key,
+            targetLanguage: parseLocale(key),
+          },
+        },
+      }).unwrap(); // Call mutation and unwrap
 
-    const newQueryParams = new URLSearchParams(window.location.search);
-    newQueryParams.set("targetLanguage", parseLocale(key));
-    window.history.pushState(null, "", "?" + newQueryParams.toString());
+      console.log("Locale updated");
+      setUser((prev) => ({
+        ...prev,
+        locale: key,
+        targetLanguage: parseLocale(key),
+      }));
+      localStorage.setItem("locale", key);
+      setDropdownActive(false);
+
+      const newQueryParams = new URLSearchParams(window.location.search);
+      newQueryParams.set("targetLanguage", parseLocale(key));
+      window.history.pushState(null, "", "?" + newQueryParams.toString());
+    } catch (error) {
+      console.error("Failed to update user:", error);
+    }
   };
 
   const items = localeConfig

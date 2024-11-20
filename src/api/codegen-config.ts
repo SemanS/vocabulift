@@ -11,10 +11,9 @@ const config: ConfigFile = {
     __dirname,
     "./src/api/generated/modifiedSchema.json"
   ),
-  apiFile: "./baseApi.ts", // Adjust the path if needed
+  apiFile: "./baseApi.ts",
   apiImport: "baseApi",
   outputFiles: {
-    // Generate separate files per tag
     [path.resolve(__dirname, "./generated/endpoints.ts")]: {
       exportName: "generatedApi",
       hooks: true,

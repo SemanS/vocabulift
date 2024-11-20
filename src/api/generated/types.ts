@@ -70,6 +70,15 @@ export type GetUserCreateApiArg = void;
 export type GetUserCurrentApiResponse =
   /** status 200 Successful retrieval of current user */ User;
 export type GetUserCurrentApiArg = void;
+export type PostUserUpdateApiResponse =
+  /** status 201 User update successful */ {
+    status?: string;
+  };
+export type PostUserUpdateApiArg = {
+  body: {
+    userEntity?: UserEntity;
+  };
+};
 export type User = {
   /** The user's email address */
   email: string;
@@ -131,4 +140,45 @@ export type User = {
   subscriptionType?: "Free" | "Linguist" | "Polyglot" | "Fail";
   /** Subscription billing period */
   subscriptionPeriod?: ("Monthly" | "Annual") | null;
+};
+export type UserEntity = {
+  /** Number of watched videos or content */
+  watched?: number;
+  /** Date and time when limits were exceeded */
+  exceededAt?: string;
+  /** The user's source language */
+  sourceLanguage?: string;
+  /** The user's target language */
+  targetLanguage?: string;
+  /** Language used for meanings or translations */
+  languageForMeaning?: string;
+  /** Whether the user's email is verified */
+  verified?: boolean;
+  /** Whether the user's account is activated */
+  activated?: boolean;
+  /** List of libraries associated with the user */
+  userLibraries?: {
+    /** The unique identifier for the library */
+    libraryId?: string;
+    /** Timestamp of the library action */
+    timeStamp?: number;
+    /** Date and time of library creation */
+    createdAt?: string;
+    /** Date and time of the last library update */
+    updatedAt?: string;
+  }[];
+  /** Whether the usage limits are exceeded */
+  isLimitExceeded?: boolean;
+  /** Whether the video addition limit is exceeded */
+  isAddVideoExceeded?: boolean;
+  /** Number of meanings learned or stored */
+  meanings?: number;
+  /** Number of language alternatives used */
+  alternatives?: number;
+  /** Indicator for new user status */
+  newUser?: boolean;
+  /** Code for partnered users or affiliations */
+  partnerCode?: string;
+  /** The user's locale preference */
+  locale?: string;
 };

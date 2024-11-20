@@ -10,7 +10,6 @@ import {
 } from "antd";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { LoginParams } from "@/models/login";
-import { useLogin } from "@/api";
 import styles from "./index.module.less";
 import { ReactComponent as LogoSvg } from "@/assets/logo/logo_tooltip.svg";
 import { getGoogleUrl } from "@/utils/getGoogleUrl";
@@ -18,7 +17,6 @@ import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { ReactComponent as GoogleIcon } from "@/assets/logo/google_icon.svg";
 
 const LoginForm: FC = () => {
-  //const loginMutation = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,7 +55,7 @@ const LoginForm: FC = () => {
   const handlePasswordChange = (e) => {
     const password = e.target.value;
 
-    setPassword(password); // Set the password state
+    setPassword(password);
 
     setPasswordRequirements({
       length: password.length >= 8,
@@ -72,13 +70,7 @@ const LoginForm: FC = () => {
         help: "",
       });
     }
-    /* else {
-      setPasswordStatus({
-        validateStatus: "error",
-        //help: "Your password must contain at least: 8 characters, 1 number, 1 uppercase character, 1 lowercase character",
-      });
-    } */
-    return password; // Return the event to ensure it is not prevented from updating the form's field value
+    return password;
   };
 
   const generateRequirementStatus = (isValid, requirement) => {

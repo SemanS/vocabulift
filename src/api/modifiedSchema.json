@@ -116,6 +116,61 @@
           "user"
         ]
       }
+    },
+    "/user/update": {
+      "post": {
+        "summary": "Update user information",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "userEntity": {
+                    "$ref": "#/components/schemas/UserEntity"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User update successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request, possibly due to invalid input"
+          },
+          "401": {
+            "description": "Unauthorized, no token or invalid token"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "tags": [
+          "user"
+        ]
+      }
     }
   },
   "components": {
@@ -433,6 +488,99 @@
           "verified",
           "activated"
         ]
+      },
+      "UserEntity": {
+        "type": "object",
+        "properties": {
+          "watched": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of watched videos or content"
+          },
+          "exceededAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date and time when limits were exceeded"
+          },
+          "sourceLanguage": {
+            "type": "string",
+            "description": "The user's source language"
+          },
+          "targetLanguage": {
+            "type": "string",
+            "description": "The user's target language"
+          },
+          "languageForMeaning": {
+            "type": "string",
+            "description": "Language used for meanings or translations"
+          },
+          "verified": {
+            "type": "boolean",
+            "description": "Whether the user's email is verified"
+          },
+          "activated": {
+            "type": "boolean",
+            "description": "Whether the user's account is activated"
+          },
+          "userLibraries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "libraryId": {
+                  "type": "string",
+                  "description": "The unique identifier for the library"
+                },
+                "timeStamp": {
+                  "type": "integer",
+                  "format": "int64",
+                  "description": "Timestamp of the library action"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Date and time of library creation"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Date and time of the last library update"
+                }
+              }
+            },
+            "description": "List of libraries associated with the user"
+          },
+          "isLimitExceeded": {
+            "type": "boolean",
+            "description": "Whether the usage limits are exceeded"
+          },
+          "isAddVideoExceeded": {
+            "type": "boolean",
+            "description": "Whether the video addition limit is exceeded"
+          },
+          "meanings": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of meanings learned or stored"
+          },
+          "alternatives": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Number of language alternatives used"
+          },
+          "newUser": {
+            "type": "boolean",
+            "description": "Indicator for new user status"
+          },
+          "partnerCode": {
+            "type": "string",
+            "description": "Code for partnered users or affiliations"
+          },
+          "locale": {
+            "type": "string",
+            "description": "The user's locale preference"
+          }
+        }
       }
     }
   },
